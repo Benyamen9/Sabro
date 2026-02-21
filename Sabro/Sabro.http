@@ -1,0 +1,6 @@
+@Sabro_HostAddress = http://localhost:5213
+
+GET {{Sabro_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
