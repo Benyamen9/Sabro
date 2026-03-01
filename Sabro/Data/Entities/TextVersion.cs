@@ -13,6 +13,6 @@ namespace Sabro.Data.Entities
         public bool Published { get; set; }
 
         // Navigation properties
-        public ICollection<Segment> Segments { get; set; } = new List<Segment>();
+        public ICollection<Segment> Segments { get; set; } = [];
     }
 }

@@ -23,6 +23,6 @@ namespace Sabro.Data.Entities
 
         // Navigation properties
         public TextVersion Version { get; set; } = null!;
-        public ICollection<AnnotationAnchor> AnnotationAnchors { get; set; } = new List<AnnotationAnchor>();
+        public ICollection<AnnotationAnchor> AnnotationAnchors { get; set; } = [];
     }
 }

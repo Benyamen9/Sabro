@@ -25,8 +25,8 @@ namespace Sabro.Data.Entities
         public string Language { get; set; } = null!;
 
         // Navigation properties
-        public ICollection<Annotation> Annotations { get; set; } = new List<Annotation>();
-        public ICollection<AuthorSource> AuthorSources { get; set; } = new List<AuthorSource>();
+        public ICollection<Annotation> Annotations { get; set; } = [];
+        public ICollection<AuthorSource> AuthorSources { get; set; } = [];
     }
 
     public enum SourceType

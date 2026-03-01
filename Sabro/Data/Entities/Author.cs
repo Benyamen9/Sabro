@@ -35,13 +35,15 @@ namespace Sabro.Data.Entities
         public string? ImageUrl { get; set; }
 
         // Navigation properties
-        public ICollection<Annotation> Annotations { get; set; } = new List<Annotation>();
-        public ICollection<AuthorSource> AuthorSources { get; set; } = new List<AuthorSource>();
+        public ICollection<Annotation> Annotations { get; set; } = [];
+        public ICollection<AuthorSource> AuthorSources { get; set; } = [];
     }
 
     public enum AuthorCategory
     {
         SyriacFather,
+        Editor,
+        Translator,
         // TODO Add more categories later if needed
     }
 }

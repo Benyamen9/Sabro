@@ -1,4 +1,4 @@
-﻿namespace Sabro.Services
+﻿namespace Sabro.Services.Interfaces
 {
     public interface IUserService
     {

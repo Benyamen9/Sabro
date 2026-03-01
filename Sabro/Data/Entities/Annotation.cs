@@ -39,9 +39,9 @@ namespace Sabro.Data.Entities
         public ApplicationUser CreatedBy { get; set; } = null!;
         public ApplicationUser UpdatedBy { get; set; } = null!;
 
-        public ICollection<AnnotationAnchor> Anchors { get; set; } = new List<AnnotationAnchor>();
-        public ICollection<Annotation> Replies { get; set; } = new List<Annotation>();
-        public ICollection<AnnotationCrossReference> CrossReferences { get; set; } = new List<AnnotationCrossReference>();
+        public ICollection<AnnotationAnchor> Anchors { get; set; } = [];
+        public ICollection<Annotation> Replies { get; set; } = [];
+        public ICollection<AnnotationCrossReference> CrossReferences { get; set; } = [];
     }
 
     public enum AnnotationType
