@@ -4,7 +4,9 @@ namespace Sabro.Data.Entities
 {
     public class ApplicationUser : IdentityUser<int>
     {
-        public UserType Type { get; set; } = UserType.Reader;
+        public string? ReviewerQualifications { get; set; }
+        public bool IsTrusted { get; set; } = false;
+        public bool IsReviewer { get; set; } = false;
 
         public bool Active { get; set; } = true;
 
@@ -15,12 +17,5 @@ namespace Sabro.Data.Entities
         public ICollection<UserNote>? Notes { get; set; }
         public ICollection<ReadingList>? ReadingLists { get; set; }
         public ICollection<ReadingHistory>? ReadingHistory { get; set; }
-    }
-
-    public enum UserType
-    {
-        Reader,
-        Translator,
-        Admin
     }
 }

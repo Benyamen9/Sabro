@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sabro.Data;
+using Sabro.Data.Entities;
 using Sabro.Services;
+using Sabro.Services.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Sabro
 {
@@ -10,8 +14,14 @@ namespace Sabro
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add identity roles
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFramework<ApplicationDbContext>();
+
             // Add services to the container.
             builder.Services.AddControllers();
+            builder.Services.AddScoped<IAnnotationService, AnnotationService>();
+            builder.Services.AddScoped<IMarkdownService, MarkdownService>();
 
             // Swagger/OpenAPI configuration
             builder.Services.AddEndpointsApiExplorer();
@@ -32,6 +42,7 @@ namespace Sabro
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

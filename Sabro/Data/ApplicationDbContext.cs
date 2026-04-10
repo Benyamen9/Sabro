@@ -19,6 +19,10 @@ namespace Sabro.Data
         public DbSet<ReadingList> ReadingLists { get; set; }
         public DbSet<ReadingListItem> ReadingListItems { get; set; }
         public DbSet<ReadingHistory> ReadingHistory { get; set; }
+        public DbSet<SegmentHistory> SegmentHistories { get; set; }
+        public DbSet<AnnotationHistory> AnnotationHistories { get; set; }
+        public DbSet<ChapterValidation> ChapterValidations { get; set; }
+        public DbSet<SuggestedEdit> SuggestedEdits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
