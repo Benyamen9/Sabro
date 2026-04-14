@@ -42,6 +42,7 @@ namespace Sabro.Data.Entities
         public ICollection<AnnotationAnchor> Anchors { get; set; } = [];
         public ICollection<Annotation> Replies { get; set; } = [];
         public ICollection<AnnotationCrossReference> CrossReferences { get; set; } = [];
+        public ICollection<AnnotationHistory> History { get; set; } = [];
     }
 
     public enum AnnotationType

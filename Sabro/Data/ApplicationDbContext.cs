@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sabro.Data.Entities;
 
 namespace Sabro.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>(options)
     {
         public DbSet<TextVersion> TextVersions { get; set; } = null!;
         public DbSet<Segment> Segments { get; set; }
@@ -13,7 +15,6 @@ namespace Sabro.Data
         public DbSet<Annotation> Annotations { get; set; }
         public DbSet<AnnotationAnchor> AnnotationAnchors { get; set; }
         public DbSet<AnnotationCrossReference> AnnotationCrossReferences { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
         public DbSet<UserFavorite> UserFavorites { get; set; }
         public DbSet<UserNote> UserNotes { get; set; }
         public DbSet<ReadingList> ReadingLists { get; set; }
@@ -168,6 +169,58 @@ namespace Sabro.Data
                 .WithMany()
                 .HasForeignKey(rh => rh.SegmentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // SegmentHistory
+            builder.Entity<SegmentHistory>()
+                .HasOne(sh => sh.Segment)
+                .WithMany(s => s.History)
+                .HasForeignKey(sh => sh.SegmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<SegmentHistory>()
+                .HasOne(sh => sh.ChangedBy)
+                .WithMany()
+                .HasForeignKey(sh => sh.ChangedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // AnnotationHistory
+            builder.Entity<AnnotationHistory>()
+                .HasOne(ah => ah.Annotation)
+                .WithMany(a => a.History)
+                .HasForeignKey(ah => ah.AnnotationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<AnnotationHistory>()
+                .HasOne(ah => ah.ChangedBy)
+                .WithMany()
+                .HasForeignKey(ah => ah.ChangedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ChapterValidation
+            builder.Entity<ChapterValidation>()
+                .HasOne(cv => cv.Version)
+                .WithMany()
+                .HasForeignKey(cv => cv.VersionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // SuggestedEdit
+            builder.Entity<SuggestedEdit>()
+                .HasOne(se => se.Segment)
+                .WithMany(s => s.SuggestedEdits)
+                .HasForeignKey(se => se.SegmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<SuggestedEdit>()
+                .HasOne(se => se.Reviewer)
+                .WithMany()
+                .HasForeignKey(se => se.ReviewerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<SuggestedEdit>()
+                .HasOne(se => se.ResolvedBy)
+                .WithMany()
+                .HasForeignKey(se => se.ResolvedById)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Seed initial data
             SeedData(builder);
