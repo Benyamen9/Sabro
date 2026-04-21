@@ -1,8 +1,10 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Sabro.Data;
 using Sabro.Data.Entities;
 using Sabro.Services;
@@ -50,6 +52,16 @@ namespace Sabro
             builder.Services.AddScoped<IMarkdownService, MarkdownService>();
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+            // TODO: Add the following services and controllers (MVP Phase 1-4):
+            // - TextVersionsController + service + DTOs  (PRIORITY: critical, needed in production)
+            // - AuthorsController      + service + DTOs
+            // - SourcesController      + service + DTOs
+            // - SuggestedEditsController + service + DTOs  (reviewer workflow)
+            // - ChapterValidationController + service + DTOs
+            // - GET /api/segments/{id}/history      (read-only)
+            // - GET /api/annotations/{id}/history   (read-only)
+            // - IUserService implementation (stub exists, body is empty)
+
             // OpenAPI + Scalar
             builder.Services.AddOpenApi(options =>
             {
@@ -58,6 +70,29 @@ namespace Sabro
                     document.Info.Title = "Sabro API";
                     document.Info.Version = "v1";
                     document.Info.Description = "API for the Sabro biblical commentary platform.";
+                    document.Components ??= new OpenApiComponents();
+                    document.Components.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>
+                    {
+                        ["Bearer"] = new OpenApiSecurityScheme
+                        {
+                            Type = SecuritySchemeType.Http,
+                            Scheme = "bearer",
+                            BearerFormat = "JWT"
+                        }
+                    };
+                    return Task.CompletedTask;
+                });
+                options.AddOperationTransformer((operation, context, ct) =>
+                {
+                    var hasAuth = context.Description.ActionDescriptor.EndpointMetadata
+                        .OfType<IAuthorizeData>().Any();
+                    if (hasAuth)
+                    {
+                        operation.Security = [new OpenApiSecurityRequirement
+                        {
+                            [new OpenApiSecuritySchemeReference("Bearer")] = []
+                        }];
+                    }
                     return Task.CompletedTask;
                 });
             });
@@ -79,6 +114,18 @@ namespace Sabro
                         auth.Token = "paste-your-jwt-token-here";
                     });
                 });
+            }
+
+            // Seed dev data
+            if (app.Environment.IsDevelopment())
+            {
+                using var scope = app.Services.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                if (!db.TextVersions.Any())
+                {
+                    db.TextVersions.Add(new TextVersion { Name = "English", Language = "EN", Published = true });
+                    db.SaveChanges();
+                }
             }
 
             app.UseHttpsRedirection();

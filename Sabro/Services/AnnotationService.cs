@@ -195,7 +195,10 @@ namespace Sabro.Services
             var annotations = await _context.Annotations
                 .Include(a => a.Author)
                 .Include(a => a.Source)
+                .Include(a => a.CreatedBy)
+                .Include(a => a.UpdatedBy)
                 .Include(a => a.Anchors)
+                    .ThenInclude(aa => aa.Segment)
                 .Where(a => a.Anchors.Any(aa => aa.SegmentId == segmentId) && a.Published)
                 .OrderBy(a => a.Author != null ? a.Author.Century : 99)
                 .ToListAsync();
