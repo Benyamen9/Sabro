@@ -54,6 +54,7 @@ dotnet_diagnostic.CA1310.severity = none   # StringComparison on every string co
 
 [tests/**/*.cs]
 dotnet_diagnostic.CA1707.severity = none   # Method_Scenario_Expected naming convention is standard for xUnit tests
+dotnet_diagnostic.CA1711.severity = none   # xUnit collection definition classes are conventionally named *Collection
 
 [**/Migrations/**.cs]
 generated_code = true
