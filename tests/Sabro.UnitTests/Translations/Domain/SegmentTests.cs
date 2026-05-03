@@ -85,4 +85,88 @@ public class SegmentTests
         result.IsSuccess.Should().BeTrue();
         result.Value!.Content.Should().Be("In the beginning.");
     }
+
+    [Fact]
+    public void Create_DefaultsToVersionOneWithNoPredecessor()
+    {
+        var result = Segment.Create(ASourceId, 1, 1, ATextVersionId, "Content.");
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Version.Should().Be(1);
+        result.Value.PreviousVersionId.Should().BeNull();
+    }
+
+    [Fact]
+    public void CreateNextVersion_IncrementsVersionAndLinksToPredecessor()
+    {
+        var first = Segment.Create(ASourceId, 1, 1, ATextVersionId, "Original.").Value!;
+
+        var next = first.CreateNextVersion("Revised.");
+
+        next.IsSuccess.Should().BeTrue();
+        next.Value!.Version.Should().Be(2);
+        next.Value.PreviousVersionId.Should().Be(first.Id);
+        next.Value.Content.Should().Be("Revised.");
+    }
+
+    [Fact]
+    public void CreateNextVersion_PreservesLocationFields()
+    {
+        var first = Segment.Create(ASourceId, 5, 12, ATextVersionId, "Original.").Value!;
+
+        var next = first.CreateNextVersion("Revised.").Value!;
+
+        next.SourceId.Should().Be(ASourceId);
+        next.ChapterNumber.Should().Be(5);
+        next.VerseNumber.Should().Be(12);
+        next.TextVersionId.Should().Be(ATextVersionId);
+    }
+
+    [Fact]
+    public void CreateNextVersion_AssignsNewId()
+    {
+        var first = Segment.Create(ASourceId, 1, 1, ATextVersionId, "Original.").Value!;
+
+        var next = first.CreateNextVersion("Revised.").Value!;
+
+        next.Id.Should().NotBe(first.Id);
+    }
+
+    [Fact]
+    public void CreateNextVersion_TrimsNewContent()
+    {
+        var first = Segment.Create(ASourceId, 1, 1, ATextVersionId, "Original.").Value!;
+
+        var next = first.CreateNextVersion("   Revised.   ").Value!;
+
+        next.Content.Should().Be("Revised.");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public void CreateNextVersion_WithMissingContent_ReturnsValidationFailure(string? newContent)
+    {
+        var first = Segment.Create(ASourceId, 1, 1, ATextVersionId, "Original.").Value!;
+
+        var next = first.CreateNextVersion(newContent!);
+
+        next.IsSuccess.Should().BeFalse();
+        next.Error!.Code.Should().Be("validation");
+    }
+
+    [Fact]
+    public void CreateNextVersion_AppliedThreeTimes_ProducesIncrementingChain()
+    {
+        var v1 = Segment.Create(ASourceId, 1, 1, ATextVersionId, "v1").Value!;
+        var v2 = v1.CreateNextVersion("v2").Value!;
+        var v3 = v2.CreateNextVersion("v3").Value!;
+
+        v1.Version.Should().Be(1);
+        v2.Version.Should().Be(2);
+        v3.Version.Should().Be(3);
+        v2.PreviousVersionId.Should().Be(v1.Id);
+        v3.PreviousVersionId.Should().Be(v2.Id);
+    }
 }

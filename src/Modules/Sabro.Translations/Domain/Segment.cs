@@ -5,7 +5,14 @@ namespace Sabro.Translations.Domain;
 
 public sealed class Segment : Entity<Guid>, IAggregateRoot
 {
-    private Segment(Guid sourceId, int chapterNumber, int verseNumber, Guid textVersionId, string content)
+    private Segment(
+        Guid sourceId,
+        int chapterNumber,
+        int verseNumber,
+        Guid textVersionId,
+        string content,
+        int version,
+        Guid? previousVersionId)
     {
         Id = Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
@@ -16,6 +23,8 @@ public sealed class Segment : Entity<Guid>, IAggregateRoot
         VerseNumber = verseNumber;
         TextVersionId = textVersionId;
         Content = content;
+        Version = version;
+        PreviousVersionId = previousVersionId;
     }
 
     public Guid SourceId { get; private set; }
@@ -27,6 +36,10 @@ public sealed class Segment : Entity<Guid>, IAggregateRoot
     public Guid TextVersionId { get; private set; }
 
     public string Content { get; private set; }
+
+    public int Version { get; private set; }
+
+    public Guid? PreviousVersionId { get; private set; }
 
     public static Result<Segment> Create(
         Guid sourceId,
@@ -61,6 +74,31 @@ public sealed class Segment : Entity<Guid>, IAggregateRoot
             return Result<Segment>.Failure(Error.Validation("Content is required."));
         }
 
-        return Result<Segment>.Success(new Segment(sourceId, chapterNumber, verseNumber, textVersionId, trimmedContent));
+        return Result<Segment>.Success(new Segment(
+            sourceId,
+            chapterNumber,
+            verseNumber,
+            textVersionId,
+            trimmedContent,
+            version: 1,
+            previousVersionId: null));
+    }
+
+    public Result<Segment> CreateNextVersion(string newContent)
+    {
+        var trimmedContent = (newContent ?? string.Empty).Trim();
+        if (trimmedContent.Length == 0)
+        {
+            return Result<Segment>.Failure(Error.Validation("Content is required."));
+        }
+
+        return Result<Segment>.Success(new Segment(
+            SourceId,
+            ChapterNumber,
+            VerseNumber,
+            TextVersionId,
+            trimmedContent,
+            version: Version + 1,
+            previousVersionId: Id));
     }
 }
