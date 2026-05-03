@@ -1,0 +1,90 @@
+name: sabro-dev
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: sabro-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sabro_dev
+      POSTGRES_USER: sabro
+      POSTGRES_PASSWORD: sabro
+      POSTGRES_INITDB_ARGS: "--locale-provider=icu --icu-locale=und-x-icu --locale=C.UTF-8 --encoding=UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sabro -d sabro_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.11
+    container_name: sabro-meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: sabro_dev_master_key
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch-data:/meili_data
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  seq:
+    image: datalust/seq:latest
+    container_name: sabro-seq
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+    ports:
+      - "5341:80"
+    volumes:
+      - seq-data:/data
+
+  logto-db:
+    image: postgres:17-alpine
+    container_name: sabro-logto-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: logto
+      POSTGRES_USER: logto
+      POSTGRES_PASSWORD: logto
+    volumes:
+      - logto-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logto -d logto"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  logto:
+    image: svhd/logto:latest
+    container_name: sabro-logto
+    restart: unless-stopped
+    depends_on:
+      logto-db:
+        condition: service_healthy
+    environment:
+      DB_URL: postgresql://logto:logto@logto-db:5432/logto
+      ENDPOINT: http://localhost:3001
+      ADMIN_ENDPOINT: http://localhost:3002
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    entrypoint:
+      - sh
+      - -c
+      - "npm run cli db seed -- --swe && npm start"
+
+volumes:
+  postgres-data:
+  meilisearch-data:
+  seq-data:
+  logto-db-data:

@@ -1,0 +1,81 @@
+name: sabro-ci
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  backend:
+    name: Backend (build + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Sabro.slnx
+
+      - name: Build
+        run: dotnet build Sabro.slnx --no-restore --configuration Release
+
+      - name: Format check
+        run: dotnet format Sabro.slnx --verify-no-changes --no-restore
+
+      - name: Unit tests
+        run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --logger "trx;LogFileName=unit.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
+
+      - name: Integration tests
+        run: dotnet test tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj --no-build --configuration Release --logger "trx;LogFileName=integration.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: ./TestResults/**/coverage.cobertura.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults/*.trx
+
+  frontend:
+    name: Frontend (build + lint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build

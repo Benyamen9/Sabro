@@ -1,0 +1,14 @@
+{
+  "site": {
+    "title": "Sabro",
+    "tagline": "Original English translations of Syriac patristic commentaries"
+  },
+  "nav": {
+    "home": "Home",
+    "translations": "Translations",
+    "lexicon": "Lexicon"
+  },
+  "language": {
+    "comingSoon": "Coming soon."
+  }
+}

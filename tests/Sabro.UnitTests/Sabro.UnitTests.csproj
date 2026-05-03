@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Sabro.UnitTests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="NSubstitute.Analyzers.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+    <Using Include="NSubstitute" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Sabro.Shared\Sabro.Shared.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Sabro.Lexicon\Sabro.Lexicon.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Sabro.Translations\Sabro.Translations.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Sabro.Reviews\Sabro.Reviews.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Sabro.Biblical\Sabro.Biblical.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Sabro.Identity\Sabro.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

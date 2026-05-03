@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sabro.API/Sabro.API.csproj" />
+    <Project Path="src/Sabro.Shared/Sabro.Shared.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/">
+    <Project Path="src/Modules/Sabro.Biblical/Sabro.Biblical.csproj" />
+    <Project Path="src/Modules/Sabro.Identity/Sabro.Identity.csproj" />
+    <Project Path="src/Modules/Sabro.Lexicon/Sabro.Lexicon.csproj" />
+    <Project Path="src/Modules/Sabro.Reviews/Sabro.Reviews.csproj" />
+    <Project Path="src/Modules/Sabro.Translations/Sabro.Translations.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj" />
+    <Project Path="tests/Sabro.UnitTests/Sabro.UnitTests.csproj" />
+  </Folder>
+</Solution>
