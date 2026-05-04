@@ -16,6 +16,8 @@ internal sealed class AnnotationConfiguration : IEntityTypeConfiguration<Annotat
         builder.Property(e => e.AnchorStart).IsRequired();
         builder.Property(e => e.AnchorEnd).IsRequired();
         builder.Property(e => e.Body).IsRequired();
+        builder.Property(e => e.Version).IsRequired();
+        builder.Property(e => e.PreviousVersionId);
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.UpdatedAt).IsRequired();
 
@@ -24,6 +26,14 @@ internal sealed class AnnotationConfiguration : IEntityTypeConfiguration<Annotat
             .HasForeignKey(e => e.SegmentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne<Annotation>()
+            .WithMany()
+            .HasForeignKey(e => e.PreviousVersionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(e => e.SegmentId);
+
+        builder.HasIndex(e => new { e.SegmentId, e.AnchorStart, e.AnchorEnd, e.Version })
+            .IsUnique();
     }
 }

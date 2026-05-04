@@ -182,5 +182,42 @@ public class TranslationsDbContextTests
         loaded.AnchorStart.Should().Be(0);
         loaded.AnchorEnd.Should().Be(5);
         loaded.Body.Should().Be("Greeting word.");
+        loaded.Version.Should().Be(1);
+        loaded.PreviousVersionId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Annotation_NextVersion_PersistsAsTwoRowsLinkedByPreviousVersionId()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var author = Author.Create("Author").Value!;
+        var source = Source.Create(author.Id, "Some Title").Value!;
+        var textVersion = TextVersion.Create("av", "ForAnnotationVersioning", isRightToLeft: false).Value!;
+        var segment = Segment.Create(source.Id, 3, 7, textVersion.Id, "Some content.").Value!;
+        var v1 = Annotation.Create(segment.Id, 5, 12, "v1 body").Value!;
+        var v2 = v1.CreateNextVersion("v2 body").Value!;
+
+        await using (var write = fixture.CreateContext())
+        {
+            write.Authors.Add(author);
+            write.Sources.Add(source);
+            write.TextVersions.Add(textVersion);
+            write.Segments.Add(segment);
+            write.Annotations.AddRange(v1, v2);
+            await write.SaveChangesAsync(ct);
+        }
+
+        await using var read = fixture.CreateContext();
+        var rows = await read.Annotations
+            .Where(a => a.SegmentId == segment.Id && a.AnchorStart == 5 && a.AnchorEnd == 12)
+            .OrderBy(a => a.Version)
+            .ToListAsync(ct);
+
+        rows.Should().HaveCount(2);
+        rows[0].Version.Should().Be(1);
+        rows[0].PreviousVersionId.Should().BeNull();
+        rows[1].Version.Should().Be(2);
+        rows[1].PreviousVersionId.Should().Be(rows[0].Id);
+        rows[1].Body.Should().Be("v2 body");
     }
 }
