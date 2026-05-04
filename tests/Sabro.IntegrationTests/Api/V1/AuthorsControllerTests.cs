@@ -1,0 +1,75 @@
+using System.Net;
+using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Sabro.IntegrationTests.Api;
+using Sabro.Translations.Application.Authors;
+
+namespace Sabro.IntegrationTests.Api.V1;
+
+[Collection(TranslationsCollection.Name)]
+public class AuthorsControllerTests : IDisposable
+{
+    private readonly PostgresFixture postgres;
+    private readonly SabroApiFactory factory;
+    private readonly HttpClient client;
+
+    public AuthorsControllerTests(PostgresFixture postgres)
+    {
+        this.postgres = postgres;
+        factory = new SabroApiFactory(postgres.ConnectionString);
+        client = factory.CreateClient();
+    }
+
+    [Fact]
+    public async Task Post_WithValidPayload_Returns201AndPersistsAuthor()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var body = new CreateAuthorRequest("Controller-Test Author", "ܛܣܛܐ", "A title");
+
+        var response = await client.PostAsJsonAsync("/api/v1/authors", body, ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var dto = await response.Content.ReadFromJsonAsync<AuthorDto>(ct);
+        dto.Should().NotBeNull();
+        dto!.Name.Should().Be("Controller-Test Author");
+        response.Headers.Location!.ToString().Should().Be($"/api/v1/authors/{dto.Id}");
+
+        await using var ctx = postgres.CreateContext();
+        var loaded = await ctx.Authors.FirstOrDefaultAsync(a => a.Id == dto.Id, ct);
+        loaded.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Post_WithEmptyName_Returns400ProblemWithFieldErrors()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var body = new CreateAuthorRequest(Name: string.Empty, SyriacName: null, Title: null);
+
+        var response = await client.PostAsJsonAsync("/api/v1/authors", body, ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
+        problem.Should().NotBeNull();
+        problem!.Errors.Should().ContainKey("name");
+        problem.Errors["name"].Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task Post_WithLatinSyriacName_Returns400FromDomainLayer()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var body = new CreateAuthorRequest(Name: "Author", SyriacName: "Latin", Title: null);
+
+        var response = await client.PostAsJsonAsync("/api/v1/authors", body, ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    public void Dispose()
+    {
+        client.Dispose();
+        factory.Dispose();
+        GC.SuppressFinalize(this);
+    }
+}
