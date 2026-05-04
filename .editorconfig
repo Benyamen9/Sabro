@@ -51,6 +51,8 @@ dotnet_diagnostic.CA1000.severity = none   # Static members on generic types (in
 dotnet_diagnostic.CA1305.severity = none   # IFormatProvider on every string operation (noise, especially for logging)
 dotnet_diagnostic.CA1304.severity = none   # CultureInfo on string operations
 dotnet_diagnostic.CA1310.severity = none   # StringComparison on every string compare
+dotnet_diagnostic.CA1848.severity = none   # LoggerMessage source-gen — overkill with Serilog backend at MVP scale
+dotnet_diagnostic.CA1873.severity = none   # Lazy-eval logger args — Serilog destructuring already lazy
 
 [tests/**/*.cs]
 dotnet_diagnostic.CA1707.severity = none   # Method_Scenario_Expected naming convention is standard for xUnit tests

@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Sabro.Shared.Results;
 using Sabro.Translations.Domain;
 using Sabro.Translations.Infrastructure;
@@ -9,11 +10,16 @@ internal sealed class AuthorService : IAuthorService
 {
     private readonly TranslationsDbContext dbContext;
     private readonly IValidator<CreateAuthorRequest> validator;
+    private readonly ILogger<AuthorService> logger;
 
-    public AuthorService(TranslationsDbContext dbContext, IValidator<CreateAuthorRequest> validator)
+    public AuthorService(
+        TranslationsDbContext dbContext,
+        IValidator<CreateAuthorRequest> validator,
+        ILogger<AuthorService> logger)
     {
         this.dbContext = dbContext;
         this.validator = validator;
+        this.logger = logger;
     }
 
     public async Task<Result<AuthorDto>> CreateAsync(CreateAuthorRequest request, CancellationToken cancellationToken)
@@ -21,19 +27,31 @@ internal sealed class AuthorService : IAuthorService
         var shapeResult = await validator.ValidateAsync(request, cancellationToken);
         if (!shapeResult.IsValid)
         {
-            var message = string.Join("; ", shapeResult.Errors.Select(e => e.ErrorMessage));
-            return Result<AuthorDto>.Failure(Error.Validation(message));
+            var fields = ValidationErrorMap.FromFluentValidation(shapeResult.Errors);
+
+            logger.LogWarning(
+                "Author creation rejected at request validation. Fields={FieldNames}",
+                fields.Keys);
+
+            return Result<AuthorDto>.Failure(Error.Validation(fields));
         }
 
         var domainResult = Author.Create(request.Name, request.SyriacName, request.Title);
         if (!domainResult.IsSuccess)
         {
+            logger.LogWarning(
+                "Author creation rejected by domain invariant. Code={ErrorCode} Message={ErrorMessage}",
+                domainResult.Error!.Code,
+                domainResult.Error.Message);
+
             return Result<AuthorDto>.Failure(domainResult.Error!);
         }
 
         var author = domainResult.Value!;
         dbContext.Authors.Add(author);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Author created. Id={AuthorId} Name={AuthorName}", author.Id, author.Name);
 
         return Result<AuthorDto>.Success(new AuthorDto(
             author.Id,

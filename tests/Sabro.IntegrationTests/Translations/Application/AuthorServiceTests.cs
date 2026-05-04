@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Sabro.Translations.Application.Authors;
 
 namespace Sabro.IntegrationTests.Translations.Application;
@@ -18,7 +19,7 @@ public class AuthorServiceTests
     {
         var ct = TestContext.Current.CancellationToken;
         await using var ctx = fixture.CreateContext();
-        var service = new AuthorService(ctx, new CreateAuthorRequestValidator());
+        var service = NewService(ctx);
         var request = new CreateAuthorRequest("Service Author", "ܛܣܛܐ", "A title");
 
         var result = await service.CreateAsync(request, ct);
@@ -37,11 +38,11 @@ public class AuthorServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_WithEmptyName_ReturnsValidationFailureAndDoesNotPersist()
+    public async Task CreateAsync_WithEmptyName_ReturnsValidationFailureWithStructuredFieldInfo()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var ctx = fixture.CreateContext();
-        var service = new AuthorService(ctx, new CreateAuthorRequestValidator());
+        var service = NewService(ctx);
         var beforeCount = await ctx.Authors.CountAsync(ct);
         var request = new CreateAuthorRequest(Name: string.Empty, SyriacName: null, Title: null);
 
@@ -49,6 +50,9 @@ public class AuthorServiceTests
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
+        result.Error.Fields.Should().NotBeNull();
+        result.Error.Fields!.Should().ContainKey("name");
+        result.Error.Fields["name"].Should().NotBeEmpty();
 
         await using var read = fixture.CreateContext();
         var afterCount = await read.Authors.CountAsync(ct);
@@ -60,7 +64,7 @@ public class AuthorServiceTests
     {
         var ct = TestContext.Current.CancellationToken;
         await using var ctx = fixture.CreateContext();
-        var service = new AuthorService(ctx, new CreateAuthorRequestValidator());
+        var service = NewService(ctx);
         var beforeCount = await ctx.Authors.CountAsync(ct);
         var request = new CreateAuthorRequest(Name: "Author", SyriacName: "Latin", Title: null);
 
@@ -69,8 +73,14 @@ public class AuthorServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
 
+        // Domain failures don't carry per-field info — they're whole-aggregate invariants
+        result.Error.Fields.Should().BeNull();
+
         await using var read = fixture.CreateContext();
         var afterCount = await read.Authors.CountAsync(ct);
         afterCount.Should().Be(beforeCount);
     }
+
+    private static AuthorService NewService(Sabro.Translations.Infrastructure.TranslationsDbContext ctx) =>
+        new(ctx, new CreateAuthorRequestValidator(), NullLogger<AuthorService>.Instance);
 }
