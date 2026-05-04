@@ -81,6 +81,34 @@ public class AuthorServiceTests
         afterCount.Should().Be(beforeCount);
     }
 
+    [Fact]
+    public async Task GetByIdAsync_OnExistingAuthor_ReturnsDto()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = fixture.CreateContext();
+        var service = NewService(ctx);
+        var created = await service.CreateAsync(new CreateAuthorRequest("GetById Author", null, null), ct);
+
+        var fetched = await service.GetByIdAsync(created.Value!.Id, ct);
+
+        fetched.IsSuccess.Should().BeTrue();
+        fetched.Value!.Id.Should().Be(created.Value.Id);
+        fetched.Value.Name.Should().Be("GetById Author");
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_OnMissingAuthor_ReturnsNotFound()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = fixture.CreateContext();
+        var service = NewService(ctx);
+
+        var result = await service.GetByIdAsync(Guid.NewGuid(), ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("not_found");
+    }
+
     private static AuthorService NewService(Sabro.Translations.Infrastructure.TranslationsDbContext ctx) =>
         new(ctx, new CreateAuthorRequestValidator(), NullLogger<AuthorService>.Instance);
 }

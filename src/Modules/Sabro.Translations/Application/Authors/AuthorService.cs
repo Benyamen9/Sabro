@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Sabro.Shared.Results;
 using Sabro.Translations.Domain;
@@ -53,12 +54,27 @@ internal sealed class AuthorService : IAuthorService
 
         logger.LogInformation("Author created. Id={AuthorId} Name={AuthorName}", author.Id, author.Name);
 
-        return Result<AuthorDto>.Success(new AuthorDto(
-            author.Id,
-            author.Name,
-            author.SyriacName,
-            author.Title,
-            author.CreatedAt,
-            author.UpdatedAt));
+        return Result<AuthorDto>.Success(Map(author));
     }
+
+    public async Task<Result<AuthorDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var author = await dbContext.Authors
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+        if (author is null)
+        {
+            return Result<AuthorDto>.Failure(Error.NotFound($"Author {id} not found."));
+        }
+
+        return Result<AuthorDto>.Success(Map(author));
+    }
+
+    private static AuthorDto Map(Author author) => new(
+        author.Id,
+        author.Name,
+        author.SyriacName,
+        author.Title,
+        author.CreatedAt,
+        author.UpdatedAt);
 }

@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Sabro.Shared.Results;
 using Sabro.Translations.Domain;
@@ -61,13 +62,28 @@ internal sealed class SourceService : ISourceService
             source.AuthorId,
             source.Title);
 
-        return Result<SourceDto>.Success(new SourceDto(
-            source.Id,
-            source.AuthorId,
-            source.Title,
-            source.OriginalLanguageCode,
-            source.Description,
-            source.CreatedAt,
-            source.UpdatedAt));
+        return Result<SourceDto>.Success(Map(source));
     }
+
+    public async Task<Result<SourceDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var source = await dbContext.Sources
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+        if (source is null)
+        {
+            return Result<SourceDto>.Failure(Error.NotFound($"Source {id} not found."));
+        }
+
+        return Result<SourceDto>.Success(Map(source));
+    }
+
+    private static SourceDto Map(Source source) => new(
+        source.Id,
+        source.AuthorId,
+        source.Title,
+        source.OriginalLanguageCode,
+        source.Description,
+        source.CreatedAt,
+        source.UpdatedAt);
 }

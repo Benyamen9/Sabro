@@ -68,7 +68,7 @@ internal sealed class SegmentService : ISegmentService
             segment.VerseNumber,
             segment.Version);
 
-        return Map(segment);
+        return Result<SegmentDto>.Success(Map(segment));
     }
 
     public async Task<Result<SegmentDto>> EditAsync(EditSegmentRequest request, CancellationToken cancellationToken)
@@ -116,19 +116,31 @@ internal sealed class SegmentService : ISegmentService
             next.Id,
             next.Version);
 
-        return Map(next);
+        return Result<SegmentDto>.Success(Map(next));
     }
 
-    private static Result<SegmentDto> Map(Segment segment) =>
-        Result<SegmentDto>.Success(new SegmentDto(
-            segment.Id,
-            segment.SourceId,
-            segment.ChapterNumber,
-            segment.VerseNumber,
-            segment.TextVersionId,
-            segment.Content,
-            segment.Version,
-            segment.PreviousVersionId,
-            segment.CreatedAt,
-            segment.UpdatedAt));
+    public async Task<Result<SegmentDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var segment = await dbContext.Segments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+        if (segment is null)
+        {
+            return Result<SegmentDto>.Failure(Error.NotFound($"Segment {id} not found."));
+        }
+
+        return Result<SegmentDto>.Success(Map(segment));
+    }
+
+    private static SegmentDto Map(Segment segment) => new(
+        segment.Id,
+        segment.SourceId,
+        segment.ChapterNumber,
+        segment.VerseNumber,
+        segment.TextVersionId,
+        segment.Content,
+        segment.Version,
+        segment.PreviousVersionId,
+        segment.CreatedAt,
+        segment.UpdatedAt);
 }
