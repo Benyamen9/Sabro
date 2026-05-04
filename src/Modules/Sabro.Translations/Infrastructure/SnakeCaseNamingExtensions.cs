@@ -49,7 +49,7 @@ internal static class SnakeCaseNamingExtensions
         }
     }
 
-    private static string ToSnakeCase(string input)
+    internal static string ToSnakeCase(string input)
     {
         if (string.IsNullOrEmpty(input))
         {
