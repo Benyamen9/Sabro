@@ -15,12 +15,18 @@ public sealed class TranslationsModule : IModuleRegistration
 
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Sabro")
-            ?? throw new InvalidOperationException("ConnectionStrings:Sabro is not configured.");
+        services.AddDbContext<TranslationsDbContext>((sp, options) =>
+        {
+            var config = sp.GetRequiredService<IConfiguration>();
+            var connectionString = config.GetConnectionString("Sabro");
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("ConnectionStrings:Sabro is not configured.");
+            }
 
-        services.AddDbContext<TranslationsDbContext>(options =>
             options.UseNpgsql(connectionString, npgsql =>
-                npgsql.MigrationsHistoryTable("__EFMigrationsHistory", TranslationsDbContext.SchemaName)));
+                npgsql.MigrationsHistoryTable("__EFMigrationsHistory", TranslationsDbContext.SchemaName));
+        });
 
         services.AddScoped<IAuthorService, AuthorService>();
         services.AddScoped<ISourceService, SourceService>();
