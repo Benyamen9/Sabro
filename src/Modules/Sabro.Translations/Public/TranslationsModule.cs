@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.Shared.Abstractions;
 using Sabro.Translations.Application.Authors;
+using Sabro.Translations.Application.Segments;
+using Sabro.Translations.Application.Sources;
 using Sabro.Translations.Infrastructure;
 
 namespace Sabro.Translations.Public;
@@ -21,5 +23,7 @@ public sealed class TranslationsModule : IModuleRegistration
                 npgsql.MigrationsHistoryTable("__EFMigrationsHistory", TranslationsDbContext.SchemaName)));
 
         services.AddScoped<IAuthorService, AuthorService>();
+        services.AddScoped<ISourceService, SourceService>();
+        services.AddScoped<ISegmentService, SegmentService>();
     }
 }
