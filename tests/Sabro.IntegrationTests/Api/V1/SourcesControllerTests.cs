@@ -35,7 +35,36 @@ public class SourcesControllerTests : IDisposable
         dto.Should().NotBeNull();
         dto!.AuthorId.Should().Be(author.Id);
         dto.Title.Should().Be("Commentary on Matthew");
-        response.Headers.Location!.ToString().Should().Be($"/api/v1/sources/{dto.Id}");
+        response.Headers.Location!.ToString().Should().EndWith($"/api/v1/sources/{dto.Id}");
+    }
+
+    [Fact]
+    public async Task Get_OnExistingSource_Returns200WithDto()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var author = await SeedAuthorAsync(ct);
+        var posted = await client.PostAsJsonAsync(
+            "/api/v1/sources",
+            new CreateSourceRequest(author.Id, "Get-Test Source", null, null),
+            ct);
+        var created = (await posted.Content.ReadFromJsonAsync<SourceDto>(ct))!;
+
+        var follow = await client.GetAsync(posted.Headers.Location, ct);
+
+        follow.StatusCode.Should().Be(HttpStatusCode.OK);
+        var dto = await follow.Content.ReadFromJsonAsync<SourceDto>(ct);
+        dto!.Id.Should().Be(created.Id);
+        dto.Title.Should().Be("Get-Test Source");
+    }
+
+    [Fact]
+    public async Task Get_OnMissingSource_Returns404Problem()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var response = await client.GetAsync($"/api/v1/sources/{Guid.NewGuid()}", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

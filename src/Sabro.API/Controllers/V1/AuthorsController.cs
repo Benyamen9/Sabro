@@ -8,7 +8,6 @@ namespace Sabro.API.Controllers.V1;
 
 [ApiVersion(1.0)]
 [Route("api/v{version:apiVersion}/authors")]
-[Authorize(Policy = AuthPolicies.Write)]
 public sealed class AuthorsController : ApiControllerBase
 {
     private readonly IAuthorService authorService;
@@ -19,6 +18,7 @@ public sealed class AuthorsController : ApiControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = AuthPolicies.Write)]
     [ProducesResponseType(typeof(AuthorDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<AuthorDto>> Create(CreateAuthorRequest request, CancellationToken cancellationToken)
@@ -29,6 +29,21 @@ public sealed class AuthorsController : ApiControllerBase
             return FromError(result.Error!);
         }
 
-        return Created($"/api/v1/authors/{result.Value!.Id}", result.Value);
+        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id, version = "1" }, result.Value);
+    }
+
+    [HttpGet("{id:guid}")]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(AuthorDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AuthorDto>> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await authorService.GetByIdAsync(id, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
     }
 }

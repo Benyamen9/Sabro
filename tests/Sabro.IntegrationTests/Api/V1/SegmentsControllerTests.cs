@@ -37,7 +37,37 @@ public class SegmentsControllerTests : IDisposable
         dto.Should().NotBeNull();
         dto!.Version.Should().Be(1);
         dto.PreviousVersionId.Should().BeNull();
-        response.Headers.Location!.ToString().Should().Be($"/api/v1/segments/{dto.Id}");
+        response.Headers.Location!.ToString().Should().EndWith($"/api/v1/segments/{dto.Id}");
+    }
+
+    [Fact]
+    public async Task Get_OnExistingSegment_Returns200WithDto()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var (sourceId, textVersionId) = await SeedSourceAndTextVersionAsync(ct);
+        var posted = await client.PostAsJsonAsync(
+            "/api/v1/segments",
+            new CreateSegmentRequest(sourceId, 9, 4, textVersionId, "Some content."),
+            ct);
+        var created = (await posted.Content.ReadFromJsonAsync<SegmentDto>(ct))!;
+
+        var follow = await client.GetAsync(posted.Headers.Location, ct);
+
+        follow.StatusCode.Should().Be(HttpStatusCode.OK);
+        var dto = await follow.Content.ReadFromJsonAsync<SegmentDto>(ct);
+        dto!.Id.Should().Be(created.Id);
+        dto.Content.Should().Be("Some content.");
+        dto.Version.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Get_OnMissingSegment_Returns404Problem()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var response = await client.GetAsync($"/api/v1/segments/{Guid.NewGuid()}", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

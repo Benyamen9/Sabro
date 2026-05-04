@@ -33,11 +33,56 @@ public class AuthorsControllerTests : IDisposable
         var dto = await response.Content.ReadFromJsonAsync<AuthorDto>(ct);
         dto.Should().NotBeNull();
         dto!.Name.Should().Be("Controller-Test Author");
-        response.Headers.Location!.ToString().Should().Be($"/api/v1/authors/{dto.Id}");
+        response.Headers.Location!.ToString().Should().EndWith($"/api/v1/authors/{dto.Id}");
 
         await using var ctx = postgres.CreateContext();
         var loaded = await ctx.Authors.FirstOrDefaultAsync(a => a.Id == dto.Id, ct);
         loaded.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Get_OnExistingAuthor_Returns200WithDto()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var posted = await client.PostAsJsonAsync(
+            "/api/v1/authors",
+            new CreateAuthorRequest("Get-Test Author", null, null),
+            ct);
+        var created = (await posted.Content.ReadFromJsonAsync<AuthorDto>(ct))!;
+
+        var response = await client.GetAsync($"/api/v1/authors/{created.Id}", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var dto = await response.Content.ReadFromJsonAsync<AuthorDto>(ct);
+        dto!.Id.Should().Be(created.Id);
+        dto.Name.Should().Be("Get-Test Author");
+    }
+
+    [Fact]
+    public async Task Get_OnMissingAuthor_Returns404Problem()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var response = await client.GetAsync($"/api/v1/authors/{Guid.NewGuid()}", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task PostThenFollowLocation_RoundTripsTheSameAuthor()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var posted = await client.PostAsJsonAsync(
+            "/api/v1/authors",
+            new CreateAuthorRequest("Roundtrip Author", null, null),
+            ct);
+        var created = (await posted.Content.ReadFromJsonAsync<AuthorDto>(ct))!;
+        var location = posted.Headers.Location!;
+
+        var follow = await client.GetAsync(location, ct);
+        follow.StatusCode.Should().Be(HttpStatusCode.OK);
+        var dto = await follow.Content.ReadFromJsonAsync<AuthorDto>(ct);
+        dto!.Id.Should().Be(created.Id);
     }
 
     [Fact]

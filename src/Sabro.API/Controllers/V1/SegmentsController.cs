@@ -8,7 +8,6 @@ namespace Sabro.API.Controllers.V1;
 
 [ApiVersion(1.0)]
 [Route("api/v{version:apiVersion}/segments")]
-[Authorize(Policy = AuthPolicies.Write)]
 public sealed class SegmentsController : ApiControllerBase
 {
     private readonly ISegmentService segmentService;
@@ -19,6 +18,7 @@ public sealed class SegmentsController : ApiControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = AuthPolicies.Write)]
     [ProducesResponseType(typeof(SegmentDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<SegmentDto>> Create(CreateSegmentRequest request, CancellationToken cancellationToken)
@@ -29,16 +29,32 @@ public sealed class SegmentsController : ApiControllerBase
             return FromError(result.Error!);
         }
 
-        return Created($"/api/v1/segments/{result.Value!.Id}", result.Value);
+        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id, version = "1" }, result.Value);
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = AuthPolicies.Write)]
     [ProducesResponseType(typeof(SegmentDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<SegmentDto>> Edit(Guid id, EditSegmentBody body, CancellationToken cancellationToken)
     {
         var result = await segmentService.EditAsync(new EditSegmentRequest(id, body.NewContent), cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("{id:guid}")]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(SegmentDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SegmentDto>> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await segmentService.GetByIdAsync(id, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);
