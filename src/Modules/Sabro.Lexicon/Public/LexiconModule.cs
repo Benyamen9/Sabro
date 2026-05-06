@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sabro.Lexicon.Infrastructure;
 using Sabro.Shared.Abstractions;
 
 namespace Sabro.Lexicon.Public;
@@ -10,6 +12,17 @@ public sealed class LexiconModule : IModuleRegistration
 
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
-        // Domain, Application, Infrastructure registrations land here as the module grows.
+        services.AddDbContext<LexiconDbContext>((sp, options) =>
+        {
+            var config = sp.GetRequiredService<IConfiguration>();
+            var connectionString = config.GetConnectionString("Sabro");
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("ConnectionStrings:Sabro is not configured.");
+            }
+
+            options.UseNpgsql(connectionString, npgsql =>
+                npgsql.MigrationsHistoryTable("__EFMigrationsHistory", LexiconDbContext.SchemaName));
+        });
     }
 }

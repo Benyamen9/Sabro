@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sabro.Lexicon.Infrastructure;
 using Sabro.Translations.Infrastructure;
 using Testcontainers.PostgreSql;
 
@@ -19,8 +20,14 @@ public sealed class PostgresFixture : IAsyncLifetime
     {
         var ct = TestContext.Current.CancellationToken;
         await container.StartAsync(ct);
-        await using var context = CreateContext();
-        await context.Database.MigrateAsync(ct);
+
+        await using (var translations = CreateContext())
+        {
+            await translations.Database.MigrateAsync(ct);
+        }
+
+        await using var lexicon = CreateLexiconContext();
+        await lexicon.Database.MigrateAsync(ct);
     }
 
     public async ValueTask DisposeAsync()
@@ -35,5 +42,13 @@ public sealed class PostgresFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString)
             .Options;
         return new TranslationsDbContext(options);
+    }
+
+    public LexiconDbContext CreateLexiconContext()
+    {
+        var options = new DbContextOptionsBuilder<LexiconDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+        return new LexiconDbContext(options);
     }
 }

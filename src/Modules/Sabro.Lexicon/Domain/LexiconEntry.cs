@@ -6,15 +6,18 @@ namespace Sabro.Lexicon.Domain;
 
 public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
 {
+    private readonly List<string> transliterationVariants = new();
+    private readonly List<LexiconMeaning> meanings = new();
+
     private LexiconEntry(
         string syriacUnvocalized,
         string? syriacVocalized,
         Guid? rootId,
         string sblTransliteration,
-        IReadOnlyList<string> transliterationVariants,
+        IEnumerable<string> transliterationVariants,
         GrammaticalCategory grammaticalCategory,
         string? morphology,
-        IReadOnlyList<LexiconMeaning> meanings)
+        IEnumerable<LexiconMeaning> meanings)
     {
         Id = Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
@@ -24,10 +27,16 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
         SyriacVocalized = syriacVocalized;
         RootId = rootId;
         SblTransliteration = sblTransliteration;
-        TransliterationVariants = transliterationVariants;
+        this.transliterationVariants.AddRange(transliterationVariants);
         GrammaticalCategory = grammaticalCategory;
         Morphology = morphology;
-        Meanings = meanings;
+        this.meanings.AddRange(meanings);
+    }
+
+    private LexiconEntry()
+    {
+        SyriacUnvocalized = string.Empty;
+        SblTransliteration = string.Empty;
     }
 
     public string SyriacUnvocalized { get; private set; }
@@ -38,13 +47,13 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
 
     public string SblTransliteration { get; private set; }
 
-    public IReadOnlyList<string> TransliterationVariants { get; private set; }
+    public IReadOnlyList<string> TransliterationVariants => transliterationVariants;
 
     public GrammaticalCategory GrammaticalCategory { get; private set; }
 
     public string? Morphology { get; private set; }
 
-    public IReadOnlyList<LexiconMeaning> Meanings { get; private set; }
+    public IReadOnlyList<LexiconMeaning> Meanings => meanings;
 
     public static Result<LexiconEntry> Create(
         string syriacUnvocalized,
