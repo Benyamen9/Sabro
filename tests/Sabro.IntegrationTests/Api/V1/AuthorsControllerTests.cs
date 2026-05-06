@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sabro.IntegrationTests.Api;
+using Sabro.Shared.Pagination;
 using Sabro.Translations.Application.Authors;
 
 namespace Sabro.IntegrationTests.Api.V1;
@@ -109,6 +110,55 @@ public class AuthorsControllerTests : IDisposable
         var response = await client.PostAsJsonAsync("/api/v1/authors", body, ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Get_List_WithDefaults_Returns200WithPagedShape()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var prefix = $"List-Ctl-{Guid.NewGuid():N}-";
+        for (var i = 1; i <= 2; i++)
+        {
+            var posted = await client.PostAsJsonAsync(
+                "/api/v1/authors",
+                new CreateAuthorRequest($"{prefix}{i}", null, null),
+                ct);
+            posted.StatusCode.Should().Be(HttpStatusCode.Created);
+        }
+
+        var response = await client.GetAsync("/api/v1/authors", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var page = await response.Content.ReadFromJsonAsync<PagedResult<AuthorDto>>(ct);
+        page.Should().NotBeNull();
+        page!.Page.Should().Be(1);
+        page.PageSize.Should().Be(50);
+        page.Total.Should().BeGreaterThanOrEqualTo(2);
+    }
+
+    [Fact]
+    public async Task Get_List_WithExplicitPaging_EchoesPageAndPageSize()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var response = await client.GetAsync("/api/v1/authors?page=2&pageSize=5", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var page = await response.Content.ReadFromJsonAsync<PagedResult<AuthorDto>>(ct);
+        page!.Page.Should().Be(2);
+        page.PageSize.Should().Be(5);
+        page.Items.Count.Should().BeLessThanOrEqualTo(5);
+    }
+
+    [Fact]
+    public async Task Get_List_WithInvalidPaging_Returns400ProblemWithFieldErrors()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var response = await client.GetAsync("/api/v1/authors?page=0&pageSize=999", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
+        problem!.Errors.Should().ContainKey("page");
+        problem.Errors.Should().ContainKey("pageSize");
     }
 
     public void Dispose()

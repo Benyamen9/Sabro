@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sabro.API.Controllers.V1;
 using Sabro.IntegrationTests.Api;
+using Sabro.Shared.Pagination;
 using Sabro.Translations.Application.Annotations;
 using Sabro.Translations.Domain;
 
@@ -112,6 +113,42 @@ public class AnnotationsControllerTests : IDisposable
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
         problem!.Errors.Should().ContainKey("body");
+    }
+
+    [Fact]
+    public async Task Get_List_WithDefaults_Returns200WithPagedShape()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var segmentId = await SeedSegmentAsync(ct);
+        var marker = $"List-Ctl-Annot-{Guid.NewGuid():N}";
+        for (var i = 1; i <= 2; i++)
+        {
+            var posted = await client.PostAsJsonAsync(
+                "/api/v1/annotations",
+                new CreateAnnotationRequest(segmentId, i * 2, (i * 2) + 4, $"{marker}-{i}"),
+                ct);
+            posted.StatusCode.Should().Be(HttpStatusCode.Created);
+        }
+
+        var response = await client.GetAsync("/api/v1/annotations", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var page = await response.Content.ReadFromJsonAsync<PagedResult<AnnotationDto>>(ct);
+        page!.Page.Should().Be(1);
+        page.PageSize.Should().Be(50);
+        page.Total.Should().BeGreaterThanOrEqualTo(2);
+    }
+
+    [Fact]
+    public async Task Get_List_WithInvalidPaging_Returns400ProblemWithFieldErrors()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var response = await client.GetAsync("/api/v1/annotations?page=-1&pageSize=500", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
+        problem!.Errors.Should().ContainKey("page");
+        problem.Errors.Should().ContainKey("pageSize");
     }
 
     public void Dispose()

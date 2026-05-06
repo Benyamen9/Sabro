@@ -123,6 +123,58 @@ public class SegmentServiceTests
         result.Error.Fields!.Should().ContainKey("newContent");
     }
 
+    [Fact]
+    public async Task ListAsync_ReturnsSeededRowsNewestFirstWithEchoedPageMetadata()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var (sourceId, textVersionId) = await SeedSourceAndTextVersionAsync(ct);
+        var marker = $"List-{Guid.NewGuid():N}";
+
+        await using (var ctx = fixture.CreateContext())
+        {
+            var service = NewService(ctx);
+            for (var i = 1; i <= 3; i++)
+            {
+                var created = await service.CreateAsync(
+                    new CreateSegmentRequest(sourceId, ChapterNumber: 1, VerseNumber: i, textVersionId, $"{marker}-{i}"),
+                    ct);
+                created.IsSuccess.Should().BeTrue();
+                await Task.Delay(2, ct);
+            }
+        }
+
+        await using var read = fixture.CreateContext();
+        var listService = NewService(read);
+        var result = await listService.ListAsync(page: 1, pageSize: 200, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Page.Should().Be(1);
+        result.Value.PageSize.Should().Be(200);
+        result.Value.Total.Should().BeGreaterThanOrEqualTo(3);
+
+        var mine = result.Value.Items.Where(s => s.Content.StartsWith(marker)).ToList();
+        mine.Should().HaveCount(3);
+        mine.Select(s => s.Content).Should().BeEquivalentTo(
+            new[] { $"{marker}-3", $"{marker}-2", $"{marker}-1" },
+            options => options.WithStrictOrdering());
+    }
+
+    [Theory]
+    [InlineData(0, 50)]
+    [InlineData(1, 0)]
+    [InlineData(1, 201)]
+    public async Task ListAsync_WithInvalidPaging_ReturnsValidationError(int page, int pageSize)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = fixture.CreateContext();
+        var service = NewService(ctx);
+
+        var result = await service.ListAsync(page, pageSize, ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
     private static SegmentService NewService(Sabro.Translations.Infrastructure.TranslationsDbContext ctx) =>
         new(
             ctx,

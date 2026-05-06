@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
 using Sabro.Translations.Domain;
 using Sabro.Translations.Infrastructure;
@@ -130,6 +131,37 @@ internal sealed class SegmentService : ISegmentService
         }
 
         return Result<SegmentDto>.Success(Map(segment));
+    }
+
+    public async Task<Result<PagedResult<SegmentDto>>> ListAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var pageError = PageRequest.Validate(page, pageSize);
+        if (pageError is not null)
+        {
+            return Result<PagedResult<SegmentDto>>.Failure(pageError);
+        }
+
+        var query = dbContext.Segments.AsNoTracking();
+        var total = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderByDescending(s => s.CreatedAt)
+            .ThenByDescending(s => s.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(s => new SegmentDto(
+                s.Id,
+                s.SourceId,
+                s.ChapterNumber,
+                s.VerseNumber,
+                s.TextVersionId,
+                s.Content,
+                s.Version,
+                s.PreviousVersionId,
+                s.CreatedAt,
+                s.UpdatedAt))
+            .ToListAsync(cancellationToken);
+
+        return Result<PagedResult<SegmentDto>>.Success(new PagedResult<SegmentDto>(items, total, page, pageSize));
     }
 
     private static SegmentDto Map(Segment segment) => new(

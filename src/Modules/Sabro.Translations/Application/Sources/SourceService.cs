@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
 using Sabro.Translations.Domain;
 using Sabro.Translations.Infrastructure;
@@ -76,6 +77,34 @@ internal sealed class SourceService : ISourceService
         }
 
         return Result<SourceDto>.Success(Map(source));
+    }
+
+    public async Task<Result<PagedResult<SourceDto>>> ListAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var pageError = PageRequest.Validate(page, pageSize);
+        if (pageError is not null)
+        {
+            return Result<PagedResult<SourceDto>>.Failure(pageError);
+        }
+
+        var query = dbContext.Sources.AsNoTracking();
+        var total = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderByDescending(s => s.CreatedAt)
+            .ThenByDescending(s => s.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(s => new SourceDto(
+                s.Id,
+                s.AuthorId,
+                s.Title,
+                s.OriginalLanguageCode,
+                s.Description,
+                s.CreatedAt,
+                s.UpdatedAt))
+            .ToListAsync(cancellationToken);
+
+        return Result<PagedResult<SourceDto>>.Success(new PagedResult<SourceDto>(items, total, page, pageSize));
     }
 
     private static SourceDto Map(Source source) => new(

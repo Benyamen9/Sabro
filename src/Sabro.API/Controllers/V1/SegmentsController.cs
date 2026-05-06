@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
+using Sabro.Shared.Pagination;
 using Sabro.Translations.Application.Segments;
 
 namespace Sabro.API.Controllers.V1;
@@ -55,6 +56,24 @@ public sealed class SegmentsController : ApiControllerBase
     public async Task<ActionResult<SegmentDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var result = await segmentService.GetByIdAsync(id, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(PagedResult<SegmentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<SegmentDto>>> List(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await segmentService.ListAsync(page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

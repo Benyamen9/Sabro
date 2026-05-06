@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
 using Sabro.Translations.Domain;
 using Sabro.Translations.Infrastructure;
@@ -68,6 +69,27 @@ internal sealed class AuthorService : IAuthorService
         }
 
         return Result<AuthorDto>.Success(Map(author));
+    }
+
+    public async Task<Result<PagedResult<AuthorDto>>> ListAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var pageError = PageRequest.Validate(page, pageSize);
+        if (pageError is not null)
+        {
+            return Result<PagedResult<AuthorDto>>.Failure(pageError);
+        }
+
+        var query = dbContext.Authors.AsNoTracking();
+        var total = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderByDescending(a => a.CreatedAt)
+            .ThenByDescending(a => a.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(a => new AuthorDto(a.Id, a.Name, a.SyriacName, a.Title, a.CreatedAt, a.UpdatedAt))
+            .ToListAsync(cancellationToken);
+
+        return Result<PagedResult<AuthorDto>>.Success(new PagedResult<AuthorDto>(items, total, page, pageSize));
     }
 
     private static AuthorDto Map(Author author) => new(

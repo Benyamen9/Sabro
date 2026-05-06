@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sabro.API.Controllers.V1;
 using Sabro.IntegrationTests.Api;
+using Sabro.Shared.Pagination;
 using Sabro.Translations.Application.Segments;
 using Sabro.Translations.Domain;
 
@@ -127,6 +128,42 @@ public class SegmentsControllerTests : IDisposable
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
         problem!.Errors.Should().ContainKey("content");
+    }
+
+    [Fact]
+    public async Task Get_List_WithDefaults_Returns200WithPagedShape()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var (sourceId, textVersionId) = await SeedSourceAndTextVersionAsync(ct);
+        var marker = $"List-Ctl-Seg-{Guid.NewGuid():N}";
+        for (var i = 1; i <= 2; i++)
+        {
+            var posted = await client.PostAsJsonAsync(
+                "/api/v1/segments",
+                new CreateSegmentRequest(sourceId, 1, i, textVersionId, $"{marker}-{i}"),
+                ct);
+            posted.StatusCode.Should().Be(HttpStatusCode.Created);
+        }
+
+        var response = await client.GetAsync("/api/v1/segments", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var page = await response.Content.ReadFromJsonAsync<PagedResult<SegmentDto>>(ct);
+        page!.Page.Should().Be(1);
+        page.PageSize.Should().Be(50);
+        page.Total.Should().BeGreaterThanOrEqualTo(2);
+    }
+
+    [Fact]
+    public async Task Get_List_WithInvalidPaging_Returns400ProblemWithFieldErrors()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var response = await client.GetAsync("/api/v1/segments?page=0&pageSize=300", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
+        problem!.Errors.Should().ContainKey("page");
+        problem.Errors.Should().ContainKey("pageSize");
     }
 
     public void Dispose()

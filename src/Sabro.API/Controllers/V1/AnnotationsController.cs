@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
+using Sabro.Shared.Pagination;
 using Sabro.Translations.Application.Annotations;
 
 namespace Sabro.API.Controllers.V1;
@@ -55,6 +56,24 @@ public sealed class AnnotationsController : ApiControllerBase
     public async Task<ActionResult<AnnotationDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var result = await annotationService.GetByIdAsync(id, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(PagedResult<AnnotationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<AnnotationDto>>> List(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await annotationService.ListAsync(page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);
