@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,6 +11,16 @@ namespace Sabro.IntegrationTests.Api;
 
 public sealed class SabroApiFactory : WebApplicationFactory<Program>
 {
+    /// <summary>
+    /// Mirrors the JSON contract configured in <c>Program.cs</c> (camelCase + string enums)
+    /// so test assertions deserialize responses the same way real clients do.
+    /// </summary>
+    public static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        Converters = { new JsonStringEnumConverter() },
+    };
+
     private readonly string connectionString;
 
     public SabroApiFactory(string connectionString)

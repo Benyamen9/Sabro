@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sabro.Lexicon.Application.Entries;
+using Sabro.Lexicon.Application.Roots;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Shared.Abstractions;
 
@@ -24,5 +26,8 @@ public sealed class LexiconModule : IModuleRegistration
             options.UseNpgsql(connectionString, npgsql =>
                 npgsql.MigrationsHistoryTable("__EFMigrationsHistory", LexiconDbContext.SchemaName));
         });
+
+        services.AddScoped<ILexiconRootService, LexiconRootService>();
+        services.AddScoped<ILexiconEntryService, LexiconEntryService>();
     }
 }
