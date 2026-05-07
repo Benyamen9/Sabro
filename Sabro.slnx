@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Sabro.API/Sabro.API.csproj" />
     <Project Path="src/Sabro.Shared/Sabro.Shared.csproj" />
+    <Project Path="src/Sabro.Shared.Infrastructure/Sabro.Shared.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
     <Project Path="src/Modules/Sabro.Biblical/Sabro.Biblical.csproj" />

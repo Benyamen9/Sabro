@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Sabro.Shared\Sabro.Shared.csproj" />
+    <ProjectReference Include="..\..\src\Sabro.Shared.Infrastructure\Sabro.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Modules\Sabro.Lexicon\Sabro.Lexicon.csproj" />
     <ProjectReference Include="..\..\src\Modules\Sabro.Translations\Sabro.Translations.csproj" />
     <ProjectReference Include="..\..\src\Modules\Sabro.Reviews\Sabro.Reviews.csproj" />

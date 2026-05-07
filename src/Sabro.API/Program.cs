@@ -8,6 +8,7 @@ using Sabro.Identity.Public;
 using Sabro.Lexicon.Public;
 using Sabro.Reviews.Public;
 using Sabro.Shared.Abstractions;
+using Sabro.Shared.Infrastructure.Search;
 using Sabro.Translations.Public;
 using Serilog;
 
@@ -92,6 +93,8 @@ try
     });
 
     builder.Services.AddHealthChecks();
+
+    builder.Services.AddSabroSearch(builder.Configuration);
 
     var modules = new IModuleRegistration[]
     {

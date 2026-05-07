@@ -21,11 +21,27 @@ public sealed class SabroApiFactory : WebApplicationFactory<Program>
         Converters = { new JsonStringEnumConverter() },
     };
 
+    /// <summary>
+    /// Default Meilisearch URL used when no real engine is wired in. Points at
+    /// a guaranteed-closed local port so the startup search initializer fails
+    /// fast (connection refused) instead of waiting on the request timeout.
+    /// Controller tests don't assert on search state — that's covered by the
+    /// dedicated *SearchSyncTests classes — so a no-op endpoint is fine here.
+    /// </summary>
+    private const string FastFailingMeilisearchUrl = "http://127.0.0.1:1";
+
     private readonly string connectionString;
+    private readonly string meilisearchUrl;
 
     public SabroApiFactory(string connectionString)
+        : this(connectionString, FastFailingMeilisearchUrl)
+    {
+    }
+
+    public SabroApiFactory(string connectionString, string meilisearchUrl)
     {
         this.connectionString = connectionString;
+        this.meilisearchUrl = meilisearchUrl;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -39,6 +55,8 @@ public sealed class SabroApiFactory : WebApplicationFactory<Program>
                 ["ConnectionStrings:Sabro"] = connectionString,
                 ["Logto:Authority"] = "https://logto.test/",
                 ["Logto:Audience"] = "https://sabro.local/api",
+                ["Meilisearch:Url"] = meilisearchUrl,
+                ["Meilisearch:RequestTimeout"] = "00:00:02",
             });
         });
 
