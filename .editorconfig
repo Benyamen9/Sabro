@@ -45,6 +45,17 @@ dotnet_diagnostic.SA1200.severity = none   # Using directives placement (handled
 dotnet_diagnostic.SA1309.severity = none   # Field names should not begin with underscore
 dotnet_diagnostic.SA1413.severity = none   # Use trailing comma
 
+# StyleCop documentation rules — XML docs not required project-wide.
+# Disabling the SA16xx family avoids forcing documentation on every public
+# member; a few classes have intentional <summary> blocks where they add value.
+dotnet_diagnostic.SA1600.severity = none   # Elements should be documented
+dotnet_diagnostic.SA1601.severity = none   # Partial elements should be documented
+dotnet_diagnostic.SA1602.severity = none   # Enumeration items should be documented
+dotnet_diagnostic.SA1611.severity = none   # Element parameters should be documented
+dotnet_diagnostic.SA1615.severity = none   # Element return value should be documented
+dotnet_diagnostic.SA1618.severity = none   # Generic type parameters should be documented
+dotnet_diagnostic.SA1623.severity = none   # Property summary documentation format
+
 # Microsoft analyzers — VB-language compatibility rules don't apply here
 dotnet_diagnostic.CA1716.severity = none   # Identifiers conflicting with VB keywords
 dotnet_diagnostic.CA1000.severity = none   # Static members on generic types (intentional pattern for Result<T>)
