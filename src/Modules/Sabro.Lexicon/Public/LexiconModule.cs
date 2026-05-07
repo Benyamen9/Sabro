@@ -3,8 +3,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.Lexicon.Application.Entries;
 using Sabro.Lexicon.Application.Roots;
+using Sabro.Lexicon.Application.Search;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Shared.Abstractions;
+using Sabro.Shared.Search;
 
 namespace Sabro.Lexicon.Public;
 
@@ -29,5 +31,7 @@ public sealed class LexiconModule : IModuleRegistration
 
         services.AddScoped<ILexiconRootService, LexiconRootService>();
         services.AddScoped<ILexiconEntryService, LexiconEntryService>();
+
+        services.AddSearchIndex<LexiconEntrySearchDocument, LexiconEntryIndexDescriptor>();
     }
 }

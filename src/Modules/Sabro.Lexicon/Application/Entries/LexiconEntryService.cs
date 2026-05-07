@@ -1,10 +1,12 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sabro.Lexicon.Application.Search;
 using Sabro.Lexicon.Domain;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
+using Sabro.Shared.Search;
 
 namespace Sabro.Lexicon.Application.Entries;
 
@@ -12,15 +14,18 @@ internal sealed class LexiconEntryService : ILexiconEntryService
 {
     private readonly LexiconDbContext dbContext;
     private readonly IValidator<CreateLexiconEntryRequest> validator;
+    private readonly ISearchIndex<LexiconEntrySearchDocument> searchIndex;
     private readonly ILogger<LexiconEntryService> logger;
 
     public LexiconEntryService(
         LexiconDbContext dbContext,
         IValidator<CreateLexiconEntryRequest> validator,
+        ISearchIndex<LexiconEntrySearchDocument> searchIndex,
         ILogger<LexiconEntryService> logger)
     {
         this.dbContext = dbContext;
         this.validator = validator;
+        this.searchIndex = searchIndex;
         this.logger = logger;
     }
 
@@ -86,6 +91,9 @@ internal sealed class LexiconEntryService : ILexiconEntryService
             entry.SyriacUnvocalized,
             entry.GrammaticalCategory);
 
+        var rootForm = await ResolveRootFormAsync(entry.RootId, cancellationToken);
+        await searchIndex.UpsertAsync(LexiconEntryDocumentMapper.Map(entry, rootForm), cancellationToken);
+
         return Result<LexiconEntryDto>.Success(Map(entry));
     }
 
@@ -135,4 +143,18 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         entry.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray(),
         entry.CreatedAt,
         entry.UpdatedAt);
+
+    private async Task<string?> ResolveRootFormAsync(Guid? rootId, CancellationToken cancellationToken)
+    {
+        if (!rootId.HasValue)
+        {
+            return null;
+        }
+
+        return await dbContext.Roots
+            .AsNoTracking()
+            .Where(r => r.Id == rootId.Value)
+            .Select(r => r.Form)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

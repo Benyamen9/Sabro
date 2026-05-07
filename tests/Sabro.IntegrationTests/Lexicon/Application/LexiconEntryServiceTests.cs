@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Sabro.Lexicon.Application.Entries;
+using Sabro.Lexicon.Application.Search;
 using Sabro.Lexicon.Domain;
+using Sabro.Shared.Search;
 
 namespace Sabro.IntegrationTests.Lexicon.Application;
 
@@ -190,5 +192,9 @@ public class LexiconEntryServiceTests
     }
 
     private static LexiconEntryService NewService(Sabro.Lexicon.Infrastructure.LexiconDbContext ctx) =>
-        new(ctx, new CreateLexiconEntryRequestValidator(), NullLogger<LexiconEntryService>.Instance);
+        new(
+            ctx,
+            new CreateLexiconEntryRequestValidator(),
+            Substitute.For<ISearchIndex<LexiconEntrySearchDocument>>(),
+            NullLogger<LexiconEntryService>.Instance);
 }
