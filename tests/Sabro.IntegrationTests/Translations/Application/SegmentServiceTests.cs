@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Sabro.Shared.Search;
+using Sabro.Translations.Application.Search;
 using Sabro.Translations.Application.Segments;
 using Sabro.Translations.Domain;
 
@@ -180,6 +182,7 @@ public class SegmentServiceTests
             ctx,
             new CreateSegmentRequestValidator(),
             new EditSegmentRequestValidator(),
+            Substitute.For<ISearchIndex<SegmentSearchDocument>>(),
             NullLogger<SegmentService>.Instance);
 
     private static string RandomLetterCode() =>

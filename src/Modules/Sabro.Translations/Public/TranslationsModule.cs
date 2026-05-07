@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.Shared.Abstractions;
+using Sabro.Shared.Search;
 using Sabro.Translations.Application.Annotations;
 using Sabro.Translations.Application.Authors;
+using Sabro.Translations.Application.Search;
 using Sabro.Translations.Application.Segments;
 using Sabro.Translations.Application.Sources;
 using Sabro.Translations.Infrastructure;
@@ -33,5 +35,7 @@ public sealed class TranslationsModule : IModuleRegistration
         services.AddScoped<ISourceService, SourceService>();
         services.AddScoped<ISegmentService, SegmentService>();
         services.AddScoped<IAnnotationService, AnnotationService>();
+
+        services.AddSearchIndex<SegmentSearchDocument, SegmentIndexDescriptor>();
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
+using Sabro.Shared.Search;
+using Sabro.Translations.Application.Search;
 using Sabro.Translations.Domain;
 using Sabro.Translations.Infrastructure;
 
@@ -13,17 +15,20 @@ internal sealed class SegmentService : ISegmentService
     private readonly TranslationsDbContext dbContext;
     private readonly IValidator<CreateSegmentRequest> createValidator;
     private readonly IValidator<EditSegmentRequest> editValidator;
+    private readonly ISearchIndex<SegmentSearchDocument> searchIndex;
     private readonly ILogger<SegmentService> logger;
 
     public SegmentService(
         TranslationsDbContext dbContext,
         IValidator<CreateSegmentRequest> createValidator,
         IValidator<EditSegmentRequest> editValidator,
+        ISearchIndex<SegmentSearchDocument> searchIndex,
         ILogger<SegmentService> logger)
     {
         this.dbContext = dbContext;
         this.createValidator = createValidator;
         this.editValidator = editValidator;
+        this.searchIndex = searchIndex;
         this.logger = logger;
     }
 
@@ -68,6 +73,8 @@ internal sealed class SegmentService : ISegmentService
             segment.ChapterNumber,
             segment.VerseNumber,
             segment.Version);
+
+        await searchIndex.UpsertAsync(SegmentDocumentMapper.Map(segment), cancellationToken);
 
         return Result<SegmentDto>.Success(Map(segment));
     }
@@ -116,6 +123,9 @@ internal sealed class SegmentService : ISegmentService
             existing.Id,
             next.Id,
             next.Version);
+
+        await searchIndex.DeleteAsync(existing.Id.ToString("D"), cancellationToken);
+        await searchIndex.UpsertAsync(SegmentDocumentMapper.Map(next), cancellationToken);
 
         return Result<SegmentDto>.Success(Map(next));
     }
