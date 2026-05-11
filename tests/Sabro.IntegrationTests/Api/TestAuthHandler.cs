@@ -10,6 +10,16 @@ public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationScheme
 {
     public const string SchemeName = "Test";
 
+    /// <summary>
+    /// Tests that need to isolate per-user state (e.g. Identity's auto-create
+    /// behavior) can set this header on the request to override the default
+    /// <c>sub</c> claim; when absent, the historical default is used so
+    /// pre-existing tests are unaffected.
+    /// </summary>
+    public const string UserHeaderName = "X-Test-User";
+
+    private const string DefaultUser = "integration-test-user";
+
     public TestAuthHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
@@ -20,9 +30,14 @@ public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationScheme
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        var user = Request.Headers.TryGetValue(UserHeaderName, out var override_) && !string.IsNullOrWhiteSpace(override_)
+            ? override_.ToString()
+            : DefaultUser;
+
         var claims = new[]
         {
-            new Claim(ClaimTypes.Name, "integration-test-user"),
+            new Claim(ClaimTypes.Name, user),
+            new Claim(ClaimTypes.NameIdentifier, user),
             new Claim("scope", "api:v1:read"),
             new Claim("scope", "api:v1:write"),
         };

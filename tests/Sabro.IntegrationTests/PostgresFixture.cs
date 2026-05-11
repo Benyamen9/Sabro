@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sabro.Identity.Infrastructure;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Translations.Infrastructure;
 using Testcontainers.PostgreSql;
@@ -26,8 +27,13 @@ public sealed class PostgresFixture : IAsyncLifetime
             await translations.Database.MigrateAsync(ct);
         }
 
-        await using var lexicon = CreateLexiconContext();
-        await lexicon.Database.MigrateAsync(ct);
+        await using (var lexicon = CreateLexiconContext())
+        {
+            await lexicon.Database.MigrateAsync(ct);
+        }
+
+        await using var identity = CreateIdentityContext();
+        await identity.Database.MigrateAsync(ct);
     }
 
     public async ValueTask DisposeAsync()
@@ -50,5 +56,13 @@ public sealed class PostgresFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString)
             .Options;
         return new LexiconDbContext(options);
+    }
+
+    public IdentityDbContext CreateIdentityContext()
+    {
+        var options = new DbContextOptionsBuilder<IdentityDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+        return new IdentityDbContext(options);
     }
 }
