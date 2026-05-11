@@ -41,6 +41,7 @@ public static class MeilisearchServiceCollectionExtensions
         });
 
         services.AddSingleton(typeof(ISearchIndex<>), typeof(MeilisearchSearchIndex<>));
+        services.AddSingleton(typeof(ISearchIndexQuery<>), typeof(MeilisearchSearchIndexQuery<>));
         services.AddHostedService<SearchIndexInitializerHostedService>();
 
         return services;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Shared.Pagination;
+using Sabro.Translations.Application.Search;
 using Sabro.Translations.Application.Segments;
 
 namespace Sabro.API.Controllers.V1;
@@ -12,10 +13,12 @@ namespace Sabro.API.Controllers.V1;
 public sealed class SegmentsController : ApiControllerBase
 {
     private readonly ISegmentService segmentService;
+    private readonly ISegmentSearchService searchService;
 
-    public SegmentsController(ISegmentService segmentService)
+    public SegmentsController(ISegmentService segmentService, ISegmentSearchService searchService)
     {
         this.segmentService = segmentService;
+        this.searchService = searchService;
     }
 
     [HttpPost]
@@ -74,6 +77,28 @@ public sealed class SegmentsController : ApiControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await segmentService.ListAsync(page, pageSize, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("search")]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(PagedResult<SegmentSearchHitDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<SegmentSearchHitDto>>> Search(
+        [FromQuery] string? q = null,
+        [FromQuery] Guid? sourceId = null,
+        [FromQuery] int? chapter = null,
+        [FromQuery] int? verse = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await searchService.SearchAsync(q, sourceId, chapter, verse, page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

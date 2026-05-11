@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Lexicon.Application.Entries;
+using Sabro.Lexicon.Application.Search;
+using Sabro.Lexicon.Domain;
 using Sabro.Shared.Pagination;
 
 namespace Sabro.API.Controllers.V1;
@@ -12,10 +14,12 @@ namespace Sabro.API.Controllers.V1;
 public sealed class LexiconEntriesController : ApiControllerBase
 {
     private readonly ILexiconEntryService entryService;
+    private readonly ILexiconSearchService searchService;
 
-    public LexiconEntriesController(ILexiconEntryService entryService)
+    public LexiconEntriesController(ILexiconEntryService entryService, ILexiconSearchService searchService)
     {
         this.entryService = entryService;
+        this.searchService = searchService;
     }
 
     [HttpPost]
@@ -58,6 +62,27 @@ public sealed class LexiconEntriesController : ApiControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await entryService.ListAsync(page, pageSize, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("search")]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(PagedResult<LexiconSearchHitDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<LexiconSearchHitDto>>> Search(
+        [FromQuery] string? q = null,
+        [FromQuery] GrammaticalCategory? category = null,
+        [FromQuery] Guid? rootId = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await searchService.SearchAsync(q, category, rootId, page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);
