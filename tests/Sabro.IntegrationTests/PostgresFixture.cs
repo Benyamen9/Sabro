@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sabro.Biblical.Infrastructure;
 using Sabro.Identity.Infrastructure;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Translations.Infrastructure;
@@ -32,8 +33,13 @@ public sealed class PostgresFixture : IAsyncLifetime
             await lexicon.Database.MigrateAsync(ct);
         }
 
-        await using var identity = CreateIdentityContext();
-        await identity.Database.MigrateAsync(ct);
+        await using (var identity = CreateIdentityContext())
+        {
+            await identity.Database.MigrateAsync(ct);
+        }
+
+        await using var biblical = CreateBiblicalContext();
+        await biblical.Database.MigrateAsync(ct);
     }
 
     public async ValueTask DisposeAsync()
@@ -64,5 +70,13 @@ public sealed class PostgresFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString)
             .Options;
         return new IdentityDbContext(options);
+    }
+
+    public BiblicalDbContext CreateBiblicalContext()
+    {
+        var options = new DbContextOptionsBuilder<BiblicalDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+        return new BiblicalDbContext(options);
     }
 }
