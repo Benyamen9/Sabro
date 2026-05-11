@@ -25,6 +25,19 @@ public class MeilisearchServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void AddSabroSearch_RegistersOpenGenericQuery()
+    {
+        var services = NewServices();
+        services.AddSabroSearch(BuildConfig("http://localhost:7700", masterKey: null));
+        services.AddSearchIndex<TestDocument, TestDescriptor>();
+
+        using var provider = services.BuildServiceProvider(validateScopes: true);
+
+        provider.GetRequiredService<ISearchIndexQuery<TestDocument>>()
+            .Should().BeOfType<MeilisearchSearchIndexQuery<TestDocument>>();
+    }
+
+    [Fact]
     public void AddSabroSearch_RegistersHostedServiceForIndexInitialization()
     {
         var services = NewServices();
