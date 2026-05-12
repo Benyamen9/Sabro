@@ -14,6 +14,8 @@ public sealed class ReviewsDbContext : DbContext
 
     public DbSet<SuggestedEdit> SuggestedEdits => Set<SuggestedEdit>();
 
+    public DbSet<Approval> Approvals => Set<Approval>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);

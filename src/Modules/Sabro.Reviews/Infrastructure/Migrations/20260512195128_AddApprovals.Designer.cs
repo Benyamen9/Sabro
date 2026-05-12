@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sabro.Reviews.Infrastructure;
@@ -11,9 +12,11 @@ using Sabro.Reviews.Infrastructure;
 namespace Sabro.Reviews.Infrastructure.Migrations
 {
     [DbContext(typeof(ReviewsDbContext))]
-    partial class ReviewsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260512195128_AddApprovals")]
+    partial class AddApprovals
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

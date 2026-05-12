@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sabro.Reviews.Application.Approvals;
 using Sabro.Reviews.Application.SuggestedEdits;
 using Sabro.Reviews.Infrastructure;
 using Sabro.Shared.Abstractions;
@@ -27,5 +28,6 @@ public sealed class ReviewsModule : IModuleRegistration
         });
 
         services.AddScoped<ISuggestedEditService, SuggestedEditService>();
+        services.AddScoped<IApprovalService, ApprovalService>();
     }
 }
