@@ -113,4 +113,44 @@ public class UserProfileTests
         profile.PreferredScriptVariant.Should().Be(originalVariant);
         profile.UpdatedAt.Should().Be(originalUpdatedAt);
     }
+
+    [Fact]
+    public void Create_DefaultsRoleToReader()
+    {
+        var result = UserProfile.Create(LogtoUserId);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Role.Should().Be(Role.Reader);
+    }
+
+    [Theory]
+    [InlineData(Role.Owner)]
+    [InlineData(Role.ExpertReviewer)]
+    [InlineData(Role.Reader)]
+    public void AssignRole_WithDefinedRole_ReturnsNullAndMutates(Role newRole)
+    {
+        var profile = UserProfile.Create(LogtoUserId).Value!;
+        var originalUpdatedAt = profile.UpdatedAt;
+
+        var error = profile.AssignRole(newRole);
+
+        error.Should().BeNull();
+        profile.Role.Should().Be(newRole);
+        profile.UpdatedAt.Should().BeOnOrAfter(originalUpdatedAt);
+    }
+
+    [Fact]
+    public void AssignRole_WithUndefinedRole_ReturnsValidationErrorAndDoesNotMutate()
+    {
+        var profile = UserProfile.Create(LogtoUserId).Value!;
+        var originalRole = profile.Role;
+        var originalUpdatedAt = profile.UpdatedAt;
+
+        var error = profile.AssignRole((Role)999);
+
+        error.Should().NotBeNull();
+        error!.Code.Should().Be("validation");
+        profile.Role.Should().Be(originalRole);
+        profile.UpdatedAt.Should().Be(originalUpdatedAt);
+    }
 }

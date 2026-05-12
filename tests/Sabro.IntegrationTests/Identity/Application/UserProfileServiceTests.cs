@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Sabro.Identity.Application.UserProfiles;
 using Sabro.Identity.Domain;
@@ -29,6 +30,33 @@ public class UserProfileServiceTests
         result.Value!.LogtoUserId.Should().Be(logtoUserId);
         result.Value.PreferredLanguage.Should().Be("en");
         result.Value.PreferredScriptVariant.Should().Be(ScriptVariant.Estrangela);
+        result.Value.Role.Should().Be(Role.Reader);
+    }
+
+    [Fact]
+    public async Task AssignRole_ServerSideMutation_PersistsAcrossReload()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var logtoUserId = NewLogtoUserId();
+
+        await using (var seed = postgres.CreateIdentityContext())
+        {
+            var seedService = NewService(seed);
+            await seedService.GetOrCreateForLogtoUserAsync(logtoUserId, ct);
+
+            var profile = await seed.UserProfiles
+                .FirstAsync(p => p.LogtoUserId == logtoUserId, ct);
+            var error = profile.AssignRole(Role.Owner);
+            error.Should().BeNull();
+            await seed.SaveChangesAsync(ct);
+        }
+
+        await using var ctx = postgres.CreateIdentityContext();
+        var service = NewService(ctx);
+        var result = await service.GetOrCreateForLogtoUserAsync(logtoUserId, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Role.Should().Be(Role.Owner);
     }
 
     [Fact]
