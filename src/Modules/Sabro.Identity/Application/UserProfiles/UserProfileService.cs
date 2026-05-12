@@ -126,6 +126,7 @@ internal sealed class UserProfileService : IUserProfileService
         profile.LogtoUserId,
         profile.PreferredLanguage,
         profile.PreferredScriptVariant,
+        profile.Role,
         profile.CreatedAt,
         profile.UpdatedAt);
 }

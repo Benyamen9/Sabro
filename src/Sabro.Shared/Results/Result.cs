@@ -22,4 +22,6 @@ public sealed record Error(
         new("validation", "One or more fields failed validation.", fields);
 
     public static Error Conflict(string message) => new("conflict", message);
+
+    public static Error Forbidden(string message) => new("forbidden", message);
 }

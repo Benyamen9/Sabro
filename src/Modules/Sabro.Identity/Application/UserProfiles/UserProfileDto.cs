@@ -7,5 +7,6 @@ public sealed record UserProfileDto(
     string LogtoUserId,
     string PreferredLanguage,
     ScriptVariant PreferredScriptVariant,
+    Role Role,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);

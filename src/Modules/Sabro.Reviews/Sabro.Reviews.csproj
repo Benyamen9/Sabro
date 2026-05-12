@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sabro.Shared\Sabro.Shared.csproj" />
+    <ProjectReference Include="..\Sabro.Identity\Sabro.Identity.csproj" />
   </ItemGroup>
 
 </Project>

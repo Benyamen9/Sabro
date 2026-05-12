@@ -15,6 +15,7 @@ internal sealed class UserProfileConfiguration : IEntityTypeConfiguration<UserPr
         builder.Property(e => e.LogtoUserId).HasMaxLength(256).IsRequired();
         builder.Property(e => e.PreferredLanguage).HasMaxLength(8).IsRequired();
         builder.Property(e => e.PreferredScriptVariant).HasConversion<string>().HasMaxLength(32).IsRequired();
+        builder.Property(e => e.Role).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.UpdatedAt).IsRequired();
 

@@ -14,6 +14,7 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
         LogtoUserId = logtoUserId;
         PreferredLanguage = preferredLanguage;
         PreferredScriptVariant = preferredScriptVariant;
+        Role = Role.Reader;
     }
 
     /// <summary>
@@ -25,6 +26,14 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
     public string PreferredLanguage { get; private set; }
 
     public ScriptVariant PreferredScriptVariant { get; private set; }
+
+    /// <summary>
+    /// Authorization role. New profiles start as <see cref="Domain.Role.Reader"/>;
+    /// changes go through <see cref="AssignRole"/>. There is no public endpoint
+    /// to set this at MVP — it is mutated server-side (seeding, future admin
+    /// console) so the surface stays minimal until an admin UI exists.
+    /// </summary>
+    public Role Role { get; private set; }
 
     public static Result<UserProfile> Create(
         string logtoUserId,
@@ -63,6 +72,23 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
 
         PreferredLanguage = languageResult.Value!;
         PreferredScriptVariant = preferredScriptVariant;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        return null;
+    }
+
+    /// <summary>
+    /// Assigns a new role. Returns <c>null</c> on success, an
+    /// <see cref="Error"/> when the supplied value is not a defined
+    /// <see cref="Role"/>. Mirrors <see cref="UpdatePreferences"/>.
+    /// </summary>
+    public Error? AssignRole(Role role)
+    {
+        if (!Enum.IsDefined(role))
+        {
+            return Error.Validation("Role is invalid.");
+        }
+
+        Role = role;
         UpdatedAt = DateTimeOffset.UtcNow;
         return null;
     }

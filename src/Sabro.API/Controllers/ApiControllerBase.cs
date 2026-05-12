@@ -13,6 +13,7 @@ public abstract class ApiControllerBase : ControllerBase
         "validation" => ValidationProblem(detail: error.Message),
         "not_found" => Problem(detail: error.Message, statusCode: StatusCodes.Status404NotFound, title: "Not Found"),
         "conflict" => Problem(detail: error.Message, statusCode: StatusCodes.Status409Conflict, title: "Conflict"),
+        "forbidden" => Problem(detail: error.Message, statusCode: StatusCodes.Status403Forbidden, title: "Forbidden"),
         _ => Problem(detail: error.Message, statusCode: StatusCodes.Status500InternalServerError),
     };
 }
