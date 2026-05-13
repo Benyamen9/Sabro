@@ -440,6 +440,66 @@ public class ApprovalServiceTests
         result.Error!.Code.Should().Be("validation");
     }
 
+    [Theory]
+    [InlineData(ApprovalStatus.Approved, AnnotationApprovalStatus.Approved)]
+    [InlineData(ApprovalStatus.Rejected, AnnotationApprovalStatus.Rejected)]
+    public async Task Create_AnnotationAsOwner_NotifiesAnnotationApprovalIndexer(
+        ApprovalStatus reviewsStatus,
+        AnnotationApprovalStatus expectedIndexerStatus)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var seed = await SeedAnnotationAsync(chapter: 2, verse: 5, ct);
+        var indexer = new FakeAnnotationApprovalIndexer();
+
+        await using var reviews = postgres.CreateReviewsContext();
+        await using var translations = postgres.CreateContext();
+        var service = NewServiceWithRealLookup(reviews, translations, indexer);
+
+        var result = await service.CreateAsync(
+            new CreateApprovalRequest(
+                ApprovalTargetType.Annotation,
+                SourceId: null,
+                ChapterNumber: null,
+                VerseNumber: null,
+                Version: null,
+                AnnotationId: seed.AnnotationId,
+                reviewsStatus),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        indexer.Calls.Should().ContainSingle()
+            .Which.Should().Be((seed.AnnotationId, expectedIndexerStatus));
+    }
+
+    [Fact]
+    public async Task Create_SegmentApproval_DoesNotNotifyAnnotationApprovalIndexer()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var indexer = new FakeAnnotationApprovalIndexer();
+
+        await using var reviews = postgres.CreateReviewsContext();
+        await using var translations = postgres.CreateContext();
+        var service = NewServiceWithRealLookup(reviews, translations, indexer);
+
+        var result = await service.CreateAsync(
+            new CreateApprovalRequest(
+                ApprovalTargetType.Segment,
+                SourceId: Guid.NewGuid(),
+                ChapterNumber: 1,
+                VerseNumber: 1,
+                Version: 1,
+                AnnotationId: null,
+                ApprovalStatus.Approved),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        indexer.Calls.Should().BeEmpty();
+    }
+
     [Fact]
     public async Task GetEffective_IncludesLatestAnnotationApprovals()
     {
@@ -531,11 +591,18 @@ public class ApprovalServiceTests
                 new UpdateUserProfileRequestValidator(),
                 NullLogger<UserProfileService>.Instance),
             new FakeAnnotationLookup(),
+            new FakeAnnotationApprovalIndexer(),
             NullLogger<ApprovalService>.Instance);
 
     private static ApprovalService NewServiceWithRealLookup(
         ReviewsDbContext reviewsCtx,
         TranslationsDbContext translationsCtx) =>
+        NewServiceWithRealLookup(reviewsCtx, translationsCtx, new FakeAnnotationApprovalIndexer());
+
+    private static ApprovalService NewServiceWithRealLookup(
+        ReviewsDbContext reviewsCtx,
+        TranslationsDbContext translationsCtx,
+        IAnnotationApprovalIndexer indexer) =>
         new(
             reviewsCtx,
             new CreateApprovalRequestValidator(),
@@ -544,6 +611,7 @@ public class ApprovalServiceTests
                 new UpdateUserProfileRequestValidator(),
                 NullLogger<UserProfileService>.Instance),
             new AnnotationLookupService(translationsCtx),
+            indexer,
             NullLogger<ApprovalService>.Instance);
 
     private static IdentityDbContext NewIdentityContext(ReviewsDbContext reviewsContext)
@@ -605,5 +673,16 @@ public class ApprovalServiceTests
         public Task<Result<AnnotationParentLocator>> GetParentLocatorAsync(Guid annotationId, CancellationToken cancellationToken) =>
             Task.FromResult(Result<AnnotationParentLocator>.Failure(
                 Error.NotFound($"Annotation {annotationId} not found.")));
+    }
+
+    private sealed class FakeAnnotationApprovalIndexer : IAnnotationApprovalIndexer
+    {
+        public List<(Guid AnnotationId, AnnotationApprovalStatus Status)> Calls { get; } = new();
+
+        public Task UpdateApprovalStatusAsync(Guid annotationId, AnnotationApprovalStatus status, CancellationToken cancellationToken)
+        {
+            Calls.Add((annotationId, status));
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,3 +1,4 @@
+using Sabro.Translations.Application.Annotations;
 using Sabro.Translations.Application.Search;
 using Sabro.Translations.Domain;
 
@@ -24,6 +25,7 @@ public class AnnotationDocumentMapperTests
         doc.AnchorEnd.Should().Be(12);
         doc.Body.Should().Be("Footnote body.");
         doc.Version.Should().Be(1);
+        doc.ApprovalStatus.Should().BeNull();
     }
 
     [Fact]
@@ -38,5 +40,18 @@ public class AnnotationDocumentMapperTests
         doc.Version.Should().Be(2);
         doc.Body.Should().Be("v2 body");
         doc.Id.Should().Be(v2.Id.ToString("D"));
+    }
+
+    [Theory]
+    [InlineData(AnnotationApprovalStatus.Approved, "approved")]
+    [InlineData(AnnotationApprovalStatus.Rejected, "rejected")]
+    public void Map_WithApprovalStatus_LowercasesEnumName(AnnotationApprovalStatus status, string expected)
+    {
+        var segment = Segment.Create(Guid.NewGuid(), 1, 1, Guid.NewGuid(), "Content.").Value!;
+        var annotation = Annotation.Create(segment.Id, 0, 5, "body").Value!;
+
+        var doc = AnnotationDocumentMapper.Map(annotation, segment, status);
+
+        doc.ApprovalStatus.Should().Be(expected);
     }
 }

@@ -84,6 +84,108 @@ public class AnnotationSearchSyncTests
     }
 
     [Fact]
+    public async Task CreateAsync_NewVersionDocStartsWithNullApprovalStatus()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var client = meili.CreateClient();
+        var descriptor = new AnnotationIndexDescriptor();
+        await EnsureIndexAsync(client, descriptor, ct);
+        var searchIndex = NewSearchIndex(client, descriptor);
+
+        var (segmentId, _) = await SeedSegmentAsync(chapter: 1, verse: 1, ct);
+
+        await using var ctx = postgres.CreateContext();
+        var service = NewService(ctx, searchIndex);
+
+        var result = await service.CreateAsync(
+            new CreateAnnotationRequest(segmentId, AnchorStart: 0, AnchorEnd: 5, Body: "fresh note"),
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        var doc = await WaitForDocumentAsync(client, descriptor.IndexName, result.Value!.Id.ToString("D"), ct);
+        doc!.ApprovalStatus.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData(AnnotationApprovalStatus.Approved, "approved")]
+    [InlineData(AnnotationApprovalStatus.Rejected, "rejected")]
+    public async Task UpdateApprovalStatusAsync_ReUpsertsDocWithApprovalStatus(AnnotationApprovalStatus status, string expectedString)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var client = meili.CreateClient();
+        var descriptor = new AnnotationIndexDescriptor();
+        await EnsureIndexAsync(client, descriptor, ct);
+        var searchIndex = NewSearchIndex(client, descriptor);
+
+        var (segmentId, _) = await SeedSegmentAsync(chapter: 1, verse: 1, ct);
+
+        await using var ctx = postgres.CreateContext();
+        var service = NewService(ctx, searchIndex);
+
+        var created = await service.CreateAsync(
+            new CreateAnnotationRequest(segmentId, AnchorStart: 0, AnchorEnd: 5, Body: "body"),
+            ct);
+        created.IsSuccess.Should().BeTrue();
+        var annotationId = created.Value!.Id;
+
+        await ((IAnnotationApprovalIndexer)service).UpdateApprovalStatusAsync(annotationId, status, ct);
+
+        var doc = await WaitForDocumentApprovalStatusAsync(client, descriptor.IndexName, annotationId.ToString("D"), expectedString, ct);
+        doc.Should().NotBeNull();
+        doc!.ApprovalStatus.Should().Be(expectedString);
+    }
+
+    [Fact]
+    public async Task UpdateApprovalStatusAsync_OnUnknownAnnotation_IsNoOp()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var client = meili.CreateClient();
+        var descriptor = new AnnotationIndexDescriptor();
+        await EnsureIndexAsync(client, descriptor, ct);
+        var searchIndex = NewSearchIndex(client, descriptor);
+
+        await using var ctx = postgres.CreateContext();
+        var service = NewService(ctx, searchIndex);
+
+        var act = async () => await ((IAnnotationApprovalIndexer)service)
+            .UpdateApprovalStatusAsync(Guid.NewGuid(), AnnotationApprovalStatus.Approved, ct);
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Fact]
+    public async Task EditAsync_ResetsApprovalStatusOnNewVersion()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var client = meili.CreateClient();
+        var descriptor = new AnnotationIndexDescriptor();
+        await EnsureIndexAsync(client, descriptor, ct);
+        var searchIndex = NewSearchIndex(client, descriptor);
+
+        var (segmentId, _) = await SeedSegmentAsync(chapter: 1, verse: 1, ct);
+
+        await using var ctx = postgres.CreateContext();
+        var service = NewService(ctx, searchIndex);
+
+        var created = await service.CreateAsync(
+            new CreateAnnotationRequest(segmentId, AnchorStart: 0, AnchorEnd: 5, Body: "v1 body"),
+            ct);
+        created.IsSuccess.Should().BeTrue();
+        var v1Id = created.Value!.Id;
+
+        await ((IAnnotationApprovalIndexer)service)
+            .UpdateApprovalStatusAsync(v1Id, AnnotationApprovalStatus.Approved, ct);
+        await WaitForDocumentApprovalStatusAsync(client, descriptor.IndexName, v1Id.ToString("D"), "approved", ct);
+
+        var edited = await service.EditAsync(new EditAnnotationRequest(v1Id, "v2 body"), ct);
+        edited.IsSuccess.Should().BeTrue();
+        var v2Id = edited.Value!.Id;
+
+        var v2Doc = await WaitForDocumentAsync(client, descriptor.IndexName, v2Id.ToString("D"), ct);
+        v2Doc!.ApprovalStatus.Should().BeNull();
+    }
+
+    [Fact]
     public async Task UpsertAsync_WhenMeilisearchUnreachable_DoesNotThrow()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -141,6 +243,32 @@ public class AnnotationSearchSyncTests
         }
 
         return null;
+    }
+
+    private static async Task<AnnotationSearchDocument?> WaitForDocumentApprovalStatusAsync(
+        MeilisearchClient client, string indexName, string documentId, string expectedStatus, CancellationToken ct)
+    {
+        var deadline = DateTimeOffset.UtcNow.AddSeconds(10);
+        AnnotationSearchDocument? last = null;
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            try
+            {
+                last = await client.Index(indexName).GetDocumentAsync<AnnotationSearchDocument>(documentId, cancellationToken: ct);
+                if (last.ApprovalStatus == expectedStatus)
+                {
+                    return last;
+                }
+            }
+            catch (MeilisearchApiError)
+            {
+            }
+
+            await Task.Delay(150, ct);
+        }
+
+        throw new Xunit.Sdk.XunitException(
+            $"Expected document {documentId} in index {indexName} to have approvalStatus '{expectedStatus}', got '{last?.ApprovalStatus}' within timeout.");
     }
 
     private static async Task WaitForDocumentDeletedAsync(

@@ -113,11 +113,44 @@ public class AnnotationSearchServiceTests
             segmentId: Guid.NewGuid(),
             sourceId: Guid.NewGuid(),
             chapterNumber: 1,
-            verseNumber: 1);
+            verseNumber: 1,
+            approvalStatus: "approved");
 
         await index.Received(1).SearchAsync(
-            Arg.Is<SearchRequest>(r => r.Filters != null && r.Filters.Count == 4),
+            Arg.Is<SearchRequest>(r => r.Filters != null && r.Filters.Count == 5),
             Arg.Any<CancellationToken>());
+    }
+
+    [Theory]
+    [InlineData(" APPROVED ", "approved")]
+    [InlineData("rejected", "rejected")]
+    public async Task SearchAsync_WithApprovalStatusFilter_NormalizesToLowerInvariant(string input, string expected)
+    {
+        var index = StubEmptyIndex();
+        var service = NewService(index);
+
+        await Search(service, approvalStatus: input);
+
+        await index.Received(1).SearchAsync(
+            Arg.Is<SearchRequest>(r =>
+                r.Filters != null
+                && r.Filters.Count == 1
+                && r.Filters[0].Field == "approvalStatus"
+                && r.Filters[0].Value == expected),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithInvalidApprovalStatus_ReturnsValidationErrorWithoutHittingIndex()
+    {
+        var index = Substitute.For<ISearchIndexQuery<AnnotationSearchDocument>>();
+        var service = NewService(index);
+
+        var result = await Search(service, approvalStatus: "pending");
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+        await index.DidNotReceive().SearchAsync(Arg.Any<SearchRequest>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -137,6 +170,7 @@ public class AnnotationSearchServiceTests
             AnchorEnd = 12,
             Body = "Footnote on the term logos.",
             Version = 2,
+            ApprovalStatus = "approved",
             CreatedAtUnix = 1_700_000_000,
         };
         var index = Substitute.For<ISearchIndexQuery<AnnotationSearchDocument>>();
@@ -157,6 +191,7 @@ public class AnnotationSearchServiceTests
         hit.AnchorEnd.Should().Be(12);
         hit.Body.Should().Be("Footnote on the term logos.");
         hit.Version.Should().Be(2);
+        hit.ApprovalStatus.Should().Be("approved");
     }
 
     private static AnnotationSearchService NewService(ISearchIndexQuery<AnnotationSearchDocument> index) =>
@@ -181,7 +216,8 @@ public class AnnotationSearchServiceTests
         Guid? sourceId = null,
         int? chapterNumber = null,
         int? verseNumber = null,
+        string? approvalStatus = null,
         int page = 1,
         int pageSize = 50) =>
-        service.SearchAsync(query, segmentId, sourceId, chapterNumber, verseNumber, page, pageSize, CancellationToken.None);
+        service.SearchAsync(query, segmentId, sourceId, chapterNumber, verseNumber, approvalStatus, page, pageSize, CancellationToken.None);
 }

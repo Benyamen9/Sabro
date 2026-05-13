@@ -38,6 +38,7 @@ public class AnnotationSearchQueryTests
                 sourceId: null,
                 chapterNumber: null,
                 verseNumber: null,
+                approvalStatus: null,
                 page: 1,
                 pageSize: 10,
                 ct),
@@ -74,6 +75,7 @@ public class AnnotationSearchQueryTests
                 sourceId: null,
                 chapterNumber: null,
                 verseNumber: null,
+                approvalStatus: null,
                 page: 1,
                 pageSize: 10,
                 ct),
@@ -112,6 +114,7 @@ public class AnnotationSearchQueryTests
                 sourceId: sourceId,
                 chapterNumber: 3,
                 verseNumber: null,
+                approvalStatus: null,
                 page: 1,
                 pageSize: 10,
                 ct),
@@ -121,6 +124,47 @@ public class AnnotationSearchQueryTests
         var hit = hits.Items.Should().ContainSingle().Subject;
         hit.SourceId.Should().Be(sourceId);
         hit.ChapterNumber.Should().Be(3);
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithApprovalStatusFilter_RestrictsResults()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var (client, descriptor, indexName) = await SetUpIsolatedIndexAsync(meili, ct);
+
+        var segment = Segment.Create(Guid.NewGuid(), 1, 1, Guid.NewGuid(), "Content.").Value!;
+        var approved = Annotation.Create(segment.Id, 0, 5, "approved note").Value!;
+        var rejected = Annotation.Create(segment.Id, 6, 10, "rejected note").Value!;
+        var unreviewed = Annotation.Create(segment.Id, 11, 15, "unreviewed note").Value!;
+
+        await client.Index(indexName).AddDocumentsAsync(
+            new[]
+            {
+                AnnotationDocumentMapper.Map(approved, segment, Sabro.Translations.Application.Annotations.AnnotationApprovalStatus.Approved),
+                AnnotationDocumentMapper.Map(rejected, segment, Sabro.Translations.Application.Annotations.AnnotationApprovalStatus.Rejected),
+                AnnotationDocumentMapper.Map(unreviewed, segment),
+            },
+            descriptor.PrimaryKey,
+            ct);
+
+        var service = NewService(client, descriptor);
+        var hits = await WaitForHitsAsync(
+            () => service.SearchAsync(
+                query: null,
+                segmentId: null,
+                sourceId: null,
+                chapterNumber: null,
+                verseNumber: null,
+                approvalStatus: "approved",
+                page: 1,
+                pageSize: 10,
+                ct),
+            expected: 1,
+            ct);
+
+        var hit = hits.Items.Should().ContainSingle().Subject;
+        hit.Id.Should().Be(approved.Id);
+        hit.ApprovalStatus.Should().Be("approved");
     }
 
     [Fact]
@@ -136,6 +180,7 @@ public class AnnotationSearchQueryTests
             sourceId: null,
             chapterNumber: null,
             verseNumber: null,
+            approvalStatus: null,
             page: 1,
             pageSize: 10,
             ct);
