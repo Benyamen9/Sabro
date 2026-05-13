@@ -124,9 +124,10 @@ User profiles and roles. Authentication itself is delegated to Logto via OIDC. S
 
 ## Search (Meilisearch)
 
-Three Meilisearch indexes, kept in sync with PostgreSQL:
+Four Meilisearch indexes, kept in sync with PostgreSQL:
 - `lexicon` — Syriac words, roots, transliterations, meanings
 - `translations` — English translation text (FR/NL when available)
+- `annotations` — inline annotations with denormalized parent (source/chapter/verse) coordinates
 - `biblical_passages` — Peshitta passages with metadata
 
 **Synchronization strategy:** synchronous at MVP — every write to PostgreSQL triggers a Meilisearch update in the same operation. May be moved to async (queue-based) if write volume grows.

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Shared.Pagination;
 using Sabro.Translations.Application.Annotations;
+using Sabro.Translations.Application.Search;
 
 namespace Sabro.API.Controllers.V1;
 
@@ -12,10 +13,14 @@ namespace Sabro.API.Controllers.V1;
 public sealed class AnnotationsController : ApiControllerBase
 {
     private readonly IAnnotationService annotationService;
+    private readonly IAnnotationSearchService searchService;
 
-    public AnnotationsController(IAnnotationService annotationService)
+    public AnnotationsController(
+        IAnnotationService annotationService,
+        IAnnotationSearchService searchService)
     {
         this.annotationService = annotationService;
+        this.searchService = searchService;
     }
 
     [HttpPost]
@@ -74,6 +79,29 @@ public sealed class AnnotationsController : ApiControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await annotationService.ListAsync(page, pageSize, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("search")]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(PagedResult<AnnotationSearchHitDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<AnnotationSearchHitDto>>> Search(
+        [FromQuery] string? q = null,
+        [FromQuery] Guid? segmentId = null,
+        [FromQuery] Guid? sourceId = null,
+        [FromQuery] int? chapter = null,
+        [FromQuery] int? verse = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await searchService.SearchAsync(q, segmentId, sourceId, chapter, verse, page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

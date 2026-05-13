@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
+using Sabro.Shared.Search;
+using Sabro.Translations.Application.Search;
 using Sabro.Translations.Domain;
 using Sabro.Translations.Infrastructure;
 
@@ -13,17 +15,20 @@ internal sealed class AnnotationService : IAnnotationService
     private readonly TranslationsDbContext dbContext;
     private readonly IValidator<CreateAnnotationRequest> createValidator;
     private readonly IValidator<EditAnnotationRequest> editValidator;
+    private readonly ISearchIndex<AnnotationSearchDocument> searchIndex;
     private readonly ILogger<AnnotationService> logger;
 
     public AnnotationService(
         TranslationsDbContext dbContext,
         IValidator<CreateAnnotationRequest> createValidator,
         IValidator<EditAnnotationRequest> editValidator,
+        ISearchIndex<AnnotationSearchDocument> searchIndex,
         ILogger<AnnotationService> logger)
     {
         this.dbContext = dbContext;
         this.createValidator = createValidator;
         this.editValidator = editValidator;
+        this.searchIndex = searchIndex;
         this.logger = logger;
     }
 
@@ -56,9 +61,20 @@ internal sealed class AnnotationService : IAnnotationService
             return Result<AnnotationDto>.Failure(domainResult.Error!);
         }
 
+        var segment = await dbContext.Segments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == request.SegmentId, cancellationToken);
+        if (segment is null)
+        {
+            logger.LogWarning("Annotation creation rejected: parent segment not found. SegmentId={SegmentId}", request.SegmentId);
+            return Result<AnnotationDto>.Failure(Error.NotFound($"Segment {request.SegmentId} not found."));
+        }
+
         var annotation = domainResult.Value!;
         dbContext.Annotations.Add(annotation);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await searchIndex.UpsertAsync(AnnotationDocumentMapper.Map(annotation, segment), cancellationToken);
 
         logger.LogInformation(
             "Annotation created. Id={AnnotationId} SegmentId={SegmentId} Version={Version}",
@@ -104,9 +120,24 @@ internal sealed class AnnotationService : IAnnotationService
             return Result<AnnotationDto>.Failure(nextResult.Error!);
         }
 
+        var segment = await dbContext.Segments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == existing.SegmentId, cancellationToken);
+        if (segment is null)
+        {
+            logger.LogWarning(
+                "Annotation edit rejected: parent segment not found. AnnotationId={AnnotationId} SegmentId={SegmentId}",
+                existing.Id,
+                existing.SegmentId);
+            return Result<AnnotationDto>.Failure(Error.NotFound($"Segment {existing.SegmentId} not found."));
+        }
+
         var next = nextResult.Value!;
         dbContext.Annotations.Add(next);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await searchIndex.DeleteAsync(existing.Id.ToString("D"), cancellationToken);
+        await searchIndex.UpsertAsync(AnnotationDocumentMapper.Map(next, segment), cancellationToken);
 
         logger.LogInformation(
             "Annotation edited. PreviousId={PreviousId} NewId={NewId} Version={Version}",

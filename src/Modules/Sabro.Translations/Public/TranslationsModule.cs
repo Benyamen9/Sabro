@@ -37,7 +37,9 @@ public sealed class TranslationsModule : IModuleRegistration
         services.AddScoped<IAnnotationService, AnnotationService>();
         services.AddScoped<IAnnotationLookupService, AnnotationLookupService>();
         services.AddScoped<ISegmentSearchService, SegmentSearchService>();
+        services.AddScoped<IAnnotationSearchService, AnnotationSearchService>();
 
         services.AddSearchIndex<SegmentSearchDocument, SegmentIndexDescriptor>();
+        services.AddSearchIndex<AnnotationSearchDocument, AnnotationIndexDescriptor>();
     }
 }
