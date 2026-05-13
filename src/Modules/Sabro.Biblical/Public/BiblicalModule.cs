@@ -3,8 +3,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.Biblical.Application.Books;
 using Sabro.Biblical.Application.Passages;
+using Sabro.Biblical.Application.Search;
 using Sabro.Biblical.Infrastructure;
 using Sabro.Shared.Abstractions;
+using Sabro.Shared.Search;
 
 namespace Sabro.Biblical.Public;
 
@@ -29,5 +31,8 @@ public sealed class BiblicalModule : IModuleRegistration
 
         services.AddScoped<IBiblicalBookService, BiblicalBookService>();
         services.AddScoped<IBiblicalPassageService, BiblicalPassageService>();
+        services.AddScoped<IBiblicalPassageSearchService, BiblicalPassageSearchService>();
+
+        services.AddSearchIndex<BiblicalPassageSearchDocument, BiblicalPassageIndexDescriptor>();
     }
 }

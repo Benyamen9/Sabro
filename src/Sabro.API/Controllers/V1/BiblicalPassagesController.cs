@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Biblical.Application.Passages;
+using Sabro.Biblical.Application.Search;
+using Sabro.Biblical.Domain;
 using Sabro.Shared.Pagination;
 
 namespace Sabro.API.Controllers.V1;
@@ -12,10 +14,14 @@ namespace Sabro.API.Controllers.V1;
 public sealed class BiblicalPassagesController : ApiControllerBase
 {
     private readonly IBiblicalPassageService passageService;
+    private readonly IBiblicalPassageSearchService searchService;
 
-    public BiblicalPassagesController(IBiblicalPassageService passageService)
+    public BiblicalPassagesController(
+        IBiblicalPassageService passageService,
+        IBiblicalPassageSearchService searchService)
     {
         this.passageService = passageService;
+        this.searchService = searchService;
     }
 
     /// <summary>
@@ -70,6 +76,29 @@ public sealed class BiblicalPassagesController : ApiControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await passageService.ListAsync(bookCode, chapter, page, pageSize, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("search")]
+    [Authorize(Policy = AuthPolicies.Read)]
+    [ProducesResponseType(typeof(PagedResult<BiblicalPassageSearchHitDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<BiblicalPassageSearchHitDto>>> Search(
+        [FromQuery] string? q = null,
+        [FromQuery] string? bookCode = null,
+        [FromQuery] Testament? testament = null,
+        [FromQuery] int? chapter = null,
+        [FromQuery] int? verse = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await searchService.SearchAsync(q, bookCode, testament, chapter, verse, page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

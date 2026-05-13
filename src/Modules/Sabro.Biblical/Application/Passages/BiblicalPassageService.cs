@@ -1,10 +1,12 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sabro.Biblical.Application.Search;
 using Sabro.Biblical.Domain;
 using Sabro.Biblical.Infrastructure;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
+using Sabro.Shared.Search;
 
 namespace Sabro.Biblical.Application.Passages;
 
@@ -12,15 +14,18 @@ internal sealed class BiblicalPassageService : IBiblicalPassageService
 {
     private readonly BiblicalDbContext dbContext;
     private readonly IValidator<GetOrCreateBiblicalPassageRequest> validator;
+    private readonly ISearchIndex<BiblicalPassageSearchDocument> searchIndex;
     private readonly ILogger<BiblicalPassageService> logger;
 
     public BiblicalPassageService(
         BiblicalDbContext dbContext,
         IValidator<GetOrCreateBiblicalPassageRequest> validator,
+        ISearchIndex<BiblicalPassageSearchDocument> searchIndex,
         ILogger<BiblicalPassageService> logger)
     {
         this.dbContext = dbContext;
         this.validator = validator;
+        this.searchIndex = searchIndex;
         this.logger = logger;
     }
 
@@ -69,6 +74,8 @@ internal sealed class BiblicalPassageService : IBiblicalPassageService
         var passage = domainResult.Value!;
         dbContext.Passages.Add(passage);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await searchIndex.UpsertAsync(BiblicalPassageDocumentMapper.Map(passage, book), cancellationToken);
 
         logger.LogInformation(
             "BiblicalPassage created. Id={PassageId} BookCode={BookCode} Chapter={Chapter} Verse={Verse}",
