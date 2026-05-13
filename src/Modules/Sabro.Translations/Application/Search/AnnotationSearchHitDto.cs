@@ -14,4 +14,5 @@ public sealed record AnnotationSearchHitDto(
     int AnchorStart,
     int AnchorEnd,
     string Body,
-    int Version);
+    int Version,
+    string? ApprovalStatus);

@@ -13,6 +13,7 @@ internal sealed class AnnotationIndexDescriptor : ISearchIndexDescriptor<Annotat
         "chapterNumber",
         "verseNumber",
         "version",
+        "approvalStatus",
     };
 
     public string IndexName => "annotations";

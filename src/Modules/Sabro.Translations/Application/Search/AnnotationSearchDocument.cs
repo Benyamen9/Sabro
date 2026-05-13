@@ -41,6 +41,16 @@ public sealed record AnnotationSearchDocument
     [JsonPropertyName("version")]
     public int Version { get; init; }
 
+    /// <summary>
+    /// Owner's approval verdict on this annotation version, lowercased
+    /// (<c>"approved"</c> or <c>"rejected"</c>), or null if no approval row
+    /// exists yet. Reset to null when a new version is created via
+    /// <see cref="Domain.Annotation.CreateNextVersion(string)"/> because
+    /// approval rows are pinned to a specific <see cref="Version"/>.
+    /// </summary>
+    [JsonPropertyName("approvalStatus")]
+    public string? ApprovalStatus { get; init; }
+
     [JsonPropertyName("createdAtUnix")]
     public long CreatedAtUnix { get; init; }
 }

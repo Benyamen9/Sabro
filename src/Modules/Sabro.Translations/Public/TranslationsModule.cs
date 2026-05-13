@@ -31,10 +31,12 @@ public sealed class TranslationsModule : IModuleRegistration
                 npgsql.MigrationsHistoryTable("__EFMigrationsHistory", TranslationsDbContext.SchemaName));
         });
 
+        services.AddScoped<AnnotationService>();
         services.AddScoped<IAuthorService, AuthorService>();
         services.AddScoped<ISourceService, SourceService>();
         services.AddScoped<ISegmentService, SegmentService>();
-        services.AddScoped<IAnnotationService, AnnotationService>();
+        services.AddScoped<IAnnotationService>(sp => sp.GetRequiredService<AnnotationService>());
+        services.AddScoped<IAnnotationApprovalIndexer>(sp => sp.GetRequiredService<AnnotationService>());
         services.AddScoped<IAnnotationLookupService, AnnotationLookupService>();
         services.AddScoped<ISegmentSearchService, SegmentSearchService>();
         services.AddScoped<IAnnotationSearchService, AnnotationSearchService>();

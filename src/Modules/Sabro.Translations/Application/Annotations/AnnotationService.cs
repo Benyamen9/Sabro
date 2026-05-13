@@ -10,7 +10,7 @@ using Sabro.Translations.Infrastructure;
 
 namespace Sabro.Translations.Application.Annotations;
 
-internal sealed class AnnotationService : IAnnotationService
+internal sealed class AnnotationService : IAnnotationService, IAnnotationApprovalIndexer
 {
     private readonly TranslationsDbContext dbContext;
     private readonly IValidator<CreateAnnotationRequest> createValidator;
@@ -159,6 +159,44 @@ internal sealed class AnnotationService : IAnnotationService
         }
 
         return Result<AnnotationDto>.Success(Map(annotation));
+    }
+
+    public async Task UpdateApprovalStatusAsync(
+        Guid annotationId,
+        AnnotationApprovalStatus status,
+        CancellationToken cancellationToken)
+    {
+        var annotation = await dbContext.Annotations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Id == annotationId, cancellationToken);
+        if (annotation is null)
+        {
+            logger.LogWarning(
+                "Annotation approval index update skipped: annotation not found. AnnotationId={AnnotationId}",
+                annotationId);
+            return;
+        }
+
+        var segment = await dbContext.Segments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == annotation.SegmentId, cancellationToken);
+        if (segment is null)
+        {
+            logger.LogWarning(
+                "Annotation approval index update skipped: parent segment not found. AnnotationId={AnnotationId} SegmentId={SegmentId}",
+                annotationId,
+                annotation.SegmentId);
+            return;
+        }
+
+        await searchIndex.UpsertAsync(
+            AnnotationDocumentMapper.Map(annotation, segment, status),
+            cancellationToken);
+
+        logger.LogInformation(
+            "Annotation approval index updated. AnnotationId={AnnotationId} Status={Status}",
+            annotationId,
+            status);
     }
 
     public async Task<Result<PagedResult<AnnotationDto>>> ListAsync(int page, int pageSize, CancellationToken cancellationToken)

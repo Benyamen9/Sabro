@@ -97,11 +97,12 @@ public sealed class AnnotationsController : ApiControllerBase
         [FromQuery] Guid? sourceId = null,
         [FromQuery] int? chapter = null,
         [FromQuery] int? verse = null,
+        [FromQuery] string? approvalStatus = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = PageRequest.DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
-        var result = await searchService.SearchAsync(q, segmentId, sourceId, chapter, verse, page, pageSize, cancellationToken);
+        var result = await searchService.SearchAsync(q, segmentId, sourceId, chapter, verse, approvalStatus, page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

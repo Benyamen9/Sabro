@@ -17,6 +17,7 @@ internal sealed class ApprovalService : IApprovalService
     private readonly IValidator<CreateApprovalRequest> createValidator;
     private readonly IUserProfileService userProfiles;
     private readonly IAnnotationLookupService annotationLookup;
+    private readonly IAnnotationApprovalIndexer annotationApprovalIndexer;
     private readonly ILogger<ApprovalService> logger;
 
     public ApprovalService(
@@ -24,12 +25,14 @@ internal sealed class ApprovalService : IApprovalService
         IValidator<CreateApprovalRequest> createValidator,
         IUserProfileService userProfiles,
         IAnnotationLookupService annotationLookup,
+        IAnnotationApprovalIndexer annotationApprovalIndexer,
         ILogger<ApprovalService> logger)
     {
         this.dbContext = dbContext;
         this.createValidator = createValidator;
         this.userProfiles = userProfiles;
         this.annotationLookup = annotationLookup;
+        this.annotationApprovalIndexer = annotationApprovalIndexer;
         this.logger = logger;
     }
 
@@ -131,6 +134,14 @@ internal sealed class ApprovalService : IApprovalService
         var approval = domainResult.Value!;
         dbContext.Approvals.Add(approval);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        if (approval.TargetType == ApprovalTargetType.Annotation && approval.AnnotationId is { } annotationId)
+        {
+            await annotationApprovalIndexer.UpdateApprovalStatusAsync(
+                annotationId,
+                ToAnnotationApprovalStatus(approval.Status),
+                cancellationToken);
+        }
 
         logger.LogInformation(
             "Approval created. Id={ApprovalId} TargetType={TargetType} SourceId={SourceId} Chapter={Chapter} Verse={Verse} AnnotationId={AnnotationId} Status={Status}",
@@ -301,4 +312,12 @@ internal sealed class ApprovalService : IApprovalService
         approval.Note,
         approval.CreatedAt,
         approval.UpdatedAt);
+
+    private static AnnotationApprovalStatus ToAnnotationApprovalStatus(ApprovalStatus status) =>
+        status switch
+        {
+            ApprovalStatus.Approved => AnnotationApprovalStatus.Approved,
+            ApprovalStatus.Rejected => AnnotationApprovalStatus.Rejected,
+            _ => throw new ArgumentOutOfRangeException(nameof(status), status, "Unhandled ApprovalStatus."),
+        };
 }

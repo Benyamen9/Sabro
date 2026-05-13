@@ -11,6 +11,7 @@ public interface IAnnotationSearchService
         Guid? sourceId,
         int? chapterNumber,
         int? verseNumber,
+        string? approvalStatus,
         int page,
         int pageSize,
         CancellationToken cancellationToken);
