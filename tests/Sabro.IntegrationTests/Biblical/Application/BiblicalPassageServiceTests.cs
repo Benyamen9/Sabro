@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 using Sabro.Biblical.Application.Books;
 using Sabro.Biblical.Application.Passages;
+using Sabro.Biblical.Application.Search;
 using Sabro.Biblical.Domain;
+using Sabro.Shared.Search;
 
 namespace Sabro.IntegrationTests.Biblical.Application;
 
@@ -107,7 +110,11 @@ public class BiblicalPassageServiceTests
     }
 
     private static BiblicalPassageService NewPassageService(Sabro.Biblical.Infrastructure.BiblicalDbContext ctx) =>
-        new(ctx, new GetOrCreateBiblicalPassageRequestValidator(), NullLogger<BiblicalPassageService>.Instance);
+        new(
+            ctx,
+            new GetOrCreateBiblicalPassageRequestValidator(),
+            Substitute.For<ISearchIndex<BiblicalPassageSearchDocument>>(),
+            NullLogger<BiblicalPassageService>.Instance);
 
     private static BiblicalBookService NewBookService(Sabro.Biblical.Infrastructure.BiblicalDbContext ctx) =>
         new(ctx, new CreateBiblicalBookRequestValidator(), NullLogger<BiblicalBookService>.Instance);
