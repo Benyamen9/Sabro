@@ -249,4 +249,109 @@ public class ApprovalTests
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
     }
+
+    [Fact]
+    public void CreateAnnotation_WithValidInputs_DenormalizesParentLocator()
+    {
+        var annotationId = Guid.NewGuid();
+
+        var result = Approval.CreateAnnotation(
+            annotationId,
+            version: 2,
+            SourceId,
+            chapterNumber: 3,
+            verseNumber: 7,
+            ApprovalStatus.Approved,
+            DecidedBy,
+            note: "Footnote checks out.");
+
+        result.IsSuccess.Should().BeTrue();
+        var approval = result.Value!;
+        approval.TargetType.Should().Be(ApprovalTargetType.Annotation);
+        approval.AnnotationId.Should().Be(annotationId);
+        approval.Version.Should().Be(2);
+        approval.SourceId.Should().Be(SourceId);
+        approval.ChapterNumber.Should().Be(3);
+        approval.VerseNumber.Should().Be(7);
+        approval.Status.Should().Be(ApprovalStatus.Approved);
+        approval.Note.Should().Be("Footnote checks out.");
+    }
+
+    [Fact]
+    public void CreateAnnotation_LeavesAnnotationIdNullOnSegmentAndChapter()
+    {
+        var segment = Approval.CreateSegment(SourceId, 1, 1, 1, ApprovalStatus.Approved, DecidedBy).Value!;
+        var chapter = Approval.CreateChapter(SourceId, 1, ApprovalStatus.Approved, DecidedBy).Value!;
+
+        segment.AnnotationId.Should().BeNull();
+        chapter.AnnotationId.Should().BeNull();
+    }
+
+    [Fact]
+    public void CreateAnnotation_WithEmptyAnnotationId_ReturnsValidationError()
+    {
+        var result = Approval.CreateAnnotation(
+            Guid.Empty,
+            version: 1,
+            SourceId,
+            chapterNumber: 1,
+            verseNumber: 1,
+            ApprovalStatus.Approved,
+            DecidedBy);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void CreateAnnotation_WithNonPositiveVersion_ReturnsValidationError(int version)
+    {
+        var result = Approval.CreateAnnotation(
+            Guid.NewGuid(),
+            version,
+            SourceId,
+            chapterNumber: 1,
+            verseNumber: 1,
+            ApprovalStatus.Approved,
+            DecidedBy);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void CreateAnnotation_WithNonPositiveVerseNumber_ReturnsValidationError(int verseNumber)
+    {
+        var result = Approval.CreateAnnotation(
+            Guid.NewGuid(),
+            version: 1,
+            SourceId,
+            chapterNumber: 1,
+            verseNumber,
+            ApprovalStatus.Approved,
+            DecidedBy);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Fact]
+    public void CreateAnnotation_WithEmptySourceId_ReturnsValidationError()
+    {
+        var result = Approval.CreateAnnotation(
+            Guid.NewGuid(),
+            version: 1,
+            Guid.Empty,
+            chapterNumber: 1,
+            verseNumber: 1,
+            ApprovalStatus.Approved,
+            DecidedBy);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
 }

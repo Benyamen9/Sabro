@@ -6,6 +6,10 @@ using Sabro.Identity.Infrastructure;
 using Sabro.Reviews.Application.Approvals;
 using Sabro.Reviews.Domain;
 using Sabro.Reviews.Infrastructure;
+using Sabro.Shared.Results;
+using Sabro.Translations.Application.Annotations;
+using Sabro.Translations.Domain;
+using Sabro.Translations.Infrastructure;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
 
@@ -36,6 +40,7 @@ public class ApprovalServiceTests
                 ChapterNumber: 1,
                 VerseNumber: 3,
                 Version: 1,
+                AnnotationId: null,
                 ApprovalStatus.Approved,
                 Note: "Reads well."),
             owner,
@@ -73,6 +78,7 @@ public class ApprovalServiceTests
                 ChapterNumber: 4,
                 VerseNumber: null,
                 Version: null,
+                AnnotationId: null,
                 ApprovalStatus.Approved),
             owner,
             ct);
@@ -129,6 +135,7 @@ public class ApprovalServiceTests
                 ChapterNumber: 1,
                 VerseNumber: null,
                 Version: 1,
+                AnnotationId: null,
                 ApprovalStatus.Approved),
             owner,
             ct);
@@ -153,6 +160,7 @@ public class ApprovalServiceTests
                 ChapterNumber: 1,
                 VerseNumber: 5,
                 Version: null,
+                AnnotationId: null,
                 ApprovalStatus.Approved),
             owner,
             ct);
@@ -236,12 +244,12 @@ public class ApprovalServiceTests
 
             // Two chapter approvals — latest wins
             var oldChapter = await service.CreateAsync(
-                new CreateApprovalRequest(ApprovalTargetType.Chapter, sourceId, 1, null, null, ApprovalStatus.Approved, "old"),
+                new CreateApprovalRequest(ApprovalTargetType.Chapter, sourceId, 1, null, null, null, ApprovalStatus.Approved, "old"),
                 owner,
                 ct);
             await Task.Delay(10, ct);
             var newChapter = await service.CreateAsync(
-                new CreateApprovalRequest(ApprovalTargetType.Chapter, sourceId, 1, null, null, ApprovalStatus.Rejected, "newer"),
+                new CreateApprovalRequest(ApprovalTargetType.Chapter, sourceId, 1, null, null, null, ApprovalStatus.Rejected, "newer"),
                 owner,
                 ct);
 
@@ -319,6 +327,174 @@ public class ApprovalServiceTests
         result.Error!.Code.Should().Be("validation");
     }
 
+    [Fact]
+    public async Task Create_AnnotationAsOwner_DenormalizesParentLocator()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var seed = await SeedAnnotationAsync(chapter: 4, verse: 9, ct);
+
+        await using var reviews = postgres.CreateReviewsContext();
+        await using var translations = postgres.CreateContext();
+        var service = NewServiceWithRealLookup(reviews, translations);
+
+        var result = await service.CreateAsync(
+            new CreateApprovalRequest(
+                ApprovalTargetType.Annotation,
+                SourceId: null,
+                ChapterNumber: null,
+                VerseNumber: null,
+                Version: null,
+                AnnotationId: seed.AnnotationId,
+                ApprovalStatus.Approved,
+                Note: "Footnote ok."),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        var dto = result.Value!;
+        dto.TargetType.Should().Be(ApprovalTargetType.Annotation);
+        dto.AnnotationId.Should().Be(seed.AnnotationId);
+        dto.SourceId.Should().Be(seed.SourceId);
+        dto.ChapterNumber.Should().Be(4);
+        dto.VerseNumber.Should().Be(9);
+        dto.Version.Should().Be(seed.AnnotationVersion);
+        dto.Note.Should().Be("Footnote ok.");
+    }
+
+    [Fact]
+    public async Task Create_AnnotationWithUnknownId_ReturnsNotFound()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+
+        await using var reviews = postgres.CreateReviewsContext();
+        await using var translations = postgres.CreateContext();
+        var service = NewServiceWithRealLookup(reviews, translations);
+
+        var result = await service.CreateAsync(
+            new CreateApprovalRequest(
+                ApprovalTargetType.Annotation,
+                SourceId: null,
+                ChapterNumber: null,
+                VerseNumber: null,
+                Version: null,
+                AnnotationId: Guid.NewGuid(),
+                ApprovalStatus.Approved),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("not_found");
+    }
+
+    [Fact]
+    public async Task Create_AnnotationAsReader_ReturnsForbidden()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reader = await SeedProfileAsync(Role.Reader, ct);
+        var seed = await SeedAnnotationAsync(chapter: 1, verse: 1, ct);
+
+        await using var reviews = postgres.CreateReviewsContext();
+        await using var translations = postgres.CreateContext();
+        var service = NewServiceWithRealLookup(reviews, translations);
+
+        var result = await service.CreateAsync(
+            new CreateApprovalRequest(
+                ApprovalTargetType.Annotation,
+                SourceId: null,
+                ChapterNumber: null,
+                VerseNumber: null,
+                Version: null,
+                AnnotationId: seed.AnnotationId,
+                ApprovalStatus.Approved),
+            reader,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("forbidden");
+    }
+
+    [Fact]
+    public async Task Create_AnnotationWithExtraLocatorFields_ReturnsValidation()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var service = NewService(ctx);
+
+        var result = await service.CreateAsync(
+            new CreateApprovalRequest(
+                ApprovalTargetType.Annotation,
+                SourceId: Guid.NewGuid(),
+                ChapterNumber: null,
+                VerseNumber: null,
+                Version: null,
+                AnnotationId: Guid.NewGuid(),
+                ApprovalStatus.Approved),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Fact]
+    public async Task GetEffective_IncludesLatestAnnotationApprovals()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var seed = await SeedAnnotationAsync(chapter: 6, verse: 2, ct);
+
+        await using (var reviews = postgres.CreateReviewsContext())
+        await using (var translations = postgres.CreateContext())
+        {
+            var service = NewServiceWithRealLookup(reviews, translations);
+            var first = await service.CreateAsync(
+                new CreateApprovalRequest(
+                    ApprovalTargetType.Annotation,
+                    SourceId: null,
+                    ChapterNumber: null,
+                    VerseNumber: null,
+                    Version: null,
+                    AnnotationId: seed.AnnotationId,
+                    ApprovalStatus.Approved,
+                    Note: "first"),
+                owner,
+                ct);
+            first.IsSuccess.Should().BeTrue();
+
+            await Task.Delay(10, ct);
+
+            var second = await service.CreateAsync(
+                new CreateApprovalRequest(
+                    ApprovalTargetType.Annotation,
+                    SourceId: null,
+                    ChapterNumber: null,
+                    VerseNumber: null,
+                    Version: null,
+                    AnnotationId: seed.AnnotationId,
+                    ApprovalStatus.Rejected,
+                    Note: "second"),
+                owner,
+                ct);
+            second.IsSuccess.Should().BeTrue();
+        }
+
+        await using var queryCtx = postgres.CreateReviewsContext();
+        var queryService = NewService(queryCtx);
+
+        var result = await queryService.GetEffectiveForChapterAsync(seed.SourceId, chapterNumber: 6, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.AnnotationApprovals.Should().HaveCount(1);
+        var latest = result.Value.AnnotationApprovals.Single();
+        latest.AnnotationId.Should().Be(seed.AnnotationId);
+        latest.Status.Should().Be(ApprovalStatus.Rejected);
+        latest.Note.Should().Be("second");
+    }
+
     private static CreateApprovalRequest ValidSegmentRequest() =>
         new(
             ApprovalTargetType.Segment,
@@ -326,6 +502,7 @@ public class ApprovalServiceTests
             ChapterNumber: 1,
             VerseNumber: 1,
             Version: 1,
+            AnnotationId: null,
             ApprovalStatus.Approved);
 
     private static CreateApprovalRequest SegmentRequest(
@@ -341,6 +518,7 @@ public class ApprovalServiceTests
             chapter,
             verse,
             version,
+            AnnotationId: null,
             status,
             note);
 
@@ -352,6 +530,20 @@ public class ApprovalServiceTests
                 NewIdentityContext(ctx),
                 new UpdateUserProfileRequestValidator(),
                 NullLogger<UserProfileService>.Instance),
+            new FakeAnnotationLookup(),
+            NullLogger<ApprovalService>.Instance);
+
+    private static ApprovalService NewServiceWithRealLookup(
+        ReviewsDbContext reviewsCtx,
+        TranslationsDbContext translationsCtx) =>
+        new(
+            reviewsCtx,
+            new CreateApprovalRequestValidator(),
+            new UserProfileService(
+                NewIdentityContext(reviewsCtx),
+                new UpdateUserProfileRequestValidator(),
+                NullLogger<UserProfileService>.Instance),
+            new AnnotationLookupService(translationsCtx),
             NullLogger<ApprovalService>.Instance);
 
     private static IdentityDbContext NewIdentityContext(ReviewsDbContext reviewsContext)
@@ -363,6 +555,19 @@ public class ApprovalServiceTests
         return new IdentityDbContext(options);
     }
 
+    private static string RandomLetterCode()
+    {
+        const string letters = "abcdefghijklmnopqrstuvwxyz";
+        var rng = Random.Shared;
+        Span<char> buffer = stackalloc char[3];
+        for (var i = 0; i < buffer.Length; i++)
+        {
+            buffer[i] = letters[rng.Next(letters.Length)];
+        }
+
+        return new string(buffer);
+    }
+
     private async Task<string> SeedProfileAsync(Role role, CancellationToken ct)
     {
         var logtoUserId = $"logto|{Guid.NewGuid():N}";
@@ -372,5 +577,33 @@ public class ApprovalServiceTests
         ctx.UserProfiles.Add(profile);
         await ctx.SaveChangesAsync(ct);
         return logtoUserId;
+    }
+
+    private async Task<AnnotationSeed> SeedAnnotationAsync(int chapter, int verse, CancellationToken ct)
+    {
+        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
+        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
+        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
+        var segment = Segment.Create(source.Id, chapter, verse, textVersion.Id, "Hello world!").Value!;
+        var annotation = Annotation.Create(segment.Id, 0, 5, "Note body.").Value!;
+
+        await using var write = postgres.CreateContext();
+        write.Authors.Add(author);
+        write.Sources.Add(source);
+        write.TextVersions.Add(textVersion);
+        write.Segments.Add(segment);
+        write.Annotations.Add(annotation);
+        await write.SaveChangesAsync(ct);
+
+        return new AnnotationSeed(annotation.Id, annotation.Version, source.Id, segment.Id);
+    }
+
+    private sealed record AnnotationSeed(Guid AnnotationId, int AnnotationVersion, Guid SourceId, Guid SegmentId);
+
+    private sealed class FakeAnnotationLookup : IAnnotationLookupService
+    {
+        public Task<Result<AnnotationParentLocator>> GetParentLocatorAsync(Guid annotationId, CancellationToken cancellationToken) =>
+            Task.FromResult(Result<AnnotationParentLocator>.Failure(
+                Error.NotFound($"Annotation {annotationId} not found.")));
     }
 }

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Sabro.Identity.Domain;
 using Sabro.Reviews.Application.Approvals;
 using Sabro.Reviews.Domain;
+using Sabro.Translations.Domain;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
@@ -103,6 +104,7 @@ public class ApprovalsControllerTests : IDisposable
                 ChapterNumber: 2,
                 VerseNumber: null,
                 Version: null,
+                AnnotationId: null,
                 ApprovalStatus.Approved),
             ct);
         chapter.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -117,6 +119,7 @@ public class ApprovalsControllerTests : IDisposable
                 ChapterNumber: 2,
                 VerseNumber: 5,
                 Version: 1,
+                AnnotationId: null,
                 ApprovalStatus.Rejected),
             ct);
         verse.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -138,6 +141,38 @@ public class ApprovalsControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Post_Annotation_AsOwner_DenormalizesParentLocator()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var seed = await SeedAnnotationAsync(chapter: 7, verse: 4, ct);
+
+        var response = await SendAsync(
+            HttpMethod.Post,
+            "/api/v1/approvals",
+            owner,
+            new CreateApprovalRequest(
+                ApprovalTargetType.Annotation,
+                SourceId: null,
+                ChapterNumber: null,
+                VerseNumber: null,
+                Version: null,
+                AnnotationId: seed.AnnotationId,
+                ApprovalStatus.Approved,
+                Note: "Annotation reviewed."),
+            ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var dto = await response.Content.ReadFromJsonAsync<ApprovalDto>(SabroApiFactory.JsonOptions, ct);
+        dto!.TargetType.Should().Be(ApprovalTargetType.Annotation);
+        dto.AnnotationId.Should().Be(seed.AnnotationId);
+        dto.SourceId.Should().Be(seed.SourceId);
+        dto.ChapterNumber.Should().Be(7);
+        dto.VerseNumber.Should().Be(4);
+        dto.Version.Should().Be(seed.AnnotationVersion);
+    }
+
+    [Fact]
     public async Task List_FiltersByTargetType()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -148,13 +183,13 @@ public class ApprovalsControllerTests : IDisposable
             HttpMethod.Post,
             "/api/v1/approvals",
             owner,
-            new CreateApprovalRequest(ApprovalTargetType.Chapter, sourceId, 1, null, null, ApprovalStatus.Approved),
+            new CreateApprovalRequest(ApprovalTargetType.Chapter, sourceId, 1, null, null, null, ApprovalStatus.Approved),
             ct);
         await SendAsync(
             HttpMethod.Post,
             "/api/v1/approvals",
             owner,
-            new CreateApprovalRequest(ApprovalTargetType.Segment, sourceId, 1, 1, 1, ApprovalStatus.Approved),
+            new CreateApprovalRequest(ApprovalTargetType.Segment, sourceId, 1, 1, 1, null, ApprovalStatus.Approved),
             ct);
 
         var response = await SendAsync(
@@ -184,7 +219,21 @@ public class ApprovalsControllerTests : IDisposable
             ChapterNumber: 1,
             VerseNumber: 1,
             Version: 1,
+            AnnotationId: null,
             ApprovalStatus.Approved);
+
+    private static string RandomLetterCode()
+    {
+        const string letters = "abcdefghijklmnopqrstuvwxyz";
+        var rng = Random.Shared;
+        Span<char> buffer = stackalloc char[3];
+        for (var i = 0; i < buffer.Length; i++)
+        {
+            buffer[i] = letters[rng.Next(letters.Length)];
+        }
+
+        return new string(buffer);
+    }
 
     private async Task<string> SeedProfileAsync(Role role, CancellationToken ct)
     {
@@ -195,6 +244,25 @@ public class ApprovalsControllerTests : IDisposable
         ctx.UserProfiles.Add(profile);
         await ctx.SaveChangesAsync(ct);
         return logtoUserId;
+    }
+
+    private async Task<AnnotationSeed> SeedAnnotationAsync(int chapter, int verse, CancellationToken ct)
+    {
+        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
+        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
+        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
+        var segment = Segment.Create(source.Id, chapter, verse, textVersion.Id, "Hello world!").Value!;
+        var annotation = Annotation.Create(segment.Id, 0, 5, "Note body.").Value!;
+
+        await using var write = postgres.CreateContext();
+        write.Authors.Add(author);
+        write.Sources.Add(source);
+        write.TextVersions.Add(textVersion);
+        write.Segments.Add(segment);
+        write.Annotations.Add(annotation);
+        await write.SaveChangesAsync(ct);
+
+        return new AnnotationSeed(annotation.Id, annotation.Version, source.Id);
     }
 
     private async Task<HttpResponseMessage> SendAsync(
@@ -213,4 +281,6 @@ public class ApprovalsControllerTests : IDisposable
 
         return await client.SendAsync(request, ct);
     }
+
+    private sealed record AnnotationSeed(Guid AnnotationId, int AnnotationVersion, Guid SourceId);
 }
