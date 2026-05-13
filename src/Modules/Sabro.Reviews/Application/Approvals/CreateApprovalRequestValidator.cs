@@ -8,30 +8,66 @@ public sealed class CreateApprovalRequestValidator : AbstractValidator<CreateApp
     public CreateApprovalRequestValidator()
     {
         RuleFor(x => x.TargetType).IsInEnum();
-        RuleFor(x => x.SourceId).NotEqual(Guid.Empty);
-        RuleFor(x => x.ChapterNumber).GreaterThanOrEqualTo(1);
         RuleFor(x => x.Status).IsInEnum();
 
-        RuleFor(x => x.VerseNumber)
-            .NotNull()
-            .WithMessage("VerseNumber is required for Segment approvals.")
-            .GreaterThanOrEqualTo(1)
-            .When(x => x.TargetType == ApprovalTargetType.Segment);
+        // Segment: source + chapter + verse + version required; annotation forbidden.
+        When(x => x.TargetType == ApprovalTargetType.Segment, () =>
+        {
+            RuleFor(x => x.SourceId)
+                .NotNull().NotEqual(Guid.Empty)
+                .WithMessage("SourceId is required for Segment approvals.");
+            RuleFor(x => x.ChapterNumber)
+                .NotNull().GreaterThanOrEqualTo(1)
+                .WithMessage("ChapterNumber is required for Segment approvals.");
+            RuleFor(x => x.VerseNumber)
+                .NotNull().GreaterThanOrEqualTo(1)
+                .WithMessage("VerseNumber is required for Segment approvals.");
+            RuleFor(x => x.Version)
+                .NotNull().GreaterThanOrEqualTo(1)
+                .WithMessage("Version is required for Segment approvals.");
+            RuleFor(x => x.AnnotationId)
+                .Null()
+                .WithMessage("AnnotationId must not be set for Segment approvals.");
+        });
 
-        RuleFor(x => x.VerseNumber)
-            .Null()
-            .WithMessage("VerseNumber must not be set for Chapter approvals.")
-            .When(x => x.TargetType == ApprovalTargetType.Chapter);
+        // Chapter: source + chapter required; verse, version, annotation forbidden.
+        When(x => x.TargetType == ApprovalTargetType.Chapter, () =>
+        {
+            RuleFor(x => x.SourceId)
+                .NotNull().NotEqual(Guid.Empty)
+                .WithMessage("SourceId is required for Chapter approvals.");
+            RuleFor(x => x.ChapterNumber)
+                .NotNull().GreaterThanOrEqualTo(1)
+                .WithMessage("ChapterNumber is required for Chapter approvals.");
+            RuleFor(x => x.VerseNumber)
+                .Null()
+                .WithMessage("VerseNumber must not be set for Chapter approvals.");
+            RuleFor(x => x.Version)
+                .Null()
+                .WithMessage("Version must not be set for Chapter approvals.");
+            RuleFor(x => x.AnnotationId)
+                .Null()
+                .WithMessage("AnnotationId must not be set for Chapter approvals.");
+        });
 
-        RuleFor(x => x.Version)
-            .NotNull()
-            .WithMessage("Version is required for Segment approvals.")
-            .GreaterThanOrEqualTo(1)
-            .When(x => x.TargetType == ApprovalTargetType.Segment);
-
-        RuleFor(x => x.Version)
-            .Null()
-            .WithMessage("Version must not be set for Chapter approvals.")
-            .When(x => x.TargetType == ApprovalTargetType.Chapter);
+        // Annotation: only AnnotationId required; service resolves the locator from the parent Segment.
+        When(x => x.TargetType == ApprovalTargetType.Annotation, () =>
+        {
+            RuleFor(x => x.AnnotationId)
+                .NotNull().NotEqual(Guid.Empty)
+                .WithMessage("AnnotationId is required for Annotation approvals.");
+            RuleFor(x => x.SourceId)
+                .Null()
+                .WithMessage("SourceId must not be set for Annotation approvals; the parent locator is resolved server-side.");
+            RuleFor(x => x.ChapterNumber)
+                .Null()
+                .WithMessage("ChapterNumber must not be set for Annotation approvals; the parent locator is resolved server-side.");
+            RuleFor(x => x.VerseNumber)
+                .Null()
+                .WithMessage("VerseNumber must not be set for Annotation approvals; the parent locator is resolved server-side.");
+            RuleFor(x => x.Version)
+                .Null()
+                .WithMessage("Version must not be set for Annotation approvals; the parent locator is resolved server-side.");
+        });
     }
 }

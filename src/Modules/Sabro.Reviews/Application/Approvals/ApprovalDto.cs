@@ -9,6 +9,7 @@ public sealed record ApprovalDto(
     int ChapterNumber,
     int? VerseNumber,
     int? Version,
+    Guid? AnnotationId,
     ApprovalStatus Status,
     string DecisionByLogtoUserId,
     DateTimeOffset DecisionAt,

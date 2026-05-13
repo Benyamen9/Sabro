@@ -7,6 +7,7 @@ using Sabro.Reviews.Domain;
 using Sabro.Reviews.Infrastructure;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
+using Sabro.Translations.Application.Annotations;
 
 namespace Sabro.Reviews.Application.Approvals;
 
@@ -15,17 +16,20 @@ internal sealed class ApprovalService : IApprovalService
     private readonly ReviewsDbContext dbContext;
     private readonly IValidator<CreateApprovalRequest> createValidator;
     private readonly IUserProfileService userProfiles;
+    private readonly IAnnotationLookupService annotationLookup;
     private readonly ILogger<ApprovalService> logger;
 
     public ApprovalService(
         ReviewsDbContext dbContext,
         IValidator<CreateApprovalRequest> createValidator,
         IUserProfileService userProfiles,
+        IAnnotationLookupService annotationLookup,
         ILogger<ApprovalService> logger)
     {
         this.dbContext = dbContext;
         this.createValidator = createValidator;
         this.userProfiles = userProfiles;
+        this.annotationLookup = annotationLookup;
         this.logger = logger;
     }
 
@@ -65,24 +69,55 @@ internal sealed class ApprovalService : IApprovalService
             return Result<ApprovalDto>.Failure(Error.Forbidden("Only the Owner may create approvals."));
         }
 
-        var domainResult = request.TargetType switch
+        Result<Approval> domainResult;
+        switch (request.TargetType)
         {
-            ApprovalTargetType.Segment => Approval.CreateSegment(
-                request.SourceId,
-                request.ChapterNumber,
-                request.VerseNumber!.Value,
-                request.Version!.Value,
-                request.Status,
-                trimmedDecidedBy,
-                request.Note),
-            ApprovalTargetType.Chapter => Approval.CreateChapter(
-                request.SourceId,
-                request.ChapterNumber,
-                request.Status,
-                trimmedDecidedBy,
-                request.Note),
-            _ => Result<Approval>.Failure(Error.Validation("TargetType is invalid.")),
-        };
+            case ApprovalTargetType.Segment:
+                domainResult = Approval.CreateSegment(
+                    request.SourceId!.Value,
+                    request.ChapterNumber!.Value,
+                    request.VerseNumber!.Value,
+                    request.Version!.Value,
+                    request.Status,
+                    trimmedDecidedBy,
+                    request.Note);
+                break;
+
+            case ApprovalTargetType.Chapter:
+                domainResult = Approval.CreateChapter(
+                    request.SourceId!.Value,
+                    request.ChapterNumber!.Value,
+                    request.Status,
+                    trimmedDecidedBy,
+                    request.Note);
+                break;
+
+            case ApprovalTargetType.Annotation:
+                {
+                    var locatorResult = await annotationLookup.GetParentLocatorAsync(
+                        request.AnnotationId!.Value,
+                        cancellationToken);
+                    if (!locatorResult.IsSuccess)
+                    {
+                        return Result<ApprovalDto>.Failure(locatorResult.Error!);
+                    }
+
+                    var locator = locatorResult.Value!;
+                    domainResult = Approval.CreateAnnotation(
+                        locator.AnnotationId,
+                        locator.AnnotationVersion,
+                        locator.SourceId,
+                        locator.ChapterNumber,
+                        locator.VerseNumber,
+                        request.Status,
+                        trimmedDecidedBy,
+                        request.Note);
+                    break;
+                }
+
+            default:
+                return Result<ApprovalDto>.Failure(Error.Validation("TargetType is invalid."));
+        }
 
         if (!domainResult.IsSuccess)
         {
@@ -98,12 +133,13 @@ internal sealed class ApprovalService : IApprovalService
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation(
-            "Approval created. Id={ApprovalId} TargetType={TargetType} SourceId={SourceId} Chapter={Chapter} Verse={Verse} Status={Status}",
+            "Approval created. Id={ApprovalId} TargetType={TargetType} SourceId={SourceId} Chapter={Chapter} Verse={Verse} AnnotationId={AnnotationId} Status={Status}",
             approval.Id,
             approval.TargetType,
             approval.SourceId,
             approval.ChapterNumber,
             approval.VerseNumber,
+            approval.AnnotationId,
             approval.Status);
         return Result<ApprovalDto>.Success(Map(approval));
     }
@@ -160,6 +196,12 @@ internal sealed class ApprovalService : IApprovalService
         {
             var verseNumber = filters.VerseNumber.Value;
             query = query.Where(a => a.VerseNumber == verseNumber);
+        }
+
+        if (filters.AnnotationId is not null)
+        {
+            var annotationId = filters.AnnotationId.Value;
+            query = query.Where(a => a.AnnotationId == annotationId);
         }
 
         var trimmedDecidedBy = string.IsNullOrWhiteSpace(filters.DecisionByLogtoUserId)
@@ -222,11 +264,27 @@ internal sealed class ApprovalService : IApprovalService
             .Select(Map)
             .ToList();
 
+        var annotationRows = await dbContext.Approvals
+            .AsNoTracking()
+            .Where(a => a.SourceId == sourceId
+                && a.ChapterNumber == chapterNumber
+                && a.TargetType == ApprovalTargetType.Annotation)
+            .OrderByDescending(a => a.DecisionAt)
+            .ThenByDescending(a => a.Id)
+            .ToListAsync(cancellationToken);
+
+        var latestPerAnnotation = annotationRows
+            .GroupBy(a => a.AnnotationId)
+            .Select(g => g.First())
+            .Select(Map)
+            .ToList();
+
         return Result<EffectiveChapterApprovalsDto>.Success(new EffectiveChapterApprovalsDto(
             sourceId,
             chapterNumber,
             chapterApproval is null ? null : Map(chapterApproval),
-            latestPerVerse));
+            latestPerVerse,
+            latestPerAnnotation));
     }
 
     private static ApprovalDto Map(Approval approval) => new(
@@ -236,6 +294,7 @@ internal sealed class ApprovalService : IApprovalService
         approval.ChapterNumber,
         approval.VerseNumber,
         approval.Version,
+        approval.AnnotationId,
         approval.Status,
         approval.DecisionByLogtoUserId,
         approval.DecisionAt,

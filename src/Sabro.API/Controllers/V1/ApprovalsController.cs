@@ -69,12 +69,20 @@ public sealed class ApprovalsController : ApiControllerBase
         [FromQuery] Guid? sourceId = null,
         [FromQuery] int? chapter = null,
         [FromQuery] int? verse = null,
+        [FromQuery] Guid? annotationId = null,
         [FromQuery] string? decidedBy = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = PageRequest.DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
-        var filters = new ApprovalListFilters(targetType, status, sourceId, chapter, verse, decidedBy);
+        var filters = new ApprovalListFilters(
+            TargetType: targetType,
+            Status: status,
+            SourceId: sourceId,
+            ChapterNumber: chapter,
+            VerseNumber: verse,
+            AnnotationId: annotationId,
+            DecisionByLogtoUserId: decidedBy);
         var result = await service.ListAsync(filters, page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {

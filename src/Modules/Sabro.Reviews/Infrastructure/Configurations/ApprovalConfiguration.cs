@@ -17,6 +17,7 @@ internal sealed class ApprovalConfiguration : IEntityTypeConfiguration<Approval>
         builder.Property(a => a.ChapterNumber).IsRequired();
         builder.Property(a => a.VerseNumber);
         builder.Property(a => a.Version);
+        builder.Property(a => a.AnnotationId);
         builder.Property(a => a.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(a => a.DecisionByLogtoUserId).HasMaxLength(256).IsRequired();
         builder.Property(a => a.DecisionAt).IsRequired();
@@ -26,6 +27,7 @@ internal sealed class ApprovalConfiguration : IEntityTypeConfiguration<Approval>
 
         builder.HasIndex(a => new { a.SourceId, a.ChapterNumber, a.VerseNumber });
         builder.HasIndex(a => new { a.SourceId, a.ChapterNumber, a.TargetType });
+        builder.HasIndex(a => a.AnnotationId);
         builder.HasIndex(a => a.DecisionByLogtoUserId);
     }
 }

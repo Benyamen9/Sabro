@@ -17,6 +17,7 @@ public sealed class Approval : Entity<Guid>, IAggregateRoot
         int chapterNumber,
         int? verseNumber,
         int? version,
+        Guid? annotationId,
         ApprovalStatus status,
         string decisionByLogtoUserId,
         string? note)
@@ -31,6 +32,7 @@ public sealed class Approval : Entity<Guid>, IAggregateRoot
         ChapterNumber = chapterNumber;
         VerseNumber = verseNumber;
         Version = version;
+        AnnotationId = annotationId;
         Status = status;
         DecisionByLogtoUserId = decisionByLogtoUserId;
         Note = note;
@@ -42,16 +44,21 @@ public sealed class Approval : Entity<Guid>, IAggregateRoot
 
     public int ChapterNumber { get; private set; }
 
-    /// <summary>Verse number for <see cref="ApprovalTargetType.Segment"/>; null for chapter approvals.</summary>
+    /// <summary>Verse number for Segment and Annotation targets; null for Chapter.</summary>
     public int? VerseNumber { get; private set; }
 
     /// <summary>
-    /// Version of the Segment the approval was made against. Null for chapter
-    /// approvals (the chapter itself is not a versioned aggregate). When a
-    /// Segment is edited the new version has no approval until re-approved;
-    /// the frontend can surface the staleness using this value.
+    /// Version of the target at decision time. Segment: the Segment's own
+    /// Version. Annotation: the Annotation's own Version (the parent Segment's
+    /// version is implied via the denormalized locator but not pinned here).
+    /// Null for Chapter — the chapter itself is not a versioned aggregate.
+    /// When the target is edited the new version has no approval until
+    /// re-approved; the frontend can surface staleness via this value.
     /// </summary>
     public int? Version { get; private set; }
+
+    /// <summary>The annotation identifier when <see cref="TargetType"/> is Annotation; null otherwise.</summary>
+    public Guid? AnnotationId { get; private set; }
 
     public ApprovalStatus Status { get; private set; }
 
@@ -86,6 +93,7 @@ public sealed class Approval : Entity<Guid>, IAggregateRoot
             chapterNumber,
             verseNumber,
             version,
+            annotationId: null,
             status,
             decisionByLogtoUserId,
             note);
@@ -103,9 +111,55 @@ public sealed class Approval : Entity<Guid>, IAggregateRoot
             chapterNumber,
             verseNumber: null,
             version: null,
+            annotationId: null,
             status,
             decisionByLogtoUserId,
             note);
+
+    /// <summary>
+    /// Creates an annotation-targeted approval. The locator fields are
+    /// denormalized from the parent Segment by the service (via the cross-
+    /// module <c>IAnnotationLookupService</c>) so chapter-scoped list and
+    /// effective queries include annotation rows alongside Segment/Chapter
+    /// rows. <paramref name="version"/> is the Annotation's own version,
+    /// not the parent Segment's.
+    /// </summary>
+    public static Result<Approval> CreateAnnotation(
+        Guid annotationId,
+        int version,
+        Guid sourceId,
+        int chapterNumber,
+        int verseNumber,
+        ApprovalStatus status,
+        string decisionByLogtoUserId,
+        string? note = null)
+    {
+        if (annotationId == Guid.Empty)
+        {
+            return Result<Approval>.Failure(Error.Validation("AnnotationId is required."));
+        }
+
+        if (verseNumber < 1)
+        {
+            return Result<Approval>.Failure(Error.Validation("VerseNumber must be 1 or greater."));
+        }
+
+        if (version < 1)
+        {
+            return Result<Approval>.Failure(Error.Validation("Version must be 1 or greater."));
+        }
+
+        return CreateCore(
+            ApprovalTargetType.Annotation,
+            sourceId,
+            chapterNumber,
+            verseNumber,
+            version,
+            annotationId,
+            status,
+            decisionByLogtoUserId,
+            note);
+    }
 
     private static Result<Approval> CreateCore(
         ApprovalTargetType targetType,
@@ -113,6 +167,7 @@ public sealed class Approval : Entity<Guid>, IAggregateRoot
         int chapterNumber,
         int? verseNumber,
         int? version,
+        Guid? annotationId,
         ApprovalStatus status,
         string decisionByLogtoUserId,
         string? note)
@@ -146,6 +201,7 @@ public sealed class Approval : Entity<Guid>, IAggregateRoot
             chapterNumber,
             verseNumber,
             version,
+            annotationId,
             status,
             trimmedDecidedBy,
             normalizedNote));
