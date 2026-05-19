@@ -96,4 +96,27 @@ internal sealed class MeilisearchSearchIndex<TDocument> : ISearchIndex<TDocument
                 documentId);
         }
     }
+
+    public async Task ResetAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await client.GetIndexAsync(descriptor.IndexName, cancellationToken).ConfigureAwait(false);
+        }
+        catch (MeilisearchApiError)
+        {
+            await client.CreateIndexAsync(descriptor.IndexName, descriptor.PrimaryKey, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        var index = client.Index(descriptor.IndexName);
+        await index.DeleteAllDocumentsAsync(cancellationToken).ConfigureAwait(false);
+
+        var settings = SearchIndexInitializerHostedService.ToMeilisearchSettings(descriptor.Settings);
+        await index.UpdateSettingsAsync(settings, cancellationToken).ConfigureAwait(false);
+
+        logger.LogInformation(
+            "Search index reset. Index={IndexName}",
+            descriptor.IndexName);
+    }
 }

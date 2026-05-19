@@ -32,6 +32,7 @@ public sealed class BiblicalModule : IModuleRegistration
         services.AddScoped<IBiblicalBookService, BiblicalBookService>();
         services.AddScoped<IBiblicalPassageService, BiblicalPassageService>();
         services.AddScoped<IBiblicalPassageSearchService, BiblicalPassageSearchService>();
+        services.AddScoped<ISearchRebuilder, BiblicalPassageSearchRebuilder>();
 
         services.AddSearchIndex<BiblicalPassageSearchDocument, BiblicalPassageIndexDescriptor>();
     }

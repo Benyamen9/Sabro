@@ -32,6 +32,7 @@ public sealed class LexiconModule : IModuleRegistration
         services.AddScoped<ILexiconRootService, LexiconRootService>();
         services.AddScoped<ILexiconEntryService, LexiconEntryService>();
         services.AddScoped<ILexiconSearchService, LexiconSearchService>();
+        services.AddScoped<ISearchRebuilder, LexiconSearchRebuilder>();
 
         services.AddSearchIndex<LexiconEntrySearchDocument, LexiconEntryIndexDescriptor>();
     }

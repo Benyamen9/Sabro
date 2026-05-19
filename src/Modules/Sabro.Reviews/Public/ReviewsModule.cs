@@ -29,5 +29,6 @@ public sealed class ReviewsModule : IModuleRegistration
 
         services.AddScoped<ISuggestedEditService, SuggestedEditService>();
         services.AddScoped<IApprovalService, ApprovalService>();
+        services.AddScoped<IAnnotationApprovalRepublisher, AnnotationApprovalRepublisher>();
     }
 }

@@ -20,4 +20,13 @@ public interface ISearchIndex<in TDocument>
     Task UpsertManyAsync(IEnumerable<TDocument> documents, CancellationToken cancellationToken);
 
     Task DeleteAsync(string documentId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Deletes every document in the index and re-applies the descriptor's
+    /// settings. Unlike <see cref="UpsertAsync"/> / <see cref="DeleteAsync"/>,
+    /// this method PROPAGATES failures — it is invoked only by the admin
+    /// rebuild path, where the operator must see errors rather than have
+    /// them quietly swallowed.
+    /// </summary>
+    Task ResetAsync(CancellationToken cancellationToken);
 }
