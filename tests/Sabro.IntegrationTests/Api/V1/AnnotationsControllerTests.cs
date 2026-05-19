@@ -6,7 +6,6 @@ using Sabro.API.Controllers.V1;
 using Sabro.IntegrationTests.Api;
 using Sabro.Shared.Pagination;
 using Sabro.Translations.Application.Annotations;
-using Sabro.Translations.Domain;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
@@ -28,7 +27,7 @@ public class AnnotationsControllerTests : IDisposable
     public async Task Post_WithValidPayload_Returns201AsVersionOne()
     {
         var ct = TestContext.Current.CancellationToken;
-        var segmentId = await SeedSegmentAsync(ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
         var body = new CreateAnnotationRequest(segmentId, AnchorStart: 4, AnchorEnd: 11, Body: "the Logos");
 
         var response = await client.PostAsJsonAsync("/api/v1/annotations", body, ct);
@@ -44,7 +43,7 @@ public class AnnotationsControllerTests : IDisposable
     public async Task Put_OnExistingAnnotation_Returns200WithVersionTwoLinkedToPredecessor()
     {
         var ct = TestContext.Current.CancellationToken;
-        var segmentId = await SeedSegmentAsync(ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
         var posted = await client.PostAsJsonAsync(
             "/api/v1/annotations",
             new CreateAnnotationRequest(segmentId, 0, 5, "v1 body"),
@@ -86,7 +85,7 @@ public class AnnotationsControllerTests : IDisposable
     public async Task Get_OnExistingAnnotation_Returns200WithDto()
     {
         var ct = TestContext.Current.CancellationToken;
-        var segmentId = await SeedSegmentAsync(ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
         var posted = await client.PostAsJsonAsync(
             "/api/v1/annotations",
             new CreateAnnotationRequest(segmentId, 2, 8, "Get-Test body"),
@@ -105,7 +104,7 @@ public class AnnotationsControllerTests : IDisposable
     public async Task Post_WithEmptyBody_Returns400ProblemWithFieldErrors()
     {
         var ct = TestContext.Current.CancellationToken;
-        var segmentId = await SeedSegmentAsync(ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
         var body = new CreateAnnotationRequest(segmentId, 0, 5, Body: string.Empty);
 
         var response = await client.PostAsJsonAsync("/api/v1/annotations", body, ct);
@@ -119,7 +118,7 @@ public class AnnotationsControllerTests : IDisposable
     public async Task Get_List_WithDefaults_Returns200WithPagedShape()
     {
         var ct = TestContext.Current.CancellationToken;
-        var segmentId = await SeedSegmentAsync(ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
         var marker = $"List-Ctl-Annot-{Guid.NewGuid():N}";
         for (var i = 1; i <= 2; i++)
         {
@@ -156,29 +155,5 @@ public class AnnotationsControllerTests : IDisposable
         client.Dispose();
         factory.Dispose();
         GC.SuppressFinalize(this);
-    }
-
-    private static string RandomLetterCode() =>
-        new string(new[]
-        {
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-        });
-
-    private async Task<Guid> SeedSegmentAsync(CancellationToken ct)
-    {
-        var author = Author.Create($"Annot-Controller Author {Guid.NewGuid():N}").Value!;
-        var source = Source.Create(author.Id, "Some Source").Value!;
-        var textVersion = TextVersion.Create(RandomLetterCode(), "ForAnnotControllerTest", isRightToLeft: false).Value!;
-        var segment = Segment.Create(source.Id, 1, 1, textVersion.Id, "Segment content for annotation tests.").Value!;
-
-        await using var seed = postgres.CreateContext();
-        seed.Authors.Add(author);
-        seed.Sources.Add(source);
-        seed.TextVersions.Add(textVersion);
-        seed.Segments.Add(segment);
-        await seed.SaveChangesAsync(ct);
-        return segment.Id;
     }
 }

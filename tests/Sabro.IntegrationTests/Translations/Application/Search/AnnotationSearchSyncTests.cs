@@ -30,20 +30,20 @@ public class AnnotationSearchSyncTests
         await EnsureIndexAsync(client, descriptor, ct);
         var searchIndex = NewSearchIndex(client, descriptor);
 
-        var (segmentId, sourceId) = await SeedSegmentAsync(chapter: 4, verse: 9, ct);
+        var seed = await postgres.SeedSegmentAsync(chapter: 4, verse: 9, ct);
 
         await using var ctx = postgres.CreateContext();
         var service = NewService(ctx, searchIndex);
 
         var result = await service.CreateAsync(
-            new CreateAnnotationRequest(segmentId, AnchorStart: 2, AnchorEnd: 7, Body: "Footnote on the term."),
+            new CreateAnnotationRequest(seed.SegmentId, AnchorStart: 2, AnchorEnd: 7, Body: "Footnote on the term."),
             ct);
 
         result.IsSuccess.Should().BeTrue();
         var doc = await WaitForDocumentAsync(client, descriptor.IndexName, result.Value!.Id.ToString("D"), ct);
         doc.Should().NotBeNull();
-        doc!.SegmentId.Should().Be(segmentId.ToString("D"));
-        doc.SourceId.Should().Be(sourceId.ToString("D"));
+        doc!.SegmentId.Should().Be(seed.SegmentId.ToString("D"));
+        doc.SourceId.Should().Be(seed.SourceId.ToString("D"));
         doc.ChapterNumber.Should().Be(4);
         doc.VerseNumber.Should().Be(9);
         doc.Body.Should().Be("Footnote on the term.");
@@ -59,7 +59,7 @@ public class AnnotationSearchSyncTests
         await EnsureIndexAsync(client, descriptor, ct);
         var searchIndex = NewSearchIndex(client, descriptor);
 
-        var (segmentId, _) = await SeedSegmentAsync(chapter: 1, verse: 1, ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
 
         await using var ctx = postgres.CreateContext();
         var service = NewService(ctx, searchIndex);
@@ -92,7 +92,7 @@ public class AnnotationSearchSyncTests
         await EnsureIndexAsync(client, descriptor, ct);
         var searchIndex = NewSearchIndex(client, descriptor);
 
-        var (segmentId, _) = await SeedSegmentAsync(chapter: 1, verse: 1, ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
 
         await using var ctx = postgres.CreateContext();
         var service = NewService(ctx, searchIndex);
@@ -117,7 +117,7 @@ public class AnnotationSearchSyncTests
         await EnsureIndexAsync(client, descriptor, ct);
         var searchIndex = NewSearchIndex(client, descriptor);
 
-        var (segmentId, _) = await SeedSegmentAsync(chapter: 1, verse: 1, ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
 
         await using var ctx = postgres.CreateContext();
         var service = NewService(ctx, searchIndex);
@@ -162,7 +162,7 @@ public class AnnotationSearchSyncTests
         await EnsureIndexAsync(client, descriptor, ct);
         var searchIndex = NewSearchIndex(client, descriptor);
 
-        var (segmentId, _) = await SeedSegmentAsync(chapter: 1, verse: 1, ct);
+        var segmentId = (await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct)).SegmentId;
 
         await using var ctx = postgres.CreateContext();
         var service = NewService(ctx, searchIndex);
@@ -289,30 +289,5 @@ public class AnnotationSearchSyncTests
         }
 
         throw new Xunit.Sdk.XunitException($"Document {documentId} was not deleted from index {indexName} within timeout.");
-    }
-
-    private static string RandomLetterCode() =>
-        new(new[]
-        {
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-        });
-
-    private async Task<(Guid SegmentId, Guid SourceId)> SeedSegmentAsync(int chapter, int verse, CancellationToken ct)
-    {
-        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
-        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
-        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
-        var segment = Segment.Create(source.Id, chapter, verse, textVersion.Id, "Some content.").Value!;
-
-        await using var ctx = postgres.CreateContext();
-        ctx.Authors.Add(author);
-        ctx.Sources.Add(source);
-        ctx.TextVersions.Add(textVersion);
-        ctx.Segments.Add(segment);
-        await ctx.SaveChangesAsync(ct);
-
-        return (segment.Id, source.Id);
     }
 }

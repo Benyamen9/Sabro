@@ -27,16 +27,16 @@ public class AnnotationSearchRebuilderTests
         var indexName = $"annotations-rebuild-{Guid.NewGuid():N}";
         var descriptor = new IsolatedAnnotationDescriptor(indexName);
 
-        var (annotationId, segmentId, sourceId) = await SeedAnnotationAsync(chapter: 5, verse: 3, ct);
+        var seed = await postgres.SeedAnnotationAsync(chapter: 5, verse: 3, ct);
         var rebuilder = NewRebuilder(client, descriptor);
 
         var result = await rebuilder.RebuildAsync(ct);
 
         result.DocumentCount.Should().BeGreaterThanOrEqualTo(1);
-        var doc = await WaitForDocumentAsync(client, indexName, annotationId.ToString("D"), ct);
+        var doc = await WaitForDocumentAsync(client, indexName, seed.AnnotationId.ToString("D"), ct);
         doc.Should().NotBeNull();
-        doc!.SegmentId.Should().Be(segmentId.ToString("D"));
-        doc.SourceId.Should().Be(sourceId.ToString("D"));
+        doc!.SegmentId.Should().Be(seed.SegmentId.ToString("D"));
+        doc.SourceId.Should().Be(seed.SourceId.ToString("D"));
         doc.ChapterNumber.Should().Be(5);
         doc.VerseNumber.Should().Be(3);
         doc.ApprovalStatus.Should().BeNull(
@@ -100,19 +100,6 @@ public class AnnotationSearchRebuilderTests
         await rebuilder.RebuildAsync(ct);
 
         await WaitForDocumentDeletedAsync(client, indexName, staleId, ct);
-    }
-
-    private static string RandomLetterCode()
-    {
-        const string letters = "abcdefghijklmnopqrstuvwxyz";
-        var rng = Random.Shared;
-        Span<char> buffer = stackalloc char[3];
-        for (var i = 0; i < buffer.Length; i++)
-        {
-            buffer[i] = letters[rng.Next(letters.Length)];
-        }
-
-        return new string(buffer);
     }
 
     private static async Task EnsureIndexAsync(
@@ -201,41 +188,14 @@ public class AnnotationSearchRebuilderTests
             NullLogger<AnnotationSearchRebuilder>.Instance);
     }
 
-    private async Task<(Guid AnnotationId, Guid SegmentId, Guid SourceId)> SeedAnnotationAsync(int chapter, int verse, CancellationToken ct)
-    {
-        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
-        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
-        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
-        var segment = Segment.Create(source.Id, chapter, verse, textVersion.Id, "hello world").Value!;
-        var annotation = Annotation.Create(segment.Id, 0, 5, "anno body").Value!;
-
-        await using var ctx = postgres.CreateContext();
-        ctx.Authors.Add(author);
-        ctx.Sources.Add(source);
-        ctx.TextVersions.Add(textVersion);
-        ctx.Segments.Add(segment);
-        ctx.Annotations.Add(annotation);
-        await ctx.SaveChangesAsync(ct);
-
-        return (annotation.Id, segment.Id, source.Id);
-    }
-
     private async Task<(Guid V1Id, Guid V2Id)> SeedAnnotationChainAsync(CancellationToken ct)
     {
-        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
-        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
-        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
-        var segment = Segment.Create(source.Id, 1, 1, textVersion.Id, "hello world").Value!;
-        var v1 = Annotation.Create(segment.Id, 0, 5, "v1 body").Value!;
+        var segmentSeed = await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct);
+        var v1 = Annotation.Create(segmentSeed.SegmentId, 0, 5, "v1 body").Value!;
         var v2 = v1.CreateNextVersion("v2 body").Value!;
 
         await using var ctx = postgres.CreateContext();
-        ctx.Authors.Add(author);
-        ctx.Sources.Add(source);
-        ctx.TextVersions.Add(textVersion);
-        ctx.Segments.Add(segment);
-        ctx.Annotations.Add(v1);
-        ctx.Annotations.Add(v2);
+        ctx.Annotations.AddRange(v1, v2);
         await ctx.SaveChangesAsync(ct);
 
         return (v1.Id, v2.Id);

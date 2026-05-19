@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using Sabro.Identity.Domain;
 using Sabro.Reviews.Application.Approvals;
 using Sabro.Reviews.Domain;
-using Sabro.Translations.Domain;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
@@ -145,7 +144,7 @@ public class ApprovalsControllerTests : IDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var owner = await SeedProfileAsync(Role.Owner, ct);
-        var seed = await SeedAnnotationAsync(chapter: 7, verse: 4, ct);
+        var seed = await postgres.SeedAnnotationAsync(chapter: 7, verse: 4, ct);
 
         var response = await SendAsync(
             HttpMethod.Post,
@@ -222,19 +221,6 @@ public class ApprovalsControllerTests : IDisposable
             AnnotationId: null,
             ApprovalStatus.Approved);
 
-    private static string RandomLetterCode()
-    {
-        const string letters = "abcdefghijklmnopqrstuvwxyz";
-        var rng = Random.Shared;
-        Span<char> buffer = stackalloc char[3];
-        for (var i = 0; i < buffer.Length; i++)
-        {
-            buffer[i] = letters[rng.Next(letters.Length)];
-        }
-
-        return new string(buffer);
-    }
-
     private async Task<string> SeedProfileAsync(Role role, CancellationToken ct)
     {
         var logtoUserId = $"test-user-{Guid.NewGuid():N}";
@@ -244,25 +230,6 @@ public class ApprovalsControllerTests : IDisposable
         ctx.UserProfiles.Add(profile);
         await ctx.SaveChangesAsync(ct);
         return logtoUserId;
-    }
-
-    private async Task<AnnotationSeed> SeedAnnotationAsync(int chapter, int verse, CancellationToken ct)
-    {
-        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
-        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
-        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
-        var segment = Segment.Create(source.Id, chapter, verse, textVersion.Id, "Hello world!").Value!;
-        var annotation = Annotation.Create(segment.Id, 0, 5, "Note body.").Value!;
-
-        await using var write = postgres.CreateContext();
-        write.Authors.Add(author);
-        write.Sources.Add(source);
-        write.TextVersions.Add(textVersion);
-        write.Segments.Add(segment);
-        write.Annotations.Add(annotation);
-        await write.SaveChangesAsync(ct);
-
-        return new AnnotationSeed(annotation.Id, annotation.Version, source.Id);
     }
 
     private async Task<HttpResponseMessage> SendAsync(
@@ -281,6 +248,4 @@ public class ApprovalsControllerTests : IDisposable
 
         return await client.SendAsync(request, ct);
     }
-
-    private sealed record AnnotationSeed(Guid AnnotationId, int AnnotationVersion, Guid SourceId);
 }

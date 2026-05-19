@@ -1,9 +1,9 @@
 using Meilisearch;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Sabro.Shared.Infrastructure.Search;
 using Sabro.Shared.Search;
 using Sabro.Translations.Application.Search;
-using Sabro.Translations.Domain;
 
 namespace Sabro.IntegrationTests.Translations.Application.Search;
 
@@ -76,19 +76,6 @@ public class SegmentSearchRebuilderTests
         await rebuilder.RebuildAsync(ct);
 
         await WaitForDocumentDeletedAsync(client, indexName, staleId, ct);
-    }
-
-    private static string RandomLetterCode()
-    {
-        const string letters = "abcdefghijklmnopqrstuvwxyz";
-        var rng = Random.Shared;
-        Span<char> buffer = stackalloc char[3];
-        for (var i = 0; i < buffer.Length; i++)
-        {
-            buffer[i] = letters[rng.Next(letters.Length)];
-        }
-
-        return new string(buffer);
     }
 
     private static async Task EnsureIndexAsync(
@@ -179,17 +166,11 @@ public class SegmentSearchRebuilderTests
 
     private async Task<(Guid V1Id, Guid V2Id)> SeedSegmentChainAsync(CancellationToken ct)
     {
-        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
-        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
-        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
-        var v1 = Segment.Create(source.Id, 1, 1, textVersion.Id, "first draft").Value!;
-        var v2 = v1.CreateNextVersion("second draft").Value!;
+        var seed = await postgres.SeedSegmentAsync(chapter: 1, verse: 1, ct, content: "first draft");
 
         await using var ctx = postgres.CreateContext();
-        ctx.Authors.Add(author);
-        ctx.Sources.Add(source);
-        ctx.TextVersions.Add(textVersion);
-        ctx.Segments.Add(v1);
+        var v1 = await ctx.Segments.AsNoTracking().FirstAsync(s => s.Id == seed.SegmentId, ct);
+        var v2 = v1.CreateNextVersion("second draft").Value!;
         ctx.Segments.Add(v2);
         await ctx.SaveChangesAsync(ct);
 

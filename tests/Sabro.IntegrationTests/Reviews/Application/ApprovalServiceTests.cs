@@ -8,7 +8,6 @@ using Sabro.Reviews.Domain;
 using Sabro.Reviews.Infrastructure;
 using Sabro.Shared.Results;
 using Sabro.Translations.Application.Annotations;
-using Sabro.Translations.Domain;
 using Sabro.Translations.Infrastructure;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
@@ -332,7 +331,7 @@ public class ApprovalServiceTests
     {
         var ct = TestContext.Current.CancellationToken;
         var owner = await SeedProfileAsync(Role.Owner, ct);
-        var seed = await SeedAnnotationAsync(chapter: 4, verse: 9, ct);
+        var seed = await postgres.SeedAnnotationAsync(chapter: 4, verse: 9, ct);
 
         await using var reviews = postgres.CreateReviewsContext();
         await using var translations = postgres.CreateContext();
@@ -393,7 +392,7 @@ public class ApprovalServiceTests
     {
         var ct = TestContext.Current.CancellationToken;
         var reader = await SeedProfileAsync(Role.Reader, ct);
-        var seed = await SeedAnnotationAsync(chapter: 1, verse: 1, ct);
+        var seed = await postgres.SeedAnnotationAsync(chapter: 1, verse: 1, ct);
 
         await using var reviews = postgres.CreateReviewsContext();
         await using var translations = postgres.CreateContext();
@@ -449,7 +448,7 @@ public class ApprovalServiceTests
     {
         var ct = TestContext.Current.CancellationToken;
         var owner = await SeedProfileAsync(Role.Owner, ct);
-        var seed = await SeedAnnotationAsync(chapter: 2, verse: 5, ct);
+        var seed = await postgres.SeedAnnotationAsync(chapter: 2, verse: 5, ct);
         var indexer = new FakeAnnotationApprovalIndexer();
 
         await using var reviews = postgres.CreateReviewsContext();
@@ -505,7 +504,7 @@ public class ApprovalServiceTests
     {
         var ct = TestContext.Current.CancellationToken;
         var owner = await SeedProfileAsync(Role.Owner, ct);
-        var seed = await SeedAnnotationAsync(chapter: 6, verse: 2, ct);
+        var seed = await postgres.SeedAnnotationAsync(chapter: 6, verse: 2, ct);
 
         await using (var reviews = postgres.CreateReviewsContext())
         await using (var translations = postgres.CreateContext())
@@ -623,19 +622,6 @@ public class ApprovalServiceTests
         return new IdentityDbContext(options);
     }
 
-    private static string RandomLetterCode()
-    {
-        const string letters = "abcdefghijklmnopqrstuvwxyz";
-        var rng = Random.Shared;
-        Span<char> buffer = stackalloc char[3];
-        for (var i = 0; i < buffer.Length; i++)
-        {
-            buffer[i] = letters[rng.Next(letters.Length)];
-        }
-
-        return new string(buffer);
-    }
-
     private async Task<string> SeedProfileAsync(Role role, CancellationToken ct)
     {
         var logtoUserId = $"logto|{Guid.NewGuid():N}";
@@ -646,27 +632,6 @@ public class ApprovalServiceTests
         await ctx.SaveChangesAsync(ct);
         return logtoUserId;
     }
-
-    private async Task<AnnotationSeed> SeedAnnotationAsync(int chapter, int verse, CancellationToken ct)
-    {
-        var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
-        var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
-        var textVersion = TextVersion.Create(RandomLetterCode(), $"Tv-{Guid.NewGuid():N}", isRightToLeft: false).Value!;
-        var segment = Segment.Create(source.Id, chapter, verse, textVersion.Id, "Hello world!").Value!;
-        var annotation = Annotation.Create(segment.Id, 0, 5, "Note body.").Value!;
-
-        await using var write = postgres.CreateContext();
-        write.Authors.Add(author);
-        write.Sources.Add(source);
-        write.TextVersions.Add(textVersion);
-        write.Segments.Add(segment);
-        write.Annotations.Add(annotation);
-        await write.SaveChangesAsync(ct);
-
-        return new AnnotationSeed(annotation.Id, annotation.Version, source.Id, segment.Id);
-    }
-
-    private sealed record AnnotationSeed(Guid AnnotationId, int AnnotationVersion, Guid SourceId, Guid SegmentId);
 
     private sealed class FakeAnnotationLookup : IAnnotationLookupService
     {
