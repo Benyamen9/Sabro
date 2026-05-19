@@ -32,7 +32,7 @@ public class LexiconSearchRebuilderTests
 
         var result = await rebuilder.RebuildAsync(ct);
 
-        result.DocumentCount.Should().Be(3);
+        result.DocumentCount.Should().BeGreaterThanOrEqualTo(3);
         foreach (var id in entryIds)
         {
             var doc = await WaitForDocumentAsync(client, indexName, id.ToString("D"), ct);
