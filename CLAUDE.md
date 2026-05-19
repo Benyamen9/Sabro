@@ -136,6 +136,12 @@ Four Meilisearch indexes, kept in sync with PostgreSQL:
 
 PostgreSQL remains the source of truth — Meilisearch is a search optimization layer only.
 
+**Rebuild-from-Postgres:** Meilisearch indexes are not backed up — they are rebuilt on demand from PostgreSQL. Owner-only admin endpoints under `/api/v1/admin/search/`:
+- `POST /api/v1/admin/search/rebuild/{indexName}` — wipes the named index and rebuilds it from Postgres. Valid index names: `lexicon`, `translations`, `annotations`, `biblical_passages`.
+- `POST /api/v1/admin/search/republish-annotation-approvals` — replays the latest annotation-targeted Approval per `AnnotationId` from `reviews.approvals` through `IAnnotationApprovalIndexer` so the `annotations` index regains its `approvalStatus` field.
+
+Operator recovery sequence: rebuild `lexicon` → `translations` → `annotations` → `biblical_passages` → `republish-annotation-approvals`. The last step is required because the annotation rebuild emits `approvalStatus = null` (verdicts live in Reviews, not Translations). Skipping it leaves `?approvalStatus=approved` queries returning nothing for genuinely approved annotations.
+
 ---
 
 ## Syriac / Unicode Handling
