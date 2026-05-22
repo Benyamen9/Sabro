@@ -5,7 +5,7 @@ using Sabro.Translations.Application.Annotations;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class AnnotationApprovalRepublisherTests
 {
     private const string Owner = "logto|owner-republish-tests";

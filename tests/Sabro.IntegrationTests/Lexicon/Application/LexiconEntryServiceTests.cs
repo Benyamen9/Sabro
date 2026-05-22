@@ -7,7 +7,7 @@ using Sabro.Shared.Search;
 
 namespace Sabro.IntegrationTests.Lexicon.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class LexiconEntryServiceTests
 {
     private const string KtbUnvocalized = "ܟܬܒ";

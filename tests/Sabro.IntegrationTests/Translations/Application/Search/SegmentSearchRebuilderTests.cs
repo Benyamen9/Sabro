@@ -7,7 +7,7 @@ using Sabro.Translations.Application.Search;
 
 namespace Sabro.IntegrationTests.Translations.Application.Search;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class SegmentSearchRebuilderTests
 {
     private readonly PostgresFixture postgres;

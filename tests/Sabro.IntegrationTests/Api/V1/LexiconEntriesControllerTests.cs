@@ -9,7 +9,7 @@ using Sabro.Shared.Pagination;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class LexiconEntriesControllerTests : IDisposable
 {
     private const string KtbUnvocalized = "ܟܬܒ";

@@ -9,7 +9,7 @@ using Sabro.Translations.Application.Annotations;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class AnnotationsControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;

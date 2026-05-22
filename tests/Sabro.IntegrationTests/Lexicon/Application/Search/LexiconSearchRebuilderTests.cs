@@ -7,7 +7,7 @@ using Sabro.Shared.Search;
 
 namespace Sabro.IntegrationTests.Lexicon.Application.Search;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class LexiconSearchRebuilderTests
 {
     private readonly PostgresFixture postgres;

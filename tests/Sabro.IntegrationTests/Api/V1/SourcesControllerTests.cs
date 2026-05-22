@@ -8,7 +8,7 @@ using Sabro.Translations.Domain;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class SourcesControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;

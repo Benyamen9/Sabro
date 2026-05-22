@@ -1,9 +1,9 @@
 namespace Sabro.IntegrationTests;
 
 [CollectionDefinition(Name)]
-public sealed class TranslationsCollection :
+public sealed class IntegrationCollection :
     ICollectionFixture<PostgresFixture>,
     ICollectionFixture<MeilisearchFixture>
 {
-    public const string Name = "Translations Postgres";
+    public const string Name = "Integration Postgres";
 }

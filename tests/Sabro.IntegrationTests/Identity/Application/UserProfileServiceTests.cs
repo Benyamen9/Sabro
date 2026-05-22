@@ -5,7 +5,7 @@ using Sabro.Identity.Domain;
 
 namespace Sabro.IntegrationTests.Identity.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class UserProfileServiceTests
 {
     private readonly PostgresFixture postgres;

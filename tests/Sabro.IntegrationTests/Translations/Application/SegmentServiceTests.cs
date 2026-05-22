@@ -7,7 +7,7 @@ using Sabro.Translations.Domain;
 
 namespace Sabro.IntegrationTests.Translations.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class SegmentServiceTests
 {
     private readonly PostgresFixture fixture;

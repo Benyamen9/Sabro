@@ -12,7 +12,7 @@ using Sabro.Translations.Infrastructure;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class ApprovalServiceTests
 {
     private readonly PostgresFixture postgres;

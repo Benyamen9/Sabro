@@ -4,7 +4,7 @@ using Sabro.Biblical.Domain;
 
 namespace Sabro.IntegrationTests.Biblical.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class BiblicalBookServiceTests
 {
     private const string MatthewSyriac = "ܡܬܝ";

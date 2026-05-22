@@ -5,7 +5,7 @@ using Sabro.Identity.Domain;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class AdminSearchControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;

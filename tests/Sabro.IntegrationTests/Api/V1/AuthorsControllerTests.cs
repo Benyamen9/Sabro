@@ -8,7 +8,7 @@ using Sabro.Translations.Application.Authors;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class AuthorsControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;

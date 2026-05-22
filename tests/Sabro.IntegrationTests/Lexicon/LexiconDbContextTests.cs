@@ -3,7 +3,7 @@ using Sabro.Lexicon.Domain;
 
 namespace Sabro.IntegrationTests.Lexicon;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class LexiconDbContextTests
 {
     private const string KtbUnvocalized = "ܟܬܒ";

@@ -7,7 +7,7 @@ using Sabro.Translations.Infrastructure;
 
 namespace Sabro.IntegrationTests.Translations.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class AnnotationServiceTests
 {
     private readonly PostgresFixture postgres;

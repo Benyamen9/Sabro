@@ -4,7 +4,7 @@ using Sabro.Translations.Application.Authors;
 
 namespace Sabro.IntegrationTests.Translations.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class AuthorServiceTests
 {
     private readonly PostgresFixture fixture;

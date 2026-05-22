@@ -8,7 +8,7 @@ using Sabro.Shared.Search;
 
 namespace Sabro.IntegrationTests.Biblical.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class BiblicalPassageServiceTests
 {
     private readonly PostgresFixture postgres;

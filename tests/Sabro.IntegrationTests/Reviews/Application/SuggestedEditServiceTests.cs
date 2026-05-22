@@ -9,7 +9,7 @@ using Sabro.Reviews.Infrastructure;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class SuggestedEditServiceTests
 {
     private readonly PostgresFixture postgres;

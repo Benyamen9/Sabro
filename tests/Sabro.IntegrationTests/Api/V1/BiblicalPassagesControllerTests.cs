@@ -7,7 +7,7 @@ using Sabro.IntegrationTests.Api;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class BiblicalPassagesControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;

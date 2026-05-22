@@ -10,7 +10,7 @@ using Sabro.Translations.Domain;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class SegmentsControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;

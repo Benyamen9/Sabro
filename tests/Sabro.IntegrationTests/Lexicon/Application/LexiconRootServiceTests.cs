@@ -4,7 +4,7 @@ using Sabro.Lexicon.Application.Roots;
 
 namespace Sabro.IntegrationTests.Lexicon.Application;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class LexiconRootServiceTests
 {
     private readonly PostgresFixture fixture;

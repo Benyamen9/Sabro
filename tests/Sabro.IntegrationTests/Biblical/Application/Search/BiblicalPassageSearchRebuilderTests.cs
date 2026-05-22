@@ -7,7 +7,7 @@ using Sabro.Shared.Search;
 
 namespace Sabro.IntegrationTests.Biblical.Application.Search;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class BiblicalPassageSearchRebuilderTests
 {
     private readonly PostgresFixture postgres;

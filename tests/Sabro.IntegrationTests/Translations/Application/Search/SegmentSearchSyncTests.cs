@@ -10,7 +10,7 @@ using Sabro.Translations.Infrastructure;
 
 namespace Sabro.IntegrationTests.Translations.Application.Search;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class SegmentSearchSyncTests
 {
     private readonly PostgresFixture postgres;

@@ -6,7 +6,7 @@ using Sabro.Reviews.Domain;
 
 namespace Sabro.IntegrationTests.Api.V1;
 
-[Collection(TranslationsCollection.Name)]
+[Collection(IntegrationCollection.Name)]
 public class SuggestedEditsControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;
