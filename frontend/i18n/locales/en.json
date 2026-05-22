@@ -4,9 +4,19 @@
     "tagline": "Original English translations of Syriac patristic commentaries"
   },
   "nav": {
+    "primary": "Primary navigation",
     "home": "Home",
     "translations": "Translations",
     "lexicon": "Lexicon"
+  },
+  "switcher": {
+    "languageLabel": "Language",
+    "scriptLabel": "Syriac script",
+    "script": {
+      "estrangela": "Estrangela",
+      "serto": "Serto",
+      "madnhaya": "Madnhaya"
+    }
   },
   "language": {
     "comingSoon": "Coming soon."

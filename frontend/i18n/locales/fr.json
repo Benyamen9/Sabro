@@ -3,6 +3,21 @@
     "title": "Sabro",
     "tagline": "Bientôt disponible."
   },
+  "nav": {
+    "primary": "Navigation principale",
+    "home": "Accueil",
+    "translations": "Traductions",
+    "lexicon": "Lexique"
+  },
+  "switcher": {
+    "languageLabel": "Langue",
+    "scriptLabel": "Écriture syriaque",
+    "script": {
+      "estrangela": "Estrangela",
+      "serto": "Serto",
+      "madnhaya": "Madnhaya"
+    }
+  },
   "language": {
     "comingSoon": "Bientôt disponible."
   }

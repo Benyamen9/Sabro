@@ -1,17 +1,19 @@
 <script setup lang="ts">
-type ScriptVariant = 'estrangela' | 'serto' | 'madnhaya'
+import type { ScriptVariant } from '~/composables/useScriptVariant'
 
 interface Props {
   text: string
   variant?: ScriptVariant
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'estrangela',
-})
+const props = defineProps<Props>()
+
+const { variant: userVariant } = useScriptVariant()
+
+const effectiveVariant = computed<ScriptVariant>(() => props.variant ?? userVariant.value)
 
 const fontFamily = computed(() => {
-  switch (props.variant) {
+  switch (effectiveVariant.value) {
     case 'serto':
       return '"Serto Jerusalem", "Noto Sans Syriac", serif'
     case 'madnhaya':

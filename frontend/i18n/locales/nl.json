@@ -3,6 +3,21 @@
     "title": "Sabro",
     "tagline": "Binnenkort beschikbaar."
   },
+  "nav": {
+    "primary": "Primaire navigatie",
+    "home": "Home",
+    "translations": "Vertalingen",
+    "lexicon": "Lexicon"
+  },
+  "switcher": {
+    "languageLabel": "Taal",
+    "scriptLabel": "Syrisch schrift",
+    "script": {
+      "estrangela": "Estrangela",
+      "serto": "Serto",
+      "madnhaya": "Madnhaya"
+    }
+  },
   "language": {
     "comingSoon": "Binnenkort beschikbaar."
   }

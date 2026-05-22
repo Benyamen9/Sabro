@@ -3,8 +3,18 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <main>
+  <section>
     <h1>{{ t('site.title') }}</h1>
     <p>{{ t('site.tagline') }}</p>
-  </main>
+    <p class="sample">
+      <SyriacText text="ܫܠܡܐ ܠܟ" />
+    </p>
+  </section>
 </template>
+
+<style scoped>
+.sample {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+}
+</style>
