@@ -1,9 +1,9 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
-namespace Sabro.Translations.Infrastructure;
+namespace Sabro.Shared.Infrastructure.Persistence;
 
-internal static class SnakeCaseNamingExtensions
+public static class SnakeCaseNamingExtensions
 {
     public static void UseSnakeCaseNaming(this ModelBuilder modelBuilder)
     {

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sabro.Lexicon.Domain;
+using Sabro.Shared.Infrastructure.Persistence;
 
 namespace Sabro.Lexicon.Infrastructure;
 

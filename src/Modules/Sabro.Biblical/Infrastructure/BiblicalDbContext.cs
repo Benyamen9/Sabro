@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sabro.Biblical.Domain;
+using Sabro.Shared.Infrastructure.Persistence;
 
 namespace Sabro.Biblical.Infrastructure;
 

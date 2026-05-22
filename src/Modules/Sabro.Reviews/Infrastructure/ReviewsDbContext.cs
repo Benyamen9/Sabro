@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sabro.Reviews.Domain;
+using Sabro.Shared.Infrastructure.Persistence;
 
 namespace Sabro.Reviews.Infrastructure;
 

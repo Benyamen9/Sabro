@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sabro.Identity.Domain;
+using Sabro.Shared.Infrastructure.Persistence;
 
 namespace Sabro.Identity.Infrastructure;
 

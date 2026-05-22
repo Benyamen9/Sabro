@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sabro.Shared\Sabro.Shared.csproj" />
+    <ProjectReference Include="..\..\Sabro.Shared.Infrastructure\Sabro.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\Sabro.Identity\Sabro.Identity.csproj" />
     <ProjectReference Include="..\Sabro.Translations\Sabro.Translations.csproj" />
   </ItemGroup>

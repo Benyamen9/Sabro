@@ -1,6 +1,6 @@
-using Sabro.Translations.Infrastructure;
+using Sabro.Shared.Infrastructure.Persistence;
 
-namespace Sabro.UnitTests.Translations.Infrastructure;
+namespace Sabro.UnitTests.Shared.Infrastructure.Persistence;
 
 public class SnakeCaseNamingExtensionsTests
 {

@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Sabro.Shared\Sabro.Shared.csproj" />
+    <ProjectReference Include="..\..\Sabro.Shared.Infrastructure\Sabro.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

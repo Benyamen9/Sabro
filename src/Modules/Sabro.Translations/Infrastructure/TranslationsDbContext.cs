@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sabro.Shared.Infrastructure.Persistence;
 using Sabro.Translations.Domain;
 
 namespace Sabro.Translations.Infrastructure;
