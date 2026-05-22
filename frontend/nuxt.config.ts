@@ -5,7 +5,6 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/i18n', '@nuxt/eslint'],
   typescript: {
     strict: true,
-    typeCheck: true,
   },
   i18n: {
     defaultLocale: 'en',
