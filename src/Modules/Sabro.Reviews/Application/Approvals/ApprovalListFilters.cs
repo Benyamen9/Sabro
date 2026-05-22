@@ -8,5 +8,6 @@ public sealed record ApprovalListFilters(
     Guid? SourceId = null,
     int? ChapterNumber = null,
     int? VerseNumber = null,
+    int? Version = null,
     Guid? AnnotationId = null,
     string? DecisionByLogtoUserId = null);

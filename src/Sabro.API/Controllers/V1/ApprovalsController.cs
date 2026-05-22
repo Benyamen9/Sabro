@@ -69,6 +69,7 @@ public sealed class ApprovalsController : ApiControllerBase
         [FromQuery] Guid? sourceId = null,
         [FromQuery] int? chapter = null,
         [FromQuery] int? verse = null,
+        [FromQuery] int? version = null,
         [FromQuery] Guid? annotationId = null,
         [FromQuery] string? decidedBy = null,
         [FromQuery] int page = 1,
@@ -81,6 +82,7 @@ public sealed class ApprovalsController : ApiControllerBase
             SourceId: sourceId,
             ChapterNumber: chapter,
             VerseNumber: verse,
+            Version: version,
             AnnotationId: annotationId,
             DecisionByLogtoUserId: decidedBy);
         var result = await service.ListAsync(filters, page, pageSize, cancellationToken);

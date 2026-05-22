@@ -216,6 +216,38 @@ public class ApprovalServiceTests
     }
 
     [Fact]
+    public async Task List_FiltersByVersion()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var sourceId = Guid.NewGuid();
+
+        await using (var seed = postgres.CreateReviewsContext())
+        {
+            var service = NewService(seed);
+            await service.CreateAsync(SegmentRequest(sourceId, 1, 1, 1, ApprovalStatus.Approved), owner, ct);
+            await service.CreateAsync(SegmentRequest(sourceId, 1, 1, 2, ApprovalStatus.Rejected), owner, ct);
+            await service.CreateAsync(SegmentRequest(sourceId, 1, 1, 3, ApprovalStatus.Approved), owner, ct);
+        }
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var queryService = NewService(ctx);
+
+        var result = await queryService.ListAsync(
+            new ApprovalListFilters(
+                SourceId: sourceId,
+                Version: 2),
+            page: 1,
+            pageSize: 20,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Total.Should().Be(1);
+        result.Value.Items.Single().Version.Should().Be(2);
+        result.Value.Items.Single().Status.Should().Be(ApprovalStatus.Rejected);
+    }
+
+    [Fact]
     public async Task GetEffective_OnEmptyChapter_ReturnsNoApprovals()
     {
         var ct = TestContext.Current.CancellationToken;

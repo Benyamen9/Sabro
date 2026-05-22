@@ -209,6 +209,12 @@ internal sealed class ApprovalService : IApprovalService
             query = query.Where(a => a.VerseNumber == verseNumber);
         }
 
+        if (filters.Version is not null)
+        {
+            var version = filters.Version.Value;
+            query = query.Where(a => a.Version == version);
+        }
+
         if (filters.AnnotationId is not null)
         {
             var annotationId = filters.AnnotationId.Value;

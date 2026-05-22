@@ -204,6 +204,40 @@ public class ApprovalsControllerTests : IDisposable
         page.Items.Single().TargetType.Should().Be(ApprovalTargetType.Chapter);
     }
 
+    [Fact]
+    public async Task List_FiltersByVersion()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var sourceId = Guid.NewGuid();
+
+        await SendAsync(
+            HttpMethod.Post,
+            "/api/v1/approvals",
+            owner,
+            new CreateApprovalRequest(ApprovalTargetType.Segment, sourceId, 1, 1, 1, null, ApprovalStatus.Approved),
+            ct);
+        await SendAsync(
+            HttpMethod.Post,
+            "/api/v1/approvals",
+            owner,
+            new CreateApprovalRequest(ApprovalTargetType.Segment, sourceId, 1, 1, 2, null, ApprovalStatus.Rejected),
+            ct);
+
+        var response = await SendAsync(
+            HttpMethod.Get,
+            $"/api/v1/approvals?sourceId={sourceId}&version=2",
+            "any-user",
+            body: null,
+            ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var page = await response.Content.ReadFromJsonAsync<Sabro.Shared.Pagination.PagedResult<ApprovalDto>>(SabroApiFactory.JsonOptions, ct);
+        page!.Total.Should().Be(1);
+        page.Items.Single().Version.Should().Be(2);
+        page.Items.Single().Status.Should().Be(ApprovalStatus.Rejected);
+    }
+
     public void Dispose()
     {
         client.Dispose();
