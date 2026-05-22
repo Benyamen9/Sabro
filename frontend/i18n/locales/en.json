@@ -20,5 +20,43 @@
   },
   "language": {
     "comingSoon": "Coming soon."
+  },
+  "lexicon": {
+    "title": "Lexicon",
+    "searchPlaceholder": "Search words, roots, transliterations…",
+    "empty": "No entries yet.",
+    "noMatches": "No entries match your search.",
+    "signInRequired": "Sign in to browse the lexicon.",
+    "loadFailed": "Could not load lexicon entries.",
+    "fields": {
+      "syriacUnvocalized": "Syriac",
+      "syriacVocalized": "Syriac (vocalized)",
+      "sblTransliteration": "Transliteration (SBL)",
+      "transliterationVariants": "Accepted variants",
+      "grammaticalCategory": "Category",
+      "morphology": "Morphology",
+      "meanings": "Meanings",
+      "rootForm": "Root"
+    },
+    "notFound": "Entry not found.",
+    "back": "Back to lexicon"
+  },
+  "category": {
+    "Noun": "Noun",
+    "Verb": "Verb",
+    "Adjective": "Adjective",
+    "Adverb": "Adverb",
+    "Pronoun": "Pronoun",
+    "Preposition": "Preposition",
+    "Conjunction": "Conjunction",
+    "Particle": "Particle",
+    "Numeral": "Numeral",
+    "Interjection": "Interjection",
+    "Other": "Other"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {total}"
   }
 }

@@ -20,5 +20,43 @@
   },
   "language": {
     "comingSoon": "Binnenkort beschikbaar."
+  },
+  "lexicon": {
+    "title": "Lexicon",
+    "searchPlaceholder": "Zoek woorden, wortels, transliteraties…",
+    "empty": "Nog geen vermeldingen.",
+    "noMatches": "Geen vermeldingen komen overeen met uw zoekopdracht.",
+    "signInRequired": "Log in om het lexicon te raadplegen.",
+    "loadFailed": "Kan de lexicon-vermeldingen niet laden.",
+    "fields": {
+      "syriacUnvocalized": "Syrisch",
+      "syriacVocalized": "Syrisch (gevocaliseerd)",
+      "sblTransliteration": "Transliteratie (SBL)",
+      "transliterationVariants": "Geaccepteerde varianten",
+      "grammaticalCategory": "Categorie",
+      "morphology": "Morfologie",
+      "meanings": "Betekenissen",
+      "rootForm": "Wortel"
+    },
+    "notFound": "Vermelding niet gevonden.",
+    "back": "Terug naar lexicon"
+  },
+  "category": {
+    "Noun": "Zelfstandig naamwoord",
+    "Verb": "Werkwoord",
+    "Adjective": "Bijvoeglijk naamwoord",
+    "Adverb": "Bijwoord",
+    "Pronoun": "Voornaamwoord",
+    "Preposition": "Voorzetsel",
+    "Conjunction": "Voegwoord",
+    "Particle": "Partikel",
+    "Numeral": "Telwoord",
+    "Interjection": "Tussenwerpsel",
+    "Other": "Andere"
+  },
+  "pagination": {
+    "previous": "Vorige",
+    "next": "Volgende",
+    "pageOf": "Pagina {page} van {total}"
   }
 }
