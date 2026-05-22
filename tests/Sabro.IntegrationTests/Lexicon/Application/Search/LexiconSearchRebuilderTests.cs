@@ -233,6 +233,7 @@ public class LexiconSearchRebuilderTests
         var searchIndex = new MeilisearchSearchIndex<LexiconEntrySearchDocument>(
             client,
             descriptor,
+            new MeilisearchOptions(),
             NullLogger<MeilisearchSearchIndex<LexiconEntrySearchDocument>>.Instance);
         var ctx = postgres.CreateLexiconContext();
         return new LexiconSearchRebuilder(

@@ -22,15 +22,18 @@ internal sealed class MeilisearchSearchIndex<TDocument> : ISearchIndex<TDocument
 {
     private readonly MeilisearchClient client;
     private readonly ISearchIndexDescriptor<TDocument> descriptor;
+    private readonly MeilisearchOptions options;
     private readonly ILogger<MeilisearchSearchIndex<TDocument>> logger;
 
     public MeilisearchSearchIndex(
         MeilisearchClient client,
         ISearchIndexDescriptor<TDocument> descriptor,
+        MeilisearchOptions options,
         ILogger<MeilisearchSearchIndex<TDocument>> logger)
     {
         this.client = client;
         this.descriptor = descriptor;
+        this.options = options;
         this.logger = logger;
     }
 
@@ -52,7 +55,12 @@ internal sealed class MeilisearchSearchIndex<TDocument> : ISearchIndex<TDocument
         try
         {
             var index = client.Index(descriptor.IndexName);
-            await index.AddDocumentsAsync(batch, descriptor.PrimaryKey, cancellationToken).ConfigureAwait(false);
+            var task = await index.AddDocumentsAsync(batch, descriptor.PrimaryKey, cancellationToken).ConfigureAwait(false);
+
+            if (options.WaitForTasks)
+            {
+                await client.WaitForTaskAsync(task.TaskUid, cancellationToken: cancellationToken).ConfigureAwait(false);
+            }
 
             logger.LogDebug(
                 "Search upsert dispatched. Index={IndexName} DocumentType={DocumentType} Count={Count}",
@@ -80,7 +88,12 @@ internal sealed class MeilisearchSearchIndex<TDocument> : ISearchIndex<TDocument
         try
         {
             var index = client.Index(descriptor.IndexName);
-            await index.DeleteOneDocumentAsync(documentId, cancellationToken).ConfigureAwait(false);
+            var task = await index.DeleteOneDocumentAsync(documentId, cancellationToken).ConfigureAwait(false);
+
+            if (options.WaitForTasks)
+            {
+                await client.WaitForTaskAsync(task.TaskUid, cancellationToken: cancellationToken).ConfigureAwait(false);
+            }
 
             logger.LogDebug(
                 "Search delete dispatched. Index={IndexName} DocumentId={DocumentId}",

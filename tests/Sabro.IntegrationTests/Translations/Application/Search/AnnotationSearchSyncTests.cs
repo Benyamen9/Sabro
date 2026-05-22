@@ -202,7 +202,7 @@ public class AnnotationSearchSyncTests
 
     private static MeilisearchSearchIndex<AnnotationSearchDocument> NewSearchIndex(
         MeilisearchClient client, AnnotationIndexDescriptor descriptor) =>
-        new(client, descriptor, NullLogger<MeilisearchSearchIndex<AnnotationSearchDocument>>.Instance);
+        new(client, descriptor, new MeilisearchOptions(), NullLogger<MeilisearchSearchIndex<AnnotationSearchDocument>>.Instance);
 
     private static AnnotationService NewService(
         TranslationsDbContext ctx, ISearchIndex<AnnotationSearchDocument> searchIndex) =>

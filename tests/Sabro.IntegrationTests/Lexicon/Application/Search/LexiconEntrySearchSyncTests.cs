@@ -99,6 +99,34 @@ public class LexiconEntrySearchSyncTests
     }
 
     [Fact]
+    public async Task UpsertAsync_WithWaitForTasks_HasReadAfterWriteConsistency()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var client = meili.CreateClient();
+        var descriptor = new LexiconEntryIndexDescriptor();
+        await EnsureIndexAsync(client, descriptor, ct);
+
+        var waitingIndex = new MeilisearchSearchIndex<LexiconEntrySearchDocument>(
+            client,
+            descriptor,
+            new MeilisearchOptions { WaitForTasks = true },
+            NullLogger<MeilisearchSearchIndex<LexiconEntrySearchDocument>>.Instance);
+        var entry = LexiconEntry.Create(
+            syriacUnvocalized: "ܨܒܐ",
+            sblTransliteration: $"sbl-{Guid.NewGuid():N}",
+            grammaticalCategory: GrammaticalCategory.Verb).Value!;
+        var doc = LexiconEntryDocumentMapper.Map(entry, rootForm: null);
+
+        await waitingIndex.UpsertAsync(doc, ct);
+
+        // No polling: WaitForTasks=true guarantees the index has applied the write before UpsertAsync returns.
+        var found = await client.Index(descriptor.IndexName)
+            .GetDocumentAsync<LexiconEntrySearchDocument>(entry.Id.ToString("D"), cancellationToken: ct);
+        found.Should().NotBeNull();
+        found.Id.Should().Be(entry.Id.ToString("D"));
+    }
+
+    [Fact]
     public async Task UpsertAsync_WhenMeilisearchUnreachable_DoesNotThrow()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -115,7 +143,7 @@ public class LexiconEntrySearchSyncTests
 
     private static MeilisearchSearchIndex<LexiconEntrySearchDocument> NewSearchIndex(
         MeilisearchClient client, LexiconEntryIndexDescriptor descriptor) =>
-        new(client, descriptor, NullLogger<MeilisearchSearchIndex<LexiconEntrySearchDocument>>.Instance);
+        new(client, descriptor, new MeilisearchOptions(), NullLogger<MeilisearchSearchIndex<LexiconEntrySearchDocument>>.Instance);
 
     private static async Task EnsureIndexAsync(
         MeilisearchClient client, LexiconEntryIndexDescriptor descriptor, CancellationToken ct)

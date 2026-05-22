@@ -28,9 +28,11 @@ public static class MeilisearchServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        services.AddSingleton(sp => sp.GetRequiredService<IOptions<MeilisearchOptions>>().Value);
+
         services.AddSingleton(sp =>
         {
-            var options = sp.GetRequiredService<IOptions<MeilisearchOptions>>().Value;
+            var options = sp.GetRequiredService<MeilisearchOptions>();
             var apiKey = string.IsNullOrWhiteSpace(options.MasterKey) ? null : options.MasterKey;
             var http = new HttpClient
             {

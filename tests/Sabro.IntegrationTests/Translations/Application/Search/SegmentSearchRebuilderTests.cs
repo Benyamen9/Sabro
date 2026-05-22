@@ -155,6 +155,7 @@ public class SegmentSearchRebuilderTests
         var searchIndex = new MeilisearchSearchIndex<SegmentSearchDocument>(
             client,
             descriptor,
+            new MeilisearchOptions(),
             NullLogger<MeilisearchSearchIndex<SegmentSearchDocument>>.Instance);
         var ctx = postgres.CreateContext();
         return new SegmentSearchRebuilder(

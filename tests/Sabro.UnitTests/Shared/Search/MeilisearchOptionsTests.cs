@@ -86,6 +86,12 @@ public class MeilisearchOptionsTests
         errors.Should().BeEmpty();
     }
 
+    [Fact]
+    public void WaitForTasks_DefaultsToFalse()
+    {
+        new MeilisearchOptions().WaitForTasks.Should().BeFalse();
+    }
+
     private static List<ValidationResult> Validate(MeilisearchOptions options)
     {
         var results = new List<ValidationResult>();

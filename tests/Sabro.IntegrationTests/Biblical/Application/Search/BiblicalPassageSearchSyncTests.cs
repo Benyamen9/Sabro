@@ -71,7 +71,7 @@ public class BiblicalPassageSearchSyncTests
 
     private static MeilisearchSearchIndex<BiblicalPassageSearchDocument> NewSearchIndex(
         MeilisearchClient client, BiblicalPassageIndexDescriptor descriptor) =>
-        new(client, descriptor, NullLogger<MeilisearchSearchIndex<BiblicalPassageSearchDocument>>.Instance);
+        new(client, descriptor, new MeilisearchOptions(), NullLogger<MeilisearchSearchIndex<BiblicalPassageSearchDocument>>.Instance);
 
     private static BiblicalPassageService NewService(
         BiblicalDbContext ctx, ISearchIndex<BiblicalPassageSearchDocument> searchIndex) =>

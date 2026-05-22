@@ -98,7 +98,7 @@ public class SegmentSearchSyncTests
 
     private static MeilisearchSearchIndex<SegmentSearchDocument> NewSearchIndex(
         MeilisearchClient client, SegmentIndexDescriptor descriptor) =>
-        new(client, descriptor, NullLogger<MeilisearchSearchIndex<SegmentSearchDocument>>.Instance);
+        new(client, descriptor, new MeilisearchOptions(), NullLogger<MeilisearchSearchIndex<SegmentSearchDocument>>.Instance);
 
     private static SegmentService NewService(
         TranslationsDbContext ctx, ISearchIndex<SegmentSearchDocument> searchIndex) =>

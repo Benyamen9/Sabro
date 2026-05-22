@@ -153,6 +153,7 @@ public class BiblicalPassageSearchRebuilderTests
         var searchIndex = new MeilisearchSearchIndex<BiblicalPassageSearchDocument>(
             client,
             descriptor,
+            new MeilisearchOptions(),
             NullLogger<MeilisearchSearchIndex<BiblicalPassageSearchDocument>>.Instance);
         var ctx = postgres.CreateBiblicalContext();
         return new BiblicalPassageSearchRebuilder(

@@ -179,6 +179,7 @@ public class AnnotationSearchRebuilderTests
         var searchIndex = new MeilisearchSearchIndex<AnnotationSearchDocument>(
             client,
             descriptor,
+            new MeilisearchOptions(),
             NullLogger<MeilisearchSearchIndex<AnnotationSearchDocument>>.Instance);
         var ctx = postgres.CreateContext();
         return new AnnotationSearchRebuilder(

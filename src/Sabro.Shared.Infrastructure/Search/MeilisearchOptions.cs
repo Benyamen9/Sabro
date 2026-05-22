@@ -29,4 +29,15 @@ public sealed class MeilisearchOptions
     /// </summary>
     [Range(typeof(TimeSpan), "00:00:00.500", "00:01:00")]
     public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
+    /// When <c>true</c>, write-side calls (<c>UpsertAsync</c>, <c>UpsertManyAsync</c>,
+    /// <c>DeleteAsync</c>) await the underlying Meilisearch task before returning,
+    /// giving read-after-write consistency at the cost of a few hundred ms per write.
+    /// Defaults to <c>false</c> — fire-and-forget is the right trade-off for normal
+    /// user writes since Meili is best-effort and Postgres is the source of truth.
+    /// Enable for environments that want deterministic search visibility after a write
+    /// (e.g. integration tests, single-user admin tooling).
+    /// </summary>
+    public bool WaitForTasks { get; set; }
 }
