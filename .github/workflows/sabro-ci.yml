@@ -69,7 +69,12 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install
-        run: npm ci
+        # --legacy-peer-deps works around a known npm 10.x bug where optional
+        # peerDependencies (e.g. @bomb.sh/tab declaring cac@^6.7.14 and
+        # commander@^13.1.0 as optional peers) are incorrectly required by
+        # `npm ci`. npm 11+ handles this correctly, but Node 22.22.x on the
+        # runner ships with npm 10.
+        run: npm ci --legacy-peer-deps
 
       - name: Lint
         run: npm run lint
