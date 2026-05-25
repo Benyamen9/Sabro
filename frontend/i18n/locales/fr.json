@@ -18,6 +18,12 @@
       "madnhaya": "Madnhaya"
     }
   },
+  "auth": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "notConfigured": "Authentification non configurée",
+    "signedInAs": "Connecté en tant que {name}"
+  },
   "translations": {
     "title": "Traductions",
     "empty": "Aucune source pour le moment.",

@@ -24,6 +24,7 @@ const navItems = computed(() => [
         <div class="app-header__switchers">
           <ScriptVariantSwitcher />
           <LanguageSwitcher />
+          <UserMenu />
         </div>
       </div>
     </header>

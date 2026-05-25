@@ -18,6 +18,12 @@
       "madnhaya": "Madnhaya"
     }
   },
+  "auth": {
+    "signIn": "Aanmelden",
+    "signOut": "Afmelden",
+    "notConfigured": "Authenticatie niet geconfigureerd",
+    "signedInAs": "Aangemeld als {name}"
+  },
   "translations": {
     "title": "Vertalingen",
     "empty": "Nog geen bronnen.",

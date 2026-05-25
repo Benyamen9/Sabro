@@ -18,6 +18,12 @@
       "madnhaya": "Madnhaya"
     }
   },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "notConfigured": "Auth not configured",
+    "signedInAs": "Signed in as {name}"
+  },
   "translations": {
     "title": "Translations",
     "empty": "No sources yet.",

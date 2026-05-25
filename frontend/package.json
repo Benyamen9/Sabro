@@ -18,6 +18,7 @@
     "generate:api-types": "openapi-typescript ./openapi/Sabro.API.json -o ./types/api.generated.ts"
   },
   "dependencies": {
+    "@logto/nuxt": "^1.2.10",
     "@nuxtjs/i18n": "^9.1.0",
     "nuxt": "^3.14.0",
     "vue": "^3.5.0",

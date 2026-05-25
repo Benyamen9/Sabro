@@ -12,6 +12,11 @@ test.describe('landing page', () => {
     await expect(page.getByRole('combobox', { name: 'Syriac script' })).toBeVisible()
     await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible()
 
+    // With no Logto config set in the test env, the UserMenu degrades to a
+    // "Auth not configured" notice rather than rendering a broken sign-in
+    // button.
+    await expect(page.getByText('Auth not configured')).toBeVisible()
+
     const syriac = page.locator('span[lang="syc"]').first()
     await expect(syriac).toBeVisible()
     await expect(syriac).toHaveAttribute('dir', 'rtl')
