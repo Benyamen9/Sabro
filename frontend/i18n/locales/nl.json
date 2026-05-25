@@ -18,8 +18,30 @@
       "madnhaya": "Madnhaya"
     }
   },
-  "language": {
-    "comingSoon": "Binnenkort beschikbaar."
+  "translations": {
+    "title": "Vertalingen",
+    "empty": "Nog geen bronnen.",
+    "signInRequired": "Log in om de vertalingen te raadplegen.",
+    "loadFailed": "Kan de vertalingen niet laden.",
+    "notFound": "Bron niet gevonden.",
+    "back": "Terug naar vertalingen",
+    "searchPlaceholder": "Zoek segmenten in deze bron…",
+    "fields": {
+      "title": "Titel",
+      "originalLanguage": "Oorspronkelijke taal",
+      "description": "Beschrijving",
+      "author": "Auteur",
+      "chapter": "Hoofdstuk",
+      "verse": "Vers",
+      "version": "Versie"
+    },
+    "segments": {
+      "heading": "Segmenten",
+      "empty": "Deze bron heeft nog geen segmenten.",
+      "noMatches": "Geen segmenten komen overeen met uw zoekopdracht.",
+      "loadFailed": "Kan de segmenten niet laden.",
+      "reference": "{chapter}:{verse}"
+    }
   },
   "lexicon": {
     "title": "Lexicon",

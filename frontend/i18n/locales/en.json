@@ -18,8 +18,30 @@
       "madnhaya": "Madnhaya"
     }
   },
-  "language": {
-    "comingSoon": "Coming soon."
+  "translations": {
+    "title": "Translations",
+    "empty": "No sources yet.",
+    "signInRequired": "Sign in to browse the translations.",
+    "loadFailed": "Could not load translations.",
+    "notFound": "Source not found.",
+    "back": "Back to translations",
+    "searchPlaceholder": "Search segments in this source…",
+    "fields": {
+      "title": "Title",
+      "originalLanguage": "Original language",
+      "description": "Description",
+      "author": "Author",
+      "chapter": "Chapter",
+      "verse": "Verse",
+      "version": "Version"
+    },
+    "segments": {
+      "heading": "Segments",
+      "empty": "This source has no segments yet.",
+      "noMatches": "No segments match your search.",
+      "loadFailed": "Could not load segments.",
+      "reference": "{chapter}:{verse}"
+    }
   },
   "lexicon": {
     "title": "Lexicon",

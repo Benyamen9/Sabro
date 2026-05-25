@@ -34,3 +34,14 @@ test.describe('landing page', () => {
     await expect(syriac).toHaveCSS('font-family', /Serto Jerusalem/)
   })
 })
+
+test.describe('translations page', () => {
+  test('renders the translations heading and gracefully reports API failure', async ({ page }) => {
+    await page.goto('/translations')
+
+    await expect(page.getByRole('heading', { name: 'Translations' })).toBeVisible()
+    // No backend is running during e2e, so listSources fails — the page must
+    // surface the i18n failure message instead of crashing.
+    await expect(page.getByText('Could not load translations.')).toBeVisible()
+  })
+})
