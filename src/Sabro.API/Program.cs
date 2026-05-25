@@ -50,7 +50,14 @@ try
         options.SubstituteApiVersionInUrl = true;
     });
 
-    builder.Services.AddOpenApi("v1");
+    builder.Services.AddOpenApi("v1", options =>
+    {
+        // Force enum schemas to be emitted as JSON strings with their member
+        // names, matching the runtime JsonStringEnumConverter configured on the
+        // MVC pipeline. Without this Microsoft.AspNetCore.OpenApi defaults to
+        // the enum's underlying numeric type.
+        options.AddSchemaTransformer<StringEnumSchemaTransformer>();
+    });
 
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

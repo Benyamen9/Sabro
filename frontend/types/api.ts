@@ -1,9 +1,30 @@
 /**
- * Hand-written mirror of the backend DTOs in src/Modules/Sabro.Lexicon/Application,
- * src/Modules/Sabro.Translations/Application, and src/Sabro.Shared/Pagination.
- * Replace with openapi-typescript-generated types once the OpenAPI spec is
- * exposed at a stable URL.
+ * Public API types for the frontend. Most DTOs are re-exported from
+ * `api.generated.ts`, which is produced by `npm run generate:api-types`
+ * from the OpenAPI spec emitted by the backend build
+ * (`frontend/openapi/Sabro.API.json`).
+ *
+ * Don't edit `api.generated.ts` directly — change the backend DTO, rebuild
+ * the API, and regenerate. Two small overrides live here:
+ *
+ *  1. `PagedResult<T>` — the OpenAPI spec emits one schema per generic
+ *     instantiation (`PagedResultOfSourceDto`, etc.). We keep a single
+ *     generic shape so consumers can write `PagedResult<SourceDto>`
+ *     instead of importing instantiation-specific names. Also narrows
+ *     `total/page/pageSize` from `number | string` (defensive int32) to
+ *     `number` since the API only sends numbers.
+ *
+ *  2. `GrammaticalCategory` and `Testament` — the backend's
+ *     StringEnumSchemaTransformer correctly converts most enum schemas to
+ *     string literal unions, but these two are emitted as `integer` for
+ *     reasons that aren't worth fighting. Both serialize as their member
+ *     name at runtime via the global JsonStringEnumConverter, so we
+ *     hand-override them here.
  */
+
+import type { components } from './api.generated'
+
+type Schemas = components['schemas']
 
 export interface PagedResult<T> {
   items: T[]
@@ -25,87 +46,46 @@ export type GrammaticalCategory =
   | 'Interjection'
   | 'Other'
 
-export interface LexiconMeaningDto {
-  language: string
-  text: string
-}
+export type Testament = 'Old' | 'New'
 
-export interface LexiconEntryDto {
-  id: string
-  syriacUnvocalized: string
-  syriacVocalized: string | null
-  rootId: string | null
-  sblTransliteration: string
-  transliterationVariants: string[]
+// Enums that come through correctly from the generated schemas.
+export type ApprovalStatus = Schemas['ApprovalStatus']
+export type ApprovalTargetType = Schemas['ApprovalTargetType']
+export type Role = Schemas['Role']
+export type ScriptVariant = Schemas['ScriptVariant']
+export type SuggestedEditStatus = Schemas['SuggestedEditStatus']
+export type SuggestedEditTargetType = Schemas['SuggestedEditTargetType']
+
+// Lexicon — generated `grammaticalCategory: number` overridden to the
+// string union above so callers get useful autocomplete.
+export type LexiconMeaningDto = Schemas['LexiconMeaningDto']
+export type LexiconEntryDto = Omit<Schemas['LexiconEntryDto'], 'grammaticalCategory'> & {
   grammaticalCategory: GrammaticalCategory
-  morphology: string | null
-  meanings: LexiconMeaningDto[]
-  createdAt: string
-  updatedAt: string
+}
+export type LexiconSearchHitDto = Schemas['LexiconSearchHitDto']
+export type LexiconRootDto = Schemas['LexiconRootDto']
+
+// Translations.
+export type AuthorDto = Schemas['AuthorDto']
+export type SourceDto = Schemas['SourceDto']
+export type SegmentDto = Schemas['SegmentDto']
+export type SegmentSearchHitDto = Schemas['SegmentSearchHitDto']
+export type AnnotationDto = Schemas['AnnotationDto']
+export type AnnotationSearchHitDto = Schemas['AnnotationSearchHitDto']
+
+// Biblical — generated `testament: number` overridden to the string union.
+export type BiblicalBookDto = Omit<Schemas['BiblicalBookDto'], 'testament'> & {
+  testament: Testament
+}
+export type BiblicalPassageDto = Schemas['BiblicalPassageDto']
+export type BiblicalPassageSearchHitDto = Omit<Schemas['BiblicalPassageSearchHitDto'], 'testament'> & {
+  testament: Testament
 }
 
-/**
- * Lexicon search hit — denormalized projection used by GET /lexicon-entries/search.
- * Differences from LexiconEntryDto: rootForm is denormalized in, meanings are
- * split into flat texts + languages arrays, grammaticalCategory is the raw
- * enum string (server serializes via JsonStringEnumConverter).
- */
-export interface LexiconSearchHitDto {
-  id: string
-  syriacUnvocalized: string
-  syriacVocalized: string | null
-  sblTransliteration: string
-  transliterationVariants: string[]
-  rootId: string | null
-  rootForm: string | null
-  grammaticalCategory: string
-  morphology: string | null
-  meaningTexts: string[]
-  meaningLanguages: string[]
-}
+// Reviews.
+export type ApprovalDto = Schemas['ApprovalDto']
+export type EffectiveChapterApprovalsDto = Schemas['EffectiveChapterApprovalsDto']
+export type SuggestedEditDto = Schemas['SuggestedEditDto']
 
-export interface AuthorDto {
-  id: string
-  name: string
-  syriacName: string | null
-  title: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface SourceDto {
-  id: string
-  authorId: string
-  title: string
-  originalLanguageCode: string | null
-  description: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface SegmentDto {
-  id: string
-  sourceId: string
-  chapterNumber: number
-  verseNumber: number
-  textVersionId: string
-  content: string
-  version: number
-  previousVersionId: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-/**
- * Segment search hit — flat projection used by GET /segments/search.
- * Reflects only the latest indexed version of each segment.
- */
-export interface SegmentSearchHitDto {
-  id: string
-  sourceId: string
-  chapterNumber: number
-  verseNumber: number
-  textVersionId: string
-  content: string
-  version: number
-}
+// Identity.
+export type UserProfileDto = Schemas['UserProfileDto']

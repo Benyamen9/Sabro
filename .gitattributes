@@ -1,0 +1,4 @@
+# Force LF line endings on generated artifacts so CI's drift-detection diff
+# stays stable across Windows (dev) and Linux (CI) checkouts.
+frontend/openapi/Sabro.API.json text eol=lf
+frontend/types/api.generated.ts text eol=lf

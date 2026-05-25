@@ -3,11 +3,18 @@
   <PropertyGroup>
     <RootNamespace>Sabro.API</RootNamespace>
     <UserSecretsId>sabro-api-dev</UserSecretsId>
+    <!-- Emit OpenAPI document at build time. Microsoft.Extensions.ApiDescription.Server
+         hooks `dotnet getdocument` into the build target and writes the JSON to the
+         configured directory. We target a stable repo path so the frontend's
+         openapi-typescript script can consume it without needing to start the API. -->
+    <OpenApiDocumentsDirectory>$(MSBuildThisFileDirectory)..\..\frontend\openapi</OpenApiDocumentsDirectory>
+    <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" PrivateAssets="all" />
     <PackageReference Include="Asp.Versioning.Mvc" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
     <PackageReference Include="Microsoft.OpenApi" />
