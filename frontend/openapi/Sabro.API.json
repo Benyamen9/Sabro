@@ -4623,7 +4623,20 @@
         }
       },
       "GrammaticalCategory": {
-        "type": "integer"
+        "enum": [
+          "Noun",
+          "Verb",
+          "Adjective",
+          "Adverb",
+          "Pronoun",
+          "Preposition",
+          "Conjunction",
+          "Particle",
+          "Numeral",
+          "Interjection",
+          "Other"
+        ],
+        "type": "string"
       },
       "LexiconEntryDto": {
         "required": [
@@ -5729,7 +5742,11 @@
         "type": "string"
       },
       "Testament": {
-        "type": "integer"
+        "enum": [
+          "Old",
+          "New"
+        ],
+        "type": "string"
       },
       "UpdateUserProfileRequest": {
         "required": [

@@ -19,11 +19,14 @@ internal sealed class StringEnumSchemaTransformer : IOpenApiSchemaTransformer
         OpenApiSchemaTransformerContext context,
         CancellationToken cancellationToken)
     {
-        if (context.JsonTypeInfo.Type.IsEnum)
+        var type = context.JsonTypeInfo.Type;
+        var enumType = type.IsEnum ? type : Nullable.GetUnderlyingType(type);
+
+        if (enumType is { IsEnum: true })
         {
             schema.Type = JsonSchemaType.String;
             schema.Format = null;
-            schema.Enum = Enum.GetNames(context.JsonTypeInfo.Type)
+            schema.Enum = Enum.GetNames(enumType)
                 .Select(name => (JsonNode)JsonValue.Create(name)!)
                 .ToList();
         }

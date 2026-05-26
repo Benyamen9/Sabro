@@ -2566,7 +2566,8 @@ export interface components {
             /** Format: int32 */
             verseNumber: number | string;
         };
-        GrammaticalCategory: number;
+        /** @enum {string} */
+        GrammaticalCategory: "Noun" | "Verb" | "Adjective" | "Adverb" | "Pronoun" | "Preposition" | "Conjunction" | "Particle" | "Numeral" | "Interjection" | "Other";
         LexiconEntryDto: {
             /** Format: uuid */
             id: string;
@@ -2830,7 +2831,8 @@ export interface components {
         SuggestedEditStatus: "Pending" | "Accepted" | "Rejected";
         /** @enum {string} */
         SuggestedEditTargetType: "Segment" | "Annotation";
-        Testament: number;
+        /** @enum {string} */
+        Testament: "Old" | "New";
         UpdateUserProfileRequest: {
             preferredLanguage: string;
             preferredScriptVariant: components["schemas"]["ScriptVariant"];
