@@ -7,6 +7,9 @@ export default defineNuxtConfig({
     strict: true,
   },
   i18n: {
+    bundle: {
+      optimizeTranslationDirective: false,
+    },
     defaultLocale: 'en',
     strategy: 'no_prefix',
     locales: [
