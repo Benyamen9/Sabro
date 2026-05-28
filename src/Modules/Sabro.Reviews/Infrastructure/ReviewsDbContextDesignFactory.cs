@@ -13,7 +13,7 @@ public sealed class ReviewsDbContextDesignFactory : IDesignTimeDbContextFactory<
     public ReviewsDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder<ReviewsDbContext>()
-            .UseNpgsql("Host=localhost;Port=5432;Database=sabro_dev;Username=sabro;Password=sabro")
+            .UseNpgsql("Host=localhost;Port=5433;Database=sabro_dev;Username=sabro;Password=sabro")
             .Options;
 
         return new ReviewsDbContext(options);

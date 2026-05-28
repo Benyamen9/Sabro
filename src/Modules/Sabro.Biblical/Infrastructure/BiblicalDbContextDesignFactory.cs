@@ -13,7 +13,7 @@ public sealed class BiblicalDbContextDesignFactory : IDesignTimeDbContextFactory
     public BiblicalDbContext CreateDbContext(string[] args)
     {
         var options = new DbContextOptionsBuilder<BiblicalDbContext>()
-            .UseNpgsql("Host=localhost;Port=5432;Database=sabro_dev;Username=sabro;Password=sabro")
+            .UseNpgsql("Host=localhost;Port=5433;Database=sabro_dev;Username=sabro;Password=sabro")
             .Options;
 
         return new BiblicalDbContext(options);
