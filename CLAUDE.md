@@ -229,6 +229,24 @@ Stack Prometheus/Grafana deferred — current solution is sufficient for the pro
 
 ---
 
+## Hosting & Deployment
+
+Single-VPS hosting at MVP — the modular-monolith philosophy extends to the deployment topology.
+
+**Target stack:**
+- **VPS**: Hetzner Cloud **CPX32** (4 vCPU AMD shared, 8 GB RAM, 160 GB NVMe, 20 TB traffic). All services co-located: Postgres, Meilisearch, Logto, Seq, the ASP.NET API, and the Nuxt frontend. Estimated 3–5 GB RAM in use, leaving 3–5 GB margin.
+- **Off-site storage**: Hetzner **Storage Box BX11** (1 TB) for pgBackRest backups and `wwwroot/media/`. Free internal traffic with the VPS; supports SFTP/rsync/Borg/restic.
+- **Reverse proxy**: **Caddy** in frontal — automatic Let's Encrypt HTTPS, one `reverse_proxy` block per domain. Buffers the brief API restart window during deploys (replaces blue-green at this scale).
+- **Container runtime**: `docker compose` on the VPS. Compose files in the repo (`docker-compose.prod.yml`); production secrets in a `.env` next to it on the VPS, never committed.
+
+**Mutualisation with other ecosystem apps** (Melthā, future small sites) on the same VPS: each app runs as its own container behind Caddy on a distinct port, has its **own Postgres database** with a distinct user, and registers as a separate OIDC application in Logto. Sub-accounts on the Storage Box isolate backups per app. The 8 GB RAM ceiling is the planning constant — sites that would push past it move to their own VM.
+
+**Planned split point (not at MVP):** when ecosystem write load grows or Sabro redeploys become disruptive to other apps, **move Logto to its own small VM first** (CPX11 class). Logto is the central IDP for the entire ecosystem and must not restart when Sabro redeploys.
+
+**Rejected at this scale:** PaaS layers (Coolify / Dokku / CapRover) — added maintenance surface and resident overhead with no compensating benefit on a single VPS. Kubernetes / k3s — already explicitly forbidden under "What Sabro Is Not".
+
+---
+
 ## Backups (pgBackRest)
 
 Sabro's translations are original work and irreplaceable — backup discipline is non-negotiable.
@@ -238,7 +256,7 @@ Sabro's translations are original work and irreplaceable — backup discipline i
 - **Continuous WAL archiving** for point-in-time recovery
 - **Retention**: 30 daily backups + 12 monthly backups
 - **Weekly automated restore test** to verify backup integrity
-- **3-2-1 rule**: 3 copies, 2 supports, 1 off-site (off-site location chosen with hosting decision)
+- **3-2-1 rule**: 3 copies, 2 supports, 1 off-site — off-site is the **Hetzner Storage Box BX11**, driven by pgBackRest over SFTP (see Hosting & Deployment)
 
 **Also backed up:**
 - `wwwroot/media/` (bibliography images) — synced separately to off-site storage
@@ -288,7 +306,24 @@ Coverage drop blocks CI on **Domain and Application** layers only — other laye
 - `pr-validation.yml` — Conventional Commits check, lint, format
 
 ### CD
-Deferred — depends on hosting decision. CI alone is in place from day one.
+GitHub Actions builds Docker images for the API and frontend, pushes them to **GitHub Container Registry** (`ghcr.io`), then SSHes to the production VPS to pull and run `docker compose up -d`.
+
+**Pipeline shape:**
+1. CI (build, tests, coverage) gates the deploy job — a red CI blocks deploy.
+2. Build multi-stage Dockerfiles for `Sabro.API` (.NET 10) and the Nuxt frontend. Tag images with the commit SHA.
+3. Push to `ghcr.io/...` (free for private repos, native `GITHUB_TOKEN` auth, no Docker Hub rate limits).
+4. SSH to the VPS, `docker compose pull`, run `docker compose run --rm api dotnet ef database update` (one-off migration container) **before** swapping app containers, then `docker compose up -d`.
+5. Health-check `/health` post-deploy. Rollback = retag the previous image SHA and `docker compose up -d` (~30 s).
+
+**Migrations rule — forward-compatible only.** No `DROP COLUMN` / rename / type-narrowing in a single deploy. Destructive changes go through an **expand → migrate → contract** sequence over multiple deploys. There is no blue-green at MVP scale — Caddy in frontal buffers the ~2–3 s API restart window.
+
+**Build always in CI, never on the VPS** — the shared vCPU is too constrained to run `dotnet publish` while serving traffic.
+
+**Meilisearch is NOT rebuilt on deploy.** Index rebuilds and `republish-annotation-approvals` stay as operator-initiated actions via the admin endpoints (see the Search section). Putting them in the pipeline would wipe search during every deploy.
+
+**Secrets:** GitHub Actions secrets for `SSH_PRIVATE_KEY`, `VPS_HOST`, GHCR token (often `GITHUB_TOKEN` suffices). Production app secrets live in a `.env` next to `docker-compose.prod.yml` on the VPS, plus a mounted `appsettings.Production.json` — never committed.
+
+**Rejected approaches:** Coolify / Dokku / CapRover (PaaS overhead + maintenance surface), Watchtower (skips migrations + health checks), Kubernetes / k3s (no justification at modular-monolith / single-VPS scale).
 
 ### Branching Strategy
 - `main` — protected, always deployable, requires PR + green CI
@@ -387,9 +422,6 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 ## Deferred Decisions
 
 These decisions are intentionally deferred and will be made when relevant:
-- **Hosting** — VPS choice, Docker orchestration, deployment target
-- **Off-site backup storage** — depends on hosting (likely Hetzner Storage Box, Backblaze B2, or Cloudflare R2)
-- **CD pipelines** — depend on hosting
 - **Bibliography page covers** — copyright vs pragmatic display, decided at page creation time
 - **Async Meilisearch sync** — only if write volume grows
 - **Async job queue** — Hangfire or similar, only if needed for background processing
