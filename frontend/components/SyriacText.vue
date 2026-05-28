@@ -29,7 +29,7 @@ const fontFamily = computed(() => {
   <span
     dir="rtl"
     lang="syc"
-    class="syriac-text"
+    class="syriac-text inline-block align-baseline"
     :style="{ fontFamily }"
   >{{ text }}</span>
 </template>
@@ -37,7 +37,8 @@ const fontFamily = computed(() => {
 <style scoped>
 .syriac-text {
   font-size: 1.15em;
-  line-height: 1.7;
+  line-height: 1.6;
   unicode-bidi: isolate;
+  font-feature-settings: "kern", "liga";
 }
 </style>

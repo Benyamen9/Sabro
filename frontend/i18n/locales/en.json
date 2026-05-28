@@ -1,7 +1,21 @@
 {
   "site": {
     "title": "Sabro",
-    "tagline": "Original English translations of Syriac patristic commentaries"
+    "tagline": "Original English translations of the Peshitta and the Syriac Fathers",
+    "statusMvp": "MVP · in development"
+  },
+  "home": {
+    "eyebrow": "The Peshitta and the Syriac Fathers",
+    "titleLine1": "Scripture",
+    "titleLine2": "and the Fathers, in English.",
+    "lede": "Original English translations of the Peshitta and of the commentaries of the Syriac Church Fathers — with the underlying Syriac, a working lexicon, and biblical cross-references throughout.",
+    "greetingCaption": "“Peace be with you.” · šlomā lāk",
+    "ctaTranslations": "Browse translations",
+    "ctaLexicon": "Open the lexicon",
+    "aboutHeading": "About",
+    "aboutBody": "Sabro publishes original English translations of two interlocking corpora: the Peshitta (the Syriac Bible) and the commentaries of the Syriac Church Fathers. The MVP begins with the commentaries of Dionysios bar Ṣalibi (d. 1171), Metropolitan of Amid; the long-term scope is the broader patristic tradition.",
+    "statusHeading": "Status",
+    "statusBody": "A small slice of the corpus is online; chapters are added as they are translated and peer-reviewed. The lexicon and translations APIs are public and consumed by other apps in the ecosystem."
   },
   "nav": {
     "primary": "Primary navigation",

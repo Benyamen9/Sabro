@@ -1,94 +1,62 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const route = useRoute()
 
 const navItems = computed(() => [
-  { to: '/', labelKey: 'nav.home' },
   { to: '/translations', labelKey: 'nav.translations' },
   { to: '/lexicon', labelKey: 'nav.lexicon' },
 ])
+
+function isActive(path: string) {
+  if (path === '/') return route.path === '/'
+  return route.path === path || route.path.startsWith(`${path}/`)
+}
 </script>
 
 <template>
-  <div class="app">
-    <header class="app-header">
-      <div class="app-header__inner">
-        <NuxtLink to="/" class="app-header__brand">{{ t('site.title') }}</NuxtLink>
-        <nav class="app-header__nav" :aria-label="t('nav.primary')">
+  <div class="flex min-h-screen flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
+    <header
+      class="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_85%,transparent)] backdrop-blur-md backdrop-saturate-150"
+    >
+      <div class="mx-auto flex h-14 max-w-6xl items-center gap-6 px-6">
+        <NuxtLink
+          to="/"
+          class="font-sans text-base font-semibold tracking-tight no-underline"
+        >
+          {{ t('site.title') }}
+        </NuxtLink>
+
+        <nav class="flex items-center gap-1" :aria-label="t('nav.primary')">
           <NuxtLink
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
-            class="app-header__link"
+            class="rounded-md px-3 py-1.5 font-sans text-sm no-underline transition-colors"
+            :class="
+              isActive(item.to)
+                ? 'bg-[var(--color-bg-subtle)] text-[var(--color-text)]'
+                : 'text-[var(--color-text-muted)] hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-text)]'
+            "
           >{{ t(item.labelKey) }}</NuxtLink>
         </nav>
-        <div class="app-header__switchers">
+
+        <div class="ml-auto flex items-center gap-2">
           <ScriptVariantSwitcher />
           <LanguageSwitcher />
           <UserMenu />
         </div>
       </div>
     </header>
-    <main class="app-main">
+
+    <main class="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
       <slot />
     </main>
+
+    <footer class="border-t border-[var(--color-border)] py-6 font-sans text-xs text-[var(--color-text-faint)]">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6">
+        <span>{{ t('site.title') }} — {{ t('site.tagline') }}</span>
+        <span>{{ t('site.statusMvp') }}</span>
+      </div>
+    </footer>
   </div>
 </template>
-
-<style scoped>
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.app-header {
-  border-bottom: 1px solid #e5e5e5;
-  padding: 0.75rem 1rem;
-}
-
-.app-header__inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.app-header__brand {
-  font-size: 1.25rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: inherit;
-}
-
-.app-header__nav {
-  display: flex;
-  gap: 1rem;
-  flex: 1;
-}
-
-.app-header__link {
-  text-decoration: none;
-  color: inherit;
-}
-
-.app-header__link:hover {
-  text-decoration: underline;
-}
-
-.app-header__switchers {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.app-main {
-  flex: 1;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-</style>

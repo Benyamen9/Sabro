@@ -10,25 +10,32 @@ const displayName = computed(() => {
 </script>
 
 <template>
-  <div class="user-menu">
-    <span v-if="!isConfigured" class="user-menu__notice">
+  <div class="flex items-center gap-2">
+    <span
+      v-if="!isConfigured"
+      class="font-sans text-xs italic text-[var(--color-text-faint)]"
+      :title="t('auth.notConfigured')"
+    >
       {{ t('auth.notConfigured') }}
     </span>
     <button
       v-else-if="!isSignedIn"
       type="button"
-      class="user-menu__button"
+      class="cursor-pointer rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-1.5 font-sans text-xs font-medium transition-colors hover:bg-[var(--color-bg-subtle)]"
       @click="signIn"
     >
       {{ t('auth.signIn') }}
     </button>
     <template v-else>
-      <span class="user-menu__name" :title="t('auth.signedInAs', { name: displayName })">
+      <span
+        class="max-w-[12rem] truncate font-sans text-xs text-[var(--color-text-muted)]"
+        :title="t('auth.signedInAs', { name: displayName })"
+      >
         {{ displayName }}
       </span>
       <button
         type="button"
-        class="user-menu__button"
+        class="cursor-pointer rounded-md border border-[var(--color-border)] px-3 py-1.5 font-sans text-xs font-medium text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-text)]"
         @click="signOut"
       >
         {{ t('auth.signOut') }}
@@ -36,39 +43,3 @@ const displayName = computed(() => {
     </template>
   </div>
 </template>
-
-<style scoped>
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.user-menu__notice {
-  font-size: 0.75rem;
-  color: #888;
-  font-style: italic;
-}
-
-.user-menu__name {
-  font-size: 0.875rem;
-  color: #333;
-  max-width: 12rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.user-menu__button {
-  padding: 0.3rem 0.7rem;
-  font-size: 0.875rem;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-}
-
-.user-menu__button:hover {
-  background: #f6f6f6;
-}
-</style>

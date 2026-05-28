@@ -11,11 +11,12 @@ function onChange(event: Event) {
 </script>
 
 <template>
-  <label class="script-variant-switcher">
-    <span class="visually-hidden">{{ t('switcher.scriptLabel') }}</span>
+  <label class="relative inline-flex items-center">
+    <span class="sr-only">{{ t('switcher.scriptLabel') }}</span>
     <select
       :value="variant"
       :aria-label="t('switcher.scriptLabel')"
+      class="cursor-pointer appearance-none rounded-md border border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-1.5 pl-3 pr-7 font-sans text-xs font-medium text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-faint)]"
       @change="onChange"
     >
       <option
@@ -24,23 +25,9 @@ function onChange(event: Event) {
         :value="value"
       >{{ t(`switcher.script.${value}`) }}</option>
     </select>
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute right-2 text-[var(--color-text-faint)]"
+    >▾</span>
   </label>
 </template>
-
-<style scoped>
-.script-variant-switcher select {
-  padding: 0.25rem 0.5rem;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-</style>
