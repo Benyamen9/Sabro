@@ -17,6 +17,8 @@ public sealed class BiblicalDbContext : DbContext
 
     public DbSet<BiblicalPassage> Passages => Set<BiblicalPassage>();
 
+    public DbSet<CrossReference> CrossReferences => Set<CrossReference>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
