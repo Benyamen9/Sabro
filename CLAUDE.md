@@ -103,7 +103,28 @@ Three-level peer review system:
 Includes a suggested edits workflow: invited expert reviewers propose corrections; the translator (Owner) accepts or rejects each suggestion. Suggestions never modify content directly.
 
 ### Biblical
-Manages Syriac biblical passages from the Peshitta. Stores passage references and links them to lexicon entries and translation annotations. For MVP: biblical cross-references only. Patristic and external citations deferred.
+Manages Syriac biblical passages from the Peshitta. Stores passage references and links them to lexicon entries and translation annotations.
+Cross-references are typed on two independent axes:
+
+Source — who originated the reference:
+
+Author — the commentator (bar Ṣalibi) cites it within the source text itself, marked in the manuscript by a citation siglum. Part of the translated work; evidence of how the Father reads the passage.
+Editorial — a parallel added by the translator as apparatus (e.g. "cf. Ps 22:8"), not present in the commentator's text.
+
+
+Kind — the nature of the reference:
+
+Quotation — explicit, verbatim or near-verbatim, typically siglum-marked.
+Allusion — an unmarked echo or substructure; the passage is in view but not quoted or named.
+
+
+
+Both stored as string-converted enums (reference_source, reference_kind), not native PostgreSQL enum types — so new values are added with a plain code change and an ordinary migration, never raw ALTER TYPE SQL. Both surface in the cross-reference API DTO and are therefore part of the /api/v1/ contract: adding values later is safe, renaming existing ones (Author/Editorial/Quotation/Allusion) is a breaking change for clients.
+For MVP: biblical cross-references only. Patristic and external citations deferred — the two-axis typing applies within biblical cross-references and does not bring deferred citation categories forward.
+Worked example — gloss on Psalm 3:3 ("...you have no salvation in your God"): the commentator's gloss produces two cross-references on the same multi-verse AnnotationAnchor:
+
+Matthew 27:40, 43 → Author + Quotation (he quotes it; siglum in the text; anchor spans two verses)
+Psalm 22:8 → Editorial + Allusion (the substructure behind the Matthew taunt; the editor records it, the commentator does not name it)
 
 ### Identity
 User profiles and roles. Authentication itself is delegated to Logto via OIDC. Sabro stores only the user profile data it needs (preferences, language, script variant choice) linked by Logto user ID. Roles: Owner (translator), Expert Reviewer (invited), Reader (public, optional account for personal features like notes and favorites).
