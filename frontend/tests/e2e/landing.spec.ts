@@ -7,7 +7,6 @@ test.describe('landing page', () => {
     await expect(page.getByRole('link', { name: 'Sabro' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Home' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Translations' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Lexicon' })).toBeVisible()
 
     await expect(page.getByRole('combobox', { name: 'Syriac script' })).toBeVisible()
     await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible()
@@ -28,7 +27,6 @@ test.describe('landing page', () => {
 
     await expect(page.getByRole('link', { name: 'Accueil' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Traductions' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Lexique' })).toBeVisible()
   })
 
   test('renders Serto when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {

@@ -4,7 +4,6 @@ const route = useRoute()
 
 const navItems = computed(() => [
   { to: '/translations', labelKey: 'nav.translations' },
-  { to: '/lexicon', labelKey: 'nav.lexicon' },
 ])
 
 function isActive(path: string) {

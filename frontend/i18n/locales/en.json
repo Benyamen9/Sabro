@@ -8,10 +8,9 @@
     "eyebrow": "The Peshitta and the Syriac Fathers",
     "titleLine1": "Scripture",
     "titleLine2": "and the Fathers, in English.",
-    "lede": "Original English translations of the Peshitta and of the commentaries of the Syriac Church Fathers — with the underlying Syriac, a working lexicon, and biblical cross-references throughout.",
+    "lede": "Original English translations of the Peshitta and of the commentaries of the Syriac Church Fathers — with the underlying Syriac and biblical cross-references throughout.",
     "greetingCaption": "“Peace be with you.” · šlomā lāk",
     "ctaTranslations": "Browse translations",
-    "ctaLexicon": "Open the lexicon",
     "aboutHeading": "About",
     "aboutBody": "Sabro publishes original English translations of two interlocking corpora: the Peshitta (the Syriac Bible) and the commentaries of the Syriac Church Fathers. The MVP begins with the commentaries of Dionysios bar Ṣalibi (d. 1171), Metropolitan of Amid; the long-term scope is the broader patristic tradition.",
     "statusHeading": "Status",
@@ -20,8 +19,7 @@
   "nav": {
     "primary": "Primary navigation",
     "home": "Home",
-    "translations": "Translations",
-    "lexicon": "Lexicon"
+    "translations": "Translations"
   },
   "switcher": {
     "languageLabel": "Language",
@@ -67,39 +65,6 @@
       "loadFailed": "Could not load segments.",
       "reference": "{chapter}:{verse}"
     }
-  },
-  "lexicon": {
-    "title": "Lexicon",
-    "searchPlaceholder": "Search words, roots, transliterations…",
-    "empty": "No entries yet.",
-    "noMatches": "No entries match your search.",
-    "signInRequired": "Sign in to browse the lexicon.",
-    "loadFailed": "Could not load lexicon entries.",
-    "fields": {
-      "syriacUnvocalized": "Syriac",
-      "syriacVocalized": "Syriac (vocalized)",
-      "sblTransliteration": "Transliteration (SBL)",
-      "transliterationVariants": "Accepted variants",
-      "grammaticalCategory": "Category",
-      "morphology": "Morphology",
-      "meanings": "Meanings",
-      "rootForm": "Root"
-    },
-    "notFound": "Entry not found.",
-    "back": "Back to lexicon"
-  },
-  "category": {
-    "Noun": "Noun",
-    "Verb": "Verb",
-    "Adjective": "Adjective",
-    "Adverb": "Adverb",
-    "Pronoun": "Pronoun",
-    "Preposition": "Preposition",
-    "Conjunction": "Conjunction",
-    "Particle": "Particle",
-    "Numeral": "Numeral",
-    "Interjection": "Interjection",
-    "Other": "Other"
   },
   "pagination": {
     "previous": "Previous",

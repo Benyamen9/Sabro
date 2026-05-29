@@ -27,7 +27,6 @@ export interface PagedResult<T> {
 }
 
 // Enums — all come through as string literal unions from the generated schemas.
-export type GrammaticalCategory = Schemas['GrammaticalCategory']
 export type Testament = Schemas['Testament']
 export type ApprovalStatus = Schemas['ApprovalStatus']
 export type ApprovalTargetType = Schemas['ApprovalTargetType']
@@ -35,12 +34,6 @@ export type Role = Schemas['Role']
 export type ScriptVariant = Schemas['ScriptVariant']
 export type SuggestedEditStatus = Schemas['SuggestedEditStatus']
 export type SuggestedEditTargetType = Schemas['SuggestedEditTargetType']
-
-// Lexicon.
-export type LexiconMeaningDto = Schemas['LexiconMeaningDto']
-export type LexiconEntryDto = Schemas['LexiconEntryDto']
-export type LexiconSearchHitDto = Schemas['LexiconSearchHitDto']
-export type LexiconRootDto = Schemas['LexiconRootDto']
 
 // Translations.
 export type AuthorDto = Schemas['AuthorDto']

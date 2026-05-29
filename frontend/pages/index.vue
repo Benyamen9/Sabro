@@ -34,12 +34,6 @@ const { t } = useI18n()
         {{ t('home.ctaTranslations') }}
         <span aria-hidden="true">→</span>
       </NuxtLink>
-      <NuxtLink
-        to="/lexicon"
-        class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-5 py-2.5 font-sans text-sm font-medium no-underline transition-colors hover:bg-[var(--color-bg-subtle)]"
-      >
-        {{ t('home.ctaLexicon') }}
-      </NuxtLink>
     </div>
 
     <hr class="my-16 border-t border-[var(--color-border)]">

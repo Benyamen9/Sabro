@@ -6,8 +6,7 @@
   "nav": {
     "primary": "Navigation principale",
     "home": "Accueil",
-    "translations": "Traductions",
-    "lexicon": "Lexique"
+    "translations": "Traductions"
   },
   "switcher": {
     "languageLabel": "Langue",
@@ -53,39 +52,6 @@
       "loadFailed": "Impossible de charger les segments.",
       "reference": "{chapter}:{verse}"
     }
-  },
-  "lexicon": {
-    "title": "Lexique",
-    "searchPlaceholder": "Rechercher mots, racines, translittérations…",
-    "empty": "Aucune entrée pour le moment.",
-    "noMatches": "Aucune entrée ne correspond à votre recherche.",
-    "signInRequired": "Connectez-vous pour parcourir le lexique.",
-    "loadFailed": "Impossible de charger les entrées du lexique.",
-    "fields": {
-      "syriacUnvocalized": "Syriaque",
-      "syriacVocalized": "Syriaque (vocalisé)",
-      "sblTransliteration": "Translittération (SBL)",
-      "transliterationVariants": "Variantes acceptées",
-      "grammaticalCategory": "Catégorie",
-      "morphology": "Morphologie",
-      "meanings": "Significations",
-      "rootForm": "Racine"
-    },
-    "notFound": "Entrée introuvable.",
-    "back": "Retour au lexique"
-  },
-  "category": {
-    "Noun": "Nom",
-    "Verb": "Verbe",
-    "Adjective": "Adjectif",
-    "Adverb": "Adverbe",
-    "Pronoun": "Pronom",
-    "Preposition": "Préposition",
-    "Conjunction": "Conjonction",
-    "Particle": "Particule",
-    "Numeral": "Numéral",
-    "Interjection": "Interjection",
-    "Other": "Autre"
   },
   "pagination": {
     "previous": "Précédent",
