@@ -32,10 +32,15 @@
       "madnhaya": "Madnhaya"
     }
   },
+  "common": {
+    "retry": "Try again",
+    "loading": "Loading…"
+  },
   "auth": {
     "signIn": "Sign in",
     "signOut": "Sign out",
     "notConfigured": "Auth not configured",
+    "signInHint": "Sign in with your account to view this content.",
     "signedInAs": "Signed in as {name}"
   },
   "translations": {

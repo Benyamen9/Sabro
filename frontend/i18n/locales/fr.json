@@ -18,10 +18,15 @@
       "madnhaya": "Madnhaya"
     }
   },
+  "common": {
+    "retry": "Réessayer",
+    "loading": "Chargement…"
+  },
   "auth": {
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
     "notConfigured": "Authentification non configurée",
+    "signInHint": "Connectez-vous avec votre compte pour voir ce contenu.",
     "signedInAs": "Connecté en tant que {name}"
   },
   "translations": {

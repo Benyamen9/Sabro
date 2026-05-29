@@ -53,17 +53,29 @@ function goTo(nextPage: number) {
       <h1>{{ t('translations.title') }}</h1>
     </header>
 
-    <p v-if="status === 'loading'" class="sources-list__state">…</p>
-    <p v-else-if="status === 'unauthorized'" class="sources-list__state">
-      {{ t('translations.signInRequired') }}
-    </p>
-    <p v-else-if="status === 'failed'" class="sources-list__state sources-list__state--error">
-      {{ t('translations.loadFailed') }}
-      <button type="button" @click="refresh()">{{ t('pagination.next') }}</button>
-    </p>
-    <p v-else-if="status === 'empty'" class="sources-list__state">
-      {{ t('translations.empty') }}
-    </p>
+    <StateMessage
+      v-if="status === 'loading'"
+      variant="loading"
+      :message="t('common.loading')"
+    />
+    <StateMessage
+      v-else-if="status === 'unauthorized'"
+      variant="unauthorized"
+      :message="t('translations.signInRequired')"
+      :hint="t('auth.signInHint')"
+    />
+    <StateMessage
+      v-else-if="status === 'failed'"
+      variant="failed"
+      :message="t('translations.loadFailed')"
+      :action-label="t('common.retry')"
+      @action="refresh()"
+    />
+    <StateMessage
+      v-else-if="status === 'empty'"
+      variant="empty"
+      :message="t('translations.empty')"
+    />
     <template v-else>
       <ul class="sources-list__items">
         <li v-for="source in data?.items ?? []" :key="source.id" class="sources-list__item">
@@ -95,15 +107,6 @@ function goTo(nextPage: number) {
 <style scoped>
 .sources-list__header {
   margin-bottom: 1.5rem;
-}
-
-.sources-list__state {
-  padding: 1.5rem 0;
-  color: #555;
-}
-
-.sources-list__state--error {
-  color: #b00020;
 }
 
 .sources-list__items {

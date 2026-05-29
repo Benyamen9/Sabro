@@ -18,10 +18,15 @@
       "madnhaya": "Madnhaya"
     }
   },
+  "common": {
+    "retry": "Opnieuw proberen",
+    "loading": "Laden…"
+  },
   "auth": {
     "signIn": "Aanmelden",
     "signOut": "Afmelden",
     "notConfigured": "Authenticatie niet geconfigureerd",
+    "signInHint": "Meld u aan met uw account om deze inhoud te bekijken.",
     "signedInAs": "Aangemeld als {name}"
   },
   "translations": {

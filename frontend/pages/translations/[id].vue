@@ -84,12 +84,27 @@ function goTo(nextPage: number) {
       <NuxtLink to="/translations">← {{ t('translations.back') }}</NuxtLink>
     </p>
 
-    <p v-if="sourceStatus === 'loading'">…</p>
-    <p v-else-if="sourceStatus === 'unauthorized'">{{ t('translations.signInRequired') }}</p>
-    <p v-else-if="sourceStatus === 'not-found'">{{ t('translations.notFound') }}</p>
-    <p v-else-if="sourceStatus === 'failed'" class="source-detail__error">
-      {{ t('translations.loadFailed') }}
-    </p>
+    <StateMessage
+      v-if="sourceStatus === 'loading'"
+      variant="loading"
+      :message="t('common.loading')"
+    />
+    <StateMessage
+      v-else-if="sourceStatus === 'unauthorized'"
+      variant="unauthorized"
+      :message="t('translations.signInRequired')"
+      :hint="t('auth.signInHint')"
+    />
+    <StateMessage
+      v-else-if="sourceStatus === 'not-found'"
+      variant="notFound"
+      :message="t('translations.notFound')"
+    />
+    <StateMessage
+      v-else-if="sourceStatus === 'failed'"
+      variant="failed"
+      :message="t('translations.loadFailed')"
+    />
     <template v-else-if="source">
       <header class="source-detail__header">
         <h1>{{ source.title }}</h1>
@@ -118,20 +133,39 @@ function goTo(nextPage: number) {
           </form>
         </header>
 
-        <p v-if="segmentsStatus === 'loading'" class="source-detail__state">…</p>
-        <p v-else-if="segmentsStatus === 'unauthorized'" class="source-detail__state">
-          {{ t('translations.signInRequired') }}
-        </p>
-        <p v-else-if="segmentsStatus === 'failed'" class="source-detail__state source-detail__state--error">
-          {{ t('translations.segments.loadFailed') }}
-          <button type="button" @click="refreshSegments()">{{ t('pagination.next') }}</button>
-        </p>
-        <p v-else-if="segmentsStatus === 'empty'" class="source-detail__state">
-          {{ t('translations.segments.empty') }}
-        </p>
-        <p v-else-if="segmentsStatus === 'no-matches'" class="source-detail__state">
-          {{ t('translations.segments.noMatches') }}
-        </p>
+        <StateMessage
+          v-if="segmentsStatus === 'loading'"
+          variant="loading"
+          :message="t('common.loading')"
+          compact
+        />
+        <StateMessage
+          v-else-if="segmentsStatus === 'unauthorized'"
+          variant="unauthorized"
+          :message="t('translations.signInRequired')"
+          :hint="t('auth.signInHint')"
+          compact
+        />
+        <StateMessage
+          v-else-if="segmentsStatus === 'failed'"
+          variant="failed"
+          :message="t('translations.segments.loadFailed')"
+          :action-label="t('common.retry')"
+          compact
+          @action="refreshSegments()"
+        />
+        <StateMessage
+          v-else-if="segmentsStatus === 'empty'"
+          variant="empty"
+          :message="t('translations.segments.empty')"
+          compact
+        />
+        <StateMessage
+          v-else-if="segmentsStatus === 'no-matches'"
+          variant="noMatches"
+          :message="t('translations.segments.noMatches')"
+          compact
+        />
         <template v-else>
           <ol class="source-detail__segment-list">
             <li v-for="segment in segments?.items ?? []" :key="segment.id" class="source-detail__segment">
@@ -212,15 +246,6 @@ function goTo(nextPage: number) {
   border-radius: 4px;
 }
 
-.source-detail__state {
-  padding: 1rem 0;
-  color: #555;
-}
-
-.source-detail__state--error {
-  color: #b00020;
-}
-
 .source-detail__segment-list {
   list-style: none;
   padding: 0;
@@ -260,7 +285,4 @@ function goTo(nextPage: number) {
   padding: 0.4rem 0.8rem;
 }
 
-.source-detail__error {
-  color: #b00020;
-}
 </style>
