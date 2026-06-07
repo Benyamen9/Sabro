@@ -1,0 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+using Sabro.Play.Domain;
+using Sabro.Shared.Infrastructure.Persistence;
+
+namespace Sabro.Play.Infrastructure;
+
+public sealed class PlayDbContext : DbContext
+{
+    public const string SchemaName = "play";
+
+    public PlayDbContext(DbContextOptions<PlayDbContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<GameResult> GameResults => Set<GameResult>();
+
+    public DbSet<MelthaDailyPuzzle> MelthaDailyPuzzles => Set<MelthaDailyPuzzle>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.HasDefaultSchema(SchemaName);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PlayDbContext).Assembly);
+        modelBuilder.UseSnakeCaseNaming();
+    }
+}

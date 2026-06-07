@@ -8,6 +8,7 @@
     <Project Path="src/Modules/Sabro.Biblical/Sabro.Biblical.csproj" />
     <Project Path="src/Modules/Sabro.Identity/Sabro.Identity.csproj" />
     <Project Path="src/Modules/Sabro.Lexicon/Sabro.Lexicon.csproj" />
+    <Project Path="src/Modules/Sabro.Play/Sabro.Play.csproj" />
     <Project Path="src/Modules/Sabro.Reviews/Sabro.Reviews.csproj" />
     <Project Path="src/Modules/Sabro.Translations/Sabro.Translations.csproj" />
   </Folder>

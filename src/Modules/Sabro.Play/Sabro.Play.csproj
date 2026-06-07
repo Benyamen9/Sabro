@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Sabro.Play</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Sabro.Shared\Sabro.Shared.csproj" />
+    <ProjectReference Include="..\..\Sabro.Shared.Infrastructure\Sabro.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\Sabro.Lexicon\Sabro.Lexicon.csproj" />
+  </ItemGroup>
+
+</Project>

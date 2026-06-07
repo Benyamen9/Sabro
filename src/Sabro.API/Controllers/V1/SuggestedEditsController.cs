@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +5,6 @@ using Sabro.API.Configuration;
 using Sabro.Reviews.Application.SuggestedEdits;
 using Sabro.Reviews.Domain;
 using Sabro.Shared.Pagination;
-using Sabro.Shared.Results;
 
 namespace Sabro.API.Controllers.V1;
 
@@ -122,17 +120,5 @@ public sealed class SuggestedEditsController : ApiControllerBase
         }
 
         return Ok(result.Value);
-    }
-
-    private Result<string> ResolveLogtoUserId()
-    {
-        var logtoUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue("sub");
-        if (string.IsNullOrWhiteSpace(logtoUserId))
-        {
-            return Result<string>.Failure(Error.Validation("Authenticated user is missing a sub claim."));
-        }
-
-        return Result<string>.Success(logtoUserId);
     }
 }

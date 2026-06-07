@@ -6,6 +6,7 @@ using Sabro.API.Configuration;
 using Sabro.Biblical.Public;
 using Sabro.Identity.Public;
 using Sabro.Lexicon.Public;
+using Sabro.Play.Public;
 using Sabro.Reviews.Public;
 using Sabro.Shared.Abstractions;
 using Sabro.Shared.Infrastructure.Search;
@@ -111,6 +112,7 @@ try
         new ReviewsModule(),
         new BiblicalModule(),
         new IdentityModule(),
+        new PlayModule(),
     };
 
     foreach (var module in modules)
