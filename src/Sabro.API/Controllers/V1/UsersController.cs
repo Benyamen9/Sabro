@@ -1,10 +1,8 @@
-using System.Security.Claims;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Identity.Application.UserProfiles;
-using Sabro.Shared.Results;
 
 namespace Sabro.API.Controllers.V1;
 
@@ -65,23 +63,5 @@ public sealed class UsersController : ApiControllerBase
         }
 
         return Ok(result.Value);
-    }
-
-    /// <summary>
-    /// Reads the OIDC <c>sub</c> claim from the validated JWT. ASP.NET Core's
-    /// JWT bearer handler maps <c>sub</c> to <see cref="ClaimTypes.NameIdentifier"/>
-    /// by default; we also fall back to the raw <c>sub</c> name for handlers that
-    /// disable inbound claim mapping.
-    /// </summary>
-    private Result<string> ResolveLogtoUserId()
-    {
-        var logtoUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue("sub");
-        if (string.IsNullOrWhiteSpace(logtoUserId))
-        {
-            return Result<string>.Failure(Error.Validation("Authenticated user is missing a sub claim."));
-        }
-
-        return Result<string>.Success(logtoUserId);
     }
 }

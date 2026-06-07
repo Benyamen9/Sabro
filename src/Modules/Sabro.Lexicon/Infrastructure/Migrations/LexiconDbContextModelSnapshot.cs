@@ -45,15 +45,28 @@ namespace Sabro.Lexicon.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("morphology");
 
+                    b.Property<bool>("PlayableInMeltha")
+                        .HasColumnType("boolean")
+                        .HasColumnName("playable_in_meltha");
+
+                    b.Property<int>("PlayableLength")
+                        .HasColumnType("integer")
+                        .HasColumnName("playable_length");
+
                     b.Property<Guid?>("RootId")
                         .HasColumnType("uuid")
                         .HasColumnName("root_id");
 
                     b.Property<string>("SblTransliteration")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
                         .HasColumnName("sbl_transliteration");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("status");
 
                     b.Property<string>("SyriacUnvocalized")
                         .IsRequired()
@@ -86,6 +99,9 @@ namespace Sabro.Lexicon.Infrastructure.Migrations
 
                     b.HasIndex("SyriacUnvocalized")
                         .HasDatabaseName("ix_lexicon_entries_syriac_unvocalized");
+
+                    b.HasIndex("Status", "PlayableInMeltha", "PlayableLength")
+                        .HasDatabaseName("ix_lexicon_entries_status_playable_in_meltha_playable_length");
 
                     b.ToTable("lexicon_entries", "lexicon");
                 });

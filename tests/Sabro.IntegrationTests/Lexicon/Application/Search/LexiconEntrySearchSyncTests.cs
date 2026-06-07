@@ -36,6 +36,7 @@ public class LexiconEntrySearchSyncTests
         var service = new LexiconEntryService(
             ctx,
             new CreateLexiconEntryRequestValidator(),
+            new UpdateLexiconEntryRequestValidator(),
             searchIndex,
             NullLogger<LexiconEntryService>.Instance);
 
@@ -80,6 +81,7 @@ public class LexiconEntrySearchSyncTests
         var service = new LexiconEntryService(
             ctx,
             new CreateLexiconEntryRequestValidator(),
+            new UpdateLexiconEntryRequestValidator(),
             searchIndex,
             NullLogger<LexiconEntryService>.Instance);
 
@@ -96,6 +98,48 @@ public class LexiconEntrySearchSyncTests
         doc.Should().NotBeNull();
         doc!.RootId.Should().Be(rootId.ToString("D"));
         doc.RootForm.Should().Be(rootForm);
+    }
+
+    [Fact]
+    public async Task PublishAndSetPlayable_UpdatesLifecycleFieldsInDocument()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var client = meili.CreateClient();
+        var descriptor = new LexiconEntryIndexDescriptor();
+        await EnsureIndexAsync(client, descriptor, ct);
+
+        var searchIndex = NewSearchIndex(client, descriptor);
+        await using var ctx = postgres.CreateLexiconContext();
+        var service = new LexiconEntryService(
+            ctx,
+            new CreateLexiconEntryRequestValidator(),
+            new UpdateLexiconEntryRequestValidator(),
+            searchIndex,
+            NullLogger<LexiconEntryService>.Instance);
+
+        var created = await service.CreateAsync(
+            new CreateLexiconEntryRequest(
+                SyriacUnvocalized: KtbUnvocalized,
+                SblTransliteration: "ktb",
+                GrammaticalCategory: GrammaticalCategory.Verb,
+                Meanings: new[]
+                {
+                    new CreateLexiconMeaningRequest("en", "to write"),
+                    new CreateLexiconMeaningRequest("fr", "écrire"),
+                    new CreateLexiconMeaningRequest("nl", "schrijven"),
+                }),
+            ct);
+        created.IsSuccess.Should().BeTrue();
+        var id = created.Value!.Id;
+
+        (await service.PublishAsync(id, ct)).IsSuccess.Should().BeTrue();
+        (await service.SetPlayableAsync(id, true, ct)).IsSuccess.Should().BeTrue();
+
+        var doc = await WaitForPlayablePublishedAsync(client, descriptor.IndexName, id.ToString("D"), ct);
+        doc.Should().NotBeNull();
+        doc!.Status.Should().Be(nameof(LexiconEntryStatus.Published));
+        doc.PlayableInMeltha.Should().BeTrue();
+        doc.PlayableLength.Should().Be(3);
     }
 
     [Fact]
@@ -175,5 +219,30 @@ public class LexiconEntrySearchSyncTests
         }
 
         return null;
+    }
+
+    private static async Task<LexiconEntrySearchDocument?> WaitForPlayablePublishedAsync(
+        MeilisearchClient client, string indexName, string documentId, CancellationToken ct)
+    {
+        var deadline = DateTimeOffset.UtcNow.AddSeconds(10);
+        LexiconEntrySearchDocument? doc = null;
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            try
+            {
+                doc = await client.Index(indexName).GetDocumentAsync<LexiconEntrySearchDocument>(documentId, cancellationToken: ct);
+                if (doc is not null && doc.Status == nameof(LexiconEntryStatus.Published) && doc.PlayableInMeltha)
+                {
+                    return doc;
+                }
+            }
+            catch (MeilisearchApiError)
+            {
+            }
+
+            await Task.Delay(150, ct);
+        }
+
+        return doc;
     }
 }

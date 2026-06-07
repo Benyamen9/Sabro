@@ -15,8 +15,8 @@ public sealed class CreateLexiconEntryRequestValidator : AbstractValidator<Creat
             .When(x => x.SyriacVocalized is not null);
 
         RuleFor(x => x.SblTransliteration)
-            .NotEmpty()
-            .MaximumLength(128);
+            .MaximumLength(128)
+            .When(x => x.SblTransliteration is not null);
 
         RuleFor(x => x.GrammaticalCategory)
             .IsInEnum();

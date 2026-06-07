@@ -4,7 +4,7 @@ namespace Sabro.Lexicon.Application.Entries;
 
 public sealed record CreateLexiconEntryRequest(
     string SyriacUnvocalized,
-    string SblTransliteration,
+    string? SblTransliteration,
     GrammaticalCategory GrammaticalCategory,
     string? SyriacVocalized = null,
     Guid? RootId = null,

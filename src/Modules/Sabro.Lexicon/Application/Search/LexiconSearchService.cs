@@ -52,14 +52,14 @@ internal sealed class LexiconSearchService : ILexiconSearchService
             new PagedResult<LexiconSearchHitDto>(hits, response.Total, response.Page, response.PageSize));
     }
 
-    private static List<SearchFilter>? BuildFilters(GrammaticalCategory? grammaticalCategory, Guid? rootId)
+    private static List<SearchFilter> BuildFilters(GrammaticalCategory? grammaticalCategory, Guid? rootId)
     {
-        if (grammaticalCategory is null && rootId is null)
+        // Public search only ever exposes published entries — drafts are editorial state.
+        var filters = new List<SearchFilter>(capacity: 3)
         {
-            return null;
-        }
+            new SearchFilter("status", nameof(LexiconEntryStatus.Published)),
+        };
 
-        var filters = new List<SearchFilter>(capacity: 2);
         if (grammaticalCategory is not null)
         {
             filters.Add(new SearchFilter("grammaticalCategory", grammaticalCategory.Value.ToString()));

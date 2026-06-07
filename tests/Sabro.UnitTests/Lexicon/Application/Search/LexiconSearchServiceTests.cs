@@ -35,7 +35,7 @@ public class LexiconSearchServiceTests
     }
 
     [Fact]
-    public async Task SearchAsync_WithNoFilters_PassesNullFiltersToIndex()
+    public async Task SearchAsync_WithNoExtraFilters_StillConstrainsToPublished()
     {
         var index = StubEmptyIndex();
         var service = NewService(index);
@@ -43,12 +43,19 @@ public class LexiconSearchServiceTests
         await service.SearchAsync(query: "ktb", grammaticalCategory: null, rootId: null, page: 1, pageSize: 20, CancellationToken.None);
 
         await index.Received(1).SearchAsync(
-            Arg.Is<SearchRequest>(r => r.Query == "ktb" && r.Page == 1 && r.PageSize == 20 && r.Filters == null),
+            Arg.Is<SearchRequest>(r =>
+                r.Query == "ktb"
+                && r.Page == 1
+                && r.PageSize == 20
+                && r.Filters != null
+                && r.Filters.Count == 1
+                && r.Filters[0].Field == "status"
+                && r.Filters[0].Value == "Published"),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task SearchAsync_WithCategoryFilter_PassesEqualsFilterToIndex()
+    public async Task SearchAsync_WithCategoryFilter_PassesPublishedAndCategoryFilters()
     {
         var index = StubEmptyIndex();
         var service = NewService(index);
@@ -58,9 +65,11 @@ public class LexiconSearchServiceTests
         await index.Received(1).SearchAsync(
             Arg.Is<SearchRequest>(r =>
                 r.Filters != null
-                && r.Filters.Count == 1
-                && r.Filters[0].Field == "grammaticalCategory"
-                && r.Filters[0].Value == "Verb"),
+                && r.Filters.Count == 2
+                && r.Filters[0].Field == "status"
+                && r.Filters[0].Value == "Published"
+                && r.Filters[1].Field == "grammaticalCategory"
+                && r.Filters[1].Value == "Verb"),
             Arg.Any<CancellationToken>());
     }
 
@@ -76,14 +85,15 @@ public class LexiconSearchServiceTests
         await index.Received(1).SearchAsync(
             Arg.Is<SearchRequest>(r =>
                 r.Filters != null
-                && r.Filters.Count == 1
-                && r.Filters[0].Field == "rootId"
-                && r.Filters[0].Value == rootId.ToString("D")),
+                && r.Filters.Count == 2
+                && r.Filters[0].Field == "status"
+                && r.Filters[1].Field == "rootId"
+                && r.Filters[1].Value == rootId.ToString("D")),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task SearchAsync_WithBothFilters_PassesBothToIndex()
+    public async Task SearchAsync_WithBothFilters_PassesPublishedCategoryAndRootId()
     {
         var rootId = Guid.NewGuid();
         var index = StubEmptyIndex();
@@ -92,7 +102,12 @@ public class LexiconSearchServiceTests
         await service.SearchAsync(query: null, grammaticalCategory: GrammaticalCategory.Noun, rootId: rootId, page: 1, pageSize: 50, CancellationToken.None);
 
         await index.Received(1).SearchAsync(
-            Arg.Is<SearchRequest>(r => r.Filters != null && r.Filters.Count == 2),
+            Arg.Is<SearchRequest>(r =>
+                r.Filters != null
+                && r.Filters.Count == 3
+                && r.Filters[0].Field == "status"
+                && r.Filters[1].Field == "grammaticalCategory"
+                && r.Filters[2].Field == "rootId"),
             Arg.Any<CancellationToken>());
     }
 

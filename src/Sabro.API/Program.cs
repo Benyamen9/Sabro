@@ -6,6 +6,7 @@ using Sabro.API.Configuration;
 using Sabro.Biblical.Public;
 using Sabro.Identity.Public;
 using Sabro.Lexicon.Public;
+using Sabro.Play.Public;
 using Sabro.Reviews.Public;
 using Sabro.Shared.Abstractions;
 using Sabro.Shared.Infrastructure.Search;
@@ -80,6 +81,7 @@ try
     {
         options.AddPolicy(AuthPolicies.Read, policy => policy.RequireClaim("scope", "api:v1:read"));
         options.AddPolicy(AuthPolicies.Write, policy => policy.RequireClaim("scope", "api:v1:write"));
+        options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireClaim("scope", "api:v1:admin"));
     });
 
     builder.Services.AddRateLimiter(options =>
@@ -110,6 +112,7 @@ try
         new ReviewsModule(),
         new BiblicalModule(),
         new IdentityModule(),
+        new PlayModule(),
     };
 
     foreach (var module in modules)

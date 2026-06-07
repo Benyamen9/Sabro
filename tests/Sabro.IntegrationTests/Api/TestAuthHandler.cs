@@ -40,6 +40,7 @@ public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationScheme
             new Claim(ClaimTypes.NameIdentifier, user),
             new Claim("scope", "api:v1:read"),
             new Claim("scope", "api:v1:write"),
+            new Claim("scope", "api:v1:admin"),
         };
         var identity = new ClaimsIdentity(claims, SchemeName);
         var principal = new ClaimsPrincipal(identity);

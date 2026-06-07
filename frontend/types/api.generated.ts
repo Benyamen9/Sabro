@@ -4,6 +4,404 @@
  */
 
 export interface paths {
+    "/api/v1/admin/lexicon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfLexiconEntryDto"];
+                        "application/json": components["schemas"]["PagedResultOfLexiconEntryDto"];
+                        "text/json": components["schemas"]["PagedResultOfLexiconEntryDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateLexiconEntryRequest"];
+                    "text/json": components["schemas"]["CreateLexiconEntryRequest"];
+                    "application/*+json": components["schemas"]["CreateLexiconEntryRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/lexicon/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateLexiconEntryRequest"];
+                    "text/json": components["schemas"]["UpdateLexiconEntryRequest"];
+                    "application/*+json": components["schemas"]["UpdateLexiconEntryRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/lexicon/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/lexicon/{id}/unpublish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/lexicon/{id}/playable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SetPlayableLexiconEntryRequest"];
+                    "text/json": components["schemas"]["SetPlayableLexiconEntryRequest"];
+                    "application/*+json": components["schemas"]["SetPlayableLexiconEntryRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/search/rebuild/{indexName}": {
         parameters: {
             query?: never;
@@ -1160,6 +1558,56 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/lexicon-entries/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/lexicon-entries": {
         parameters: {
             query?: never;
@@ -1199,94 +1647,6 @@ export interface paths {
                         "text/plain": components["schemas"]["ValidationProblemDetails"];
                         "application/json": components["schemas"]["ValidationProblemDetails"];
                         "text/json": components["schemas"]["ValidationProblemDetails"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateLexiconEntryRequest"];
-                    "text/json": components["schemas"]["CreateLexiconEntryRequest"];
-                    "application/*+json": components["schemas"]["CreateLexiconEntryRequest"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["LexiconEntryDto"];
-                        "application/json": components["schemas"]["LexiconEntryDto"];
-                        "text/json": components["schemas"]["LexiconEntryDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["ValidationProblemDetails"];
-                        "application/json": components["schemas"]["ValidationProblemDetails"];
-                        "text/json": components["schemas"]["ValidationProblemDetails"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/lexicon-entries/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["LexiconEntryDto"];
-                        "application/json": components["schemas"]["LexiconEntryDto"];
-                        "text/json": components["schemas"]["LexiconEntryDto"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/plain": components["schemas"]["ProblemDetails"];
-                        "application/json": components["schemas"]["ProblemDetails"];
-                        "text/json": components["schemas"]["ProblemDetails"];
                     };
                 };
             };
@@ -1514,6 +1874,170 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/play/meltha/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["MelthaPuzzleDto"];
+                        "application/json": components["schemas"]["MelthaPuzzleDto"];
+                        "text/json": components["schemas"]["MelthaPuzzleDto"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/play/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RecordGameResultRequest"];
+                    "text/json": components["schemas"]["RecordGameResultRequest"];
+                    "application/*+json": components["schemas"]["RecordGameResultRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["GameResultDto"];
+                        "application/json": components["schemas"]["GameResultDto"];
+                        "text/json": components["schemas"]["GameResultDto"];
+                    };
+                };
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["GameResultDto"];
+                        "application/json": components["schemas"]["GameResultDto"];
+                        "text/json": components["schemas"]["GameResultDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/play/results/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfGameResultDto"];
+                        "application/json": components["schemas"]["PagedResultOfGameResultDto"];
+                        "text/json": components["schemas"]["PagedResultOfGameResultDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
                 };
             };
         };
@@ -2498,7 +3022,7 @@ export interface components {
         };
         CreateLexiconEntryRequest: {
             syriacUnvocalized: string;
-            sblTransliteration: string;
+            sblTransliteration: null | string;
             grammaticalCategory: components["schemas"]["GrammaticalCategory"];
             syriacVocalized?: null | string;
             /** Format: uuid */
@@ -2559,6 +3083,22 @@ export interface components {
             verseApprovals: components["schemas"]["ApprovalDto"][];
             annotationApprovals: components["schemas"]["ApprovalDto"][];
         };
+        GameResultDto: {
+            /** Format: uuid */
+            id: string;
+            logtoUserId: string;
+            gameId: string;
+            /** Format: date */
+            playedOn: string;
+            solved: boolean;
+            /** Format: int32 */
+            attempts: number | string;
+            detailJson: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
         GetOrCreateBiblicalPassageRequest: {
             bookCode: string;
             /** Format: int32 */
@@ -2575,16 +3115,22 @@ export interface components {
             syriacVocalized: null | string;
             /** Format: uuid */
             rootId: null | string;
-            sblTransliteration: string;
+            sblTransliteration: null | string;
             transliterationVariants: string[];
             grammaticalCategory: components["schemas"]["GrammaticalCategory"];
             morphology: null | string;
             meanings: components["schemas"]["LexiconMeaningDto"][];
+            status: components["schemas"]["LexiconEntryStatus"];
+            playableInMeltha: boolean;
+            /** Format: int32 */
+            playableLength: number | string;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
         };
+        /** @enum {string} */
+        LexiconEntryStatus: "Draft" | "Published";
         LexiconMeaningDto: {
             language: string;
             text: string;
@@ -2612,6 +3158,22 @@ export interface components {
             morphology: null | string;
             meaningTexts: string[];
             meaningLanguages: string[];
+        };
+        MelthaPuzzleDto: {
+            /** Format: date */
+            date: string;
+            /** Format: uuid */
+            lexiconEntryId: string;
+            syriacUnvocalized: string;
+            syriacVocalized: null | string;
+            sblTransliteration: null | string;
+            /** Format: int32 */
+            playableLength: number | string;
+            meanings: components["schemas"]["MelthaPuzzleMeaningDto"][];
+        };
+        MelthaPuzzleMeaningDto: {
+            language: string;
+            text: string;
         };
         PagedResultOfAnnotationDto: {
             items: components["schemas"]["AnnotationDto"][];
@@ -2669,6 +3231,15 @@ export interface components {
         };
         PagedResultOfBiblicalPassageSearchHitDto: {
             items: components["schemas"]["BiblicalPassageSearchHitDto"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+        };
+        PagedResultOfGameResultDto: {
+            items: components["schemas"]["GameResultDto"][];
             /** Format: int32 */
             total: number | string;
             /** Format: int32 */
@@ -2747,6 +3318,15 @@ export interface components {
             detail?: null | string;
             instance?: null | string;
         };
+        RecordGameResultRequest: {
+            gameId: string;
+            /** Format: date */
+            playedOn: string;
+            solved: boolean;
+            /** Format: int32 */
+            attempts: number | string;
+            detailJson: null | string;
+        };
         /** @enum {string} */
         Role: "Reader" | "ExpertReviewer" | "Owner";
         /** @enum {string} */
@@ -2793,6 +3373,9 @@ export interface components {
             /** Format: int32 */
             version: number | string;
         };
+        SetPlayableLexiconEntryRequest: {
+            playable: boolean;
+        };
         SourceDto: {
             /** Format: uuid */
             id: string;
@@ -2833,6 +3416,17 @@ export interface components {
         SuggestedEditTargetType: "Segment" | "Annotation";
         /** @enum {string} */
         Testament: "Old" | "New";
+        UpdateLexiconEntryRequest: {
+            syriacUnvocalized: string;
+            sblTransliteration: null | string;
+            grammaticalCategory: components["schemas"]["GrammaticalCategory"];
+            syriacVocalized?: null | string;
+            /** Format: uuid */
+            rootId?: null | string;
+            transliterationVariants?: null | string[];
+            morphology?: null | string;
+            meanings?: null | components["schemas"]["CreateLexiconMeaningRequest"][];
+        };
         UpdateUserProfileRequest: {
             preferredLanguage: string;
             preferredScriptVariant: components["schemas"]["ScriptVariant"];

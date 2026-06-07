@@ -25,7 +25,7 @@ public class LexiconEntrySearchQueryTests
         var ct = TestContext.Current.CancellationToken;
         var (client, descriptor, indexName) = await SetUpIsolatedIndexAsync(meili, ct);
 
-        var entry = LexiconEntry.Create("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun).Value!;
+        var entry = PublishedEntry("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun);
         var doc = LexiconEntryDocumentMapper.Map(entry, rootForm: null);
         await client.Index(indexName).AddDocumentsAsync(new[] { doc }, descriptor.PrimaryKey, ct);
 
@@ -45,7 +45,7 @@ public class LexiconEntrySearchQueryTests
         var ct = TestContext.Current.CancellationToken;
         var (client, descriptor, indexName) = await SetUpIsolatedIndexAsync(meili, ct);
 
-        var entry = LexiconEntry.Create("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun).Value!;
+        var entry = PublishedEntry("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun);
         var doc = LexiconEntryDocumentMapper.Map(entry, rootForm: null);
         await client.Index(indexName).AddDocumentsAsync(new[] { doc }, descriptor.PrimaryKey, ct);
 
@@ -64,8 +64,8 @@ public class LexiconEntrySearchQueryTests
         var ct = TestContext.Current.CancellationToken;
         var (client, descriptor, indexName) = await SetUpIsolatedIndexAsync(meili, ct);
 
-        var verb = LexiconEntry.Create("ܟܬܒ", "ktb", GrammaticalCategory.Verb).Value!;
-        var noun = LexiconEntry.Create("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun).Value!;
+        var verb = PublishedEntry("ܟܬܒ", "ktb", GrammaticalCategory.Verb);
+        var noun = PublishedEntry("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun);
         await client.Index(indexName).AddDocumentsAsync(
             new[]
             {
@@ -91,8 +91,8 @@ public class LexiconEntrySearchQueryTests
         var (client, descriptor, indexName) = await SetUpIsolatedIndexAsync(meili, ct);
 
         var rootId = Guid.NewGuid();
-        var rooted = LexiconEntry.Create("ܫܠܡܐ", "šlāmā", GrammaticalCategory.Noun, rootId: rootId).Value!;
-        var unrooted = LexiconEntry.Create("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun).Value!;
+        var rooted = PublishedEntry("ܫܠܡܐ", "šlāmā", GrammaticalCategory.Noun, rootId: rootId);
+        var unrooted = PublishedEntry("ܡܠܬܐ", "meltā", GrammaticalCategory.Noun);
         await client.Index(indexName).AddDocumentsAsync(
             new[]
             {
@@ -140,6 +140,23 @@ public class LexiconEntrySearchQueryTests
         await client.WaitForTaskAsync(settingsTask.TaskUid, cancellationToken: ct);
 
         return (client, descriptor, indexName);
+    }
+
+    /// <summary>
+    /// Builds a published entry — public search only exposes published entries, so
+    /// query tests must publish before indexing. Publication requires en/fr/nl glosses.
+    /// </summary>
+    private static LexiconEntry PublishedEntry(string syriacUnvocalized, string sbl, GrammaticalCategory category, Guid? rootId = null)
+    {
+        var meanings = new[]
+        {
+            LexiconMeaning.Create("en", "gloss").Value!,
+            LexiconMeaning.Create("fr", "glose").Value!,
+            LexiconMeaning.Create("nl", "betekenis").Value!,
+        };
+        var entry = LexiconEntry.Create(syriacUnvocalized, sbl, category, rootId: rootId, meanings: meanings).Value!;
+        entry.Publish().Should().BeNull();
+        return entry;
     }
 
     private static LexiconSearchService NewService(

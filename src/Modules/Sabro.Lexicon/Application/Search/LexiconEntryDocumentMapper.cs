@@ -10,7 +10,7 @@ internal static class LexiconEntryDocumentMapper
         Id = entry.Id.ToString("D"),
         SyriacUnvocalized = entry.SyriacUnvocalized,
         SyriacVocalized = entry.SyriacVocalized,
-        SblTransliteration = entry.SblTransliteration,
+        SblTransliteration = entry.SblTransliteration ?? string.Empty,
         TransliterationVariants = entry.TransliterationVariants.ToArray(),
         RootId = entry.RootId?.ToString("D"),
         RootForm = rootForm,
@@ -18,6 +18,9 @@ internal static class LexiconEntryDocumentMapper
         Morphology = entry.Morphology,
         MeaningTexts = entry.Meanings.Select(m => m.Text).ToArray(),
         MeaningLanguages = entry.Meanings.Select(m => m.Language).Distinct().ToArray(),
+        Status = entry.Status.ToString(),
+        PlayableInMeltha = entry.PlayableInMeltha,
+        PlayableLength = entry.PlayableLength,
         CreatedAtUnix = entry.CreatedAt.ToUnixTimeSeconds(),
     };
 }

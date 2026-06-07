@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Sabro.Biblical.Infrastructure;
 using Sabro.Identity.Infrastructure;
 using Sabro.Lexicon.Infrastructure;
+using Sabro.Play.Infrastructure;
 using Sabro.Reviews.Infrastructure;
 using Sabro.Translations.Infrastructure;
 using Testcontainers.PostgreSql;
@@ -42,6 +43,11 @@ public sealed class PostgresFixture : IAsyncLifetime
         await using (var biblical = CreateBiblicalContext())
         {
             await biblical.Database.MigrateAsync(ct);
+        }
+
+        await using (var play = CreatePlayContext())
+        {
+            await play.Database.MigrateAsync(ct);
         }
 
         await using var reviews = CreateReviewsContext();
@@ -92,5 +98,13 @@ public sealed class PostgresFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString)
             .Options;
         return new ReviewsDbContext(options);
+    }
+
+    public PlayDbContext CreatePlayContext()
+    {
+        var options = new DbContextOptionsBuilder<PlayDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+        return new PlayDbContext(options);
     }
 }
