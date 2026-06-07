@@ -16,12 +16,18 @@ internal sealed class LexiconEntryConfiguration : IEntityTypeConfiguration<Lexic
         builder.Property(e => e.SyriacUnvocalized).HasMaxLength(256).IsRequired();
         builder.Property(e => e.SyriacVocalized).HasMaxLength(256);
         builder.Property(e => e.RootId);
-        builder.Property(e => e.SblTransliteration).HasMaxLength(128).IsRequired();
+        builder.Property(e => e.SblTransliteration).HasMaxLength(128);
         builder.Property(e => e.GrammaticalCategory)
             .HasConversion<string>()
             .HasMaxLength(32)
             .IsRequired();
         builder.Property(e => e.Morphology);
+        builder.Property(e => e.Status)
+            .HasConversion<string>()
+            .HasMaxLength(16)
+            .IsRequired();
+        builder.Property(e => e.PlayableInMeltha).IsRequired();
+        builder.Property(e => e.PlayableLength).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.UpdatedAt).IsRequired();
 
@@ -42,6 +48,10 @@ internal sealed class LexiconEntryConfiguration : IEntityTypeConfiguration<Lexic
 
         builder.HasIndex(e => e.SyriacUnvocalized);
         builder.HasIndex(e => e.SblTransliteration);
+
+        // Serves the Melthā eligible-pool query (Published + playable + length window)
+        // and status-filtered admin/listing reads.
+        builder.HasIndex(e => new { e.Status, e.PlayableInMeltha, e.PlayableLength });
 
         // Meanings — owned-many on a private List<LexiconMeaning> field, persisted to a child table
         // with composite key (LexiconEntryId, Position). EF preserves order by writing Position.

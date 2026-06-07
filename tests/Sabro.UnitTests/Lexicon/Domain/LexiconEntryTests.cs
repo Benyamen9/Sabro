@@ -29,6 +29,9 @@ public class LexiconEntryTests
         result.Value.Morphology.Should().BeNull();
         result.Value.Meanings.Should().BeEmpty();
         result.Value.Id.Should().NotBe(Guid.Empty);
+        result.Value.Status.Should().Be(LexiconEntryStatus.Draft);
+        result.Value.PlayableInMeltha.Should().BeFalse();
+        result.Value.PlayableLength.Should().Be(3);
     }
 
     [Fact]
@@ -103,15 +106,15 @@ public class LexiconEntryTests
     [InlineData("")]
     [InlineData("   ")]
     [InlineData(null)]
-    public void Create_WithMissingSblTransliteration_ReturnsValidationFailure(string? translit)
+    public void Create_WithoutSblTransliteration_StoresNull(string? translit)
     {
         var result = LexiconEntry.Create(
             syriacUnvocalized: KtbUnvocalized,
-            sblTransliteration: translit!,
+            sblTransliteration: translit,
             grammaticalCategory: GrammaticalCategory.Verb);
 
-        result.IsSuccess.Should().BeFalse();
-        result.Error!.Code.Should().Be("validation");
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.SblTransliteration.Should().BeNull();
     }
 
     [Fact]
@@ -220,4 +223,184 @@ public class LexiconEntryTests
         result.Value!.CreatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         result.Value.UpdatedAt.Should().Be(result.Value.CreatedAt);
     }
+
+    [Fact]
+    public void Publish_WithAllRequiredGlosses_SetsPublished()
+    {
+        var entry = CreateDraftWithAllMeanings();
+
+        var error = entry.Publish();
+
+        error.Should().BeNull();
+        entry.Status.Should().Be(LexiconEntryStatus.Published);
+    }
+
+    [Theory]
+    [InlineData("en")]
+    [InlineData("fr")]
+    [InlineData("nl")]
+    public void Publish_WithMissingRequiredGloss_ReturnsValidationAndStaysDraft(string missing)
+    {
+        var meanings = AllThreeMeanings().Where(m => m.Language != missing).ToArray();
+        var entry = LexiconEntry.Create(
+            syriacUnvocalized: KtbUnvocalized,
+            sblTransliteration: "ktb",
+            grammaticalCategory: GrammaticalCategory.Verb,
+            meanings: meanings).Value!;
+
+        var error = entry.Publish();
+
+        error.Should().NotBeNull();
+        error!.Code.Should().Be("validation");
+        entry.Status.Should().Be(LexiconEntryStatus.Draft);
+    }
+
+    [Fact]
+    public void Publish_WhenAlreadyPublished_IsIdempotent()
+    {
+        var entry = CreateDraftWithAllMeanings();
+        entry.Publish();
+
+        var error = entry.Publish();
+
+        error.Should().BeNull();
+        entry.Status.Should().Be(LexiconEntryStatus.Published);
+    }
+
+    [Fact]
+    public void SetPlayable_OnDraftEntry_ReturnsConflict()
+    {
+        var entry = CreateDraftWithAllMeanings();
+
+        var error = entry.SetPlayable(true);
+
+        error.Should().NotBeNull();
+        error!.Code.Should().Be("conflict");
+        entry.PlayableInMeltha.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SetPlayable_OnPublishedEntry_SetsFlag()
+    {
+        var entry = CreateDraftWithAllMeanings();
+        entry.Publish();
+
+        var error = entry.SetPlayable(true);
+
+        error.Should().BeNull();
+        entry.PlayableInMeltha.Should().BeTrue();
+    }
+
+    [Fact]
+    public void SetPlayable_DoesNotEnforceLengthWindow()
+    {
+        // A single-letter word is outside the 2–8 window but can still be flagged;
+        // the eligible-pool predicate (not the flag) enforces the bound.
+        var entry = LexiconEntry.Create(
+            syriacUnvocalized: "ܐ",
+            sblTransliteration: "ʾ",
+            grammaticalCategory: GrammaticalCategory.Other,
+            meanings: AllThreeMeanings()).Value!;
+        entry.Publish();
+
+        var error = entry.SetPlayable(true);
+
+        error.Should().BeNull();
+        entry.PlayableInMeltha.Should().BeTrue();
+        entry.PlayableLength.Should().Be(1);
+    }
+
+    [Fact]
+    public void ReturnToDraft_ClearsPublishedAndPlayable()
+    {
+        var entry = CreateDraftWithAllMeanings();
+        entry.Publish();
+        entry.SetPlayable(true);
+
+        entry.ReturnToDraft();
+
+        entry.Status.Should().Be(LexiconEntryStatus.Draft);
+        entry.PlayableInMeltha.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Update_RecomputesPlayableLength()
+    {
+        var entry = CreateDraftWithAllMeanings();
+
+        var error = entry.Update(
+            syriacUnvocalized: "ܐܒ",
+            sblTransliteration: "ʾb",
+            grammaticalCategory: GrammaticalCategory.Noun,
+            meanings: AllThreeMeanings());
+
+        error.Should().BeNull();
+        entry.SyriacUnvocalized.Should().Be("ܐܒ");
+        entry.PlayableLength.Should().Be(2);
+    }
+
+    [Fact]
+    public void Update_OnDraftEntry_AllowsPartialMeanings()
+    {
+        var entry = LexiconEntry.Create(
+            syriacUnvocalized: KtbUnvocalized,
+            sblTransliteration: "ktb",
+            grammaticalCategory: GrammaticalCategory.Verb).Value!;
+
+        var error = entry.Update(
+            syriacUnvocalized: KtbUnvocalized,
+            sblTransliteration: "ktb",
+            grammaticalCategory: GrammaticalCategory.Verb,
+            meanings: new[] { LexiconMeaning.Create("en", "to write").Value! });
+
+        error.Should().BeNull();
+        entry.Meanings.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void Update_OnPublishedEntry_DroppingRequiredGloss_ReturnsValidationAndLeavesEntryUnchanged()
+    {
+        var entry = CreateDraftWithAllMeanings();
+        entry.Publish();
+
+        var error = entry.Update(
+            syriacUnvocalized: KtbUnvocalized,
+            sblTransliteration: "ktb",
+            grammaticalCategory: GrammaticalCategory.Verb,
+            meanings: new[] { LexiconMeaning.Create("en", "to write").Value! });
+
+        error.Should().NotBeNull();
+        error!.Code.Should().Be("validation");
+        entry.Status.Should().Be(LexiconEntryStatus.Published);
+        entry.Meanings.Should().HaveCount(3);
+    }
+
+    [Fact]
+    public void Update_BumpsUpdatedAt()
+    {
+        var entry = CreateDraftWithAllMeanings();
+        var original = entry.UpdatedAt;
+
+        var error = entry.Update(
+            syriacUnvocalized: KtbUnvocalized,
+            sblTransliteration: "ktb",
+            grammaticalCategory: GrammaticalCategory.Verb,
+            meanings: AllThreeMeanings());
+
+        error.Should().BeNull();
+        entry.UpdatedAt.Should().BeOnOrAfter(original);
+    }
+
+    private static LexiconMeaning[] AllThreeMeanings() => new[]
+    {
+        LexiconMeaning.Create("en", "to write").Value!,
+        LexiconMeaning.Create("fr", "écrire").Value!,
+        LexiconMeaning.Create("nl", "schrijven").Value!,
+    };
+
+    private static LexiconEntry CreateDraftWithAllMeanings() => LexiconEntry.Create(
+        syriacUnvocalized: KtbUnvocalized,
+        sblTransliteration: "ktb",
+        grammaticalCategory: GrammaticalCategory.Verb,
+        meanings: AllThreeMeanings()).Value!;
 }

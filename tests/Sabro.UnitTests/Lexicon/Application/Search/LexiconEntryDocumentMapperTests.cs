@@ -93,6 +93,40 @@ public class LexiconEntryDocumentMapperTests
         doc.CreatedAtUnix.Should().Be(entry.CreatedAt.ToUnixTimeSeconds());
     }
 
+    [Fact]
+    public void Map_EmitsDraftLifecycleStateForNewEntry()
+    {
+        var entry = NewEntry(syriacVocalized: null, rootId: null, variants: null, meanings: null);
+
+        var doc = LexiconEntryDocumentMapper.Map(entry, rootForm: null);
+
+        doc.Status.Should().Be(nameof(LexiconEntryStatus.Draft));
+        doc.PlayableInMeltha.Should().BeFalse();
+        doc.PlayableLength.Should().Be(3);
+    }
+
+    [Fact]
+    public void Map_EmitsPublishedAndPlayableState()
+    {
+        var entry = LexiconEntry.Create(
+            syriacUnvocalized: KtbUnvocalized,
+            sblTransliteration: "ktb",
+            grammaticalCategory: GrammaticalCategory.Verb,
+            meanings: new[]
+            {
+                LexiconMeaning.Create("en", "to write").Value!,
+                LexiconMeaning.Create("fr", "écrire").Value!,
+                LexiconMeaning.Create("nl", "schrijven").Value!,
+            }).Value!;
+        entry.Publish();
+        entry.SetPlayable(true);
+
+        var doc = LexiconEntryDocumentMapper.Map(entry, rootForm: null);
+
+        doc.Status.Should().Be(nameof(LexiconEntryStatus.Published));
+        doc.PlayableInMeltha.Should().BeTrue();
+    }
+
     private static LexiconEntry NewEntry(
         string? syriacVocalized,
         Guid? rootId,

@@ -46,4 +46,25 @@ public static class SyriacText
 
         return true;
     }
+
+    /// <summary>
+    /// Counts the base letters in <paramref name="input"/>: Unicode letter-category
+    /// code points only. Combining marks (vowel points, seyame, diacritics) are not
+    /// counted. Intended for already-validated Syriac text; used to derive the Melthā
+    /// playable length from the unvocalized form, so it is independent of vocalization.
+    /// </summary>
+    public static int CountLetters(string input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        var count = 0;
+        foreach (var rune in input.EnumerateRunes())
+        {
+            if (Rune.IsLetter(rune))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
 }

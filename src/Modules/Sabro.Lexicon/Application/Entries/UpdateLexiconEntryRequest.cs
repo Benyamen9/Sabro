@@ -2,7 +2,12 @@ using Sabro.Lexicon.Domain;
 
 namespace Sabro.Lexicon.Application.Entries;
 
-public sealed record CreateLexiconEntryRequest(
+/// <summary>
+/// Full replacement of an entry's editable fields. Does not carry status or the
+/// playable flag — those move through the dedicated publish/unpublish/playable
+/// operations. The target entry is identified by the route id, not this body.
+/// </summary>
+public sealed record UpdateLexiconEntryRequest(
     string SyriacUnvocalized,
     string? SblTransliteration,
     GrammaticalCategory GrammaticalCategory,

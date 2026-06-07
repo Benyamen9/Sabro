@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Sabro.Lexicon.Application.Entries;
 
-public sealed class CreateLexiconEntryRequestValidator : AbstractValidator<CreateLexiconEntryRequest>
+public sealed class UpdateLexiconEntryRequestValidator : AbstractValidator<UpdateLexiconEntryRequest>
 {
-    public CreateLexiconEntryRequestValidator()
+    public UpdateLexiconEntryRequestValidator()
     {
         RuleFor(x => x.SyriacUnvocalized)
             .NotEmpty()

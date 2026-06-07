@@ -22,28 +22,13 @@ public sealed class LexiconEntriesController : ApiControllerBase
         this.searchService = searchService;
     }
 
-    [HttpPost]
-    [Authorize(Policy = AuthPolicies.Write)]
-    [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<LexiconEntryDto>> Create(CreateLexiconEntryRequest request, CancellationToken cancellationToken)
-    {
-        var result = await entryService.CreateAsync(request, cancellationToken);
-        if (!result.IsSuccess)
-        {
-            return FromError(result.Error!);
-        }
-
-        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id, version = "1" }, result.Value);
-    }
-
     [HttpGet("{id:guid}")]
     [Authorize(Policy = AuthPolicies.Read)]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<LexiconEntryDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var result = await entryService.GetByIdAsync(id, cancellationToken);
+        var result = await entryService.GetPublishedByIdAsync(id, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);
@@ -61,7 +46,7 @@ public sealed class LexiconEntriesController : ApiControllerBase
         [FromQuery] int pageSize = PageRequest.DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
-        var result = await entryService.ListAsync(page, pageSize, cancellationToken);
+        var result = await entryService.ListPublishedAsync(page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

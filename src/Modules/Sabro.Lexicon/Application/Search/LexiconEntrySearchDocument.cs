@@ -44,6 +44,15 @@ public sealed record LexiconEntrySearchDocument
     [JsonPropertyName("meaningLanguages")]
     public IReadOnlyList<string> MeaningLanguages { get; init; } = Array.Empty<string>();
 
+    [JsonPropertyName("status")]
+    public string Status { get; init; } = string.Empty;
+
+    [JsonPropertyName("playableInMeltha")]
+    public bool PlayableInMeltha { get; init; }
+
+    [JsonPropertyName("playableLength")]
+    public int PlayableLength { get; init; }
+
     [JsonPropertyName("createdAtUnix")]
     public long CreatedAtUnix { get; init; }
 }

@@ -80,6 +80,7 @@ try
     {
         options.AddPolicy(AuthPolicies.Read, policy => policy.RequireClaim("scope", "api:v1:read"));
         options.AddPolicy(AuthPolicies.Write, policy => policy.RequireClaim("scope", "api:v1:write"));
+        options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireClaim("scope", "api:v1:admin"));
     });
 
     builder.Services.AddRateLimiter(options =>
