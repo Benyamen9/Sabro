@@ -4,9 +4,9 @@ test.describe('landing page', () => {
   test('renders the app shell with brand, nav, switchers, and a Syriac sample', async ({ page }) => {
     await page.goto('/')
 
+    // The brand link doubles as home; the primary nav holds a single Translations item.
     await expect(page.getByRole('link', { name: 'Sabro' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Home' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Translations' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Translations', exact: true })).toBeVisible()
 
     await expect(page.getByRole('combobox', { name: 'Syriac script' })).toBeVisible()
     await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible()
@@ -25,8 +25,7 @@ test.describe('landing page', () => {
     await context.addCookies([{ name: 'sabro_locale', value: 'fr', url: baseURL! }])
     await page.goto('/')
 
-    await expect(page.getByRole('link', { name: 'Accueil' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Traductions' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Traductions', exact: true })).toBeVisible()
   })
 
   test('renders Serto when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {
