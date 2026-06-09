@@ -2901,7 +2901,7 @@
         }
       }
     },
-    "/api/v1/play/meltha/today": {
+    "/api/v1/play/meltho/today": {
       "get": {
         "tags": [
           "Play"
@@ -2912,17 +2912,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MelthaPuzzleDto"
+                  "$ref": "#/components/schemas/MelthoPuzzleDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MelthaPuzzleDto"
+                  "$ref": "#/components/schemas/MelthoPuzzleDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MelthaPuzzleDto"
+                  "$ref": "#/components/schemas/MelthoPuzzleDto"
                 }
               }
             }
@@ -5439,7 +5439,7 @@
           "morphology",
           "meanings",
           "status",
-          "playableInMeltha",
+          "playableInMeltho",
           "playableLength",
           "createdAt",
           "updatedAt"
@@ -5496,7 +5496,7 @@
           "status": {
             "$ref": "#/components/schemas/LexiconEntryStatus"
           },
-          "playableInMeltha": {
+          "playableInMeltho": {
             "type": "boolean"
           },
           "playableLength": {
@@ -5639,7 +5639,7 @@
           }
         }
       },
-      "MelthaPuzzleDto": {
+      "MelthoPuzzleDto": {
         "required": [
           "date",
           "lexiconEntryId",
@@ -5685,12 +5685,12 @@
           "meanings": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/MelthaPuzzleMeaningDto"
+              "$ref": "#/components/schemas/MelthoPuzzleMeaningDto"
             }
           }
         }
       },
-      "MelthaPuzzleMeaningDto": {
+      "MelthoPuzzleMeaningDto": {
         "required": [
           "language",
           "text"

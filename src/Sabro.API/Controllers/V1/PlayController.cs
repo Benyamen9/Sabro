@@ -3,41 +3,41 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Play.Application.GameResults;
-using Sabro.Play.Application.Meltha;
+using Sabro.Play.Application.Meltho;
 using Sabro.Shared.Pagination;
 
 namespace Sabro.API.Controllers.V1;
 
 /// <summary>
-/// Ecosystem play surface: the shared Melthā daily puzzle plus the authenticated
+/// Ecosystem play surface: the shared Meltho daily puzzle plus the authenticated
 /// player's own game results. Sabro owns only the shared daily-word selection;
-/// clients (Melthā) own guess evaluation and presentation.
+/// clients (Meltho) own guess evaluation and presentation.
 /// </summary>
 [ApiVersion(1.0)]
 [Route("api/v{version:apiVersion}/play")]
 public sealed class PlayController : ApiControllerBase
 {
-    private readonly IMelthaPuzzleService melthaPuzzleService;
+    private readonly IMelthoPuzzleService melthoPuzzleService;
     private readonly IGameResultService gameResultService;
 
-    public PlayController(IMelthaPuzzleService melthaPuzzleService, IGameResultService gameResultService)
+    public PlayController(IMelthoPuzzleService melthoPuzzleService, IGameResultService gameResultService)
     {
-        this.melthaPuzzleService = melthaPuzzleService;
+        this.melthoPuzzleService = melthoPuzzleService;
         this.gameResultService = gameResultService;
     }
 
     /// <summary>
-    /// Returns today's Melthā puzzle (get-or-create per date; identical for all
+    /// Returns today's Meltho puzzle (get-or-create per date; identical for all
     /// players; respects the anti-repetition window). Read scope is sufficient —
     /// a read-only client still needs today's word to play.
     /// </summary>
-    [HttpGet("meltha/today")]
+    [HttpGet("meltho/today")]
     [Authorize(Policy = AuthPolicies.Read)]
-    [ProducesResponseType(typeof(MelthaPuzzleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(MelthoPuzzleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<MelthaPuzzleDto>> GetTodaysMelthaPuzzle(CancellationToken cancellationToken)
+    public async Task<ActionResult<MelthoPuzzleDto>> GetTodaysMelthoPuzzle(CancellationToken cancellationToken)
     {
-        var result = await melthaPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
+        var result = await melthoPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

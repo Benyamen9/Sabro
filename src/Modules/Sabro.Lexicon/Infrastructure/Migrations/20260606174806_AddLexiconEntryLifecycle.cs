@@ -22,7 +22,7 @@ namespace Sabro.Lexicon.Infrastructure.Migrations
                 oldMaxLength: 128);
 
             migrationBuilder.AddColumn<bool>(
-                name: "playable_in_meltha",
+                name: "playable_in_meltho",
                 schema: "lexicon",
                 table: "lexicon_entries",
                 type: "boolean",
@@ -47,22 +47,22 @@ namespace Sabro.Lexicon.Infrastructure.Migrations
                 defaultValue: "Draft");
 
             migrationBuilder.CreateIndex(
-                name: "ix_lexicon_entries_status_playable_in_meltha_playable_length",
+                name: "ix_lexicon_entries_status_playable_in_meltho_playable_length",
                 schema: "lexicon",
                 table: "lexicon_entries",
-                columns: new[] { "status", "playable_in_meltha", "playable_length" });
+                columns: new[] { "status", "playable_in_meltho", "playable_length" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
-                name: "ix_lexicon_entries_status_playable_in_meltha_playable_length",
+                name: "ix_lexicon_entries_status_playable_in_meltho_playable_length",
                 schema: "lexicon",
                 table: "lexicon_entries");
 
             migrationBuilder.DropColumn(
-                name: "playable_in_meltha",
+                name: "playable_in_meltho",
                 schema: "lexicon",
                 table: "lexicon_entries");
 

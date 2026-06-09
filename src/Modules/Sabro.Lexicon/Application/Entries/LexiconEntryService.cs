@@ -220,7 +220,7 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         entry.Morphology,
         entry.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray(),
         entry.Status,
-        entry.PlayableInMeltha,
+        entry.PlayableInMeltho,
         entry.PlayableLength,
         entry.CreatedAt,
         entry.UpdatedAt);

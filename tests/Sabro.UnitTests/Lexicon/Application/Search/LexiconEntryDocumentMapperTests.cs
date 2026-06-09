@@ -101,7 +101,7 @@ public class LexiconEntryDocumentMapperTests
         var doc = LexiconEntryDocumentMapper.Map(entry, rootForm: null);
 
         doc.Status.Should().Be(nameof(LexiconEntryStatus.Draft));
-        doc.PlayableInMeltha.Should().BeFalse();
+        doc.PlayableInMeltho.Should().BeFalse();
         doc.PlayableLength.Should().Be(3);
     }
 
@@ -124,7 +124,7 @@ public class LexiconEntryDocumentMapperTests
         var doc = LexiconEntryDocumentMapper.Map(entry, rootForm: null);
 
         doc.Status.Should().Be(nameof(LexiconEntryStatus.Published));
-        doc.PlayableInMeltha.Should().BeTrue();
+        doc.PlayableInMeltho.Should().BeTrue();
     }
 
     private static LexiconEntry NewEntry(

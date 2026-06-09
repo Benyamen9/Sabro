@@ -1,7 +1,7 @@
 namespace Sabro.Lexicon.Application.Entries;
 
 /// <summary>
-/// Read-only cross-module surface over the Melthā-playable lexicon pool, consumed
+/// Read-only cross-module surface over the Meltho-playable lexicon pool, consumed
 /// by the Play module to select and render the daily puzzle. Kept narrow on purpose
 /// — callers get the eligible-pool query and a by-id playable projection, not the
 /// full entry CRUD surface.
@@ -9,8 +9,8 @@ namespace Sabro.Lexicon.Application.Entries;
 public interface ILexiconPlayablePool
 {
     /// <summary>
-    /// Returns the ids of entries currently eligible for Melthā: <c>Published</c>,
-    /// <c>PlayableInMeltha</c>, and with a playable length within
+    /// Returns the ids of entries currently eligible for Meltho: <c>Published</c>,
+    /// <c>PlayableInMeltho</c>, and with a playable length within
     /// [<paramref name="minLength"/>, <paramref name="maxLength"/>] inclusive.
     /// Order is unspecified — the caller chooses among the returned candidates.
     /// </summary>

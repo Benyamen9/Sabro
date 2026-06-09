@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sabro.Play.Application.GameResults;
-using Sabro.Play.Application.Meltha;
+using Sabro.Play.Application.Meltho;
 using Sabro.Play.Infrastructure;
 using Sabro.Shared.Abstractions;
 
@@ -28,10 +28,10 @@ public sealed class PlayModule : IModuleRegistration
                 npgsql.MigrationsHistoryTable("__EFMigrationsHistory", PlayDbContext.SchemaName));
         });
 
-        services.Configure<MelthaOptions>(configuration.GetSection(MelthaOptions.SectionName));
+        services.Configure<MelthoOptions>(configuration.GetSection(MelthoOptions.SectionName));
         services.TryAddSingleton(TimeProvider.System);
 
         services.AddScoped<IGameResultService, GameResultService>();
-        services.AddScoped<IMelthaPuzzleService, MelthaPuzzleService>();
+        services.AddScoped<IMelthoPuzzleService, MelthoPuzzleService>();
     }
 }

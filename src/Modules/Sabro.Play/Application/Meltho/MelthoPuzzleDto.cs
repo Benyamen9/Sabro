@@ -1,16 +1,16 @@
-namespace Sabro.Play.Application.Meltha;
+namespace Sabro.Play.Application.Meltho;
 
 /// <summary>
-/// Today's Melthā puzzle: the served date plus the target word's playable
-/// projection. Melthā evaluates guesses client-side, so it receives the answer
+/// Today's Meltho puzzle: the served date plus the target word's playable
+/// projection. Meltho evaluates guesses client-side, so it receives the answer
 /// word and length here; the meanings/vocalized/transliteration support the
 /// post-game reveal without a second round trip.
 /// </summary>
-public sealed record MelthaPuzzleDto(
+public sealed record MelthoPuzzleDto(
     DateOnly Date,
     Guid LexiconEntryId,
     string SyriacUnvocalized,
     string? SyriacVocalized,
     string? SblTransliteration,
     int PlayableLength,
-    IReadOnlyList<MelthaPuzzleMeaningDto> Meanings);
+    IReadOnlyList<MelthoPuzzleMeaningDto> Meanings);

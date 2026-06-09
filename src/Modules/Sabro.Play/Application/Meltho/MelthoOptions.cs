@@ -1,14 +1,14 @@
-namespace Sabro.Play.Application.Meltha;
+namespace Sabro.Play.Application.Meltho;
 
 /// <summary>
-/// Configuration for Melthā daily-puzzle selection, bound from the <c>Meltha</c>
+/// Configuration for Meltho daily-puzzle selection, bound from the <c>Meltho</c>
 /// section. The anti-repetition window must stay configurable: a small launch
 /// pool (~30–50 words) starves under a large window, so it starts low and is
 /// raised toward 365 as the pool grows. Never hardcode it.
 /// </summary>
-public sealed class MelthaOptions
+public sealed class MelthoOptions
 {
-    public const string SectionName = "Meltha";
+    public const string SectionName = "Meltho";
 
     /// <summary>
     /// Number of days a word is barred from reuse after being served. A word

@@ -25,7 +25,7 @@ public class GameResultServiceTests
 
         var result = await service.RecordAsync(
             user,
-            new RecordGameResultRequest("meltha", new DateOnly(2026, 6, 7), Solved: true, Attempts: 3, DetailJson: null),
+            new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 7), Solved: true, Attempts: 3, DetailJson: null),
             ct);
 
         result.IsSuccess.Should().BeTrue();
@@ -49,7 +49,7 @@ public class GameResultServiceTests
         {
             var first = await NewService(ctx).RecordAsync(
                 user,
-                new RecordGameResultRequest("meltha", playedOn, Solved: true, Attempts: 3, DetailJson: null),
+                new RecordGameResultRequest("meltho", playedOn, Solved: true, Attempts: 3, DetailJson: null),
                 ct);
             first.Value!.WasCreated.Should().BeTrue();
         }
@@ -57,7 +57,7 @@ public class GameResultServiceTests
         await using var second = fixture.CreatePlayContext();
         var result = await NewService(second).RecordAsync(
             user,
-            new RecordGameResultRequest("meltha", playedOn, Solved: false, Attempts: 6, DetailJson: null),
+            new RecordGameResultRequest("meltho", playedOn, Solved: false, Attempts: 6, DetailJson: null),
             ct);
 
         result.IsSuccess.Should().BeTrue();
@@ -79,7 +79,7 @@ public class GameResultServiceTests
 
         var result = await NewService(ctx).RecordAsync(
             NewUser(),
-            new RecordGameResultRequest("meltha", future, Solved: false, Attempts: 0, DetailJson: null),
+            new RecordGameResultRequest("meltho", future, Solved: false, Attempts: 0, DetailJson: null),
             ct);
 
         result.IsSuccess.Should().BeFalse();
@@ -111,10 +111,10 @@ public class GameResultServiceTests
         await using (var ctx = fixture.CreatePlayContext())
         {
             var service = NewService(ctx);
-            await service.RecordAsync(user, new RecordGameResultRequest("meltha", new DateOnly(2026, 6, 5), true, 2, null), ct);
-            await service.RecordAsync(user, new RecordGameResultRequest("meltha", new DateOnly(2026, 6, 7), true, 4, null), ct);
-            await service.RecordAsync(user, new RecordGameResultRequest("meltha", new DateOnly(2026, 6, 6), false, 6, null), ct);
-            await service.RecordAsync(other, new RecordGameResultRequest("meltha", new DateOnly(2026, 6, 7), true, 1, null), ct);
+            await service.RecordAsync(user, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 5), true, 2, null), ct);
+            await service.RecordAsync(user, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 7), true, 4, null), ct);
+            await service.RecordAsync(user, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 6), false, 6, null), ct);
+            await service.RecordAsync(other, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 7), true, 1, null), ct);
         }
 
         await using var read = fixture.CreatePlayContext();

@@ -156,7 +156,7 @@ public class AdminLexiconControllerTests : IDisposable
             ct);
         playable.StatusCode.Should().Be(HttpStatusCode.OK);
         var playableDto = await playable.Content.ReadFromJsonAsync<LexiconEntryDto>(SabroApiFactory.JsonOptions, ct);
-        playableDto!.PlayableInMeltha.Should().BeTrue();
+        playableDto!.PlayableInMeltho.Should().BeTrue();
     }
 
     public void Dispose()

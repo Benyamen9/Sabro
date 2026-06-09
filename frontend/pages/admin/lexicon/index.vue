@@ -146,7 +146,7 @@ function goTo(nextPage: number) {
                 >{{ t(`admin.lexicon.status.${entry.status}`) }}</span>
               </td>
               <td class="px-4 py-3 font-sans text-sm">
-                <span v-if="entry.playableInMeltha" :title="t('admin.lexicon.lifecycle.inPool')">✓</span>
+                <span v-if="entry.playableInMeltho" :title="t('admin.lexicon.lifecycle.inPool')">✓</span>
                 <span v-else class="text-[var(--color-text-faint)]">—</span>
               </td>
               <td class="px-4 py-3 text-right">

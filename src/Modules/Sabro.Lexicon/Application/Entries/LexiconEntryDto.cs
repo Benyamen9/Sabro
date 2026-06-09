@@ -13,7 +13,7 @@ public sealed record LexiconEntryDto(
     string? Morphology,
     IReadOnlyList<LexiconMeaningDto> Meanings,
     LexiconEntryStatus Status,
-    bool PlayableInMeltha,
+    bool PlayableInMeltho,
     int PlayableLength,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);

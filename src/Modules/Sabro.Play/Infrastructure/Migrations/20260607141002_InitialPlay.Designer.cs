@@ -79,7 +79,7 @@ namespace Sabro.Play.Infrastructure.Migrations
                     b.ToTable("game_results", "play");
                 });
 
-            modelBuilder.Entity("Sabro.Play.Domain.MelthaDailyPuzzle", b =>
+            modelBuilder.Entity("Sabro.Play.Domain.MelthoDailyPuzzle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,16 +109,16 @@ namespace Sabro.Play.Infrastructure.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("pk_meltha_daily_puzzles");
+                        .HasName("pk_meltho_daily_puzzles");
 
                     b.HasIndex("GameId", "Date")
                         .IsUnique()
-                        .HasDatabaseName("ix_meltha_daily_puzzles_game_id_date");
+                        .HasDatabaseName("ix_meltho_daily_puzzles_game_id_date");
 
                     b.HasIndex("GameId", "LexiconEntryId")
-                        .HasDatabaseName("ix_meltha_daily_puzzles_game_id_lexicon_entry_id");
+                        .HasDatabaseName("ix_meltho_daily_puzzles_game_id_lexicon_entry_id");
 
-                    b.ToTable("meltha_daily_puzzles", "play");
+                    b.ToTable("meltho_daily_puzzles", "play");
                 });
 #pragma warning restore 612, 618
         }

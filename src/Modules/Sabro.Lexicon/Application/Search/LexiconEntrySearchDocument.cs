@@ -47,8 +47,8 @@ public sealed record LexiconEntrySearchDocument
     [JsonPropertyName("status")]
     public string Status { get; init; } = string.Empty;
 
-    [JsonPropertyName("playableInMeltha")]
-    public bool PlayableInMeltha { get; init; }
+    [JsonPropertyName("playableInMeltho")]
+    public bool PlayableInMeltho { get; init; }
 
     [JsonPropertyName("playableLength")]
     public int PlayableLength { get; init; }

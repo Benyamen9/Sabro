@@ -68,7 +68,7 @@
     "adminRequiredHint": "Connectez-vous avec un compte éditeur pour gérer le lexique.",
     "lexicon": {
       "title": "Back-office du lexique",
-      "subtitle": "Gérez la base lexicale syriaque et le vivier de mots de Melthā.",
+      "subtitle": "Gérez la base lexicale syriaque et le vivier de mots de Meltho.",
       "newEntry": "Nouvelle entrée",
       "empty": "Aucune entrée de lexique pour le moment. Créez la première.",
       "loadFailed": "Impossible de charger les entrées du lexique.",
@@ -116,17 +116,17 @@
         "meanings": "Significations",
         "meaningsHint": "L’anglais, le français et le néerlandais sont tous requis pour publier.",
         "playableLength": "Longueur jouable",
-        "playableLengthHint": "Comptée à partir de la forme non vocalisée. Le vivier de Melthā accepte 2 à 8 lettres.",
-        "playableLengthInRange": "Dans la fenêtre 2–8 de Melthā.",
-        "playableLengthOutOfRange": "Hors de la fenêtre 2–8 de Melthā."
+        "playableLengthHint": "Comptée à partir de la forme non vocalisée. Le vivier de Meltho accepte 2 à 8 lettres.",
+        "playableLengthInRange": "Dans la fenêtre 2–8 de Meltho.",
+        "playableLengthOutOfRange": "Hors de la fenêtre 2–8 de Meltho."
       },
       "lifecycle": {
         "heading": "Cycle de vie",
         "publishHint": "La publication requiert les significations en anglais, français et néerlandais.",
-        "poolHeading": "Vivier de Melthā",
-        "poolHint": "Seules les entrées publiées de 2 à 8 lettres peuvent rejoindre le vivier de Melthā.",
-        "inPool": "Dans le vivier de Melthā",
-        "notInPool": "Hors du vivier de Melthā"
+        "poolHeading": "Vivier de Meltho",
+        "poolHint": "Seules les entrées publiées de 2 à 8 lettres peuvent rejoindre le vivier de Meltho.",
+        "inPool": "Dans le vivier de Meltho",
+        "notInPool": "Hors du vivier de Meltho"
       },
       "meaning": {
         "en": "Anglais",

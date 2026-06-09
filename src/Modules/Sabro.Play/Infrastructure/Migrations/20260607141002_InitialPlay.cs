@@ -35,7 +35,7 @@ namespace Sabro.Play.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "meltha_daily_puzzles",
+                name: "meltho_daily_puzzles",
                 schema: "play",
                 columns: table => new
                 {
@@ -48,7 +48,7 @@ namespace Sabro.Play.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_meltha_daily_puzzles", x => x.id);
+                    table.PrimaryKey("pk_meltho_daily_puzzles", x => x.id);
                 });
 
             migrationBuilder.CreateIndex(
@@ -59,16 +59,16 @@ namespace Sabro.Play.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_meltha_daily_puzzles_game_id_date",
+                name: "ix_meltho_daily_puzzles_game_id_date",
                 schema: "play",
-                table: "meltha_daily_puzzles",
+                table: "meltho_daily_puzzles",
                 columns: new[] { "game_id", "date" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_meltha_daily_puzzles_game_id_lexicon_entry_id",
+                name: "ix_meltho_daily_puzzles_game_id_lexicon_entry_id",
                 schema: "play",
-                table: "meltha_daily_puzzles",
+                table: "meltho_daily_puzzles",
                 columns: new[] { "game_id", "lexicon_entry_id" });
         }
 
@@ -80,7 +80,7 @@ namespace Sabro.Play.Infrastructure.Migrations
                 schema: "play");
 
             migrationBuilder.DropTable(
-                name: "meltha_daily_puzzles",
+                name: "meltho_daily_puzzles",
                 schema: "play");
         }
     }

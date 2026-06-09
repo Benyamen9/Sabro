@@ -19,7 +19,7 @@ internal static class LexiconEntryDocumentMapper
         MeaningTexts = entry.Meanings.Select(m => m.Text).ToArray(),
         MeaningLanguages = entry.Meanings.Select(m => m.Language).Distinct().ToArray(),
         Status = entry.Status.ToString(),
-        PlayableInMeltha = entry.PlayableInMeltha,
+        PlayableInMeltho = entry.PlayableInMeltho,
         PlayableLength = entry.PlayableLength,
         CreatedAtUnix = entry.CreatedAt.ToUnixTimeSeconds(),
     };
