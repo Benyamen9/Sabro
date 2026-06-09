@@ -8,13 +8,13 @@ using Sabro.Identity.Domain;
 namespace Sabro.IntegrationTests.Api.V1;
 
 [Collection(IntegrationCollection.Name)]
-public class UsersControllerTests : IDisposable
+public class ProfileControllerTests : IDisposable
 {
     private readonly PostgresFixture postgres;
     private readonly SabroApiFactory factory;
     private readonly HttpClient client;
 
-    public UsersControllerTests(PostgresFixture postgres)
+    public ProfileControllerTests(PostgresFixture postgres)
     {
         this.postgres = postgres;
         factory = new SabroApiFactory(postgres.ConnectionString);
@@ -27,7 +27,7 @@ public class UsersControllerTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
         var testUser = NewTestUser();
 
-        var response = await GetAsTestUserAsync("/api/v1/users/me", testUser, ct);
+        var response = await GetAsTestUserAsync("/api/v1/profile/me", testUser, ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var dto = await response.Content.ReadFromJsonAsync<UserProfileDto>(SabroApiFactory.JsonOptions, ct);
@@ -47,10 +47,10 @@ public class UsersControllerTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
         var testUser = NewTestUser();
 
-        var first = await GetAsTestUserAsync("/api/v1/users/me", testUser, ct);
+        var first = await GetAsTestUserAsync("/api/v1/profile/me", testUser, ct);
         var firstDto = (await first.Content.ReadFromJsonAsync<UserProfileDto>(SabroApiFactory.JsonOptions, ct))!;
 
-        var second = await GetAsTestUserAsync("/api/v1/users/me", testUser, ct);
+        var second = await GetAsTestUserAsync("/api/v1/profile/me", testUser, ct);
         var secondDto = (await second.Content.ReadFromJsonAsync<UserProfileDto>(SabroApiFactory.JsonOptions, ct))!;
 
         secondDto.Id.Should().Be(firstDto.Id);
@@ -58,14 +58,14 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task PatchMe_OnExistingProfile_UpdatesPreferences()
+    public async Task PutMe_OnExistingProfile_UpdatesPreferences()
     {
         var ct = TestContext.Current.CancellationToken;
         var testUser = NewTestUser();
-        await GetAsTestUserAsync("/api/v1/users/me", testUser, ct);
+        await GetAsTestUserAsync("/api/v1/profile/me", testUser, ct);
 
         var body = new UpdateUserProfileRequest("fr", ScriptVariant.Serto);
-        var request = new HttpRequestMessage(HttpMethod.Patch, "/api/v1/users/me")
+        var request = new HttpRequestMessage(HttpMethod.Put, "/api/v1/profile/me")
         {
             Content = JsonContent.Create(body, options: SabroApiFactory.JsonOptions),
         };
@@ -79,11 +79,11 @@ public class UsersControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task PatchMe_WithUnsupportedLanguage_Returns400WithFieldError()
+    public async Task PutMe_WithUnsupportedLanguage_Returns400WithFieldError()
     {
         var ct = TestContext.Current.CancellationToken;
         var testUser = NewTestUser();
-        await GetAsTestUserAsync("/api/v1/users/me", testUser, ct);
+        await GetAsTestUserAsync("/api/v1/profile/me", testUser, ct);
 
         var rawJson = """
         {
@@ -91,7 +91,7 @@ public class UsersControllerTests : IDisposable
             "preferredScriptVariant": "Serto"
         }
         """;
-        var request = new HttpRequestMessage(HttpMethod.Patch, "/api/v1/users/me")
+        var request = new HttpRequestMessage(HttpMethod.Put, "/api/v1/profile/me")
         {
             Content = new StringContent(rawJson, System.Text.Encoding.UTF8, "application/json"),
         };
