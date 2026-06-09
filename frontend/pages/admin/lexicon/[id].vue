@@ -85,7 +85,7 @@ function onUnpublish() {
 
 function onTogglePlayable() {
   if (!entry.value) return
-  const next = !entry.value.playableInMeltha
+  const next = !entry.value.playableInMeltho
   runAction(() => setPlayable(entry.value!.id, next), 'admin.lexicon.actionFailed')
 }
 
@@ -197,7 +197,7 @@ const actionButtonClass
         </h3>
         <div class="mt-3 flex flex-wrap items-center gap-3">
           <span class="font-sans text-sm text-[var(--color-text-muted)]">
-            {{ entry.playableInMeltha ? t('admin.lexicon.lifecycle.inPool') : t('admin.lexicon.lifecycle.notInPool') }}
+            {{ entry.playableInMeltho ? t('admin.lexicon.lifecycle.inPool') : t('admin.lexicon.lifecycle.notInPool') }}
           </span>
           <button
             type="button"
@@ -205,7 +205,7 @@ const actionButtonClass
             :class="actionButtonClass"
             @click="onTogglePlayable"
           >
-            {{ entry.playableInMeltha ? t('admin.lexicon.actions.removeFromPool') : t('admin.lexicon.actions.addToPool') }}
+            {{ entry.playableInMeltho ? t('admin.lexicon.actions.removeFromPool') : t('admin.lexicon.actions.addToPool') }}
           </button>
         </div>
         <p class="mt-2 font-sans text-xs text-[var(--color-text-faint)]">

@@ -138,7 +138,7 @@ public class LexiconEntrySearchSyncTests
         var doc = await WaitForPlayablePublishedAsync(client, descriptor.IndexName, id.ToString("D"), ct);
         doc.Should().NotBeNull();
         doc!.Status.Should().Be(nameof(LexiconEntryStatus.Published));
-        doc.PlayableInMeltha.Should().BeTrue();
+        doc.PlayableInMeltho.Should().BeTrue();
         doc.PlayableLength.Should().Be(3);
     }
 
@@ -231,7 +231,7 @@ public class LexiconEntrySearchSyncTests
             try
             {
                 doc = await client.Index(indexName).GetDocumentAsync<LexiconEntrySearchDocument>(documentId, cancellationToken: ct);
-                if (doc is not null && doc.Status == nameof(LexiconEntryStatus.Published) && doc.PlayableInMeltha)
+                if (doc is not null && doc.Status == nameof(LexiconEntryStatus.Published) && doc.PlayableInMeltho)
                 {
                     return doc;
                 }

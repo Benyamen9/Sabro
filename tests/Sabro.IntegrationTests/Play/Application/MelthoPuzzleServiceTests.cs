@@ -2,24 +2,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Sabro.Lexicon.Application.Entries;
-using Sabro.Play.Application.Meltha;
+using Sabro.Play.Application.Meltho;
 using Sabro.Play.Domain;
 using Sabro.Play.Infrastructure;
 
 namespace Sabro.IntegrationTests.Play.Application;
 
 // Each test pins "today" to a distinct far-future year so the shared
-// meltha_daily_puzzles table never collides on the unique (game, date) key and
+// meltho_daily_puzzles table never collides on the unique (game, date) key and
 // the anti-repetition window scan only ever sees this test's own seeded rows.
 // The eligible pool is substituted, so selection is deterministic and decoupled
 // from the shared lexicon table; the real PlayDbContext exercises get-or-create
 // and the window scan against Postgres.
 [Collection(IntegrationCollection.Name)]
-public class MelthaPuzzleServiceTests
+public class MelthoPuzzleServiceTests
 {
     private readonly PostgresFixture fixture;
 
-    public MelthaPuzzleServiceTests(PostgresFixture fixture)
+    public MelthoPuzzleServiceTests(PostgresFixture fixture)
     {
         this.fixture = fixture;
     }
@@ -39,7 +39,7 @@ public class MelthaPuzzleServiceTests
         result.Value.Date.Should().Be(today);
 
         await using var read = fixture.CreatePlayContext();
-        var rows = await read.MelthaDailyPuzzles.Where(p => p.Date == today).ToListAsync(ct);
+        var rows = await read.MelthoDailyPuzzles.Where(p => p.Date == today).ToListAsync(ct);
         rows.Should().ContainSingle().Which.LexiconEntryId.Should().Be(e1);
     }
 
@@ -64,7 +64,7 @@ public class MelthaPuzzleServiceTests
         second.Value!.LexiconEntryId.Should().Be(first);
 
         await using var read = fixture.CreatePlayContext();
-        var rows = await read.MelthaDailyPuzzles.Where(p => p.Date == today).ToListAsync(ct);
+        var rows = await read.MelthoDailyPuzzles.Where(p => p.Date == today).ToListAsync(ct);
         rows.Should().ContainSingle();
     }
 
@@ -147,13 +147,13 @@ public class MelthaPuzzleServiceTests
         result.Error!.Code.Should().Be("not_found");
     }
 
-    private static MelthaPuzzleService NewService(PlayDbContext ctx, ILexiconPlayablePool pool, DateOnly today, int windowDays) =>
+    private static MelthoPuzzleService NewService(PlayDbContext ctx, ILexiconPlayablePool pool, DateOnly today, int windowDays) =>
         new(
             ctx,
             pool,
-            Options.Create(new MelthaOptions { AntiRepetitionWindowDays = windowDays }),
+            Options.Create(new MelthoOptions { AntiRepetitionWindowDays = windowDays }),
             new FixedTimeProvider(today),
-            NullLogger<MelthaPuzzleService>.Instance);
+            NullLogger<MelthoPuzzleService>.Instance);
 
     private static ILexiconPlayablePool PoolReturning(params Guid[] eligible)
     {
@@ -168,7 +168,7 @@ public class MelthaPuzzleServiceTests
     private async Task SeedServedAsync(DateOnly date, Guid entryId, CancellationToken ct)
     {
         await using var ctx = fixture.CreatePlayContext();
-        ctx.MelthaDailyPuzzles.Add(MelthaDailyPuzzle.Create(Games.Meltha, date, entryId).Value!);
+        ctx.MelthoDailyPuzzles.Add(MelthoDailyPuzzle.Create(Games.Meltho, date, entryId).Value!);
         await ctx.SaveChangesAsync(ct);
     }
 }

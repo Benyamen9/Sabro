@@ -1885,7 +1885,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/play/meltha/today": {
+    "/api/v1/play/meltho/today": {
         parameters: {
             query?: never;
             header?: never;
@@ -1907,9 +1907,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["MelthaPuzzleDto"];
-                        "application/json": components["schemas"]["MelthaPuzzleDto"];
-                        "text/json": components["schemas"]["MelthaPuzzleDto"];
+                        "text/plain": components["schemas"]["MelthoPuzzleDto"];
+                        "application/json": components["schemas"]["MelthoPuzzleDto"];
+                        "text/json": components["schemas"]["MelthoPuzzleDto"];
                     };
                 };
                 /** @description Conflict */
@@ -3121,7 +3121,7 @@ export interface components {
             morphology: null | string;
             meanings: components["schemas"]["LexiconMeaningDto"][];
             status: components["schemas"]["LexiconEntryStatus"];
-            playableInMeltha: boolean;
+            playableInMeltho: boolean;
             /** Format: int32 */
             playableLength: number | string;
             /** Format: date-time */
@@ -3159,7 +3159,7 @@ export interface components {
             meaningTexts: string[];
             meaningLanguages: string[];
         };
-        MelthaPuzzleDto: {
+        MelthoPuzzleDto: {
             /** Format: date */
             date: string;
             /** Format: uuid */
@@ -3169,9 +3169,9 @@ export interface components {
             sblTransliteration: null | string;
             /** Format: int32 */
             playableLength: number | string;
-            meanings: components["schemas"]["MelthaPuzzleMeaningDto"][];
+            meanings: components["schemas"]["MelthoPuzzleMeaningDto"][];
         };
-        MelthaPuzzleMeaningDto: {
+        MelthoPuzzleMeaningDto: {
             language: string;
             text: string;
         };

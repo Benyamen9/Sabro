@@ -15,7 +15,7 @@ public sealed class PlayDbContext : DbContext
 
     public DbSet<GameResult> GameResults => Set<GameResult>();
 
-    public DbSet<MelthaDailyPuzzle> MelthaDailyPuzzles => Set<MelthaDailyPuzzle>();
+    public DbSet<MelthoDailyPuzzle> MelthoDailyPuzzles => Set<MelthoDailyPuzzle>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

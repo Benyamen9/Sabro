@@ -7,7 +7,7 @@ namespace Sabro.Play.Domain;
 /// <summary>
 /// A single player's outcome for one game on one day. Generic and multi-game by
 /// design: keyed by Logto user id + a <see cref="GameId"/> discriminator
-/// (<c>meltha</c>, later <c>shmo</c>, …) + <see cref="PlayedOn"/>. One row per
+/// (<c>meltho</c>, later <c>shmo</c>, …) + <see cref="PlayedOn"/>. One row per
 /// (user, game, day) — the unique constraint lives in the EF configuration.
 /// Streaks and aggregates are derived from these rows, never stored.
 /// </summary>
@@ -34,7 +34,7 @@ public sealed class GameResult : Entity<Guid>, IAggregateRoot
     /// <summary>Opaque Logto user id (the OIDC <c>sub</c> claim) of the player.</summary>
     public string LogtoUserId { get; private set; } = string.Empty;
 
-    /// <summary>Game discriminator, normalized to lower case (e.g. <c>meltha</c>).</summary>
+    /// <summary>Game discriminator, normalized to lower case (e.g. <c>meltho</c>).</summary>
     public string GameId { get; private set; } = string.Empty;
 
     public DateOnly PlayedOn { get; private set; }

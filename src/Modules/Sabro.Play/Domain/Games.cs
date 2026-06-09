@@ -9,5 +9,5 @@ namespace Sabro.Play.Domain;
 /// </summary>
 public static class Games
 {
-    public const string Meltha = "meltha";
+    public const string Meltho = "meltho";
 }

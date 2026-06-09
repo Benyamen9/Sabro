@@ -42,7 +42,7 @@ public class RecordGameResultRequestValidatorTests
     }
 
     private static RecordGameResultRequest Valid() => new(
-        GameId: "meltha",
+        GameId: "meltho",
         PlayedOn: new DateOnly(2026, 6, 7),
         Solved: true,
         Attempts: 3,

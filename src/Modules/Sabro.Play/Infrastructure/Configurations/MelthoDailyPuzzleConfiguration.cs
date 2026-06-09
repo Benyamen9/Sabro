@@ -4,11 +4,11 @@ using Sabro.Play.Domain;
 
 namespace Sabro.Play.Infrastructure.Configurations;
 
-internal sealed class MelthaDailyPuzzleConfiguration : IEntityTypeConfiguration<MelthaDailyPuzzle>
+internal sealed class MelthoDailyPuzzleConfiguration : IEntityTypeConfiguration<MelthoDailyPuzzle>
 {
-    public void Configure(EntityTypeBuilder<MelthaDailyPuzzle> builder)
+    public void Configure(EntityTypeBuilder<MelthoDailyPuzzle> builder)
     {
-        builder.ToTable("MelthaDailyPuzzles");
+        builder.ToTable("MelthoDailyPuzzles");
 
         builder.HasKey(e => e.Id);
 

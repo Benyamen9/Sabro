@@ -68,7 +68,7 @@
     "adminRequiredHint": "Meld u aan met een redacteursaccount om het lexicon te beheren.",
     "lexicon": {
       "title": "Lexicon-backoffice",
-      "subtitle": "Beheer de Syrische lexicale database en de Melthā-woordenpool.",
+      "subtitle": "Beheer de Syrische lexicale database en de Meltho-woordenpool.",
       "newEntry": "Nieuwe vermelding",
       "empty": "Nog geen lexiconvermeldingen. Maak de eerste aan.",
       "loadFailed": "Kan de lexiconvermeldingen niet laden.",
@@ -116,17 +116,17 @@
         "meanings": "Betekenissen",
         "meaningsHint": "Engels, Frans en Nederlands zijn alle vereist om te publiceren.",
         "playableLength": "Speelbare lengte",
-        "playableLengthHint": "Geteld vanaf de onvocalisatievorm. De Melthā-pool aanvaardt 2–8 letters.",
-        "playableLengthInRange": "Binnen het 2–8-venster van Melthā.",
-        "playableLengthOutOfRange": "Buiten het 2–8-venster van Melthā."
+        "playableLengthHint": "Geteld vanaf de onvocalisatievorm. De Meltho-pool aanvaardt 2–8 letters.",
+        "playableLengthInRange": "Binnen het 2–8-venster van Meltho.",
+        "playableLengthOutOfRange": "Buiten het 2–8-venster van Meltho."
       },
       "lifecycle": {
         "heading": "Levenscyclus",
         "publishHint": "Publiceren vereist betekenissen in het Engels, Frans en Nederlands.",
-        "poolHeading": "Melthā-pool",
-        "poolHint": "Alleen gepubliceerde vermeldingen van 2–8 letters kunnen in de Melthā-pool.",
-        "inPool": "In de Melthā-pool",
-        "notInPool": "Niet in de Melthā-pool"
+        "poolHeading": "Meltho-pool",
+        "poolHint": "Alleen gepubliceerde vermeldingen van 2–8 letters kunnen in de Meltho-pool.",
+        "inPool": "In de Meltho-pool",
+        "notInPool": "Niet in de Meltho-pool"
       },
       "meaning": {
         "en": "Engels",

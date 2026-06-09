@@ -30,7 +30,7 @@ public class LexiconEntryTests
         result.Value.Meanings.Should().BeEmpty();
         result.Value.Id.Should().NotBe(Guid.Empty);
         result.Value.Status.Should().Be(LexiconEntryStatus.Draft);
-        result.Value.PlayableInMeltha.Should().BeFalse();
+        result.Value.PlayableInMeltho.Should().BeFalse();
         result.Value.PlayableLength.Should().Be(3);
     }
 
@@ -276,7 +276,7 @@ public class LexiconEntryTests
 
         error.Should().NotBeNull();
         error!.Code.Should().Be("conflict");
-        entry.PlayableInMeltha.Should().BeFalse();
+        entry.PlayableInMeltho.Should().BeFalse();
     }
 
     [Fact]
@@ -288,7 +288,7 @@ public class LexiconEntryTests
         var error = entry.SetPlayable(true);
 
         error.Should().BeNull();
-        entry.PlayableInMeltha.Should().BeTrue();
+        entry.PlayableInMeltho.Should().BeTrue();
     }
 
     [Fact]
@@ -306,7 +306,7 @@ public class LexiconEntryTests
         var error = entry.SetPlayable(true);
 
         error.Should().BeNull();
-        entry.PlayableInMeltha.Should().BeTrue();
+        entry.PlayableInMeltho.Should().BeTrue();
         entry.PlayableLength.Should().Be(1);
     }
 
@@ -320,7 +320,7 @@ public class LexiconEntryTests
         entry.ReturnToDraft();
 
         entry.Status.Should().Be(LexiconEntryStatus.Draft);
-        entry.PlayableInMeltha.Should().BeFalse();
+        entry.PlayableInMeltho.Should().BeFalse();
     }
 
     [Fact]

@@ -9,12 +9,12 @@ public class GameResultTests
     [Fact]
     public void Create_WithValidInput_Succeeds()
     {
-        var result = GameResult.Create("user-1", "meltha", PlayedOn, solved: true, attempts: 3, detailJson: "{\"guesses\":3}");
+        var result = GameResult.Create("user-1", "meltho", PlayedOn, solved: true, attempts: 3, detailJson: "{\"guesses\":3}");
 
         result.IsSuccess.Should().BeTrue();
         var entry = result.Value!;
         entry.LogtoUserId.Should().Be("user-1");
-        entry.GameId.Should().Be("meltha");
+        entry.GameId.Should().Be("meltho");
         entry.PlayedOn.Should().Be(PlayedOn);
         entry.Solved.Should().BeTrue();
         entry.Attempts.Should().Be(3);
@@ -28,7 +28,7 @@ public class GameResultTests
     [InlineData(null)]
     public void Create_WithoutLogtoUserId_Fails(string? userId)
     {
-        var result = GameResult.Create(userId!, "meltha", PlayedOn, solved: false, attempts: 0);
+        var result = GameResult.Create(userId!, "meltho", PlayedOn, solved: false, attempts: 0);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -46,7 +46,7 @@ public class GameResultTests
     }
 
     [Theory]
-    [InlineData("MELTHA", "meltha")]
+    [InlineData("MELTHO", "meltho")]
     [InlineData("  Shmo  ", "shmo")]
     public void Create_NormalizesGameIdToTrimmedLowerCase(string input, string expected)
     {
@@ -79,7 +79,7 @@ public class GameResultTests
     [Fact]
     public void Create_WithNegativeAttempts_Fails()
     {
-        var result = GameResult.Create("user-1", "meltha", PlayedOn, solved: false, attempts: -1);
+        var result = GameResult.Create("user-1", "meltho", PlayedOn, solved: false, attempts: -1);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -88,7 +88,7 @@ public class GameResultTests
     [Fact]
     public void Create_SolvedWithZeroAttempts_Fails()
     {
-        var result = GameResult.Create("user-1", "meltha", PlayedOn, solved: true, attempts: 0);
+        var result = GameResult.Create("user-1", "meltho", PlayedOn, solved: true, attempts: 0);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -97,7 +97,7 @@ public class GameResultTests
     [Fact]
     public void Create_UnsolvedWithZeroAttempts_Succeeds()
     {
-        var result = GameResult.Create("user-1", "meltha", PlayedOn, solved: false, attempts: 0);
+        var result = GameResult.Create("user-1", "meltho", PlayedOn, solved: false, attempts: 0);
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -105,7 +105,7 @@ public class GameResultTests
     [Fact]
     public void Create_WithDefaultPlayedOn_Fails()
     {
-        var result = GameResult.Create("user-1", "meltha", default, solved: false, attempts: 1);
+        var result = GameResult.Create("user-1", "meltho", default, solved: false, attempts: 1);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -117,7 +117,7 @@ public class GameResultTests
     [InlineData(null)]
     public void Create_WithBlankDetailJson_StoresNull(string? detailJson)
     {
-        var result = GameResult.Create("user-1", "meltha", PlayedOn, solved: false, attempts: 1, detailJson: detailJson);
+        var result = GameResult.Create("user-1", "meltho", PlayedOn, solved: false, attempts: 1, detailJson: detailJson);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.DetailJson.Should().BeNull();
@@ -126,7 +126,7 @@ public class GameResultTests
     [Fact]
     public void Create_WithMalformedDetailJson_Fails()
     {
-        var result = GameResult.Create("user-1", "meltha", PlayedOn, solved: false, attempts: 1, detailJson: "{not json");
+        var result = GameResult.Create("user-1", "meltho", PlayedOn, solved: false, attempts: 1, detailJson: "{not json");
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");

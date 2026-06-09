@@ -81,7 +81,7 @@
     "adminRequiredHint": "Sign in with an editor account to manage the lexicon.",
     "lexicon": {
       "title": "Lexicon backoffice",
-      "subtitle": "Manage the Syriac lexical database and the Melthā word pool.",
+      "subtitle": "Manage the Syriac lexical database and the Meltho word pool.",
       "newEntry": "New entry",
       "empty": "No lexicon entries yet. Create the first one.",
       "loadFailed": "Could not load lexicon entries.",
@@ -129,17 +129,17 @@
         "meanings": "Meanings",
         "meaningsHint": "English, French and Dutch are all required to publish.",
         "playableLength": "Playable length",
-        "playableLengthHint": "Counted from the unvocalized form. The Melthā pool accepts 2–8 letters.",
-        "playableLengthInRange": "Within the 2–8 Melthā window.",
-        "playableLengthOutOfRange": "Outside the 2–8 Melthā window."
+        "playableLengthHint": "Counted from the unvocalized form. The Meltho pool accepts 2–8 letters.",
+        "playableLengthInRange": "Within the 2–8 Meltho window.",
+        "playableLengthOutOfRange": "Outside the 2–8 Meltho window."
       },
       "lifecycle": {
         "heading": "Lifecycle",
         "publishHint": "Publishing requires English, French and Dutch meanings.",
-        "poolHeading": "Melthā pool",
-        "poolHint": "Only published entries of 2–8 letters can join the Melthā pool.",
-        "inPool": "In the Melthā pool",
-        "notInPool": "Not in the Melthā pool"
+        "poolHeading": "Meltho pool",
+        "poolHint": "Only published entries of 2–8 letters can join the Meltho pool.",
+        "inPool": "In the Meltho pool",
+        "notInPool": "Not in the Meltho pool"
       },
       "meaning": {
         "en": "English",

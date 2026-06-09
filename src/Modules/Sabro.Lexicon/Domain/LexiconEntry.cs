@@ -18,7 +18,7 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
         CreatedAt = now;
         UpdatedAt = now;
         Status = LexiconEntryStatus.Draft;
-        PlayableInMeltha = false;
+        PlayableInMeltho = false;
         Apply(fields);
     }
 
@@ -44,11 +44,11 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
 
     public LexiconEntryStatus Status { get; private set; }
 
-    public bool PlayableInMeltha { get; private set; }
+    public bool PlayableInMeltho { get; private set; }
 
     /// <summary>
     /// Number of base Syriac letters in <see cref="SyriacUnvocalized"/> (combining marks
-    /// excluded). Computed on every create/edit, never set directly. Drives Melthā's
+    /// excluded). Computed on every create/edit, never set directly. Drives Meltho's
     /// 2–8 eligible-pool window.
     /// </summary>
     public int PlayableLength { get; private set; }
@@ -83,7 +83,7 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
     /// <summary>
     /// Replaces the editable fields (full replace of variants and meanings). Recomputes
     /// <see cref="PlayableLength"/>. Does not change <see cref="Status"/> or
-    /// <see cref="PlayableInMeltha"/>. A published entry must keep all required glosses —
+    /// <see cref="PlayableInMeltho"/>. A published entry must keep all required glosses —
     /// an edit that would drop one is rejected; unpublish first.
     /// </summary>
     public Error? Update(
@@ -142,13 +142,13 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
     /// <summary>Returns the entry to draft and clears the playable flag (a draft can never be playable).</summary>
     public void ReturnToDraft()
     {
-        if (Status == LexiconEntryStatus.Draft && !PlayableInMeltha)
+        if (Status == LexiconEntryStatus.Draft && !PlayableInMeltho)
         {
             return;
         }
 
         Status = LexiconEntryStatus.Draft;
-        PlayableInMeltha = false;
+        PlayableInMeltho = false;
         Touch();
     }
 
@@ -163,12 +163,12 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
             return Error.Conflict("Only published entries can be marked playable.");
         }
 
-        if (PlayableInMeltha == playable)
+        if (PlayableInMeltho == playable)
         {
             return null;
         }
 
-        PlayableInMeltha = playable;
+        PlayableInMeltho = playable;
         Touch();
         return null;
     }

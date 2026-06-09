@@ -18,7 +18,7 @@ internal sealed class LexiconPlayablePool : ILexiconPlayablePool
         return await dbContext.Entries
             .AsNoTracking()
             .Where(e => e.Status == LexiconEntryStatus.Published
-                && e.PlayableInMeltha
+                && e.PlayableInMeltho
                 && e.PlayableLength >= minLength
                 && e.PlayableLength <= maxLength)
             .Select(e => e.Id)

@@ -6,9 +6,9 @@ using Sabro.Play.Domain;
 using Sabro.Play.Infrastructure;
 using Sabro.Shared.Results;
 
-namespace Sabro.Play.Application.Meltha;
+namespace Sabro.Play.Application.Meltho;
 
-internal sealed class MelthaPuzzleService : IMelthaPuzzleService
+internal sealed class MelthoPuzzleService : IMelthoPuzzleService
 {
     /// <summary>Hard server-side bound on playable length, re-enforced here so a mis-flagged out-of-range entry can never be served.</summary>
     private const int MinPlayableLength = 2;
@@ -16,16 +16,16 @@ internal sealed class MelthaPuzzleService : IMelthaPuzzleService
 
     private readonly PlayDbContext dbContext;
     private readonly ILexiconPlayablePool playablePool;
-    private readonly MelthaOptions options;
+    private readonly MelthoOptions options;
     private readonly TimeProvider timeProvider;
-    private readonly ILogger<MelthaPuzzleService> logger;
+    private readonly ILogger<MelthoPuzzleService> logger;
 
-    public MelthaPuzzleService(
+    public MelthoPuzzleService(
         PlayDbContext dbContext,
         ILexiconPlayablePool playablePool,
-        IOptions<MelthaOptions> options,
+        IOptions<MelthoOptions> options,
         TimeProvider timeProvider,
-        ILogger<MelthaPuzzleService> logger)
+        ILogger<MelthoPuzzleService> logger)
     {
         this.dbContext = dbContext;
         this.playablePool = playablePool;
@@ -34,13 +34,13 @@ internal sealed class MelthaPuzzleService : IMelthaPuzzleService
         this.logger = logger;
     }
 
-    public async Task<Result<MelthaPuzzleDto>> GetTodaysPuzzleAsync(CancellationToken cancellationToken)
+    public async Task<Result<MelthoPuzzleDto>> GetTodaysPuzzleAsync(CancellationToken cancellationToken)
     {
         var today = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime);
 
-        var existing = await dbContext.MelthaDailyPuzzles
+        var existing = await dbContext.MelthoDailyPuzzles
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.GameId == Games.Meltha && p.Date == today, cancellationToken);
+            .FirstOrDefaultAsync(p => p.GameId == Games.Meltho && p.Date == today, cancellationToken);
         if (existing is not null)
         {
             return await RenderAsync(today, existing.LexiconEntryId, cancellationToken);
@@ -49,17 +49,17 @@ internal sealed class MelthaPuzzleService : IMelthaPuzzleService
         var selection = await SelectEntryIdAsync(today, cancellationToken);
         if (!selection.IsSuccess)
         {
-            return Result<MelthaPuzzleDto>.Failure(selection.Error!);
+            return Result<MelthoPuzzleDto>.Failure(selection.Error!);
         }
 
-        var puzzleResult = MelthaDailyPuzzle.Create(Games.Meltha, today, selection.Value);
+        var puzzleResult = MelthoDailyPuzzle.Create(Games.Meltho, today, selection.Value);
         if (!puzzleResult.IsSuccess)
         {
-            return Result<MelthaPuzzleDto>.Failure(puzzleResult.Error!);
+            return Result<MelthoPuzzleDto>.Failure(puzzleResult.Error!);
         }
 
         var puzzle = puzzleResult.Value!;
-        dbContext.MelthaDailyPuzzles.Add(puzzle);
+        dbContext.MelthoDailyPuzzles.Add(puzzle);
         try
         {
             await dbContext.SaveChangesAsync(cancellationToken);
@@ -70,9 +70,9 @@ internal sealed class MelthaPuzzleService : IMelthaPuzzleService
             // today's puzzle first. Re-read and serve their word so every player
             // sees the same one.
             dbContext.Entry(puzzle).State = EntityState.Detached;
-            var raced = await dbContext.MelthaDailyPuzzles
+            var raced = await dbContext.MelthoDailyPuzzles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.GameId == Games.Meltha && p.Date == today, cancellationToken);
+                .FirstOrDefaultAsync(p => p.GameId == Games.Meltho && p.Date == today, cancellationToken);
             if (raced is null)
             {
                 throw;
@@ -82,7 +82,7 @@ internal sealed class MelthaPuzzleService : IMelthaPuzzleService
         }
 
         logger.LogInformation(
-            "Melthā daily puzzle selected. Date={Date} LexiconEntryId={LexiconEntryId}",
+            "Meltho daily puzzle selected. Date={Date} LexiconEntryId={LexiconEntryId}",
             today,
             puzzle.LexiconEntryId);
 
@@ -94,9 +94,9 @@ internal sealed class MelthaPuzzleService : IMelthaPuzzleService
         var windowDays = Math.Max(0, options.AntiRepetitionWindowDays);
         var cutoff = today.AddDays(-windowDays);
 
-        var recentlyServed = await dbContext.MelthaDailyPuzzles
+        var recentlyServed = await dbContext.MelthoDailyPuzzles
             .AsNoTracking()
-            .Where(p => p.GameId == Games.Meltha && p.Date > cutoff)
+            .Where(p => p.GameId == Games.Meltho && p.Date > cutoff)
             .Select(p => p.LexiconEntryId)
             .ToListAsync(cancellationToken);
         var excluded = recentlyServed.ToHashSet();
@@ -106,39 +106,39 @@ internal sealed class MelthaPuzzleService : IMelthaPuzzleService
         if (candidates.Count == 0)
         {
             logger.LogWarning(
-                "Melthā daily puzzle selection found no eligible word. EligibleCount={EligibleCount} ExcludedCount={ExcludedCount} WindowDays={WindowDays}",
+                "Meltho daily puzzle selection found no eligible word. EligibleCount={EligibleCount} ExcludedCount={ExcludedCount} WindowDays={WindowDays}",
                 eligible.Count,
                 excluded.Count,
                 windowDays);
             return Result<Guid>.Failure(Error.Conflict(
-                "No eligible Melthā word is available for today. The playable pool may be too small for the anti-repetition window."));
+                "No eligible Meltho word is available for today. The playable pool may be too small for the anti-repetition window."));
         }
 
         var picked = candidates[Random.Shared.Next(candidates.Count)];
         return Result<Guid>.Success(picked);
     }
 
-    private async Task<Result<MelthaPuzzleDto>> RenderAsync(DateOnly date, Guid lexiconEntryId, CancellationToken cancellationToken)
+    private async Task<Result<MelthoPuzzleDto>> RenderAsync(DateOnly date, Guid lexiconEntryId, CancellationToken cancellationToken)
     {
         var entry = await playablePool.GetPlayableEntryAsync(lexiconEntryId, cancellationToken);
         if (entry is null)
         {
             logger.LogError(
-                "Melthā daily puzzle points at a missing lexicon entry. Date={Date} LexiconEntryId={LexiconEntryId}",
+                "Meltho daily puzzle points at a missing lexicon entry. Date={Date} LexiconEntryId={LexiconEntryId}",
                 date,
                 lexiconEntryId);
-            return Result<MelthaPuzzleDto>.Failure(Error.NotFound("Today's Melthā word could not be resolved."));
+            return Result<MelthoPuzzleDto>.Failure(Error.NotFound("Today's Meltho word could not be resolved."));
         }
 
-        var dto = new MelthaPuzzleDto(
+        var dto = new MelthoPuzzleDto(
             date,
             entry.Id,
             entry.SyriacUnvocalized,
             entry.SyriacVocalized,
             entry.SblTransliteration,
             entry.PlayableLength,
-            entry.Meanings.Select(m => new MelthaPuzzleMeaningDto(m.Language, m.Text)).ToArray());
+            entry.Meanings.Select(m => new MelthoPuzzleMeaningDto(m.Language, m.Text)).ToArray());
 
-        return Result<MelthaPuzzleDto>.Success(dto);
+        return Result<MelthoPuzzleDto>.Success(dto);
     }
 }

@@ -305,7 +305,7 @@ public class LexiconEntryServiceTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.Status.Should().Be(LexiconEntryStatus.Draft);
-        result.Value.PlayableInMeltha.Should().BeFalse();
+        result.Value.PlayableInMeltho.Should().BeFalse();
     }
 
     [Fact]
@@ -331,7 +331,7 @@ public class LexiconEntryServiceTests
         var result = await NewService(ctx).SetPlayableAsync(id, true, ct);
 
         result.IsSuccess.Should().BeTrue();
-        result.Value!.PlayableInMeltha.Should().BeTrue();
+        result.Value!.PlayableInMeltho.Should().BeTrue();
     }
 
     [Fact]

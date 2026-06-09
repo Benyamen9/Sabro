@@ -22,7 +22,7 @@ internal sealed class LexiconEntryIndexDescriptor : ISearchIndexDescriptor<Lexic
         "rootForm",
         "meaningLanguages",
         "status",
-        "playableInMeltha",
+        "playableInMeltho",
         "playableLength",
     };
 
