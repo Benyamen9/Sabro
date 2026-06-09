@@ -6,7 +6,8 @@
   "nav": {
     "primary": "Primaire navigatie",
     "home": "Home",
-    "translations": "Vertalingen"
+    "translations": "Vertalingen",
+    "admin": "Backoffice"
   },
   "switcher": {
     "languageLabel": "Taal",
@@ -19,7 +20,11 @@
   },
   "common": {
     "retry": "Opnieuw proberen",
-    "loading": "Laden…"
+    "loading": "Laden…",
+    "save": "Opslaan",
+    "saving": "Opslaan…",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen"
   },
   "auth": {
     "signIn": "Aanmelden",
@@ -57,5 +62,90 @@
     "previous": "Vorige",
     "next": "Volgende",
     "pageOf": "Pagina {page} van {total}"
+  },
+  "admin": {
+    "adminRequired": "Beheerderstoegang vereist.",
+    "adminRequiredHint": "Meld u aan met een redacteursaccount om het lexicon te beheren.",
+    "lexicon": {
+      "title": "Lexicon-backoffice",
+      "subtitle": "Beheer de Syrische lexicale database en de Melthā-woordenpool.",
+      "newEntry": "Nieuwe vermelding",
+      "empty": "Nog geen lexiconvermeldingen. Maak de eerste aan.",
+      "loadFailed": "Kan de lexiconvermeldingen niet laden.",
+      "loadEntryFailed": "Kan deze vermelding niet laden.",
+      "notFound": "Vermelding niet gevonden.",
+      "saveFailed": "Kan de vermelding niet opslaan. Controleer de gemarkeerde velden.",
+      "deleteFailed": "Kan de vermelding niet verwijderen.",
+      "actionFailed": "De actie kon niet worden voltooid.",
+      "backToList": "Terug naar lexicon",
+      "deleteConfirm": "Deze vermelding definitief verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "columns": {
+        "syriac": "Syrisch",
+        "transliteration": "Transliteratie",
+        "category": "Categorie",
+        "status": "Status",
+        "playable": "Pool",
+        "length": "Lengte"
+      },
+      "status": {
+        "Draft": "Concept",
+        "Published": "Gepubliceerd"
+      },
+      "actions": {
+        "edit": "Bewerken",
+        "create": "Vermelding aanmaken",
+        "publish": "Publiceren",
+        "unpublish": "Publicatie ongedaan maken",
+        "addToPool": "Aan pool toevoegen",
+        "removeFromPool": "Uit pool verwijderen"
+      },
+      "form": {
+        "createTitle": "Nieuwe lexiconvermelding",
+        "editTitle": "Lexiconvermelding bewerken",
+        "syriacUnvocalized": "Syrisch (onvocalisatie)",
+        "syriacUnvocalizedHint": "Verplicht. Basistekst zonder klinkertekens.",
+        "syriacVocalized": "Syrisch (gevocaliseerd)",
+        "syriacVocalizedHint": "Optioneel. Met klinkertekens.",
+        "sblTransliteration": "SBL-transliteratie",
+        "sblTransliterationHint": "Optionele verrijking; bepaalt de publicatie niet.",
+        "transliterationVariants": "Transliteratievarianten",
+        "transliterationVariantsHint": "Door komma's gescheiden aanvaarde spellingen voor zoektolerantie.",
+        "grammaticalCategory": "Grammaticale categorie",
+        "morphology": "Morfologie",
+        "morphologyHint": "Optionele vrije tekst.",
+        "meanings": "Betekenissen",
+        "meaningsHint": "Engels, Frans en Nederlands zijn alle vereist om te publiceren.",
+        "playableLength": "Speelbare lengte",
+        "playableLengthHint": "Geteld vanaf de onvocalisatievorm. De Melthā-pool aanvaardt 2–8 letters.",
+        "playableLengthInRange": "Binnen het 2–8-venster van Melthā.",
+        "playableLengthOutOfRange": "Buiten het 2–8-venster van Melthā."
+      },
+      "lifecycle": {
+        "heading": "Levenscyclus",
+        "publishHint": "Publiceren vereist betekenissen in het Engels, Frans en Nederlands.",
+        "poolHeading": "Melthā-pool",
+        "poolHint": "Alleen gepubliceerde vermeldingen van 2–8 letters kunnen in de Melthā-pool.",
+        "inPool": "In de Melthā-pool",
+        "notInPool": "Niet in de Melthā-pool"
+      },
+      "meaning": {
+        "en": "Engels",
+        "fr": "Frans",
+        "nl": "Nederlands"
+      },
+      "category": {
+        "Noun": "Zelfstandig naamwoord",
+        "Verb": "Werkwoord",
+        "Adjective": "Bijvoeglijk naamwoord",
+        "Adverb": "Bijwoord",
+        "Pronoun": "Voornaamwoord",
+        "Preposition": "Voorzetsel",
+        "Conjunction": "Voegwoord",
+        "Particle": "Partikel",
+        "Numeral": "Telwoord",
+        "Interjection": "Tussenwerpsel",
+        "Other": "Overig"
+      }
+    }
   }
 }

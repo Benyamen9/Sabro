@@ -55,3 +55,13 @@ export type SuggestedEditDto = Schemas['SuggestedEditDto']
 
 // Identity.
 export type UserProfileDto = Schemas['UserProfileDto']
+
+// Lexicon.
+export type GrammaticalCategory = Schemas['GrammaticalCategory']
+export type LexiconEntryStatus = Schemas['LexiconEntryStatus']
+export type LexiconMeaningDto = Schemas['LexiconMeaningDto']
+export type LexiconEntryDto = Schemas['LexiconEntryDto']
+export type CreateLexiconMeaningRequest = Schemas['CreateLexiconMeaningRequest']
+export type CreateLexiconEntryRequest = Schemas['CreateLexiconEntryRequest']
+export type UpdateLexiconEntryRequest = Schemas['UpdateLexiconEntryRequest']
+export type SetPlayableLexiconEntryRequest = Schemas['SetPlayableLexiconEntryRequest']

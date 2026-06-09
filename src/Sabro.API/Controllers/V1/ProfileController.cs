@@ -6,13 +6,17 @@ using Sabro.Identity.Application.UserProfiles;
 
 namespace Sabro.API.Controllers.V1;
 
+/// <summary>
+/// The authenticated caller's own profile — the hub's "my profile" surface.
+/// Identity owns who the user is; play activity lives in the Play module.
+/// </summary>
 [ApiVersion(1.0)]
-[Route("api/v{version:apiVersion}/users")]
-public sealed class UsersController : ApiControllerBase
+[Route("api/v{version:apiVersion}/profile")]
+public sealed class ProfileController : ApiControllerBase
 {
     private readonly IUserProfileService userProfileService;
 
-    public UsersController(IUserProfileService userProfileService)
+    public ProfileController(IUserProfileService userProfileService)
     {
         this.userProfileService = userProfileService;
     }
@@ -43,7 +47,12 @@ public sealed class UsersController : ApiControllerBase
         return Ok(result.Value);
     }
 
-    [HttpPatch("me")]
+    /// <summary>
+    /// Replaces the caller's editable preferences (preferred language and
+    /// default script variant). A full representation is sent, so this is a
+    /// PUT rather than a PATCH.
+    /// </summary>
+    [HttpPut("me")]
     [Authorize(Policy = AuthPolicies.Write)]
     [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]

@@ -1,10 +1,21 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
+const { isAdmin, refresh: refreshAdmin } = useAdmin()
 
-const navItems = computed(() => [
-  { to: '/translations', labelKey: 'nav.translations' },
-])
+// Resolve admin status once on mount so the backoffice link only appears for
+// editors. The API enforces the admin scope regardless of what we show here.
+onMounted(() => {
+  refreshAdmin()
+})
+
+const navItems = computed(() => {
+  const items = [{ to: '/translations', labelKey: 'nav.translations' }]
+  if (isAdmin.value) {
+    items.push({ to: '/admin/lexicon', labelKey: 'nav.admin' })
+  }
+  return items
+})
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
