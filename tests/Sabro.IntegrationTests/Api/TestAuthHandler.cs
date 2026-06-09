@@ -34,13 +34,15 @@ public sealed class TestAuthHandler : AuthenticationHandler<AuthenticationScheme
             ? override_.ToString()
             : DefaultUser;
 
+        // Logto (and OIDC generally) issues the granted scopes as a single
+        // space-delimited "scope" claim, not one claim per scope. Model that
+        // faithfully so the authorization policies are exercised the way a real
+        // token hits them.
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, user),
             new Claim(ClaimTypes.NameIdentifier, user),
-            new Claim("scope", "api:v1:read"),
-            new Claim("scope", "api:v1:write"),
-            new Claim("scope", "api:v1:admin"),
+            new Claim("scope", "api:v1:read api:v1:write api:v1:admin"),
         };
         var identity = new ClaimsIdentity(claims, SchemeName);
         var principal = new ClaimsPrincipal(identity);

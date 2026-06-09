@@ -79,9 +79,9 @@ try
 
     builder.Services.AddAuthorization(options =>
     {
-        options.AddPolicy(AuthPolicies.Read, policy => policy.RequireClaim("scope", "api:v1:read"));
-        options.AddPolicy(AuthPolicies.Write, policy => policy.RequireClaim("scope", "api:v1:write"));
-        options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireClaim("scope", "api:v1:admin"));
+        options.AddPolicy(AuthPolicies.Read, policy => policy.RequireAssertion(c => AuthPolicies.HasScope(c, AuthPolicies.Read)));
+        options.AddPolicy(AuthPolicies.Write, policy => policy.RequireAssertion(c => AuthPolicies.HasScope(c, AuthPolicies.Write)));
+        options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireAssertion(c => AuthPolicies.HasScope(c, AuthPolicies.Admin)));
     });
 
     builder.Services.AddRateLimiter(options =>
