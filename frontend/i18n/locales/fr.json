@@ -6,7 +6,8 @@
   "nav": {
     "primary": "Navigation principale",
     "home": "Accueil",
-    "translations": "Traductions"
+    "translations": "Traductions",
+    "admin": "Back-office"
   },
   "switcher": {
     "languageLabel": "Langue",
@@ -19,7 +20,11 @@
   },
   "common": {
     "retry": "Réessayer",
-    "loading": "Chargement…"
+    "loading": "Chargement…",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
   },
   "auth": {
     "signIn": "Se connecter",
@@ -57,5 +62,90 @@
     "previous": "Précédent",
     "next": "Suivant",
     "pageOf": "Page {page} sur {total}"
+  },
+  "admin": {
+    "adminRequired": "Accès administrateur requis.",
+    "adminRequiredHint": "Connectez-vous avec un compte éditeur pour gérer le lexique.",
+    "lexicon": {
+      "title": "Back-office du lexique",
+      "subtitle": "Gérez la base lexicale syriaque et le vivier de mots de Melthā.",
+      "newEntry": "Nouvelle entrée",
+      "empty": "Aucune entrée de lexique pour le moment. Créez la première.",
+      "loadFailed": "Impossible de charger les entrées du lexique.",
+      "loadEntryFailed": "Impossible de charger cette entrée.",
+      "notFound": "Entrée introuvable.",
+      "saveFailed": "Impossible d’enregistrer l’entrée. Vérifiez les champs en surbrillance.",
+      "deleteFailed": "Impossible de supprimer l’entrée.",
+      "actionFailed": "L’action n’a pas pu être effectuée.",
+      "backToList": "Retour au lexique",
+      "deleteConfirm": "Supprimer définitivement cette entrée ? Cette action est irréversible.",
+      "columns": {
+        "syriac": "Syriaque",
+        "transliteration": "Translittération",
+        "category": "Catégorie",
+        "status": "Statut",
+        "playable": "Vivier",
+        "length": "Longueur"
+      },
+      "status": {
+        "Draft": "Brouillon",
+        "Published": "Publié"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "create": "Créer l’entrée",
+        "publish": "Publier",
+        "unpublish": "Dépublier",
+        "addToPool": "Ajouter au vivier",
+        "removeFromPool": "Retirer du vivier"
+      },
+      "form": {
+        "createTitle": "Nouvelle entrée de lexique",
+        "editTitle": "Modifier l’entrée de lexique",
+        "syriacUnvocalized": "Syriaque (non vocalisé)",
+        "syriacUnvocalizedHint": "Obligatoire. Texte de base sans points-voyelles.",
+        "syriacVocalized": "Syriaque (vocalisé)",
+        "syriacVocalizedHint": "Facultatif. Avec points-voyelles.",
+        "sblTransliteration": "Translittération SBL",
+        "sblTransliterationHint": "Enrichissement facultatif ; ne conditionne pas la publication.",
+        "transliterationVariants": "Variantes de translittération",
+        "transliterationVariantsHint": "Orthographes acceptées, séparées par des virgules, pour la tolérance de recherche.",
+        "grammaticalCategory": "Catégorie grammaticale",
+        "morphology": "Morphologie",
+        "morphologyHint": "Notes libres facultatives.",
+        "meanings": "Significations",
+        "meaningsHint": "L’anglais, le français et le néerlandais sont tous requis pour publier.",
+        "playableLength": "Longueur jouable",
+        "playableLengthHint": "Comptée à partir de la forme non vocalisée. Le vivier de Melthā accepte 2 à 8 lettres.",
+        "playableLengthInRange": "Dans la fenêtre 2–8 de Melthā.",
+        "playableLengthOutOfRange": "Hors de la fenêtre 2–8 de Melthā."
+      },
+      "lifecycle": {
+        "heading": "Cycle de vie",
+        "publishHint": "La publication requiert les significations en anglais, français et néerlandais.",
+        "poolHeading": "Vivier de Melthā",
+        "poolHint": "Seules les entrées publiées de 2 à 8 lettres peuvent rejoindre le vivier de Melthā.",
+        "inPool": "Dans le vivier de Melthā",
+        "notInPool": "Hors du vivier de Melthā"
+      },
+      "meaning": {
+        "en": "Anglais",
+        "fr": "Français",
+        "nl": "Néerlandais"
+      },
+      "category": {
+        "Noun": "Nom",
+        "Verb": "Verbe",
+        "Adjective": "Adjectif",
+        "Adverb": "Adverbe",
+        "Pronoun": "Pronom",
+        "Preposition": "Préposition",
+        "Conjunction": "Conjonction",
+        "Particle": "Particule",
+        "Numeral": "Numéral",
+        "Interjection": "Interjection",
+        "Other": "Autre"
+      }
+    }
   }
 }
