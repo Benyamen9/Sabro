@@ -57,6 +57,19 @@ export default defineNuxtConfig({
       // configured, so this placeholder is harmless. ALWAYS override in
       // real deployments via NUXT_LOGTO_COOKIE_ENCRYPTION_KEY.
       cookieEncryptionKey: 'sabro-unconfigured-placeholder-do-not-use-in-prod',
+      // Resources + scopes the SDK requests at sign-in. Without the Sabro
+      // API resource here, getAccessToken(resource) can never return a
+      // resource-bound token. Resources is an array, so it can't be set via
+      // a single NUXT_LOGTO_* env override — derive it from the same
+      // NUXT_PUBLIC_SABRO_API_RESOURCE used elsewhere (loaded from .env
+      // before this config is evaluated). Empty array when unconfigured.
+      resources: process.env.NUXT_PUBLIC_SABRO_API_RESOURCE
+        ? [process.env.NUXT_PUBLIC_SABRO_API_RESOURCE]
+        : [],
+      // The three Sabro API scopes. Requesting a scope the signed-in user
+      // hasn't been granted (e.g. api:v1:admin for a non-admin) is harmless —
+      // Logto simply omits it from the issued token.
+      scopes: ['api:v1:read', 'api:v1:write', 'api:v1:admin'],
     },
     public: {
       apiBaseUrl: 'http://localhost:5082/api/v1',

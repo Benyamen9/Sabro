@@ -42,7 +42,11 @@ export default defineEventHandler(async (event) => {
     return { scopes: [] as string[] }
   }
 
-  const client = useLogtoClient()
+  // The Logto event-handler middleware populates event.context.logtoClient on
+  // every non-(sign-in/out/callback) request. We read it directly here because
+  // useLogtoClient() relies on Nuxt's SSR context, which doesn't exist in a
+  // standalone Nitro server route.
+  const client = event.context.logtoClient
   if (!client) {
     return { scopes: [] as string[] }
   }
