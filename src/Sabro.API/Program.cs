@@ -84,6 +84,26 @@ try
         options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireAssertion(c => AuthPolicies.HasScope(c, AuthPolicies.Admin)));
     });
 
+    // CORS so browser clients (the Sabro hub frontend, Meltho, future apps) on
+    // other origins can call the API directly — the ecosystem's intended shape
+    // (clients call /api/v1 directly). Origins come from config in production;
+    // in Development we default to the local frontend ports so a fresh checkout
+    // works without extra config. Bearer-token auth means we do not need
+    // AllowCredentials (no cookies are sent to the API).
+    var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+    if ((corsOrigins is null || corsOrigins.Length == 0) && builder.Environment.IsDevelopment())
+    {
+        corsOrigins = ["http://localhost:3000", "http://localhost:3100"];
+    }
+
+    corsOrigins ??= [];
+
+    builder.Services.AddCors(options =>
+        options.AddPolicy("frontend", policy => policy
+            .WithOrigins(corsOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()));
+
     builder.Services.AddRateLimiter(options =>
     {
         options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -133,6 +153,7 @@ try
 
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
+    app.UseCors("frontend");
     app.UseRateLimiter();
     app.UseAuthentication();
     app.UseAuthorization();
