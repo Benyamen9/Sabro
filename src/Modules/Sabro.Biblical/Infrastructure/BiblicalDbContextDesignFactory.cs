@@ -12,8 +12,15 @@ public sealed class BiblicalDbContextDesignFactory : IDesignTimeDbContextFactory
 {
     public BiblicalDbContext CreateDbContext(string[] args)
     {
+        // Read the connection from the same env the API uses so the CD
+        // migrator targets the real database; fall back to the local dev
+        // string for `migrations add` / `database update` on a dev machine.
+        var connectionString =
+            Environment.GetEnvironmentVariable("ConnectionStrings__Sabro")
+            ?? "Host=localhost;Port=5433;Database=sabro_dev;Username=sabro;Password=sabro";
+
         var options = new DbContextOptionsBuilder<BiblicalDbContext>()
-            .UseNpgsql("Host=localhost;Port=5433;Database=sabro_dev;Username=sabro;Password=sabro")
+            .UseNpgsql(connectionString)
             .Options;
 
         return new BiblicalDbContext(options);

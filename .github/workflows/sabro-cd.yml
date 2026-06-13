@@ -1,0 +1,128 @@
+name: sabro-cd
+
+# Continuous deployment: build the API, migrator, and frontend images, push them
+# to GHCR tagged with the commit SHA, then SSH to the VPS to migrate and swap
+# containers. Gated on a green sabro-ci run for the same commit on main — a red
+# CI never triggers a deploy.
+
+on:
+  workflow_run:
+    workflows: ["sabro-ci"]
+    types: [completed]
+    branches: [main]
+
+# Only build for a successful CI run; never deploy a red build.
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAMESPACE: ${{ github.repository_owner }}
+  # The exact commit that passed CI — both images and deploy pin to it.
+  SHA: ${{ github.event.workflow_run.head_sha }}
+
+jobs:
+  build-and-push:
+    name: Build + push images
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ env.SHA }}
+    steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase image namespace
+        id: ns
+        run: echo "value=$(echo '${{ env.IMAGE_NAMESPACE }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      # API runtime image (context = repo root).
+      - name: Build + push API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/Sabro.API/Dockerfile
+          target: runtime
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-api:${{ env.SHA }}
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Migrator image — same Dockerfile, migrator target.
+      - name: Build + push migrator
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/Sabro.API/Dockerfile
+          target: migrator
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-migrator:${{ env.SHA }}
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-migrator:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Frontend image (context = ./frontend). The API resource must be baked in
+      # at build time (it feeds the Logto `resources` array in nuxt.config).
+      - name: Build + push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: frontend/Dockerfile
+          push: true
+          build-args: |
+            NUXT_PUBLIC_SABRO_API_RESOURCE=${{ secrets.NUXT_PUBLIC_SABRO_API_RESOURCE }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-frontend:${{ env.SHA }}
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to VPS
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # APP_DIR holds docker-compose.prod.yml, Caddyfile, and the .env.
+          # Pin the image tag to this commit, migrate first, then swap.
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.APP_DIR }}"
+            echo "SABRO_IMAGE_TAG=${{ needs.build-and-push.outputs.tag }}" > .env.deploy
+            COMPOSE="docker compose --env-file .env --env-file .env.deploy -f docker-compose.prod.yml"
+            $COMPOSE pull
+            # Apply migrations before swapping app containers (expand->migrate->contract).
+            $COMPOSE --profile migrate run --rm migrator
+            $COMPOSE up -d
+            # Post-deploy health check through Caddy from the host (the API
+            # container exposes no host port and ships no wget/curl).
+            set -a; . ./.env; set +a
+            for i in $(seq 1 30); do
+              if curl -fsS "https://${SABRO_API_DOMAIN}/health" >/dev/null 2>&1; then
+                echo "API healthy"; exit 0
+              fi
+              echo "waiting for API health ($i)..."; sleep 2
+            done
+            echo "API did not become healthy in time" >&2
+            exit 1

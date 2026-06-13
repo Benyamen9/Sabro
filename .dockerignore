@@ -1,0 +1,39 @@
+# Build context for the Sabro.API image (context = repo root).
+# Keep the context small and reproducible: never ship local build output,
+# secrets, the Node frontend, or test artifacts into the .NET image.
+
+# .NET build output
+**/bin/
+**/obj/
+**/TestResults/
+**/coverage/
+*.coverage
+*.coveragexml
+
+# Local IDE / VS state
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Secrets and local config (never bake into an image)
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.*.local.json
+.env
+.env.*
+!.env.prod.example
+*.pfx
+*.key
+
+# Frontend — built by its own Dockerfile, not part of the API context
+frontend/
+
+# Git + CI + docs not needed inside the image
+.git/
+.github/
+**/*.md
+docker-compose*.yml
+Caddyfile
+wwwroot/media/
