@@ -1,0 +1,12 @@
+# Build context = ./frontend. Keep node_modules + build output out so the
+# image builds reproducibly from package-lock.json on Linux.
+node_modules/
+.nuxt/
+.output/
+dist/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+*.log

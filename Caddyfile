@@ -1,0 +1,40 @@
+# Caddy reverse proxy for the Sabro stack. Caddy provisions and renews TLS
+# automatically (Let's Encrypt). Hostnames come from the .env next to
+# docker-compose.prod.yml. One reverse_proxy block per public hostname; every
+# upstream is a compose service name on the internal network.
+
+{
+	email {$CADDY_ACME_EMAIL}
+}
+
+# Sabro hub frontend (Nuxt SSR).
+{$SABRO_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy frontend:3000
+}
+
+# Sabro API — clients call /api/v1 here directly.
+{$SABRO_API_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy api:8080
+}
+
+# Logto — central IDP (OIDC endpoint). Must stay reachable for every app in the
+# ecosystem; it is the planned first service to move to its own VM.
+{$LOGTO_DOMAIN} {
+	reverse_proxy logto:3001
+}
+
+# Logto admin console.
+{$LOGTO_ADMIN_DOMAIN} {
+	reverse_proxy logto:3002
+}
+
+# --- Future ecosystem clients register their own block here -------------------
+# Meltho lives in its own repo and runs as its own container behind this same
+# Caddy on a distinct hostname, sharing Sabro's API + database. Example:
+#
+# meltho.example.com {
+# 	encode zstd gzip
+# 	reverse_proxy meltho:3000
+# }
