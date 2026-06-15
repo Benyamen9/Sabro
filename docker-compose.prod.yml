@@ -42,7 +42,10 @@ services:
     volumes:
       - meilisearch-data:/meili_data
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7700/health"]
+      # Use 127.0.0.1, not localhost: inside this image localhost resolves to
+      # IPv6 ::1 but Meilisearch binds IPv4 0.0.0.0 only, so a localhost probe
+      # gets connection-refused and the container is wrongly marked unhealthy.
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:7700/health"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -87,6 +90,11 @@ services:
       # Public HTTPS endpoints (served through Caddy). OIDC issuer must match.
       ENDPOINT: https://${LOGTO_DOMAIN}
       ADMIN_ENDPOINT: https://${LOGTO_ADMIN_DOMAIN}
+      # Caddy terminates TLS and proxies to Logto over plain HTTP. Trust the
+      # X-Forwarded-Proto header so Logto resolves the request origin as https
+      # and matches ENDPOINT / ADMIN_ENDPOINT — otherwise the admin console
+      # 404s ("page not found") behind the proxy.
+      TRUST_PROXY_HEADER: "true"
     entrypoint:
       - sh
       - -c
