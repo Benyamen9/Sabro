@@ -17,25 +17,33 @@ fi
 
 cd /src
 
-# "ContextName:project path" — keep in sync with the module DbContexts.
+# Active-module DbContexts only — Lexicon, Identity, Play. The deferred modules
+# (Translations, Reviews, Biblical) have migrations in the tree but are NOT part
+# of the launch and must not create their schema in production; add them here
+# when those modules are un-deferred.
+#
+# "ContextName:project path" — keep in sync with the active module DbContexts.
 contexts=(
   "LexiconDbContext:src/Modules/Sabro.Lexicon"
   "IdentityDbContext:src/Modules/Sabro.Identity"
   "PlayDbContext:src/Modules/Sabro.Play"
-  "TranslationsDbContext:src/Modules/Sabro.Translations"
-  "ReviewsDbContext:src/Modules/Sabro.Reviews"
-  "BiblicalDbContext:src/Modules/Sabro.Biblical"
 )
 
+# Sabro.API is the single --startup-project for every context: it references the
+# EF Core Design package and the module projects, driving the design-time build.
+# (Individual modules don't all reference Microsoft.EntityFrameworkCore.Design,
+# so using a module as its own startup project fails for Identity/Play.) Each
+# module's IDesignTimeDbContextFactory still supplies the DbContext + connection
+# string from ConnectionStrings__Sabro.
 for entry in "${contexts[@]}"; do
   context="${entry%%:*}"
   project="${entry##*:}"
   echo ">>> Applying migrations for ${context} (${project})"
   dotnet ef database update \
     --project "${project}" \
-    --startup-project "${project}" \
+    --startup-project src/Sabro.API \
     --context "${context}" \
     --configuration Release
 done
 
-echo ">>> All module migrations applied."
+echo ">>> All active-module migrations applied."
