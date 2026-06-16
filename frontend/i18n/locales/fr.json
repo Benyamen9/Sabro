@@ -1,7 +1,20 @@
 {
   "site": {
     "title": "Sabro",
-    "tagline": "Bientôt disponible."
+    "tagline": "Traductions anglaises originales de la Peshitta et des Pères syriaques",
+    "statusMvp": "MVP · en développement"
+  },
+  "home": {
+    "eyebrow": "La Peshitta et les Pères syriaques",
+    "titleLine1": "L’Écriture",
+    "titleLine2": "et les Pères, en anglais.",
+    "lede": "Traductions anglaises originales de la Peshitta et des commentaires des Pères de l’Église syriaque — avec le syriaque sous-jacent et les références bibliques croisées tout au long.",
+    "greetingCaption": "« La paix soit avec toi. » · šlomā lāk",
+    "ctaTranslations": "Parcourir les traductions",
+    "aboutHeading": "À propos",
+    "aboutBody": "Sabro publie des traductions anglaises originales de deux corpus entrelacés : la Peshitta (la Bible syriaque) et les commentaires des Pères de l’Église syriaque. Le MVP commence par les commentaires de Dionysios bar Ṣalibi (m. 1171), métropolite d’Amid ; la portée à long terme est la tradition patristique plus large.",
+    "statusHeading": "Statut",
+    "statusBody": "Une petite partie du corpus est en ligne ; les chapitres sont ajoutés au fur et à mesure de leur traduction et de leur relecture par les pairs. Les API du lexique et des traductions sont publiques et consommées par d’autres applications de l’écosystème."
   },
   "nav": {
     "primary": "Navigation principale",
