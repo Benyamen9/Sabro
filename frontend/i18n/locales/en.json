@@ -1,20 +1,20 @@
 {
   "site": {
     "title": "Sabro",
-    "tagline": "Original English translations of the Peshitta and the Syriac Fathers",
+    "tagline": "A platform for Syriac language and patristic studies",
     "statusMvp": "MVP · in development"
   },
   "home": {
-    "eyebrow": "The Peshitta and the Syriac Fathers",
-    "titleLine1": "Scripture",
-    "titleLine2": "and the Fathers, in English.",
-    "lede": "Original English translations of the Peshitta and of the commentaries of the Syriac Church Fathers — with the underlying Syriac and biblical cross-references throughout.",
+    "eyebrow": "Syriac language & patristic studies",
+    "titleLine1": "Syriac,",
+    "titleLine2": "alive online.",
+    "lede": "Sabro is the hub of a growing ecosystem of apps for the Syriac language and the Syriac Fathers — starting with Meltho, a daily Syriac word game. Original English translations of the Peshitta and the Church Fathers are the long-term mission, and will follow.",
     "greetingCaption": "“Peace be with you.” · šlomā lāk",
     "ctaTranslations": "Browse translations",
     "aboutHeading": "About",
-    "aboutBody": "Sabro publishes original English translations of two interlocking corpora: the Peshitta (the Syriac Bible) and the commentaries of the Syriac Church Fathers. The MVP begins with the commentaries of Dionysios bar Ṣalibi (d. 1171), Metropolitan of Amid; the long-term scope is the broader patristic tradition.",
+    "aboutBody": "Sabro is the backbone of an ecosystem dedicated to Syriac language and patristic studies. It owns shared identity, user profiles, a Syriac lexicon, and the public API the ecosystem’s apps build on — beginning with Meltho.",
     "statusHeading": "Status",
-    "statusBody": "A small slice of the corpus is online; chapters are added as they are translated and peer-reviewed. The lexicon and translations APIs are public and consumed by other apps in the ecosystem."
+    "statusBody": "Meltho is the first app to launch on the platform. Original English translations of the Peshitta and the commentaries of the Syriac Fathers — beginning with Dionysios bar Ṣalibi (d. 1171) — are the long-term mission and will follow."
   },
   "nav": {
     "primary": "Primary navigation",

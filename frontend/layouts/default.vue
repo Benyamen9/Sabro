@@ -10,7 +10,9 @@ onMounted(() => {
 })
 
 const navItems = computed(() => {
-  const items = [{ to: '/translations', labelKey: 'nav.translations' }]
+  // Translations are deferred post-launch; only the admin backoffice is linked
+  // for now. The lexicon CRUD link is gated on the admin scope from Logto.
+  const items: { to: string, labelKey: string }[] = []
   if (isAdmin.value) {
     items.push({ to: '/admin/lexicon', labelKey: 'nav.admin' })
   }
