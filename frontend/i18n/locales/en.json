@@ -1,20 +1,19 @@
 {
   "site": {
     "title": "Sabro",
-    "tagline": "A platform for Syriac language and patristic studies",
+    "tagline": "A platform for the Syriac language",
     "statusMvp": "MVP · in development"
   },
   "home": {
-    "eyebrow": "Syriac language & patristic studies",
+    "eyebrow": "The Syriac language",
     "titleLine1": "Syriac,",
     "titleLine2": "alive online.",
-    "lede": "Sabro is the hub of a growing ecosystem of apps for the Syriac language and the Syriac Fathers — starting with Meltho, a daily Syriac word game. Original English translations of the Peshitta and the Church Fathers are the long-term mission, and will follow.",
+    "lede": "Sabro is the hub of a growing ecosystem of apps for the Syriac language — starting with Meltho, a daily Syriac word game.",
     "greetingCaption": "“Peace be with you.” · šlomā lāk",
-    "ctaTranslations": "Browse translations",
     "aboutHeading": "About",
-    "aboutBody": "Sabro is the backbone of an ecosystem dedicated to Syriac language and patristic studies. It owns shared identity, user profiles, a Syriac lexicon, and the public API the ecosystem’s apps build on — beginning with Meltho.",
+    "aboutBody": "Sabro is the backbone of an ecosystem dedicated to the Syriac language. It owns shared identity, user profiles, a Syriac lexicon, and the public API the ecosystem’s apps build on — beginning with Meltho.",
     "statusHeading": "Status",
-    "statusBody": "Meltho is the first app to launch on the platform. Original English translations of the Peshitta and the commentaries of the Syriac Fathers — beginning with Dionysios bar Ṣalibi (d. 1171) — are the long-term mission and will follow."
+    "statusBody": "Meltho, a daily Syriac word game, is the first app to launch on the platform. More apps for the Syriac language will follow."
   },
   "nav": {
     "primary": "Primary navigation",
