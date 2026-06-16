@@ -1,12 +1,14 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('landing page', () => {
-  test('renders the app shell with brand, nav, switchers, and a Syriac sample', async ({ page }) => {
+  test('renders the app shell with brand, switchers, and a Syriac sample', async ({ page }) => {
     await page.goto('/')
 
-    // The brand link doubles as home; the primary nav holds a single Translations item.
+    // The brand link doubles as home. Translations are deferred, so the primary
+    // nav holds no public items for an anonymous visitor.
     await expect(page.getByRole('link', { name: 'Sabro' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Translations', exact: true })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Translations', exact: true })).toHaveCount(0)
+    await expect(page.getByText('Syriac language & patristic studies')).toBeVisible()
 
     await expect(page.getByRole('combobox', { name: 'Syriac script' })).toBeVisible()
     await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible()
@@ -25,7 +27,9 @@ test.describe('landing page', () => {
     await context.addCookies([{ name: 'sabro_locale', value: 'fr', url: baseURL! }])
     await page.goto('/')
 
-    await expect(page.getByRole('link', { name: 'Traductions', exact: true })).toBeVisible()
+    // The locale cookie switches rendered text; assert a French heading from
+    // the home page (the "About" section) is present.
+    await expect(page.getByRole('heading', { name: 'À propos' })).toBeVisible()
   })
 
   test('renders Serto when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {

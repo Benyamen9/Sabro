@@ -26,16 +26,6 @@ const { t } = useI18n()
       </figcaption>
     </figure>
 
-    <div class="flex flex-wrap gap-3">
-      <NuxtLink
-        to="/translations"
-        class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-5 py-2.5 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
-      >
-        {{ t('home.ctaTranslations') }}
-        <span aria-hidden="true">→</span>
-      </NuxtLink>
-    </div>
-
     <hr class="my-16 border-t border-[var(--color-border)]">
 
     <div class="grid gap-10 sm:grid-cols-2">
