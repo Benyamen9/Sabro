@@ -30,11 +30,13 @@
 	reverse_proxy logto:3002
 }
 
+# Meltho — Syriac word game (own repo, own container), sharing Sabro's API +
+# database behind this same Caddy on its own hostname.
+{$MELTHO_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy meltho:3000
+}
+
 # --- Future ecosystem clients register their own block here -------------------
-# Meltho lives in its own repo and runs as its own container behind this same
-# Caddy on a distinct hostname, sharing Sabro's API + database. Example:
-#
-# meltho.example.com {
-# 	encode zstd gzip
-# 	reverse_proxy meltho:3000
-# }
+# Additional clients add one reverse_proxy block per hostname, each pointing at
+# their own compose service on the internal network.

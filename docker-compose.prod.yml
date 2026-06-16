@@ -156,6 +156,28 @@ services:
       NUXT_PUBLIC_API_BASE_URL: "https://${SABRO_API_DOMAIN}/api/v1"
     networks: [internal]
 
+  # Meltho — Syriac word game. Lives in its own repo (Hito/Meltho) and is built
+  # into its own GHCR image, but runs as another container in this shared stack
+  # behind the same Caddy, reading content + writing play results through the
+  # Sabro API. It is its own Logto OIDC app (MELTHO_LOGTO_*), distinct from the
+  # hub's. NUXT_PUBLIC_SABRO_API_RESOURCE is baked into the image at build time
+  # (Meltho's CD passes it as a build arg); the value here must match.
+  meltho:
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/meltho:${MELTHO_IMAGE_TAG:-latest}
+    container_name: sabro-meltho
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NUXT_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_LOGTO_APP_ID: ${MELTHO_LOGTO_APP_ID:?MELTHO_LOGTO_APP_ID is required}
+      NUXT_LOGTO_APP_SECRET: ${MELTHO_LOGTO_APP_SECRET:?MELTHO_LOGTO_APP_SECRET is required}
+      NUXT_LOGTO_COOKIE_ENCRYPTION_KEY: ${MELTHO_LOGTO_COOKIE_ENCRYPTION_KEY:?MELTHO_LOGTO_COOKIE_ENCRYPTION_KEY is required}
+      NUXT_PUBLIC_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_PUBLIC_SABRO_API_RESOURCE: ${SABRO_API_RESOURCE}
+      NUXT_PUBLIC_API_BASE_URL: "https://${SABRO_API_DOMAIN}/api/v1"
+    networks: [internal]
+
   caddy:
     image: caddy:2-alpine
     container_name: sabro-caddy
@@ -174,6 +196,7 @@ services:
       SABRO_API_DOMAIN: ${SABRO_API_DOMAIN}
       LOGTO_DOMAIN: ${LOGTO_DOMAIN}
       LOGTO_ADMIN_DOMAIN: ${LOGTO_ADMIN_DOMAIN}
+      MELTHO_DOMAIN: ${MELTHO_DOMAIN}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
