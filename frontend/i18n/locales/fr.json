@@ -1,19 +1,19 @@
 {
   "site": {
     "title": "Sabro",
-    "tagline": "Traductions anglaises originales de la Peshitta et des Pères syriaques",
+    "tagline": "Une plateforme pour la langue syriaque",
     "statusMvp": "MVP · en développement"
   },
   "home": {
-    "eyebrow": "La Peshitta et les Pères syriaques",
-    "titleLine1": "L’Écriture",
-    "titleLine2": "et les Pères, en anglais.",
-    "lede": "Traductions anglaises originales de la Peshitta et des commentaires des Pères de l’Église syriaque — avec le syriaque sous-jacent et les références bibliques croisées tout au long.",
+    "eyebrow": "La langue syriaque",
+    "titleLine1": "Le syriaque,",
+    "titleLine2": "vivant en ligne.",
+    "lede": "Sabro est le hub d’un écosystème grandissant d’applications pour la langue syriaque — à commencer par Meltho, un jeu de mots syriaque quotidien.",
     "greetingCaption": "« La paix soit avec toi. » · šlomā lāk",
     "aboutHeading": "À propos",
-    "aboutBody": "Sabro publie des traductions anglaises originales de deux corpus entrelacés : la Peshitta (la Bible syriaque) et les commentaires des Pères de l’Église syriaque. Le MVP commence par les commentaires de Dionysios bar Ṣalibi (m. 1171), métropolite d’Amid ; la portée à long terme est la tradition patristique plus large.",
+    "aboutBody": "Sabro est la colonne vertébrale d’un écosystème dédié à la langue syriaque. Il détient l’identité partagée, les profils utilisateurs, un lexique syriaque et l’API publique sur laquelle s’appuient les applications de l’écosystème — à commencer par Meltho.",
     "statusHeading": "Statut",
-    "statusBody": "Une petite partie du corpus est en ligne ; les chapitres sont ajoutés au fur et à mesure de leur traduction et de leur relecture par les pairs. Les API du lexique et des traductions sont publiques et consommées par d’autres applications de l’écosystème."
+    "statusBody": "Meltho, un jeu de mots syriaque quotidien, est la première application lancée sur la plateforme. D’autres applications pour la langue syriaque suivront."
   },
   "nav": {
     "primary": "Navigation principale",
