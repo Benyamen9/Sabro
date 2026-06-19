@@ -14,27 +14,27 @@ describe('SyriacText', () => {
     expect(span.text()).toBe('ܫܠܡܐ')
   })
 
-  it('uses the Estrangelo Edessa font family by default', async () => {
+  it('uses the Noto Sans Syriac (Estrangela) font family by default', async () => {
     const wrapper = await mountSuspended(SyriacText, {
       props: { text: 'ܫܠܡܐ' },
     })
 
-    expect(wrapper.find('span').attributes('style')).toContain('Estrangelo Edessa')
+    expect(wrapper.find('span').attributes('style')).toContain('Noto Sans Syriac')
   })
 
-  it('uses Serto Jerusalem when variant=serto', async () => {
+  it('uses Noto Sans Syriac Western when variant=serto', async () => {
     const wrapper = await mountSuspended(SyriacText, {
       props: { text: 'ܫܠܡܐ', variant: 'serto' },
     })
 
-    expect(wrapper.find('span').attributes('style')).toContain('Serto Jerusalem')
+    expect(wrapper.find('span').attributes('style')).toContain('Noto Sans Syriac Western')
   })
 
-  it('uses East Syriac Adiabene when variant=madnhaya', async () => {
+  it('uses Noto Sans Syriac Eastern when variant=madnhaya', async () => {
     const wrapper = await mountSuspended(SyriacText, {
       props: { text: 'ܫܠܡܐ', variant: 'madnhaya' },
     })
 
-    expect(wrapper.find('span').attributes('style')).toContain('East Syriac Adiabene')
+    expect(wrapper.find('span').attributes('style')).toContain('Noto Sans Syriac Eastern')
   })
 })
