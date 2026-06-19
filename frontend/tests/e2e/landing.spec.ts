@@ -37,7 +37,7 @@ test.describe('landing page', () => {
     await page.goto('/')
 
     const syriac = page.locator('span[lang="syc"]').first()
-    await expect(syriac).toHaveCSS('font-family', /Serto Jerusalem/)
+    await expect(syriac).toHaveCSS('font-family', /Noto Sans Syriac Western/)
   })
 })
 
