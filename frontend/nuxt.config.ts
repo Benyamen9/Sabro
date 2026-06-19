@@ -79,6 +79,10 @@ export default defineNuxtConfig({
       // The API resource (audience) the backend expects in the access
       // token's `aud` claim. Matches Sabro.API's Logto:Audience config.
       sabroApiResource: '',
+      // Meltho, the first ecosystem app, linked from the hub header. Defaults
+      // to prod so the link works without extra config; override with
+      // NUXT_PUBLIC_MELTHO_URL.
+      melthoUrl: 'https://meltho.sabro.be',
     },
   },
 })
