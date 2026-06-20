@@ -2,7 +2,6 @@
 const { t } = useI18n()
 const route = useRoute()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
-const melthoUrl = useRuntimeConfig().public.melthoUrl
 
 // Resolve admin status once on mount so the backoffice link only appears for
 // editors. The API enforces the admin scope regardless of what we show here.
@@ -40,10 +39,6 @@ function isActive(path: string) {
         </NuxtLink>
 
         <nav class="flex items-center gap-1" :aria-label="t('nav.primary')">
-          <a
-            :href="melthoUrl"
-            class="rounded-md px-3 py-1.5 font-sans text-sm text-[var(--color-text-muted)] no-underline transition-colors hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-text)]"
-          >{{ t('nav.meltho') }}</a>
           <NuxtLink
             v-for="item in navItems"
             :key="item.to"
