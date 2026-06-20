@@ -10,6 +10,11 @@
     "titleLine2": "springlevend online.",
     "lede": "Sabro is de hub van een groeiend ecosysteem van apps voor de Syrische taal — te beginnen met Meltho, een dagelijks Syrisch woordspel.",
     "greetingCaption": "„Vrede zij met u.” · šlomā lāk",
+    "meltho": {
+      "heading": "Meltho",
+      "body": "Een dagelijks Syrisch woordspel — raad het verborgen woord in zes pogingen. De eerste app op het platform.",
+      "cta": "Speel Meltho"
+    },
     "aboutHeading": "Over",
     "aboutBody": "Sabro is de ruggengraat van een ecosysteem gewijd aan de Syrische taal. Het beheert de gedeelde identiteit, gebruikersprofielen, een Syrisch lexicon en de publieke API waarop de apps van het ecosysteem bouwen — te beginnen met Meltho.",
     "statusHeading": "Status",
@@ -18,7 +23,6 @@
   "nav": {
     "primary": "Primaire navigatie",
     "home": "Home",
-    "meltho": "Meltho",
     "translations": "Vertalingen",
     "admin": "Backoffice"
   },

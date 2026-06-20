@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const melthoUrl = useRuntimeConfig().public.melthoUrl
 </script>
 
 <template>
@@ -16,6 +17,25 @@ const { t } = useI18n()
     <p class="mt-8 max-w-2xl font-serif text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl">
       {{ t('home.lede') }}
     </p>
+
+    <!-- Introduces Meltho, the first ecosystem app, with a direct link to play. -->
+    <div
+      class="mt-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 shadow-[var(--shadow-soft)] sm:flex sm:items-center sm:justify-between sm:gap-6"
+    >
+      <div class="flex items-center gap-5">
+        <SyriacText text="ܡܠܬܐ" class="!text-4xl text-[var(--color-accent)]" />
+        <div>
+          <h2 class="font-serif text-2xl">{{ t('home.meltho.heading') }}</h2>
+          <p class="mt-1.5 max-w-md font-serif text-[var(--color-text-muted)]">
+            {{ t('home.meltho.body') }}
+          </p>
+        </div>
+      </div>
+      <a
+        :href="melthoUrl"
+        class="mt-5 inline-block flex-none rounded-lg bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline transition-colors hover:bg-[var(--color-accent-hover)] sm:mt-0"
+      >{{ t('home.meltho.cta') }} →</a>
+    </div>
 
     <figure class="my-14 border-l-2 border-[var(--color-accent)] pl-6">
       <blockquote class="font-serif">

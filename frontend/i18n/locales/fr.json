@@ -10,6 +10,11 @@
     "titleLine2": "vivant en ligne.",
     "lede": "Sabro est le hub d’un écosystème grandissant d’applications pour la langue syriaque — à commencer par Meltho, un jeu de mots syriaque quotidien.",
     "greetingCaption": "« La paix soit avec toi. » · šlomā lāk",
+    "meltho": {
+      "heading": "Meltho",
+      "body": "Un jeu de mots syriaque quotidien — devinez le mot caché en six essais. La première application de la plateforme.",
+      "cta": "Jouer à Meltho"
+    },
     "aboutHeading": "À propos",
     "aboutBody": "Sabro est la colonne vertébrale d’un écosystème dédié à la langue syriaque. Il détient l’identité partagée, les profils utilisateurs, un lexique syriaque et l’API publique sur laquelle s’appuient les applications de l’écosystème — à commencer par Meltho.",
     "statusHeading": "Statut",
@@ -18,7 +23,6 @@
   "nav": {
     "primary": "Navigation principale",
     "home": "Accueil",
-    "meltho": "Meltho",
     "translations": "Traductions",
     "admin": "Back-office"
   },
