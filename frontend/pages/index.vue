@@ -22,8 +22,8 @@ const melthoUrl = useRuntimeConfig().public.melthoUrl
     <div
       class="mt-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 shadow-[var(--shadow-soft)] sm:flex sm:items-center sm:justify-between sm:gap-6"
     >
-      <div class="flex items-center gap-5">
-        <SyriacText text="ܡܠܬܐ" class="!text-4xl text-[var(--color-accent)]" />
+      <div class="flex items-center gap-4 sm:gap-5">
+        <SyriacText text="ܡܠܬܐ" class="!text-3xl text-[var(--color-accent)] sm:!text-4xl" />
         <div>
           <h2 class="font-serif text-2xl">{{ t('home.meltho.heading') }}</h2>
           <p class="mt-1.5 max-w-md font-serif text-[var(--color-text-muted)]">
@@ -33,7 +33,7 @@ const melthoUrl = useRuntimeConfig().public.melthoUrl
       </div>
       <a
         :href="melthoUrl"
-        class="mt-5 inline-block flex-none rounded-lg bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline transition-colors hover:bg-[var(--color-accent-hover)] sm:mt-0"
+        class="mt-5 block flex-none rounded-lg bg-[var(--color-accent)] px-5 py-3 text-center font-sans text-sm font-semibold text-white no-underline transition-colors hover:bg-[var(--color-accent-hover)] sm:mt-0 sm:inline-block sm:text-left"
       >{{ t('home.meltho.cta') }} →</a>
     </div>
 
