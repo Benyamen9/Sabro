@@ -2,11 +2,15 @@
 const { t } = useI18n()
 const route = useRoute()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
+const { load: loadProfile } = useProfile()
 
 // Resolve admin status once on mount so the backoffice link only appears for
 // editors. The API enforces the admin scope regardless of what we show here.
+// Also adopt the signed-in user's saved language + script-variant preferences
+// so they follow the account across devices.
 onMounted(() => {
   refreshAdmin()
+  loadProfile()
 })
 
 const navItems = computed(() => {

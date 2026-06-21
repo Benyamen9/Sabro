@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { locale, locales, setLocale, t } = useI18n()
+const { persist } = useProfile()
 
 const localeOptions = computed(() =>
   (locales.value as Array<{ code: string, name?: string }>).map(l => ({
@@ -11,6 +12,8 @@ const localeOptions = computed(() =>
 async function onChange(event: Event) {
   const target = event.target as HTMLSelectElement
   await setLocale(target.value as typeof locale.value)
+  // i18n persists the locale cookie itself; mirror to the profile when signed in.
+  persist()
 }
 </script>
 
