@@ -133,20 +133,15 @@ public class SegmentSearchSyncTests
         ctx.Sources.Add(source);
         await ctx.SaveChangesAsync(ct);
 
-        var version = TextVersion.Create(RandomLetterCode(), "Initial version", isRightToLeft: false).Value!;
+        var version = TextVersion.Create(
+            TranslationsSeedExtensions.NextTextVersionCode(),
+            "Initial version",
+            isRightToLeft: false).Value!;
         ctx.TextVersions.Add(version);
         await ctx.SaveChangesAsync(ct);
 
         return (source.Id, version.Id);
     }
-
-    private static string RandomLetterCode() =>
-        new(new[]
-        {
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-        });
 
     private static async Task<SegmentSearchDocument?> WaitForDocumentAsync(
         MeilisearchClient client, string indexName, string documentId, CancellationToken ct)
