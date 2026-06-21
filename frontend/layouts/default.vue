@@ -30,7 +30,7 @@ function isActive(path: string) {
     <header
       class="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_85%,transparent)] backdrop-blur-md backdrop-saturate-150"
     >
-      <div class="mx-auto flex h-14 max-w-6xl items-center gap-6 px-6">
+      <div class="mx-auto flex min-h-14 max-w-6xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2 sm:flex-nowrap sm:gap-6 sm:px-6 sm:py-0">
         <NuxtLink
           to="/"
           class="font-sans text-base font-semibold tracking-tight no-underline"
@@ -52,7 +52,7 @@ function isActive(path: string) {
           >{{ t(item.labelKey) }}</NuxtLink>
         </nav>
 
-        <div class="ml-auto flex items-center gap-2">
+        <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
           <ScriptVariantSwitcher />
           <LanguageSwitcher />
           <UserMenu />
