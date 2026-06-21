@@ -3,10 +3,13 @@ import type { ScriptVariant } from '~/composables/useScriptVariant'
 
 const { t } = useI18n()
 const { variant, set, available } = useScriptVariant()
+const { persist } = useProfile()
 
 function onChange(event: Event) {
   const target = event.target as HTMLSelectElement
   set(target.value as ScriptVariant)
+  // Cookie is updated synchronously above; mirror to the profile when signed in.
+  persist()
 }
 </script>
 
