@@ -173,19 +173,11 @@ public class SegmentsControllerTests : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private static string RandomLetterCode() =>
-        new string(new[]
-        {
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-        });
-
     private async Task<(Guid SourceId, Guid TextVersionId)> SeedSourceAndTextVersionAsync(CancellationToken ct)
     {
         var author = Author.Create($"Segments-Controller Author {Guid.NewGuid():N}").Value!;
         var source = Source.Create(author.Id, "Some Source").Value!;
-        var code = RandomLetterCode();
+        var code = TranslationsSeedExtensions.NextTextVersionCode();
         var textVersion = TextVersion.Create(code, "ForControllerTest", isRightToLeft: false).Value!;
 
         await using var seed = postgres.CreateContext();

@@ -185,19 +185,11 @@ public class SegmentServiceTests
             Substitute.For<ISearchIndex<SegmentSearchDocument>>(),
             NullLogger<SegmentService>.Instance);
 
-    private static string RandomLetterCode() =>
-        new string(new[]
-        {
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-            (char)('a' + Random.Shared.Next(26)),
-        });
-
     private async Task<(Guid SourceId, Guid TextVersionId)> SeedSourceAndTextVersionAsync(CancellationToken ct)
     {
         var author = Author.Create($"Segment-Test Author {Guid.NewGuid():N}").Value!;
         var source = Source.Create(author.Id, "Some Source").Value!;
-        var code = RandomLetterCode();
+        var code = TranslationsSeedExtensions.NextTextVersionCode();
         var textVersion = TextVersion.Create(code, "ForSegmentTest", isRightToLeft: false).Value!;
 
         await using var seed = fixture.CreateContext();

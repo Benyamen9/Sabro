@@ -12,6 +12,10 @@ namespace Sabro.IntegrationTests;
 /// </summary>
 public static class TranslationsSeedExtensions
 {
+    // Monotonic counter backing NextTextVersionCode. -1 so the first
+    // Interlocked.Increment yields 0 ("aaa").
+    private static int textVersionCodeSequence = -1;
+
     /// <summary>
     /// Seeds an Author, Source, TextVersion, and Segment at the given
     /// (chapter, verse). Returns the full id set so call sites can pick
@@ -27,7 +31,7 @@ public static class TranslationsSeedExtensions
         var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
         var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
         var textVersion = TextVersion.Create(
-            RandomLetterCode(),
+            NextTextVersionCode(),
             $"Tv-{Guid.NewGuid():N}",
             isRightToLeft: false).Value!;
         var segment = Segment.Create(
@@ -68,7 +72,7 @@ public static class TranslationsSeedExtensions
         var author = Author.Create($"Author-{Guid.NewGuid():N}").Value!;
         var source = Source.Create(author.Id, $"Source-{Guid.NewGuid():N}").Value!;
         var textVersion = TextVersion.Create(
-            RandomLetterCode(),
+            NextTextVersionCode(),
             $"Tv-{Guid.NewGuid():N}",
             isRightToLeft: false).Value!;
         var segment = Segment.Create(
@@ -103,17 +107,35 @@ public static class TranslationsSeedExtensions
     }
 
     /// <summary>
-    /// Generates a 3-letter lowercase code that satisfies the
+    /// Returns a process-unique 3-letter lowercase code satisfying the
     /// <c>TextVersion.Code</c> validator (2–3 lowercase letters).
+    /// <para>
+    /// Drawn from a monotonic counter rather than at random: the previous
+    /// random 3-letter generator collided on the unique
+    /// <c>ix_text_versions_code</c> index by chance (birthday paradox over only
+    /// 26³ values) when many tests seeded into the same Postgres container,
+    /// causing intermittent CI failures. A counter guarantees every generated
+    /// code is distinct within a test run. Codes are always length 3, so they
+    /// also never collide with the 2-letter literal codes used elsewhere.
+    /// </para>
+    /// All call sites share this single counter so uniqueness holds across test
+    /// classes, including those running in parallel (hence Interlocked).
     /// </summary>
-    public static string RandomLetterCode()
+    public static string NextTextVersionCode()
     {
         const string letters = "abcdefghijklmnopqrstuvwxyz";
-        var rng = Random.Shared;
-        Span<char> buffer = stackalloc char[3];
-        for (var i = 0; i < buffer.Length; i++)
+        var n = Interlocked.Increment(ref textVersionCodeSequence);
+        if (n >= letters.Length * letters.Length * letters.Length)
         {
-            buffer[i] = letters[rng.Next(letters.Length)];
+            throw new InvalidOperationException(
+                "Exhausted the 3-letter TextVersion code space for this test run.");
+        }
+
+        Span<char> buffer = stackalloc char[3];
+        for (var i = buffer.Length - 1; i >= 0; i--)
+        {
+            buffer[i] = letters[n % letters.Length];
+            n /= letters.Length;
         }
 
         return new string(buffer);
