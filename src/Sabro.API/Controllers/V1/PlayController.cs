@@ -28,11 +28,13 @@ public sealed class PlayController : ApiControllerBase
 
     /// <summary>
     /// Returns today's Meltho puzzle (get-or-create per date; identical for all
-    /// players; respects the anti-repetition window). Read scope is sufficient —
-    /// a read-only client still needs today's word to play.
+    /// players; respects the anti-repetition window). Public: anyone can play
+    /// without an account — login is only needed to persist a result. The daily
+    /// word is shared, non-personal content, so it is served anonymously (still
+    /// rate-limited as a public endpoint).
     /// </summary>
     [HttpGet("meltho/today")]
-    [Authorize(Policy = AuthPolicies.Read)]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(MelthoPuzzleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MelthoPuzzleDto>> GetTodaysMelthoPuzzle(CancellationToken cancellationToken)
