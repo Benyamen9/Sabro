@@ -114,13 +114,24 @@ jobs:
             $COMPOSE pull
             # Apply migrations before swapping app containers (expand->migrate->contract).
             $COMPOSE --profile migrate run --rm migrator
-            $COMPOSE up -d
+            # Bring the stack up and drop orphaned containers, then force the app
+            # services onto the just-pulled image WITHOUT disturbing the data
+            # services (--no-deps). A plain `up -d` can leave a stale api/frontend
+            # container serving after an image bump; --force-recreate guarantees
+            # the swap, and --remove-orphans clears any leftover from an earlier run.
+            $COMPOSE up -d --remove-orphans
+            $COMPOSE up -d --force-recreate --no-deps api frontend
+            # Record exactly which image the api service ended up on (deploy observability).
+            $COMPOSE images api
             # Post-deploy health check through Caddy from the host (the API
             # container exposes no host port and ships no wget/curl).
             set -a; . ./.env; set +a
             for i in $(seq 1 30); do
               if curl -fsS "https://${SABRO_API_DOMAIN}/health" >/dev/null 2>&1; then
-                echo "API healthy"; exit 0
+                echo "API healthy"
+                # Diagnostic: the puzzle endpoint must be public (200), not 401.
+                echo "anon /play/meltho/today -> HTTP $(curl -s -o /dev/null -w '%{http_code}' "https://${SABRO_API_DOMAIN}/api/v1/play/meltho/today")"
+                exit 0
               fi
               echo "waiting for API health ($i)..."; sleep 2
             done
