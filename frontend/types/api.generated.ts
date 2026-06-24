@@ -1933,6 +1933,107 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/play/meltho/library": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfMelthoLibraryEntryDto"];
+                        "application/json": components["schemas"]["PagedResultOfMelthoLibraryEntryDto"];
+                        "text/json": components["schemas"]["PagedResultOfMelthoLibraryEntryDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/play/meltho/library/{lexiconEntryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    lexiconEntryId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["MelthoLibraryDetailDto"];
+                        "application/json": components["schemas"]["MelthoLibraryDetailDto"];
+                        "text/json": components["schemas"]["MelthoLibraryDetailDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/play/results": {
         parameters: {
             query?: never;
@@ -3108,6 +3209,10 @@ export interface components {
         };
         /** @enum {string} */
         GrammaticalCategory: "Noun" | "Verb" | "Adjective" | "Adverb" | "Pronoun" | "Preposition" | "Conjunction" | "Particle" | "Numeral" | "Interjection" | "Other";
+        /** @enum {string} */
+        HardeningSource: "None" | "Marked" | "Computed";
+        /** @enum {string} */
+        LetterHardening: "Qushoyo" | "Rukkokho";
         LexiconEntryDto: {
             /** Format: uuid */
             id: string;
@@ -3158,6 +3263,29 @@ export interface components {
             morphology: null | string;
             meaningTexts: string[];
             meaningLanguages: string[];
+        };
+        MelthoLibraryDetailDto: {
+            /** Format: uuid */
+            lexiconEntryId: string;
+            syriacUnvocalized: string;
+            syriacVocalized: null | string;
+            sblTransliteration: null | string;
+            transliterationVariants: string[];
+            grammaticalCategory: string;
+            morphology: null | string;
+            /** Format: int32 */
+            playableLength: number | string;
+            meanings: components["schemas"]["MelthoPuzzleMeaningDto"][];
+            composition: components["schemas"]["SyriacLetter"][];
+            playedOn: string[];
+        };
+        MelthoLibraryEntryDto: {
+            /** Format: date */
+            lastPlayedOn: string;
+            /** Format: uuid */
+            lexiconEntryId: string;
+            syriacUnvocalized: string;
+            meanings: components["schemas"]["MelthoPuzzleMeaningDto"][];
         };
         MelthoPuzzleDto: {
             /** Format: date */
@@ -3267,6 +3395,15 @@ export interface components {
         };
         PagedResultOfLexiconSearchHitDto: {
             items: components["schemas"]["LexiconSearchHitDto"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+        };
+        PagedResultOfMelthoLibraryEntryDto: {
+            items: components["schemas"]["MelthoLibraryEntryDto"][];
             /** Format: int32 */
             total: number | string;
             /** Format: int32 */
@@ -3414,6 +3551,18 @@ export interface components {
         SuggestedEditStatus: "Pending" | "Accepted" | "Rejected";
         /** @enum {string} */
         SuggestedEditTargetType: "Segment" | "Annotation";
+        SyriacLetter: {
+            letter: string;
+            code: components["schemas"]["SyriacLetterCode"];
+            vowel: null | components["schemas"]["SyriacVowel"];
+            isBegadkephat: boolean;
+            hardening: null | components["schemas"]["LetterHardening"];
+            hardeningSource: components["schemas"]["HardeningSource"];
+        };
+        /** @enum {string} */
+        SyriacLetterCode: "Unknown" | "Alaph" | "Beth" | "Gamal" | "Dalath" | "He" | "Waw" | "Zayn" | "Heth" | "Teth" | "Yudh" | "Kaph" | "Lamadh" | "Mim" | "Nun" | "Semkath" | "Ayn" | "Pe" | "Sadhe" | "Qaph" | "Rish" | "Shin" | "Taw";
+        /** @enum {string} */
+        SyriacVowel: "Pthaha" | "Zqapha" | "Rbasa" | "Zlama" | "Hbasa" | "Esasa" | "Rwaha";
         /** @enum {string} */
         Testament: "Old" | "New";
         UpdateLexiconEntryRequest: {
