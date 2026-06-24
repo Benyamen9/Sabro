@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Sabro.Lexicon.Application.Entries;
 using Sabro.Play.Application.Meltho;
 using Sabro.Play.Domain;
@@ -6,10 +7,10 @@ using Sabro.Shared.Text;
 
 namespace Sabro.IntegrationTests.Play.Application;
 
-// Like MelthoPuzzleServiceTests, each test pins "today" to a distinct far-future year so the
-// shared meltho_daily_puzzles table never collides and the past-only scan only sees this
-// test's own rows. The lexicon reader is substituted; the real PlayDbContext exercises the
-// past-only filter, per-word dedup, ordering, and pagination against Postgres.
+// The library list aggregates across the whole past, so — unlike the puzzle tests, which
+// isolate via a unique far-future year and a 30-day window — these tests cannot tolerate
+// rows left by other tests in the shared meltho_daily_puzzles table. The IntegrationCollection
+// runs sequentially, so each test clears the table first to get a deterministic global view.
 [Collection(IntegrationCollection.Name)]
 public class MelthoLibraryServiceTests
 {
@@ -24,6 +25,7 @@ public class MelthoLibraryServiceTests
     public async Task List_ExcludesTodaysWord()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var today = new DateOnly(2201, 6, 15);
         var yesterdayWord = Guid.NewGuid();
         var todayWord = Guid.NewGuid();
@@ -43,6 +45,7 @@ public class MelthoLibraryServiceTests
     public async Task List_DeduplicatesWords_OrderedByMostRecentlyServed()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var today = new DateOnly(2211, 6, 15);
         var wordA = Guid.NewGuid();
         var wordB = Guid.NewGuid();
@@ -63,6 +66,7 @@ public class MelthoLibraryServiceTests
     public async Task List_PaginatesAndReportsTotal()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var today = new DateOnly(2221, 6, 15);
         for (var i = 1; i <= 5; i++)
         {
@@ -97,6 +101,7 @@ public class MelthoLibraryServiceTests
     public async Task GetDetail_ReturnsInfoCompositionAndPastDates()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var today = new DateOnly(2241, 6, 15);
         var word = Guid.NewGuid();
         await SeedServedAsync(today.AddDays(-5), word, ct);
@@ -116,6 +121,7 @@ public class MelthoLibraryServiceTests
     public async Task GetDetail_WordServedOnlyToday_ReturnsNotFound()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var today = new DateOnly(2251, 6, 15);
         var word = Guid.NewGuid();
         await SeedServedAsync(today, word, ct);
@@ -131,6 +137,7 @@ public class MelthoLibraryServiceTests
     public async Task GetDetail_WhenEntryMissing_ReturnsNotFound()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var today = new DateOnly(2261, 6, 15);
         var word = Guid.NewGuid();
         await SeedServedAsync(today.AddDays(-1), word, ct);
@@ -172,6 +179,12 @@ public class MelthoLibraryServiceTests
                 new[] { new LexiconMeaningDto("en", "word") },
                 SyriacComposition.Decompose("ܡܶܠܬ݂ܳܐ")));
         return reader;
+    }
+
+    private async Task ClearAsync(CancellationToken ct)
+    {
+        await using var ctx = fixture.CreatePlayContext();
+        await ctx.MelthoDailyPuzzles.ExecuteDeleteAsync(ct);
     }
 
     private async Task SeedServedAsync(DateOnly date, Guid entryId, CancellationToken ct)
