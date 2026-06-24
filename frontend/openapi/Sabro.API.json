@@ -2950,6 +2950,143 @@
         }
       }
     },
+    "/api/v1/play/meltho/library": {
+      "get": {
+        "tags": [
+          "Play"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfMelthoLibraryEntryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfMelthoLibraryEntryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfMelthoLibraryEntryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/play/meltho/library/{lexiconEntryId}": {
+      "get": {
+        "tags": [
+          "Play"
+        ],
+        "parameters": [
+          {
+            "name": "lexiconEntryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MelthoLibraryDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MelthoLibraryDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MelthoLibraryDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/play/results": {
       "post": {
         "tags": [
@@ -5427,6 +5564,21 @@
         ],
         "type": "string"
       },
+      "HardeningSource": {
+        "enum": [
+          "None",
+          "Marked",
+          "Computed"
+        ],
+        "type": "string"
+      },
+      "LetterHardening": {
+        "enum": [
+          "Qushoyo",
+          "Rukkokho"
+        ],
+        "type": "string"
+      },
       "LexiconEntryDto": {
         "required": [
           "id",
@@ -5635,6 +5787,113 @@
             "type": "array",
             "items": {
               "type": "string"
+            }
+          }
+        }
+      },
+      "MelthoLibraryDetailDto": {
+        "required": [
+          "lexiconEntryId",
+          "syriacUnvocalized",
+          "syriacVocalized",
+          "sblTransliteration",
+          "transliterationVariants",
+          "grammaticalCategory",
+          "morphology",
+          "playableLength",
+          "meanings",
+          "composition",
+          "playedOn"
+        ],
+        "type": "object",
+        "properties": {
+          "lexiconEntryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "syriacUnvocalized": {
+            "type": "string"
+          },
+          "syriacVocalized": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sblTransliteration": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "transliterationVariants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grammaticalCategory": {
+            "type": "string"
+          },
+          "morphology": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "playableLength": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "meanings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MelthoPuzzleMeaningDto"
+            }
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyriacLetter"
+            }
+          },
+          "playedOn": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        }
+      },
+      "MelthoLibraryEntryDto": {
+        "required": [
+          "lastPlayedOn",
+          "lexiconEntryId",
+          "syriacUnvocalized",
+          "meanings"
+        ],
+        "type": "object",
+        "properties": {
+          "lastPlayedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "lexiconEntryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "syriacUnvocalized": {
+            "type": "string"
+          },
+          "meanings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MelthoPuzzleMeaningDto"
             }
           }
         }
@@ -6128,6 +6387,47 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/LexiconSearchHitDto"
+            }
+          },
+          "total": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "page": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "PagedResultOfMelthoLibraryEntryDto": {
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MelthoLibraryEntryDto"
             }
           },
           "total": {
@@ -6708,6 +7008,91 @@
         "enum": [
           "Segment",
           "Annotation"
+        ],
+        "type": "string"
+      },
+      "SyriacLetter": {
+        "required": [
+          "letter",
+          "code",
+          "vowel",
+          "isBegadkephat",
+          "hardening",
+          "hardeningSource"
+        ],
+        "type": "object",
+        "properties": {
+          "letter": {
+            "type": "string"
+          },
+          "code": {
+            "$ref": "#/components/schemas/SyriacLetterCode"
+          },
+          "vowel": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SyriacVowel"
+              }
+            ]
+          },
+          "isBegadkephat": {
+            "type": "boolean"
+          },
+          "hardening": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/LetterHardening"
+              }
+            ]
+          },
+          "hardeningSource": {
+            "$ref": "#/components/schemas/HardeningSource"
+          }
+        }
+      },
+      "SyriacLetterCode": {
+        "enum": [
+          "Unknown",
+          "Alaph",
+          "Beth",
+          "Gamal",
+          "Dalath",
+          "He",
+          "Waw",
+          "Zayn",
+          "Heth",
+          "Teth",
+          "Yudh",
+          "Kaph",
+          "Lamadh",
+          "Mim",
+          "Nun",
+          "Semkath",
+          "Ayn",
+          "Pe",
+          "Sadhe",
+          "Qaph",
+          "Rish",
+          "Shin",
+          "Taw"
+        ],
+        "type": "string"
+      },
+      "SyriacVowel": {
+        "enum": [
+          "Pthaha",
+          "Zqapha",
+          "Rbasa",
+          "Zlama",
+          "Hbasa",
+          "Esasa",
+          "Rwaha"
         ],
         "type": "string"
       },

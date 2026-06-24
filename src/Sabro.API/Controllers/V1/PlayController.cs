@@ -18,11 +18,16 @@ namespace Sabro.API.Controllers.V1;
 public sealed class PlayController : ApiControllerBase
 {
     private readonly IMelthoPuzzleService melthoPuzzleService;
+    private readonly IMelthoLibraryService melthoLibraryService;
     private readonly IGameResultService gameResultService;
 
-    public PlayController(IMelthoPuzzleService melthoPuzzleService, IGameResultService gameResultService)
+    public PlayController(
+        IMelthoPuzzleService melthoPuzzleService,
+        IMelthoLibraryService melthoLibraryService,
+        IGameResultService gameResultService)
     {
         this.melthoPuzzleService = melthoPuzzleService;
+        this.melthoLibraryService = melthoLibraryService;
         this.gameResultService = gameResultService;
     }
 
@@ -40,6 +45,51 @@ public sealed class PlayController : ApiControllerBase
     public async Task<ActionResult<MelthoPuzzleDto>> GetTodaysMelthoPuzzle(CancellationToken cancellationToken)
     {
         var result = await melthoPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Lists the public Meltho word library: words served on past days, most recent first,
+    /// paged. Today's word is never included (it would spoil the live puzzle). Public,
+    /// non-personal content, so served anonymously (still rate-limited).
+    /// </summary>
+    [HttpGet("meltho/library")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(PagedResult<MelthoLibraryEntryDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<MelthoLibraryEntryDto>>> GetMelthoLibrary(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await melthoLibraryService.ListAsync(page, pageSize, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Returns the detail for one past Meltho word: the info table, the per-letter composition
+    /// (qushoyo/rukkokho), and every past date it was served. Public. 404 if the word has never
+    /// been served on a past day.
+    /// </summary>
+    [HttpGet("meltho/library/{lexiconEntryId:guid}")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(MelthoLibraryDetailDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MelthoLibraryDetailDto>> GetMelthoLibraryWord(
+        Guid lexiconEntryId,
+        CancellationToken cancellationToken)
+    {
+        var result = await melthoLibraryService.GetDetailAsync(lexiconEntryId, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

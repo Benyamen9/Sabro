@@ -24,6 +24,7 @@
     "primary": "Navigation principale",
     "home": "Accueil",
     "translations": "Traductions",
+    "library": "Bibliothèque",
     "admin": "Back-office"
   },
   "switcher": {
@@ -79,6 +80,54 @@
     "previous": "Précédent",
     "next": "Suivant",
     "pageOf": "Page {page} sur {total}"
+  },
+  "library": {
+    "title": "Bibliothèque des mots",
+    "heading": "Bibliothèque des mots Meltho",
+    "lede": "Chaque mot proposé par Meltho, avec ses lettres et ses sons.",
+    "empty": "Aucun mot passé pour l’instant — revenez après l’énigme du jour.",
+    "loadFailed": "Impossible de charger la bibliothèque des mots.",
+    "notFound": "Ce mot n’est pas encore dans la bibliothèque.",
+    "back": "Retour à la bibliothèque",
+    "lastPlayed": "Dernière fois le {date}",
+    "playedOn": "Proposé le",
+    "composition": {
+      "heading": "Lettre par lettre",
+      "none": "Ajoutez une forme vocalisée à ce mot pour voir ses lettres détaillées."
+    },
+    "fields": {
+      "unvocalized": "Syriaque",
+      "vocalized": "Vocalisé",
+      "transliteration": "Translittération",
+      "category": "Catégorie",
+      "length": "Lettres",
+      "meanings": "Sens"
+    },
+    "letters": {
+      "Alaph": "Ālap", "Beth": "Bēt", "Gamal": "Gāmal", "Dalath": "Dālat",
+      "He": "Hē", "Waw": "Waw", "Zayn": "Zayn", "Heth": "Ḥēt", "Teth": "Ṭēt",
+      "Yudh": "Yod", "Kaph": "Kāp", "Lamadh": "Lāmad", "Mim": "Mīm", "Nun": "Nūn",
+      "Semkath": "Semkat", "Ayn": "ʿĒ", "Pe": "Pē", "Sadhe": "Ṣādē", "Qaph": "Qōp",
+      "Rish": "Rīsh", "Shin": "Shīn", "Taw": "Taw", "Unknown": "—"
+    },
+    "vowels": {
+      "Pthaha": "Ptāḥā (a)", "Zqapha": "Zqāpā (o)", "Rbasa": "Rbāṣā (e)",
+      "Zlama": "Zlāmā (e)", "Hbasa": "Ḥbāṣā (i)", "Esasa": "ʿṣāṣā (u)", "Rwaha": "Rwāḥā"
+    },
+    "hardening": {
+      "Qushoyo": "Qushoyo — dur",
+      "Rukkokho": "Rukkokho — doux"
+    },
+    "rule": {
+      "marked": "marqué dans la vocalisation",
+      "computedSoft": "doux après une voyelle (calculé)",
+      "computedHard": "dur à l’initiale ou après une lettre sans voyelle (calculé)"
+    }
+  },
+  "categories": {
+    "Noun": "Nom", "Verb": "Verbe", "Adjective": "Adjectif", "Adverb": "Adverbe",
+    "Pronoun": "Pronom", "Preposition": "Préposition", "Conjunction": "Conjonction",
+    "Particle": "Particule", "Numeral": "Numéral", "Interjection": "Interjection", "Other": "Autre"
   },
   "admin": {
     "adminRequired": "Accès administrateur requis.",

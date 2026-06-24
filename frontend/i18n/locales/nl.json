@@ -24,6 +24,7 @@
     "primary": "Primaire navigatie",
     "home": "Home",
     "translations": "Vertalingen",
+    "library": "Bibliotheek",
     "admin": "Backoffice"
   },
   "switcher": {
@@ -79,6 +80,55 @@
     "previous": "Vorige",
     "next": "Volgende",
     "pageOf": "Pagina {page} van {total}"
+  },
+  "library": {
+    "title": "Woordbibliotheek",
+    "heading": "Meltho-woordbibliotheek",
+    "lede": "Elk woord dat Meltho heeft getoond, met zijn letters en klanken.",
+    "empty": "Nog geen eerdere woorden — kom terug na de puzzel van vandaag.",
+    "loadFailed": "Kon de woordbibliotheek niet laden.",
+    "notFound": "Dit woord staat nog niet in de bibliotheek.",
+    "back": "Terug naar de bibliotheek",
+    "lastPlayed": "Laatst getoond op {date}",
+    "playedOn": "Getoond op",
+    "composition": {
+      "heading": "Letter voor letter",
+      "none": "Voeg een gevocaliseerde vorm toe aan dit woord om de letters uitgesplitst te zien."
+    },
+    "fields": {
+      "unvocalized": "Syrisch",
+      "vocalized": "Gevocaliseerd",
+      "transliteration": "Transliteratie",
+      "category": "Categorie",
+      "length": "Letters",
+      "meanings": "Betekenissen"
+    },
+    "letters": {
+      "Alaph": "Ālap", "Beth": "Bēt", "Gamal": "Gāmal", "Dalath": "Dālat",
+      "He": "Hē", "Waw": "Waw", "Zayn": "Zayn", "Heth": "Ḥēt", "Teth": "Ṭēt",
+      "Yudh": "Yod", "Kaph": "Kāp", "Lamadh": "Lāmad", "Mim": "Mīm", "Nun": "Nūn",
+      "Semkath": "Semkat", "Ayn": "ʿĒ", "Pe": "Pē", "Sadhe": "Ṣādē", "Qaph": "Qōp",
+      "Rish": "Rīsh", "Shin": "Shīn", "Taw": "Taw", "Unknown": "—"
+    },
+    "vowels": {
+      "Pthaha": "Ptāḥā (a)", "Zqapha": "Zqāpā (o)", "Rbasa": "Rbāṣā (e)",
+      "Zlama": "Zlāmā (e)", "Hbasa": "Ḥbāṣā (i)", "Esasa": "ʿṣāṣā (u)", "Rwaha": "Rwāḥā"
+    },
+    "hardening": {
+      "Qushoyo": "Qushoyo — hard",
+      "Rukkokho": "Rukkokho — zacht"
+    },
+    "rule": {
+      "marked": "aangegeven in de vocalisatie",
+      "computedSoft": "zacht na een klinker (berekend)",
+      "computedHard": "hard aan het begin of na een klinkerloze letter (berekend)"
+    }
+  },
+  "categories": {
+    "Noun": "Zelfstandig naamwoord", "Verb": "Werkwoord", "Adjective": "Bijvoeglijk naamwoord",
+    "Adverb": "Bijwoord", "Pronoun": "Voornaamwoord", "Preposition": "Voorzetsel",
+    "Conjunction": "Voegwoord", "Particle": "Partikel", "Numeral": "Telwoord",
+    "Interjection": "Tussenwerpsel", "Other": "Overig"
   },
   "admin": {
     "adminRequired": "Beheerderstoegang vereist.",

@@ -14,9 +14,11 @@ onMounted(() => {
 })
 
 const navItems = computed(() => {
-  // Translations are deferred post-launch; only the admin backoffice is linked
-  // for now. The lexicon CRUD link is gated on the admin scope from Logto.
-  const items: { to: string, labelKey: string }[] = []
+  // The Meltho word library is public. Translations are deferred post-launch; the
+  // lexicon CRUD link is gated on the admin scope from Logto.
+  const items: { to: string, labelKey: string }[] = [
+    { to: '/library', labelKey: 'nav.library' },
+  ]
   if (isAdmin.value) {
     items.push({ to: '/admin/lexicon', labelKey: 'nav.admin' })
   }

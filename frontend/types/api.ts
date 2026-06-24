@@ -66,3 +66,13 @@ export type CreateLexiconMeaningRequest = Schemas['CreateLexiconMeaningRequest']
 export type CreateLexiconEntryRequest = Schemas['CreateLexiconEntryRequest']
 export type UpdateLexiconEntryRequest = Schemas['UpdateLexiconEntryRequest']
 export type SetPlayableLexiconEntryRequest = Schemas['SetPlayableLexiconEntryRequest']
+
+// Meltho play + library.
+export type MelthoPuzzleMeaningDto = Schemas['MelthoPuzzleMeaningDto']
+export type MelthoLibraryEntryDto = Schemas['MelthoLibraryEntryDto']
+export type MelthoLibraryDetailDto = Schemas['MelthoLibraryDetailDto']
+export type SyriacLetter = Schemas['SyriacLetter']
+export type SyriacLetterCode = Schemas['SyriacLetterCode']
+export type SyriacVowel = Schemas['SyriacVowel']
+export type LetterHardening = Schemas['LetterHardening']
+export type HardeningSource = Schemas['HardeningSource']

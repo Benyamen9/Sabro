@@ -24,6 +24,7 @@
     "primary": "Primary navigation",
     "home": "Home",
     "translations": "Translations",
+    "library": "Library",
     "admin": "Backoffice"
   },
   "switcher": {
@@ -79,6 +80,54 @@
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {page} of {total}"
+  },
+  "library": {
+    "title": "Word library",
+    "heading": "Meltho word library",
+    "lede": "Every word Meltho has shown, with its letters and sounds.",
+    "empty": "No past words yet — check back after today's puzzle.",
+    "loadFailed": "Could not load the word library.",
+    "notFound": "This word is not in the library yet.",
+    "back": "Back to the library",
+    "lastPlayed": "Last shown {date}",
+    "playedOn": "Shown on",
+    "composition": {
+      "heading": "Letter by letter",
+      "none": "Add a vocalized form to this word to see its letters broken down."
+    },
+    "fields": {
+      "unvocalized": "Syriac",
+      "vocalized": "Vocalized",
+      "transliteration": "Transliteration",
+      "category": "Category",
+      "length": "Letters",
+      "meanings": "Meanings"
+    },
+    "letters": {
+      "Alaph": "Ālap", "Beth": "Bēt", "Gamal": "Gāmal", "Dalath": "Dālat",
+      "He": "Hē", "Waw": "Waw", "Zayn": "Zayn", "Heth": "Ḥēt", "Teth": "Ṭēt",
+      "Yudh": "Yod", "Kaph": "Kāp", "Lamadh": "Lāmad", "Mim": "Mīm", "Nun": "Nūn",
+      "Semkath": "Semkat", "Ayn": "ʿĒ", "Pe": "Pē", "Sadhe": "Ṣādē", "Qaph": "Qōp",
+      "Rish": "Rīsh", "Shin": "Shīn", "Taw": "Taw", "Unknown": "—"
+    },
+    "vowels": {
+      "Pthaha": "Ptāḥā (a)", "Zqapha": "Zqāpā (o)", "Rbasa": "Rbāṣā (e)",
+      "Zlama": "Zlāmā (e)", "Hbasa": "Ḥbāṣā (i)", "Esasa": "ʿṣāṣā (u)", "Rwaha": "Rwāḥā"
+    },
+    "hardening": {
+      "Qushoyo": "Qushoyo — hard",
+      "Rukkokho": "Rukkokho — soft"
+    },
+    "rule": {
+      "marked": "marked in the vocalization",
+      "computedSoft": "soft after a vowel (computed)",
+      "computedHard": "hard at the start or after a vowelless letter (computed)"
+    }
+  },
+  "categories": {
+    "Noun": "Noun", "Verb": "Verb", "Adjective": "Adjective", "Adverb": "Adverb",
+    "Pronoun": "Pronoun", "Preposition": "Preposition", "Conjunction": "Conjunction",
+    "Particle": "Particle", "Numeral": "Numeral", "Interjection": "Interjection", "Other": "Other"
   },
   "admin": {
     "adminRequired": "Admin access required.",
