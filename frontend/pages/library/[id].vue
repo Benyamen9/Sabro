@@ -102,9 +102,10 @@ function categoryLabel(category: string | undefined) {
       <section class="mt-12">
         <h2 class="font-serif text-2xl">{{ t('library.composition.heading') }}</h2>
         <div v-if="hasComposition" class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <!-- Cards read right-to-left to match the Syriac word order. -->
+          <!-- Cards run left-to-right in word order (first letter first): e.g. ktobo
+               reads Kaph, Taw, Beth, Alaph. -->
           <LetterCard
-            v-for="(letter, index) in [...data.composition].reverse()"
+            v-for="(letter, index) in data.composition"
             :key="index"
             :letter="letter"
           />
