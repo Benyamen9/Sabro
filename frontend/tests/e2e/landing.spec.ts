@@ -8,7 +8,7 @@ test.describe('landing page', () => {
     // nav holds no public items for an anonymous visitor.
     await expect(page.getByRole('link', { name: 'Sabro' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Translations', exact: true })).toHaveCount(0)
-    await expect(page.getByText('alive online.')).toBeVisible()
+    await expect(page.getByText('letter by letter.')).toBeVisible()
 
     await expect(page.getByRole('combobox', { name: 'Syriac script' })).toBeVisible()
     await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible()
