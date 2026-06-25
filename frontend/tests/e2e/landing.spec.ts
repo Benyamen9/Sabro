@@ -28,8 +28,8 @@ test.describe('landing page', () => {
     await page.goto('/')
 
     // The locale cookie switches rendered text; assert a French heading from
-    // the home page (the "About" section) is present.
-    await expect(page.getByRole('heading', { name: 'À propos' })).toBeVisible()
+    // the home page (the "what Sabro is" section) is present.
+    await expect(page.getByRole('heading', { name: 'Un hub, plusieurs applications' })).toBeVisible()
   })
 
   test('renders Serto when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {
