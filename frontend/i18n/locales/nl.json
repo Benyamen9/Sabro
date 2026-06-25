@@ -25,7 +25,8 @@
     "home": "Home",
     "translations": "Vertalingen",
     "library": "Bibliotheek",
-    "admin": "Backoffice"
+    "admin": "Backoffice",
+    "meltho": "Meltho"
   },
   "switcher": {
     "languageLabel": "Taal",
