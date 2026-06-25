@@ -2981,6 +2981,27 @@
               "format": "int32",
               "default": 50
             }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LibrarySort"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SortDirection"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -5791,6 +5812,15 @@
           }
         }
       },
+      "LibrarySort": {
+        "enum": [
+          "Recent",
+          "Alphabetical",
+          "Length"
+        ],
+        "type": "string",
+        "default": 0
+      },
       "MelthoLibraryDetailDto": {
         "required": [
           "lexiconEntryId",
@@ -5801,6 +5831,7 @@
           "grammaticalCategory",
           "morphology",
           "playableLength",
+          "root",
           "meanings",
           "composition",
           "playedOn"
@@ -5849,6 +5880,12 @@
             ],
             "format": "int32"
           },
+          "root": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "meanings": {
             "type": "array",
             "items": {
@@ -5875,6 +5912,9 @@
           "lastPlayedOn",
           "lexiconEntryId",
           "syriacUnvocalized",
+          "sblTransliteration",
+          "playableLength",
+          "timesPlayed",
           "meanings"
         ],
         "type": "object",
@@ -5889,6 +5929,28 @@
           },
           "syriacUnvocalized": {
             "type": "string"
+          },
+          "sblTransliteration": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "playableLength": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "timesPlayed": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           },
           "meanings": {
             "type": "array",
@@ -6869,6 +6931,13 @@
             "type": "boolean"
           }
         }
+      },
+      "SortDirection": {
+        "enum": [
+          "Ascending",
+          "Descending"
+        ],
+        "type": "string"
       },
       "SourceDto": {
         "required": [

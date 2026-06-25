@@ -91,6 +91,22 @@
     "back": "Retour à la bibliothèque",
     "lastPlayed": "Dernière fois le {date}",
     "playedOn": "Proposé le",
+    "count": "{count} mots",
+    "timesPlayed": "proposé {count}×",
+    "lettersCount": "{count} lettres",
+    "searchPlaceholder": "Rechercher un mot, un sens ou une translittération…",
+    "searchClear": "Effacer la recherche",
+    "noResults": "Aucun mot ne correspond à « {query} ».",
+    "sort": {
+      "label": "Trier",
+      "recent": "Récemment proposés",
+      "alphabetical": "Alphabétique",
+      "length": "Longueur du mot"
+    },
+    "direction": {
+      "ascending": "Croissant — cliquer pour inverser",
+      "descending": "Décroissant — cliquer pour inverser"
+    },
     "composition": {
       "heading": "Lettre par lettre",
       "none": "Ajoutez une forme vocalisée à ce mot pour voir ses lettres détaillées."
@@ -101,6 +117,7 @@
       "transliteration": "Translittération",
       "category": "Catégorie",
       "length": "Lettres",
+      "root": "Racine",
       "meanings": "Sens"
     },
     "letters": {
@@ -117,6 +134,10 @@
     "hardening": {
       "Qushoyo": "Qushoyo — dur",
       "Rukkokho": "Rukkokho — doux"
+    },
+    "dot": {
+      "above": "point au-dessus",
+      "below": "point en dessous"
     },
     "rule": {
       "marked": "marqué dans la vocalisation",

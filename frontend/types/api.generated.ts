@@ -1945,6 +1945,9 @@ export interface paths {
                 query?: {
                     page?: number | string;
                     pageSize?: number | string;
+                    sort?: components["schemas"]["LibrarySort"];
+                    direction?: components["schemas"]["SortDirection"];
+                    search?: string;
                 };
                 header?: never;
                 path?: never;
@@ -3264,6 +3267,11 @@ export interface components {
             meaningTexts: string[];
             meaningLanguages: string[];
         };
+        /**
+         * @default 0
+         * @enum {string}
+         */
+        LibrarySort: "Recent" | "Alphabetical" | "Length";
         MelthoLibraryDetailDto: {
             /** Format: uuid */
             lexiconEntryId: string;
@@ -3275,6 +3283,7 @@ export interface components {
             morphology: null | string;
             /** Format: int32 */
             playableLength: number | string;
+            root: null | string;
             meanings: components["schemas"]["MelthoPuzzleMeaningDto"][];
             composition: components["schemas"]["SyriacLetter"][];
             playedOn: string[];
@@ -3285,6 +3294,11 @@ export interface components {
             /** Format: uuid */
             lexiconEntryId: string;
             syriacUnvocalized: string;
+            sblTransliteration: null | string;
+            /** Format: int32 */
+            playableLength: number | string;
+            /** Format: int32 */
+            timesPlayed: number | string;
             meanings: components["schemas"]["MelthoPuzzleMeaningDto"][];
         };
         MelthoPuzzleDto: {
@@ -3513,6 +3527,8 @@ export interface components {
         SetPlayableLexiconEntryRequest: {
             playable: boolean;
         };
+        /** @enum {string} */
+        SortDirection: "Ascending" | "Descending";
         SourceDto: {
             /** Format: uuid */
             id: string;

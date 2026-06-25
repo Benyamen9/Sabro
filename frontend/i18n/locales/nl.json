@@ -91,6 +91,22 @@
     "back": "Terug naar de bibliotheek",
     "lastPlayed": "Laatst getoond op {date}",
     "playedOn": "Getoond op",
+    "count": "{count} woorden",
+    "timesPlayed": "{count}× getoond",
+    "lettersCount": "{count} letters",
+    "searchPlaceholder": "Zoek een woord, betekenis of transliteratie…",
+    "searchClear": "Zoekopdracht wissen",
+    "noResults": "Geen woorden komen overeen met ‘{query}’.",
+    "sort": {
+      "label": "Sorteren",
+      "recent": "Recent getoond",
+      "alphabetical": "Alfabetisch",
+      "length": "Woordlengte"
+    },
+    "direction": {
+      "ascending": "Oplopend — klik om om te keren",
+      "descending": "Aflopend — klik om om te keren"
+    },
     "composition": {
       "heading": "Letter voor letter",
       "none": "Voeg een gevocaliseerde vorm toe aan dit woord om de letters uitgesplitst te zien."
@@ -101,6 +117,7 @@
       "transliteration": "Transliteratie",
       "category": "Categorie",
       "length": "Letters",
+      "root": "Wortel",
       "meanings": "Betekenissen"
     },
     "letters": {
@@ -117,6 +134,10 @@
     "hardening": {
       "Qushoyo": "Qushoyo — hard",
       "Rukkokho": "Rukkokho — zacht"
+    },
+    "dot": {
+      "above": "punt erboven",
+      "below": "punt eronder"
     },
     "rule": {
       "marked": "aangegeven in de vocalisatie",
