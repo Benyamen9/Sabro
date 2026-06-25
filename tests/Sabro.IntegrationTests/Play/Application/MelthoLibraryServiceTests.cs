@@ -33,7 +33,7 @@ public class MelthoLibraryServiceTests
         await SeedServedAsync(today, todayWord, ct);
 
         await using var ctx = fixture.CreatePlayContext();
-        var result = await NewService(ctx, EchoReader(), today).ListAsync(1, 50, ct);
+        var result = await NewService(ctx, EchoReader(), today).ListAsync(1, 50, LibrarySort.Recent, null, null, ct);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.Total.Should().Be(1);
@@ -54,12 +54,14 @@ public class MelthoLibraryServiceTests
         await SeedServedAsync(today.AddDays(-2), wordB, ct);
 
         await using var ctx = fixture.CreatePlayContext();
-        var result = await NewService(ctx, EchoReader(), today).ListAsync(1, 50, ct);
+        var result = await NewService(ctx, EchoReader(), today).ListAsync(1, 50, LibrarySort.Recent, null, null, ct);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.Total.Should().Be(2);
         result.Value.Items.Select(i => i.LexiconEntryId).Should().Equal(wordA, wordB);
         result.Value.Items[0].LastPlayedOn.Should().Be(today.AddDays(-1));
+        result.Value.Items[0].TimesPlayed.Should().Be(2); // A was served on two past days
+        result.Value.Items[1].TimesPlayed.Should().Be(1);
     }
 
     [Fact]
@@ -75,8 +77,8 @@ public class MelthoLibraryServiceTests
 
         await using var ctx = fixture.CreatePlayContext();
         var service = NewService(ctx, EchoReader(), today);
-        var page1 = await service.ListAsync(1, 2, ct);
-        var page2 = await service.ListAsync(2, 2, ct);
+        var page1 = await service.ListAsync(1, 2, LibrarySort.Recent, null, null, ct);
+        var page2 = await service.ListAsync(2, 2, LibrarySort.Recent, null, null, ct);
 
         page1.Value!.Total.Should().Be(5);
         page1.Value.Items.Should().HaveCount(2);
@@ -86,12 +88,161 @@ public class MelthoLibraryServiceTests
     }
 
     [Fact]
+    public async Task List_AlphabeticalSort_OrdersBySyriacFormRegardlessOfDate()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2271, 6, 15);
+        var alaph = Guid.NewGuid();
+        var beth = Guid.NewGuid();
+        var gamal = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), gamal, ct); // most recent, but last alphabetically
+        await SeedServedAsync(today.AddDays(-2), beth, ct);
+        await SeedServedAsync(today.AddDays(-3), alaph, ct);
+
+        var reader = MappedReader(new Dictionary<Guid, (string, int)>
+        {
+            [alaph] = ("ܐ", 1),
+            [beth] = ("ܒ", 1),
+            [gamal] = ("ܓ", 1),
+        });
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, reader, today).ListAsync(1, 50, LibrarySort.Alphabetical, null, null, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Items.Select(i => i.LexiconEntryId).Should().Equal(alaph, beth, gamal);
+    }
+
+    [Fact]
+    public async Task List_LengthSort_OrdersByPlayableLengthAscending()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2281, 6, 15);
+        var two = Guid.NewGuid();
+        var three = Guid.NewGuid();
+        var four = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), four, ct); // most recent, but longest
+        await SeedServedAsync(today.AddDays(-2), three, ct);
+        await SeedServedAsync(today.AddDays(-3), two, ct);
+
+        var reader = MappedReader(new Dictionary<Guid, (string, int)>
+        {
+            [two] = ("ܐܐ", 2),
+            [three] = ("ܒܒܒ", 3),
+            [four] = ("ܓܓܓܓ", 4),
+        });
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, reader, today).ListAsync(1, 50, LibrarySort.Length, null, null, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Items.Select(i => i.PlayableLength).Should().Equal(2, 3, 4);
+    }
+
+    [Fact]
+    public async Task List_AlphabeticalDescending_ReversesSyriacOrder()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2291, 6, 15);
+        var alaph = Guid.NewGuid();
+        var beth = Guid.NewGuid();
+        var gamal = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), alaph, ct);
+        await SeedServedAsync(today.AddDays(-2), beth, ct);
+        await SeedServedAsync(today.AddDays(-3), gamal, ct);
+
+        var reader = MappedReader(new Dictionary<Guid, (string, int)>
+        {
+            [alaph] = ("ܐ", 1),
+            [beth] = ("ܒ", 1),
+            [gamal] = ("ܓ", 1),
+        });
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, reader, today)
+            .ListAsync(1, 50, LibrarySort.Alphabetical, SortDirection.Descending, null, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Items.Select(i => i.LexiconEntryId).Should().Equal(gamal, beth, alaph);
+    }
+
+    [Fact]
+    public async Task List_RecentAscending_OrdersOldestFirst()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2301, 6, 15);
+        var newest = Guid.NewGuid();
+        var oldest = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), newest, ct);
+        await SeedServedAsync(today.AddDays(-5), oldest, ct);
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, EchoReader(), today)
+            .ListAsync(1, 50, LibrarySort.Recent, SortDirection.Ascending, null, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Items.Select(i => i.LexiconEntryId).Should().Equal(oldest, newest);
+    }
+
+    [Fact]
+    public async Task List_Search_FiltersBySyriacFormAndReportsFilteredTotal()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2311, 6, 15);
+        var alaph = Guid.NewGuid();
+        var beth = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), alaph, ct);
+        await SeedServedAsync(today.AddDays(-2), beth, ct);
+
+        var reader = MappedReader(new Dictionary<Guid, (string, int)>
+        {
+            [alaph] = ("ܐܠܦ", 3),
+            [beth] = ("ܒܝܬ", 3),
+        });
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, reader, today).ListAsync(1, 50, LibrarySort.Recent, null, "ܐܠܦ", ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Total.Should().Be(1);
+        result.Value.Items.Should().ContainSingle().Which.LexiconEntryId.Should().Be(alaph);
+    }
+
+    [Fact]
+    public async Task List_Search_MatchesTransliterationIgnoringDiacritics()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2321, 6, 15);
+        var word = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), word, ct);
+
+        var reader = Substitute.For<ILexiconLibraryReader>();
+        reader.GetLibraryListAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(ci => (IReadOnlyList<LexiconLibraryListItem>)ci.Arg<IReadOnlyCollection<Guid>>()
+                .Select(id => new LexiconLibraryListItem(id, "ܟܬܒܐ", "ktōbō", 4, new[] { new LexiconMeaningDto("en", "book") }))
+                .ToList());
+
+        await using var ctx = fixture.CreatePlayContext();
+        var service = NewService(ctx, reader, today);
+
+        // Query without macrons still matches; a non-matching query filters everything out.
+        (await service.ListAsync(1, 50, LibrarySort.Recent, null, "ktobo", ct)).Value!.Total.Should().Be(1);
+        (await service.ListAsync(1, 50, LibrarySort.Recent, null, "zzz", ct)).Value!.Total.Should().Be(0);
+    }
+
+    [Fact]
     public async Task List_InvalidPage_ReturnsValidationError()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var ctx = fixture.CreatePlayContext();
 
-        var result = await NewService(ctx, EchoReader(), new DateOnly(2231, 6, 15)).ListAsync(0, 50, ct);
+        var result = await NewService(ctx, EchoReader(), new DateOnly(2231, 6, 15)).ListAsync(0, 50, LibrarySort.Recent, null, null, ct);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -113,6 +264,7 @@ public class MelthoLibraryServiceTests
         result.IsSuccess.Should().BeTrue();
         var dto = result.Value!;
         dto.LexiconEntryId.Should().Be(word);
+        dto.Root.Should().Be("ܡܠܠ");
         dto.Composition.Should().NotBeEmpty();
         dto.PlayedOn.Should().Equal(today.AddDays(-1), today.AddDays(-5)); // newest first
     }
@@ -164,6 +316,8 @@ public class MelthoLibraryServiceTests
                 .Select(id => new LexiconLibraryListItem(
                     id,
                     "ܡܠܬܐ",
+                    "meltho",
+                    4,
                     new[] { new LexiconMeaningDto("en", "word") }))
                 .ToList());
         reader.GetLibraryDetailAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
@@ -176,8 +330,26 @@ public class MelthoLibraryServiceTests
                 "Noun",
                 null,
                 4,
+                "ܡܠܠ",
                 new[] { new LexiconMeaningDto("en", "word") },
                 SyriacComposition.Decompose("ܡܶܠܬ݂ܳܐ")));
+        return reader;
+    }
+
+    // Maps each id to a specific (Syriac form, playable length) so sort assertions are deterministic.
+    private static ILexiconLibraryReader MappedReader(Dictionary<Guid, (string Syriac, int Length)> words)
+    {
+        var reader = Substitute.For<ILexiconLibraryReader>();
+        reader.GetLibraryListAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(ci => (IReadOnlyList<LexiconLibraryListItem>)ci.Arg<IReadOnlyCollection<Guid>>()
+                .Where(words.ContainsKey)
+                .Select(id => new LexiconLibraryListItem(
+                    id,
+                    words[id].Syriac,
+                    null,
+                    words[id].Length,
+                    new[] { new LexiconMeaningDto("en", "word") }))
+                .ToList());
         return reader;
     }
 

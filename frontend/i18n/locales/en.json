@@ -91,6 +91,22 @@
     "back": "Back to the library",
     "lastPlayed": "Last shown {date}",
     "playedOn": "Shown on",
+    "count": "{count} words",
+    "timesPlayed": "shown {count}×",
+    "lettersCount": "{count} letters",
+    "searchPlaceholder": "Search a word, meaning, or transliteration…",
+    "searchClear": "Clear search",
+    "noResults": "No words match “{query}”.",
+    "sort": {
+      "label": "Sort",
+      "recent": "Recently shown",
+      "alphabetical": "Alphabetical",
+      "length": "Word length"
+    },
+    "direction": {
+      "ascending": "Ascending — click to reverse",
+      "descending": "Descending — click to reverse"
+    },
     "composition": {
       "heading": "Letter by letter",
       "none": "Add a vocalized form to this word to see its letters broken down."
@@ -101,6 +117,7 @@
       "transliteration": "Transliteration",
       "category": "Category",
       "length": "Letters",
+      "root": "Root",
       "meanings": "Meanings"
     },
     "letters": {
@@ -117,6 +134,10 @@
     "hardening": {
       "Qushoyo": "Qushoyo — hard",
       "Rukkokho": "Rukkokho — soft"
+    },
+    "dot": {
+      "above": "dot above",
+      "below": "dot below"
     },
     "rule": {
       "marked": "marked in the vocalization",

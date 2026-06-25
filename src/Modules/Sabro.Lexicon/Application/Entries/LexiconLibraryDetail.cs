@@ -16,5 +16,6 @@ public sealed record LexiconLibraryDetail(
     string GrammaticalCategory,
     string? Morphology,
     int PlayableLength,
+    string? Root,
     IReadOnlyList<LexiconMeaningDto> Meanings,
     IReadOnlyList<SyriacLetter> Composition);

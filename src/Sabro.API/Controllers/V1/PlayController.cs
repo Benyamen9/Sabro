@@ -54,9 +54,13 @@ public sealed class PlayController : ApiControllerBase
     }
 
     /// <summary>
-    /// Lists the public Meltho word library: words served on past days, most recent first,
-    /// paged. Today's word is never included (it would spoil the live puzzle). Public,
-    /// non-personal content, so served anonymously (still rate-limited).
+    /// Lists the public Meltho word library: words served on past days, paged, in the requested
+    /// <paramref name="sort"/> order (most recent first by default). Today's word is never
+    /// included (it would spoil the live puzzle). Public, non-personal content, so served
+    /// anonymously (still rate-limited). Valid sort values: recent, alphabetical, length.
+    /// An omitted direction applies the sort's natural default (recent → descending, others →
+    /// ascending). An optional <paramref name="search"/> filters by Syriac form, transliteration,
+    /// or gloss (case- and diacritic-insensitive).
     /// </summary>
     [HttpGet("meltho/library")]
     [AllowAnonymous]
@@ -65,9 +69,12 @@ public sealed class PlayController : ApiControllerBase
     public async Task<ActionResult<PagedResult<MelthoLibraryEntryDto>>> GetMelthoLibrary(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        [FromQuery] LibrarySort sort = LibrarySort.Recent,
+        [FromQuery] SortDirection? direction = null,
+        [FromQuery] string? search = null,
         CancellationToken cancellationToken = default)
     {
-        var result = await melthoLibraryService.ListAsync(page, pageSize, cancellationToken);
+        var result = await melthoLibraryService.ListAsync(page, pageSize, sort, direction, search, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

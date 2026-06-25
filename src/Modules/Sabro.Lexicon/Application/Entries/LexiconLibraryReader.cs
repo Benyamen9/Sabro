@@ -32,6 +32,8 @@ internal sealed class LexiconLibraryReader : ILexiconLibraryReader
             .Select(e => new LexiconLibraryListItem(
                 e.Id,
                 e.SyriacUnvocalized,
+                e.SblTransliteration,
+                e.PlayableLength,
                 e.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray()))
             .ToList();
     }
@@ -46,6 +48,15 @@ internal sealed class LexiconLibraryReader : ILexiconLibraryReader
             return null;
         }
 
+        // Optional Semitic root, surfaced as its Syriac form for the detail page's root chip.
+        var root = entry.RootId is { } rootId
+            ? await dbContext.Roots
+                .AsNoTracking()
+                .Where(r => r.Id == rootId)
+                .Select(r => r.Form)
+                .FirstOrDefaultAsync(cancellationToken)
+            : null;
+
         return new LexiconLibraryDetail(
             entry.Id,
             entry.SyriacUnvocalized,
@@ -55,6 +66,7 @@ internal sealed class LexiconLibraryReader : ILexiconLibraryReader
             entry.GrammaticalCategory.ToString(),
             entry.Morphology,
             entry.PlayableLength,
+            root,
             entry.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray(),
             SyriacComposition.Decompose(entry.SyriacVocalized));
     }

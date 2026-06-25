@@ -13,6 +13,11 @@ const hardeningLabel = computed(() =>
 )
 const isSoft = computed(() => props.letter.hardening === 'Rukkokho')
 
+// Hard (qushoyo) is written with a point above the letter, soft (rukkokho) with one below.
+const dotLabel = computed(() =>
+  props.letter.hardening ? (isSoft.value ? t('library.dot.below') : t('library.dot.above')) : null,
+)
+
 // Short rule label: authoritative when marked in the vocalization, otherwise the
 // heuristic that produced the first-pass guess.
 const ruleLabel = computed(() => {
@@ -41,7 +46,10 @@ const ruleLabel = computed(() => {
             : 'bg-[var(--color-bg-subtle)] text-[var(--color-text)]'
         "
       >{{ hardeningLabel }}</span>
-      <p class="mt-1.5 font-sans text-[0.7rem] leading-snug text-[var(--color-text-muted)]">
+      <p v-if="dotLabel" class="mt-1.5 font-sans text-[0.7rem] text-[var(--color-text-faint)]">
+        {{ dotLabel }}
+      </p>
+      <p class="mt-1 font-sans text-[0.7rem] leading-snug text-[var(--color-text-muted)]">
         {{ ruleLabel }}
       </p>
     </div>

@@ -15,6 +15,7 @@ public sealed record MelthoLibraryDetailDto(
     string GrammaticalCategory,
     string? Morphology,
     int PlayableLength,
+    string? Root,
     IReadOnlyList<MelthoPuzzleMeaningDto> Meanings,
     IReadOnlyList<SyriacLetter> Composition,
     IReadOnlyList<DateOnly> PlayedOn);
