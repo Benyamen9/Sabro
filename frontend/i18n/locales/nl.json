@@ -8,17 +8,28 @@
     "eyebrow": "De Syrische taal",
     "titleLine1": "Syrisch,",
     "titleLine2": "letter voor letter.",
-    "lede": "Sabro is de hub van een groeiend ecosysteem van apps voor de Syrische taal — te beginnen met Meltho, een dagelijks Syrisch woordspel.",
-    "greetingCaption": "„Vrede zij met u.” · šlomā lāk",
+    "nameGloss": "sabro — Syrisch voor „hoop”",
+    "lede": "Sabro is het thuis van een groeiende familie van apps voor de Syrische taal. Het begint met {app}.",
+    "liveNow": "Live",
+    "exploreCta": "Verken de woorden",
     "meltho": {
       "heading": "Meltho",
-      "body": "Een dagelijks Syrisch woordspel — raad het verborgen woord in zes pogingen. De eerste app op het platform.",
-      "cta": "Speel Meltho"
+      "live": "Live",
+      "body": "Een dagelijks Syrisch woordspel — zes pogingen om het verborgen woord te vinden. Elke dag een nieuw woord, uit het lexicon.",
+      "cta": "Speel het woord van vandaag",
+      "ctaShort": "Speel Meltho"
     },
-    "aboutHeading": "Over",
-    "aboutBody": "Sabro is de ruggengraat van een ecosysteem gewijd aan de Syrische taal. Het beheert de gedeelde identiteit, gebruikersprofielen, een Syrisch lexicon en de publieke API waarop de apps van het ecosysteem bouwen — te beginnen met Meltho.",
-    "statusHeading": "Status",
-    "statusBody": "Meltho, een dagelijks Syrisch woordspel, is de eerste app die op het platform wordt gelanceerd. Meer apps voor de Syrische taal volgen."
+    "library": {
+      "eyebrow": "Woordbibliotheek",
+      "heading": "Elk woord, ontleed",
+      "body": "Bekijk elk woord dat Meltho heeft getoond — de letters, klanken, wortel en betekenis, één voor één.",
+      "cta": "Open de bibliotheek"
+    },
+    "about": {
+      "eyebrow": "Wat Sabro is",
+      "heading": "Eén hub, vele apps",
+      "body": "Sabro draagt de gedeelde identiteit, het lexicon en de API waarop het ecosysteem is gebouwd. Meer apps voor de Syrische taal zullen Meltho volgen."
+    }
   },
   "nav": {
     "primary": "Primaire navigatie",

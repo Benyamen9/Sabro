@@ -8,17 +8,28 @@
     "eyebrow": "The Syriac language",
     "titleLine1": "Syriac,",
     "titleLine2": "letter by letter.",
-    "lede": "Sabro is the hub of a growing ecosystem of apps for the Syriac language — starting with Meltho, a daily Syriac word game.",
-    "greetingCaption": "“Peace be with you.” · šlomā lāk",
+    "nameGloss": "sabro — Syriac for “hope”",
+    "lede": "Sabro is the home of a growing family of apps for the Syriac language. It begins with {app}.",
+    "liveNow": "Live now",
+    "exploreCta": "Explore the words",
     "meltho": {
       "heading": "Meltho",
-      "body": "A daily Syriac word game — guess the hidden word in six tries. The first app on the platform.",
-      "cta": "Play Meltho"
+      "live": "Live",
+      "body": "A daily Syriac word game — six tries to find the hidden word. A new one every day, drawn from the lexicon.",
+      "cta": "Play today’s word",
+      "ctaShort": "Play Meltho"
     },
-    "aboutHeading": "About",
-    "aboutBody": "Sabro is the backbone of an ecosystem dedicated to the Syriac language. It owns shared identity, user profiles, a Syriac lexicon, and the public API the ecosystem’s apps build on — beginning with Meltho.",
-    "statusHeading": "Status",
-    "statusBody": "Meltho, a daily Syriac word game, is the first app to launch on the platform. More apps for the Syriac language will follow."
+    "library": {
+      "eyebrow": "Word library",
+      "heading": "Every word, broken down",
+      "body": "Browse each word Meltho has shown — its letters, sounds, root, and meaning, one at a time.",
+      "cta": "Open the library"
+    },
+    "about": {
+      "eyebrow": "What Sabro is",
+      "heading": "One hub, many apps",
+      "body": "Sabro carries the shared identity, lexicon, and API the ecosystem is built on. More apps for the Syriac language will follow Meltho."
+    }
   },
   "nav": {
     "primary": "Primary navigation",
