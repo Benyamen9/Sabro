@@ -154,6 +154,10 @@ services:
       NUXT_PUBLIC_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
       NUXT_PUBLIC_SABRO_API_RESOURCE: ${SABRO_API_RESOURCE}
       NUXT_PUBLIC_API_BASE_URL: "https://${SABRO_API_DOMAIN}/api/v1"
+      # Shared cookie domain so locale + Syriac-script preferences carry across
+      # the ecosystem (sabro.be + meltho.sabro.be + future apps). Must match the
+      # value baked into the image at build time (CD build-arg).
+      NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
     networks: [internal]
 
   # Meltho — Syriac word game. Lives in its own repo (Hito/Meltho) and is built
@@ -176,6 +180,9 @@ services:
       NUXT_PUBLIC_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
       NUXT_PUBLIC_SABRO_API_RESOURCE: ${SABRO_API_RESOURCE}
       NUXT_PUBLIC_API_BASE_URL: "https://${SABRO_API_DOMAIN}/api/v1"
+      # Same shared cookie domain as the hub frontend — this is what makes the
+      # locale + script choice carry between Sabro and Meltho.
+      NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
     networks: [internal]
 
   caddy:

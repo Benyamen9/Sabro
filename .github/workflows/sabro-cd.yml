@@ -87,6 +87,7 @@ jobs:
           push: true
           build-args: |
             NUXT_PUBLIC_SABRO_API_RESOURCE=${{ secrets.NUXT_PUBLIC_SABRO_API_RESOURCE }}
+            NUXT_PUBLIC_COOKIE_DOMAIN=${{ vars.COOKIE_DOMAIN || '.sabro.be' }}
           tags: |
             ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-frontend:${{ env.SHA }}
             ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-frontend:latest
