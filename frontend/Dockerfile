@@ -20,6 +20,13 @@ WORKDIR /app
 ARG NUXT_PUBLIC_SABRO_API_RESOURCE=""
 ENV NUXT_PUBLIC_SABRO_API_RESOURCE=${NUXT_PUBLIC_SABRO_API_RESOURCE}
 
+# NUXT_PUBLIC_COOKIE_DOMAIN is likewise read at nuxt.config eval (build) time —
+# it sets the shared cookie domain (".sabro.be") for the i18n locale cookie, so
+# locale + script preferences carry across the ecosystem apps. Empty by default
+# (host-only cookies); the prod CD passes ".sabro.be" as a build arg.
+ARG NUXT_PUBLIC_COOKIE_DOMAIN=""
+ENV NUXT_PUBLIC_COOKIE_DOMAIN=${NUXT_PUBLIC_COOKIE_DOMAIN}
+
 # Install dependencies first for layer caching. --ignore-scripts skips the
 # `postinstall: nuxt prepare` lifecycle hook, which would fail before the
 # project sources are copied; `nuxt build` runs prepare itself below.

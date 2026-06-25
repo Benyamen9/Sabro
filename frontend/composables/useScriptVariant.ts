@@ -29,10 +29,17 @@ function isScriptVariant(value: unknown): value is ScriptVariant {
  * (per CLAUDE.md: "switcher available everywhere Syriac text is displayed").
  */
 export function useScriptVariant() {
+  // Share the script-variant cookie across the ecosystem (sabro.be + *.sabro.be)
+  // via a configurable domain, so the choice holds in Meltho and future apps.
+  // Empty in dev → host-only; ".sabro.be" in prod. Secure only when a domain is
+  // set, so http localhost dev still works.
+  const cookieDomain = useRuntimeConfig().public.cookieDomain
   const cookie = useCookie<ScriptVariant>(cookieKey, {
     default: () => 'estrangela',
     maxAge: 60 * 60 * 24 * 365,
     sameSite: 'lax',
+    domain: cookieDomain || undefined,
+    secure: Boolean(cookieDomain),
   })
 
   const variant = useState<ScriptVariant>(stateKey, () => cookie.value)

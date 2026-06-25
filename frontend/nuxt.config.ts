@@ -40,6 +40,13 @@ export default defineNuxtConfig({
       useCookie: true,
       cookieKey: 'sabro_locale',
       redirectOn: 'root',
+      // Share the locale cookie across the ecosystem (sabro.be + *.sabro.be) so
+      // a language chosen in one app holds in the others. Read at nuxt.config
+      // eval (build time): the prod image is built with NUXT_PUBLIC_COOKIE_DOMAIN
+      // set (see Dockerfile / CD build-args); empty in dev → host-only cookie.
+      // Secure only when a domain is set, so http localhost dev still works.
+      cookieDomain: process.env.NUXT_PUBLIC_COOKIE_DOMAIN || undefined,
+      cookieSecure: Boolean(process.env.NUXT_PUBLIC_COOKIE_DOMAIN),
     },
   },
   // Logto OIDC bindings. Values come from NUXT_LOGTO_* env vars; the empty
@@ -73,6 +80,12 @@ export default defineNuxtConfig({
     },
     public: {
       apiBaseUrl: 'http://localhost:5082/api/v1',
+      // Shared cookie domain for ecosystem-wide preferences (locale + Syriac
+      // script variant). Empty = host-only (dev); set to ".sabro.be" in prod so
+      // the cookies are shared with Meltho and future apps. Overridable at
+      // runtime via NUXT_PUBLIC_COOKIE_DOMAIN; must match the build-time value
+      // baked for the i18n locale cookie (see i18n.detectBrowserLanguage).
+      cookieDomain: '',
       // Mirror of runtimeConfig.logto.endpoint so client code can detect
       // whether Logto has been configured without leaking the secret.
       logtoEndpoint: '',
