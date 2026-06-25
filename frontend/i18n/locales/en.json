@@ -25,7 +25,8 @@
     "home": "Home",
     "translations": "Translations",
     "library": "Library",
-    "admin": "Backoffice"
+    "admin": "Backoffice",
+    "meltho": "Meltho"
   },
   "switcher": {
     "languageLabel": "Language",

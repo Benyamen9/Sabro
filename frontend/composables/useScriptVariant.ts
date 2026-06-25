@@ -2,6 +2,19 @@ export type ScriptVariant = 'estrangela' | 'serto' | 'madnhaya'
 
 export const scriptVariants: readonly ScriptVariant[] = ['estrangela', 'serto', 'madnhaya'] as const
 
+// Each variant maps to a distinct Google-hosted Noto Syriac family (loaded in
+// nuxt.config head), falling back to the Estrangela family then a generic serif.
+const FONTS: Record<ScriptVariant, string> = {
+  estrangela: '"Noto Sans Syriac", serif',
+  serto: '"Noto Sans Syriac Western", "Noto Sans Syriac", serif',
+  madnhaya: '"Noto Sans Syriac Eastern", "Noto Sans Syriac", serif',
+}
+
+/** The font stack for a given script variant — shared by SyriacText and the global binding. */
+export function fontForVariant(variant: ScriptVariant): string {
+  return FONTS[variant]
+}
+
 const cookieKey = 'sabro_script_variant'
 const stateKey = 'sabro:scriptVariant'
 
@@ -32,9 +45,14 @@ export function useScriptVariant() {
     cookie.value = value
   }
 
+  // The active variant's font stack, for binding --font-syriac globally so every
+  // Syriac surface (including chrome like the nav brand mark) follows the choice.
+  const fontFamily = computed(() => fontForVariant(variant.value))
+
   return {
     variant,
     set,
     available: scriptVariants,
+    fontFamily,
   }
 }

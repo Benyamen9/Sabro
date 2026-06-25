@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ScriptVariant } from '~/composables/useScriptVariant'
+import { fontForVariant } from '~/composables/useScriptVariant'
 
 interface Props {
   text: string
@@ -12,21 +13,9 @@ const { variant: userVariant } = useScriptVariant()
 
 const effectiveVariant = computed<ScriptVariant>(() => props.variant ?? userVariant.value)
 
-// Each variant maps to a distinct Google-hosted Noto Syriac family (loaded in
-// nuxt.config head). The earlier Beth Mardutho names (Serto Jerusalem, East
-// Syriac Adiabene) were never loaded, so every variant silently fell back to
-// one font and the switcher had no visible effect.
-const fontFamily = computed(() => {
-  switch (effectiveVariant.value) {
-    case 'serto':
-      return '"Noto Sans Syriac Western", "Noto Sans Syriac", serif'
-    case 'madnhaya':
-      return '"Noto Sans Syriac Eastern", "Noto Sans Syriac", serif'
-    case 'estrangela':
-    default:
-      return '"Noto Sans Syriac", serif'
-  }
-})
+// Resolve the variant's font from the shared map. An explicit `variant` prop
+// overrides the user's global choice for this one instance.
+const fontFamily = computed(() => fontForVariant(effectiveVariant.value))
 </script>
 
 <template>
