@@ -8,17 +8,28 @@
     "eyebrow": "La langue syriaque",
     "titleLine1": "Le syriaque,",
     "titleLine2": "lettre par lettre.",
-    "lede": "Sabro est le hub d’un écosystème grandissant d’applications pour la langue syriaque — à commencer par Meltho, un jeu de mots syriaque quotidien.",
-    "greetingCaption": "« La paix soit avec toi. » · šlomā lāk",
+    "nameGloss": "sabro — « espoir » en syriaque",
+    "lede": "Sabro est le foyer d’une famille grandissante d’applications pour la langue syriaque. Tout commence avec {app}.",
+    "liveNow": "En ligne",
+    "exploreCta": "Explorer les mots",
     "meltho": {
       "heading": "Meltho",
-      "body": "Un jeu de mots syriaque quotidien — devinez le mot caché en six essais. La première application de la plateforme.",
-      "cta": "Jouer à Meltho"
+      "live": "En ligne",
+      "body": "Un jeu de mots syriaque quotidien — six essais pour trouver le mot caché. Un nouveau chaque jour, tiré du lexique.",
+      "cta": "Jouer au mot du jour",
+      "ctaShort": "Jouer à Meltho"
     },
-    "aboutHeading": "À propos",
-    "aboutBody": "Sabro est la colonne vertébrale d’un écosystème dédié à la langue syriaque. Il détient l’identité partagée, les profils utilisateurs, un lexique syriaque et l’API publique sur laquelle s’appuient les applications de l’écosystème — à commencer par Meltho.",
-    "statusHeading": "Statut",
-    "statusBody": "Meltho, un jeu de mots syriaque quotidien, est la première application lancée sur la plateforme. D’autres applications pour la langue syriaque suivront."
+    "library": {
+      "eyebrow": "Bibliothèque de mots",
+      "heading": "Chaque mot, décomposé",
+      "body": "Parcourez chaque mot proposé par Meltho — ses lettres, ses sons, sa racine et son sens, un par un.",
+      "cta": "Ouvrir la bibliothèque"
+    },
+    "about": {
+      "eyebrow": "Ce qu’est Sabro",
+      "heading": "Un hub, plusieurs applications",
+      "body": "Sabro porte l’identité partagée, le lexique et l’API sur lesquels repose l’écosystème. D’autres applications pour la langue syriaque suivront Meltho."
+    }
   },
   "nav": {
     "primary": "Navigation principale",

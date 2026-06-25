@@ -33,10 +33,19 @@ function isActive(path: string) {
   if (path === '/') return route.path === '/'
   return route.path === path || route.path.startsWith(`${path}/`)
 }
+
+// A thin gradient accent edge frames the hub landing. Scoped to the home route
+// (no_prefix i18n keeps it at '/') so inner pages stay unadorned.
+const isHome = computed(() => route.path === '/')
 </script>
 
 <template>
   <div class="flex min-h-screen flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
+    <div
+      v-if="isHome"
+      aria-hidden="true"
+      class="h-1.5 bg-gradient-to-r from-[var(--color-accent)] to-[#b5535f]"
+    />
     <header
       class="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_85%,transparent)] backdrop-blur-md backdrop-saturate-150"
     >

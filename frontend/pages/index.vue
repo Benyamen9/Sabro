@@ -1,70 +1,113 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const melthoUrl = useRuntimeConfig().public.melthoUrl
+
+// The Syriac letter tiles teasing the word library (content, not UI strings).
+const libraryTiles = ['ܐ', 'ܒ', 'ܓ', 'ܕ']
+
+const primaryButton
+  = 'inline-flex items-center gap-2 rounded-xl bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(140_47_57/0.25)] transition-colors hover:bg-[var(--color-accent-hover)]'
+const ghostButton
+  = 'inline-flex items-center gap-2 rounded-xl border border-[var(--color-border-strong)] px-4 py-3 font-sans text-sm font-medium text-[var(--color-text)] no-underline transition-colors hover:bg-[var(--color-bg-subtle)]'
+const sectionEyebrow
+  = 'font-sans text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-text-faint)]'
 </script>
 
 <template>
-  <section class="mx-auto max-w-3xl py-12 sm:py-20">
-    <p class="mb-6 font-sans text-xs font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
-      {{ t('home.eyebrow') }}
-    </p>
+  <div>
+    <!-- Hero: the name's meaning ("hope") is surfaced as a legible word-line,
+         not a decorative watermark. -->
+    <section class="max-w-3xl pt-2 sm:pt-6">
+      <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        {{ t('home.eyebrow') }}
+      </p>
 
-    <h1 class="font-serif text-4xl leading-[1.1] sm:text-5xl md:text-6xl">
-      <span class="block italic">{{ t('home.titleLine1') }}</span>
-      <span class="block">{{ t('home.titleLine2') }}</span>
-    </h1>
+      <h1 class="mt-5 font-sans text-4xl leading-[1.05] tracking-[-0.015em] sm:text-5xl md:text-6xl">
+        <span class="block font-serif font-normal italic">{{ t('home.titleLine1') }}</span>
+        <span class="block">{{ t('home.titleLine2') }}</span>
+      </h1>
 
-    <p class="mt-8 max-w-2xl font-serif text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl">
-      {{ t('home.lede') }}
-    </p>
+      <div class="mt-5 flex items-center gap-3.5">
+        <SyriacText text="ܣܒܪܐ" class="!text-[2rem] leading-none text-[var(--color-accent)]" />
+        <span class="font-sans text-sm text-[var(--color-text-muted)]">{{ t('home.nameGloss') }}</span>
+      </div>
 
-    <!-- Introduces Meltho, the first ecosystem app, with a direct link to play. -->
-    <div
-      class="mt-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 shadow-[var(--shadow-soft)] sm:flex sm:items-center sm:justify-between sm:gap-6"
-    >
-      <div class="flex items-center gap-4 sm:gap-5">
-        <SyriacText text="ܡܠܬܐ" class="!text-3xl text-[var(--color-accent)] sm:!text-4xl" />
-        <div>
-          <h2 class="font-serif text-2xl">{{ t('home.meltho.heading') }}</h2>
-          <p class="mt-1.5 max-w-md font-serif text-[var(--color-text-muted)]">
+      <i18n-t
+        keypath="home.lede"
+        tag="p"
+        class="mt-7 max-w-xl font-serif text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl"
+      >
+        <template #app>
+          <strong class="font-semibold text-[var(--color-text)]">Meltho</strong>
+        </template>
+      </i18n-t>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a :href="melthoUrl" :class="primaryButton">{{ t('home.meltho.ctaShort') }} →</a>
+        <NuxtLink to="/library" :class="ghostButton">{{ t('home.exploreCta') }}</NuxtLink>
+      </div>
+    </section>
+
+    <!-- Live now: Meltho, the launched app, as a real feature with a direct play CTA. -->
+    <section class="mt-14 sm:mt-20">
+      <div class="flex items-baseline justify-between border-b border-[var(--color-border)] pb-3.5">
+        <span class="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          {{ t('home.liveNow') }}
+        </span>
+      </div>
+
+      <div
+        class="mt-5 flex flex-col gap-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:gap-7 sm:p-8"
+      >
+        <SyriacText text="ܡܠܬܐ" class="!text-5xl leading-none text-[var(--color-accent)]" />
+        <div class="flex-1">
+          <h2 class="flex items-center gap-3 font-sans text-2xl">
+            {{ t('home.meltho.heading') }}
+            <span
+              class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
+            >
+              <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
+              {{ t('home.meltho.live') }}
+            </span>
+          </h2>
+          <p class="mt-2 max-w-md font-serif text-[var(--color-text-muted)]">
             {{ t('home.meltho.body') }}
           </p>
         </div>
+        <a :href="melthoUrl" :class="primaryButton" class="self-start sm:ml-auto sm:self-auto">
+          {{ t('home.meltho.cta') }} →
+        </a>
       </div>
-      <a
-        :href="melthoUrl"
-        class="mt-5 block flex-none rounded-lg bg-[var(--color-accent)] px-5 py-3 text-center font-sans text-sm font-semibold text-white no-underline transition-colors hover:bg-[var(--color-accent-hover)] sm:mt-0 sm:inline-block sm:text-left"
-      >{{ t('home.meltho.cta') }} →</a>
-    </div>
+    </section>
 
-    <figure class="my-14 border-l-2 border-[var(--color-accent)] pl-6">
-      <blockquote class="font-serif">
-        <SyriacText text="ܫܠܡܐ ܠܟ" class="!text-4xl sm:!text-5xl" />
-      </blockquote>
-      <figcaption class="mt-3 font-sans text-xs uppercase tracking-wider text-[var(--color-text-faint)]">
-        {{ t('home.greetingCaption') }}
-      </figcaption>
-    </figure>
+    <!-- Two real destinations: the word library and a short "what Sabro is" note. -->
+    <section class="mt-10 mb-4 grid gap-5 sm:grid-cols-[1.15fr_1fr]">
+      <NuxtLink
+        to="/library"
+        class="group flex flex-col rounded-2xl border border-[var(--color-border)] p-7 no-underline transition-colors hover:border-[var(--color-border-strong)]"
+      >
+        <span :class="sectionEyebrow">{{ t('home.library.eyebrow') }}</span>
+        <h3 class="mt-3 font-sans text-xl">{{ t('home.library.heading') }}</h3>
+        <p class="mt-2.5 font-serif text-[var(--color-text-muted)]">{{ t('home.library.body') }}</p>
+        <div class="mt-4 flex gap-1.5">
+          <span
+            v-for="letter in libraryTiles"
+            :key="letter"
+            class="flex h-11 w-9 items-center justify-center rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-elevated)]"
+          >
+            <SyriacText :text="letter" class="!text-xl text-[var(--color-accent)]" />
+          </span>
+        </div>
+        <span class="mt-5 font-sans text-sm font-semibold text-[var(--color-accent)]">
+          {{ t('home.library.cta') }} →
+        </span>
+      </NuxtLink>
 
-    <hr class="my-16 border-t border-[var(--color-border)]">
-
-    <div class="grid gap-10 sm:grid-cols-2">
-      <article>
-        <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-          {{ t('home.aboutHeading') }}
-        </h2>
-        <p class="mt-3 font-serif text-base leading-relaxed">
-          {{ t('home.aboutBody') }}
-        </p>
-      </article>
-      <article>
-        <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-          {{ t('home.statusHeading') }}
-        </h2>
-        <p class="mt-3 font-serif text-base leading-relaxed">
-          {{ t('home.statusBody') }}
-        </p>
-      </article>
-    </div>
-  </section>
+      <div class="rounded-2xl bg-[var(--color-bg-subtle)] p-7">
+        <span :class="sectionEyebrow">{{ t('home.about.eyebrow') }}</span>
+        <h3 class="mt-3 font-sans text-xl">{{ t('home.about.heading') }}</h3>
+        <p class="mt-2.5 font-serif text-[var(--color-text-muted)]">{{ t('home.about.body') }}</p>
+      </div>
+    </section>
+  </div>
 </template>
