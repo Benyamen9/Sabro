@@ -70,6 +70,7 @@
     "title": "Profiel",
     "signInRequired": "Meld u aan om uw profiel te bekijken.",
     "identityNote": "Uw naam, e-mail en wachtwoord worden beheerd door uw aanmeldaccount.",
+    "manageAccount": "Account en beveiliging beheren",
     "role": {
       "Reader": "Lezer",
       "ExpertReviewer": "Expertbeoordelaar",
