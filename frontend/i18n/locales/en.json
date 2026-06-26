@@ -63,6 +63,32 @@
     "signInHint": "Sign in with your account to view this content.",
     "signedInAs": "Signed in as {name}"
   },
+  "account": {
+    "menu": "Account menu",
+    "profileSettings": "Profile & settings",
+    "eyebrow": "Your account",
+    "title": "Profile",
+    "signInRequired": "Sign in to view your profile.",
+    "identityNote": "Your name, email and password are managed by your sign-in account.",
+    "role": {
+      "Reader": "Reader",
+      "ExpertReviewer": "Expert reviewer",
+      "Owner": "Owner"
+    },
+    "fields": {
+      "username": "Username",
+      "email": "Email",
+      "memberSince": "Member since"
+    },
+    "preferences": {
+      "heading": "Preferences",
+      "body": "These follow your account across every app in the ecosystem."
+    },
+    "session": {
+      "heading": "Session",
+      "body": "Sign out of Sabro on this device."
+    }
+  },
   "translations": {
     "title": "Translations",
     "empty": "No sources yet.",

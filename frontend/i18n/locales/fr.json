@@ -63,6 +63,32 @@
     "signInHint": "Connectez-vous avec votre compte pour voir ce contenu.",
     "signedInAs": "Connecté en tant que {name}"
   },
+  "account": {
+    "menu": "Menu du compte",
+    "profileSettings": "Profil et paramètres",
+    "eyebrow": "Votre compte",
+    "title": "Profil",
+    "signInRequired": "Connectez-vous pour voir votre profil.",
+    "identityNote": "Votre nom, votre e-mail et votre mot de passe sont gérés par votre compte de connexion.",
+    "role": {
+      "Reader": "Lecteur",
+      "ExpertReviewer": "Relecteur expert",
+      "Owner": "Propriétaire"
+    },
+    "fields": {
+      "username": "Nom d’utilisateur",
+      "email": "E-mail",
+      "memberSince": "Membre depuis"
+    },
+    "preferences": {
+      "heading": "Préférences",
+      "body": "Elles suivent votre compte dans toutes les applications de l’écosystème."
+    },
+    "session": {
+      "heading": "Session",
+      "body": "Se déconnecter de Sabro sur cet appareil."
+    }
+  },
   "translations": {
     "title": "Traductions",
     "empty": "Aucune source pour le moment.",

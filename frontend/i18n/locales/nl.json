@@ -63,6 +63,32 @@
     "signInHint": "Meld u aan met uw account om deze inhoud te bekijken.",
     "signedInAs": "Aangemeld als {name}"
   },
+  "account": {
+    "menu": "Accountmenu",
+    "profileSettings": "Profiel en instellingen",
+    "eyebrow": "Uw account",
+    "title": "Profiel",
+    "signInRequired": "Meld u aan om uw profiel te bekijken.",
+    "identityNote": "Uw naam, e-mail en wachtwoord worden beheerd door uw aanmeldaccount.",
+    "role": {
+      "Reader": "Lezer",
+      "ExpertReviewer": "Expertbeoordelaar",
+      "Owner": "Eigenaar"
+    },
+    "fields": {
+      "username": "Gebruikersnaam",
+      "email": "E-mail",
+      "memberSince": "Lid sinds"
+    },
+    "preferences": {
+      "heading": "Voorkeuren",
+      "body": "Deze volgen uw account in elke app van het ecosysteem."
+    },
+    "session": {
+      "heading": "Sessie",
+      "body": "Afmelden bij Sabro op dit apparaat."
+    }
+  },
   "translations": {
     "title": "Vertalingen",
     "empty": "Nog geen bronnen.",
