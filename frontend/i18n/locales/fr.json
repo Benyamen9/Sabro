@@ -96,6 +96,25 @@
       "distribution": "Répartition des essais",
       "averageGuesses": "Moy. {value} essais"
     },
+    "leaderboard": {
+      "optInHeading": "Classement",
+      "optInBody": "Affrontez les autres sur la plus longue série Meltho. Choisissez comment vous apparaissez et si vous participez — vous n’y figurez pas tant que vous n’avez pas adhéré.",
+      "displayName": "Nom affiché",
+      "displayNamePlaceholder": "Comment vous apparaîtrez",
+      "optInToggle": "M’afficher dans le classement",
+      "optInHint": "Un nom affiché est requis pour apparaître.",
+      "saved": "Enregistré",
+      "saveError": "Échec de l’enregistrement. Veuillez réessayer.",
+      "heading": "Meilleures séries",
+      "subtitle": "Les plus longues séries Meltho",
+      "you": "Vous",
+      "yourRank": "Classé n°{rank}",
+      "optedInUnranked": "Lancez une série pour grimper au classement.",
+      "notOptedIn": "Vous n’êtes pas encore au classement — adhérez ci-dessus pour participer.",
+      "dayStreak": "jours de série",
+      "days": "{count} jours",
+      "empty": "Aucune série au classement pour l’instant — commencez la vôtre aujourd’hui."
+    },
     "session": {
       "heading": "Session",
       "body": "Se déconnecter de Sabro sur cet appareil."

@@ -96,6 +96,25 @@
       "distribution": "Guess distribution",
       "averageGuesses": "Avg. {value} guesses"
     },
+    "leaderboard": {
+      "optInHeading": "Leaderboard",
+      "optInBody": "Compete on the longest Meltho streak. Choose how you appear and whether to join — you're off the board until you opt in.",
+      "displayName": "Display name",
+      "displayNamePlaceholder": "How you'll appear",
+      "optInToggle": "Show me on the leaderboard",
+      "optInHint": "A display name is required to appear.",
+      "saved": "Saved",
+      "saveError": "Could not save. Please try again.",
+      "heading": "Top streaks",
+      "subtitle": "The longest Meltho streaks",
+      "you": "You",
+      "yourRank": "Ranked #{rank}",
+      "optedInUnranked": "Build a streak to climb the board.",
+      "notOptedIn": "You're not on the leaderboard yet — opt in above to join.",
+      "dayStreak": "day streak",
+      "days": "{count} days",
+      "empty": "No streaks on the board yet — start one today."
+    },
     "session": {
       "heading": "Session",
       "body": "Sign out of Sabro on this device."

@@ -96,6 +96,25 @@
       "distribution": "Verdeling van pogingen",
       "averageGuesses": "Gem. {value} pogingen"
     },
+    "leaderboard": {
+      "optInHeading": "Ranglijst",
+      "optInBody": "Strijd om de langste Meltho-reeks. Kies hoe u verschijnt en of u meedoet — u staat er niet op totdat u zich aanmeldt.",
+      "displayName": "Weergavenaam",
+      "displayNamePlaceholder": "Hoe u verschijnt",
+      "optInToggle": "Toon mij op de ranglijst",
+      "optInHint": "Een weergavenaam is vereist om te verschijnen.",
+      "saved": "Opgeslagen",
+      "saveError": "Opslaan mislukt. Probeer het opnieuw.",
+      "heading": "Beste reeksen",
+      "subtitle": "De langste Meltho-reeksen",
+      "you": "U",
+      "yourRank": "Plaats #{rank}",
+      "optedInUnranked": "Bouw een reeks op om te stijgen op de ranglijst.",
+      "notOptedIn": "U staat nog niet op de ranglijst — meld u hierboven aan om mee te doen.",
+      "dayStreak": "dagen reeks",
+      "days": "{count} dagen",
+      "empty": "Nog geen reeksen op de ranglijst — begin er vandaag een."
+    },
     "session": {
       "heading": "Sessie",
       "body": "Afmelden bij Sabro op dit apparaat."

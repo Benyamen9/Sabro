@@ -8,5 +8,7 @@ public sealed record UserProfileDto(
     string PreferredLanguage,
     ScriptVariant PreferredScriptVariant,
     Role Role,
+    string? DisplayName,
+    bool ShowOnLeaderboard,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);

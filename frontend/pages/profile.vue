@@ -5,13 +5,57 @@ const { t, locale, locales, setLocale } = useI18n()
 const { isConfigured, isSignedIn, displayName, email, username, avatarUrl, initial, signIn, signOut }
   = useAuth()
 const { variant, set: setVariant, available: scriptOptions } = useScriptVariant()
-const { profile, load, persist } = useProfile()
+const { profile, load, persist, saveAccount } = useProfile()
+const { load: loadLeaderboard } = useLeaderboard()
 
 useHead({ title: () => `${t('account.title')} · ${t('site.title')}` })
 
 // The layout loads the profile on mount, but the page can be hit directly, so
 // resolve it here too. Both calls are idempotent (loaded-once guard inside).
 onMounted(load)
+
+// --- Leaderboard opt-in editing ---------------------------------------------
+// Local draft of the editable account fields. Seeded once from the profile (or
+// the Logto name as a sensible default for the display name) so typing isn't
+// clobbered by a later profile refresh.
+const displayNameDraft = ref('')
+const optIn = ref(false)
+const seeded = ref(false)
+const saving = ref(false)
+const saveState = ref<'idle' | 'saved' | 'error'>('idle')
+
+watchEffect(() => {
+  if (seeded.value || !profile.value) return
+  displayNameDraft.value = profile.value.displayName ?? displayName.value ?? ''
+  optIn.value = profile.value.showOnLeaderboard
+  seeded.value = true
+})
+
+const trimmedName = computed(() => displayNameDraft.value.trim())
+const canOptIn = computed(() => trimmedName.value.length > 0)
+
+// Clearing the name while opted in turns the opt-in off — you can't appear nameless.
+watch(canOptIn, (ok) => {
+  if (!ok) optIn.value = false
+})
+
+const accountDirty = computed(() =>
+  profile.value
+    ? trimmedName.value !== (profile.value.displayName ?? '') || optIn.value !== profile.value.showOnLeaderboard
+    : trimmedName.value.length > 0 || optIn.value,
+)
+
+async function saveLeaderboard() {
+  saving.value = true
+  saveState.value = 'idle'
+  const ok = await saveAccount({
+    displayName: trimmedName.value.length > 0 ? trimmedName.value : null,
+    showOnLeaderboard: optIn.value,
+  })
+  saving.value = false
+  saveState.value = ok ? 'saved' : 'error'
+  if (ok) await loadLeaderboard(true) // refresh the board with the new name/opt-in
+}
 
 const localeOptions = computed(() =>
   (locales.value as Array<{ code: string, name: string }>).map(l => ({ code: l.code, name: l.name })),
@@ -165,6 +209,69 @@ const memberSince = computed(() => {
               >{{ t(`switcher.script.${option}`) }}</span>
             </button>
           </div>
+        </div>
+      </section>
+
+      <!-- Leaderboard: opt-in controls + the board itself. -->
+      <section
+        class="mt-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]"
+      >
+        <h2 class="font-serif text-lg font-semibold tracking-tight text-[var(--color-text)]">
+          {{ t('account.leaderboard.optInHeading') }}
+        </h2>
+        <p class="mt-1 font-sans text-sm text-[var(--color-text-muted)]">
+          {{ t('account.leaderboard.optInBody') }}
+        </p>
+
+        <div class="mt-4">
+          <label
+            for="displayName"
+            class="font-sans text-sm font-medium text-[var(--color-text)]"
+          >{{ t('account.leaderboard.displayName') }}</label>
+          <input
+            id="displayName"
+            v-model="displayNameDraft"
+            type="text"
+            :maxlength="40"
+            :placeholder="t('account.leaderboard.displayNamePlaceholder')"
+            class="mt-1.5 w-full max-w-sm rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-2 font-sans text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-faint)]"
+          >
+        </div>
+
+        <label class="mt-4 flex cursor-pointer items-start gap-3">
+          <input
+            v-model="optIn"
+            type="checkbox"
+            :disabled="!canOptIn"
+            class="mt-0.5 size-4 cursor-pointer accent-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+          <span class="font-sans text-sm">
+            <span class="font-medium text-[var(--color-text)]">{{ t('account.leaderboard.optInToggle') }}</span>
+            <span class="mt-0.5 block text-xs text-[var(--color-text-muted)]">{{ t('account.leaderboard.optInHint') }}</span>
+          </span>
+        </label>
+
+        <div class="mt-4 flex items-center gap-3">
+          <button
+            type="button"
+            :disabled="saving || !accountDirty"
+            class="inline-flex cursor-pointer items-center rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            @click="saveLeaderboard"
+          >
+            {{ saving ? t('common.saving') : t('common.save') }}
+          </button>
+          <span
+            v-if="saveState === 'saved'"
+            class="font-sans text-xs text-[var(--color-text-muted)]"
+          >{{ t('account.leaderboard.saved') }}</span>
+          <span
+            v-else-if="saveState === 'error'"
+            class="font-sans text-xs text-[var(--color-accent)]"
+          >{{ t('account.leaderboard.saveError') }}</span>
+        </div>
+
+        <div class="mt-6 border-t border-[var(--color-border)] pt-6">
+          <MelthoLeaderboardCard />
         </div>
       </section>
 

@@ -3197,6 +3197,35 @@
         }
       }
     },
+    "/api/v1/play/meltho/leaderboard": {
+      "get": {
+        "tags": [
+          "Play"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MelthoLeaderboardDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MelthoLeaderboardDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MelthoLeaderboardDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/play/results/me": {
       "get": {
         "tags": [
@@ -5821,6 +5850,116 @@
         "type": "string",
         "default": 0
       },
+      "MelthoLeaderboardDto": {
+        "required": [
+          "top",
+          "me"
+        ],
+        "type": "object",
+        "properties": {
+          "top": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MelthoLeaderboardEntryDto"
+            }
+          },
+          "me": {
+            "$ref": "#/components/schemas/MelthoLeaderboardMeDto"
+          }
+        }
+      },
+      "MelthoLeaderboardEntryDto": {
+        "required": [
+          "rank",
+          "displayName",
+          "longestStreak",
+          "currentStreak",
+          "isMe"
+        ],
+        "type": "object",
+        "properties": {
+          "rank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "longestStreak": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "currentStreak": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "isMe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MelthoLeaderboardMeDto": {
+        "required": [
+          "rank",
+          "displayName",
+          "longestStreak",
+          "currentStreak",
+          "onLeaderboard",
+          "hasPlayed"
+        ],
+        "type": "object",
+        "properties": {
+          "rank": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "displayName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "longestStreak": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "currentStreak": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "onLeaderboard": {
+            "type": "boolean"
+          },
+          "hasPlayed": {
+            "type": "boolean"
+          }
+        }
+      },
       "MelthoLibraryDetailDto": {
         "required": [
           "lexiconEntryId",
@@ -7243,6 +7382,16 @@
           },
           "preferredScriptVariant": {
             "$ref": "#/components/schemas/ScriptVariant"
+          },
+          "displayName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "showOnLeaderboard": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -7253,6 +7402,8 @@
           "preferredLanguage",
           "preferredScriptVariant",
           "role",
+          "displayName",
+          "showOnLeaderboard",
           "createdAt",
           "updatedAt"
         ],
@@ -7273,6 +7424,15 @@
           },
           "role": {
             "$ref": "#/components/schemas/Role"
+          },
+          "displayName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "showOnLeaderboard": {
+            "type": "boolean"
           },
           "createdAt": {
             "type": "string",

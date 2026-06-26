@@ -20,15 +20,18 @@ public sealed class PlayController : ApiControllerBase
     private readonly IMelthoPuzzleService melthoPuzzleService;
     private readonly IMelthoLibraryService melthoLibraryService;
     private readonly IGameResultService gameResultService;
+    private readonly IMelthoLeaderboardService melthoLeaderboardService;
 
     public PlayController(
         IMelthoPuzzleService melthoPuzzleService,
         IMelthoLibraryService melthoLibraryService,
-        IGameResultService gameResultService)
+        IGameResultService gameResultService,
+        IMelthoLeaderboardService melthoLeaderboardService)
     {
         this.melthoPuzzleService = melthoPuzzleService;
         this.melthoLibraryService = melthoLibraryService;
         this.gameResultService = gameResultService;
+        this.melthoLeaderboardService = melthoLeaderboardService;
     }
 
     /// <summary>
@@ -136,6 +139,32 @@ public sealed class PlayController : ApiControllerBase
         }
 
         return Ok(outcome.Result);
+    }
+
+    /// <summary>
+    /// Returns the Meltho leaderboard for the signed-in caller: the top players by longest
+    /// streak (opted-in players only) plus the caller's own standing (streak always shown,
+    /// even outside the top or when not opted in). Signed-in only — viewing requires a token;
+    /// appearing additionally requires the player to opt in on their profile.
+    /// </summary>
+    [HttpGet("meltho/leaderboard")]
+    [Authorize(Policy = AuthPolicies.Write)]
+    [ProducesResponseType(typeof(MelthoLeaderboardDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<MelthoLeaderboardDto>> GetMelthoLeaderboard(CancellationToken cancellationToken)
+    {
+        var logtoUserIdResult = ResolveLogtoUserId();
+        if (!logtoUserIdResult.IsSuccess)
+        {
+            return FromError(logtoUserIdResult.Error!);
+        }
+
+        var result = await melthoLeaderboardService.GetAsync(logtoUserIdResult.Value!, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
     }
 
     /// <summary>Returns the authenticated player's own results, newest day first, paged.</summary>

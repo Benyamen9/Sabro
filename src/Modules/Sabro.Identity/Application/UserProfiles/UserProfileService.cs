@@ -92,6 +92,16 @@ internal sealed class UserProfileService : IUserProfileService
             }
 
             profile = domainResult.Value!;
+            var newAccountError = profile.UpdateAccount(request.DisplayName, request.ShowOnLeaderboard);
+            if (newAccountError is not null)
+            {
+                logger.LogWarning(
+                    "UserProfile account fields rejected during create-on-update. Code={ErrorCode} Message={ErrorMessage}",
+                    newAccountError.Code,
+                    newAccountError.Message);
+                return Result<UserProfileDto>.Failure(newAccountError);
+            }
+
             dbContext.UserProfiles.Add(profile);
             await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -112,6 +122,16 @@ internal sealed class UserProfileService : IUserProfileService
             return Result<UserProfileDto>.Failure(error);
         }
 
+        var accountError = profile.UpdateAccount(request.DisplayName, request.ShowOnLeaderboard);
+        if (accountError is not null)
+        {
+            logger.LogWarning(
+                "UserProfile account update rejected by domain invariant. Code={ErrorCode} Message={ErrorMessage}",
+                accountError.Code,
+                accountError.Message);
+            return Result<UserProfileDto>.Failure(accountError);
+        }
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation(
@@ -127,6 +147,8 @@ internal sealed class UserProfileService : IUserProfileService
         profile.PreferredLanguage,
         profile.PreferredScriptVariant,
         profile.Role,
+        profile.DisplayName,
+        profile.ShowOnLeaderboard,
         profile.CreatedAt,
         profile.UpdatedAt);
 }
