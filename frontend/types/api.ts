@@ -67,6 +67,9 @@ export type CreateLexiconEntryRequest = Schemas['CreateLexiconEntryRequest']
 export type UpdateLexiconEntryRequest = Schemas['UpdateLexiconEntryRequest']
 export type SetPlayableLexiconEntryRequest = Schemas['SetPlayableLexiconEntryRequest']
 
+// Play results.
+export type GameResultDto = Schemas['GameResultDto']
+
 // Meltho play + library.
 export type MelthoPuzzleMeaningDto = Schemas['MelthoPuzzleMeaningDto']
 export type MelthoLibraryEntryDto = Schemas['MelthoLibraryEntryDto']

@@ -84,6 +84,18 @@
       "heading": "Preferences",
       "body": "These follow your account across every app in the ecosystem."
     },
+    "stats": {
+      "heading": "Meltho",
+      "subtitle": "Your daily word game",
+      "play": "Play",
+      "empty": "You haven't played Meltho yet. Your stats will appear here once you do.",
+      "played": "Played",
+      "winRate": "Win %",
+      "currentStreak": "Current streak",
+      "maxStreak": "Max streak",
+      "distribution": "Guess distribution",
+      "averageGuesses": "Avg. {value} guesses"
+    },
     "session": {
       "heading": "Session",
       "body": "Sign out of Sabro on this device."

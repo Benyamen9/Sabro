@@ -84,6 +84,18 @@
       "heading": "Voorkeuren",
       "body": "Deze volgen uw account in elke app van het ecosysteem."
     },
+    "stats": {
+      "heading": "Meltho",
+      "subtitle": "Uw dagelijkse woordspel",
+      "play": "Spelen",
+      "empty": "U hebt Meltho nog niet gespeeld. Uw statistieken verschijnen hier zodra u speelt.",
+      "played": "Gespeeld",
+      "winRate": "Winst %",
+      "currentStreak": "Huidige reeks",
+      "maxStreak": "Langste reeks",
+      "distribution": "Verdeling van pogingen",
+      "averageGuesses": "Gem. {value} pogingen"
+    },
     "session": {
       "heading": "Sessie",
       "body": "Afmelden bij Sabro op dit apparaat."

@@ -105,6 +105,11 @@ const memberSince = computed(() => {
         </p>
       </section>
 
+      <!-- Player stats — derived from the user's own Meltho results. -->
+      <div class="mt-6">
+        <MelthoStatsCard />
+      </div>
+
       <!-- Preferences — editable, persisted to the profile + shared cookies. -->
       <section
         class="mt-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]"
