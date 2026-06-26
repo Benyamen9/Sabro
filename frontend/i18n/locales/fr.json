@@ -63,6 +63,63 @@
     "signInHint": "Connectez-vous avec votre compte pour voir ce contenu.",
     "signedInAs": "Connecté en tant que {name}"
   },
+  "account": {
+    "menu": "Menu du compte",
+    "profileSettings": "Profil et paramètres",
+    "eyebrow": "Votre compte",
+    "title": "Profil",
+    "signInRequired": "Connectez-vous pour voir votre profil.",
+    "identityNote": "Votre nom, votre e-mail et votre mot de passe sont gérés par votre compte de connexion.",
+    "role": {
+      "Reader": "Lecteur",
+      "ExpertReviewer": "Relecteur expert",
+      "Owner": "Propriétaire"
+    },
+    "fields": {
+      "username": "Nom d’utilisateur",
+      "email": "E-mail",
+      "memberSince": "Membre depuis"
+    },
+    "preferences": {
+      "heading": "Préférences",
+      "body": "Elles suivent votre compte dans toutes les applications de l’écosystème."
+    },
+    "stats": {
+      "heading": "Meltho",
+      "subtitle": "Votre jeu de mots quotidien",
+      "play": "Jouer",
+      "empty": "Vous n’avez pas encore joué à Meltho. Vos statistiques apparaîtront ici dès que vous jouerez.",
+      "played": "Parties",
+      "winRate": "% de réussite",
+      "currentStreak": "Série en cours",
+      "maxStreak": "Meilleure série",
+      "distribution": "Répartition des essais",
+      "averageGuesses": "Moy. {value} essais"
+    },
+    "leaderboard": {
+      "optInHeading": "Classement",
+      "optInBody": "Affrontez les autres sur la plus longue série Meltho. Choisissez comment vous apparaissez et si vous participez — vous n’y figurez pas tant que vous n’avez pas adhéré.",
+      "displayName": "Nom affiché",
+      "displayNamePlaceholder": "Comment vous apparaîtrez",
+      "optInToggle": "M’afficher dans le classement",
+      "optInHint": "Un nom affiché est requis pour apparaître.",
+      "saved": "Enregistré",
+      "saveError": "Échec de l’enregistrement. Veuillez réessayer.",
+      "heading": "Meilleures séries",
+      "subtitle": "Les plus longues séries Meltho",
+      "you": "Vous",
+      "yourRank": "Classé n°{rank}",
+      "optedInUnranked": "Lancez une série pour grimper au classement.",
+      "notOptedIn": "Vous n’êtes pas encore au classement — adhérez ci-dessus pour participer.",
+      "dayStreak": "jours de série",
+      "days": "{count} jours",
+      "empty": "Aucune série au classement pour l’instant — commencez la vôtre aujourd’hui."
+    },
+    "session": {
+      "heading": "Session",
+      "body": "Se déconnecter de Sabro sur cet appareil."
+    }
+  },
   "translations": {
     "title": "Traductions",
     "empty": "Aucune source pour le moment.",

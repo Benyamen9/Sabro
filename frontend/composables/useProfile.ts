@@ -67,21 +67,47 @@ export function useProfile() {
     }
   }
 
-  // Save the current language + script variant to the profile. No-op when
-  // signed out — the cookie alone covers the anonymous case.
-  async function persist() {
-    if (!isConfigured.value || !isSignedIn.value) return
-    const payload: UpdateUserProfileRequest = {
+  // The full PUT body. The API treats an omitted displayName/showOnLeaderboard as
+  // "clear it", so every write must carry the current account fields too — otherwise
+  // switching language would silently wipe the user's display name and opt-out them.
+  function buildPayload(overrides?: Partial<UpdateUserProfileRequest>): UpdateUserProfileRequest {
+    return {
       preferredLanguage: locale.value as string,
       preferredScriptVariant: localToApiVariant[variant.value],
+      displayName: profile.value?.displayName ?? null,
+      showOnLeaderboard: profile.value?.showOnLeaderboard ?? false,
+      ...overrides,
     }
+  }
+
+  // Save the current language + script variant to the profile, preserving the
+  // account fields. No-op when signed out — the cookie alone covers the anonymous
+  // case.
+  async function persist() {
+    if (!isConfigured.value || !isSignedIn.value) return
     try {
-      profile.value = await api<UserProfileDto>('/profile/me', { method: 'PUT', body: payload })
+      profile.value = await api<UserProfileDto>('/profile/me', { method: 'PUT', body: buildPayload() })
     }
     catch {
       // The local cookie is already updated; tolerate a failed server sync.
     }
   }
 
-  return { profile, load, persist }
+  // Save the editable account fields (display name + leaderboard opt-in). Returns
+  // true on success; false on a validation/network error so the caller can surface it.
+  async function saveAccount(account: { displayName: string | null, showOnLeaderboard: boolean }): Promise<boolean> {
+    if (!isConfigured.value || !isSignedIn.value) return false
+    try {
+      profile.value = await api<UserProfileDto>('/profile/me', {
+        method: 'PUT',
+        body: buildPayload(account),
+      })
+      return true
+    }
+    catch {
+      return false
+    }
+  }
+
+  return { profile, load, persist, saveAccount }
 }

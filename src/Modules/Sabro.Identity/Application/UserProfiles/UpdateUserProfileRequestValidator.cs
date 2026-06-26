@@ -1,4 +1,5 @@
 using FluentValidation;
+using Sabro.Identity.Domain;
 
 namespace Sabro.Identity.Application.UserProfiles;
 
@@ -15,5 +16,15 @@ public sealed class UpdateUserProfileRequestValidator : AbstractValidator<Update
 
         RuleFor(x => x.PreferredScriptVariant)
             .IsInEnum();
+
+        RuleFor(x => x.DisplayName)
+            .MaximumLength(UserProfile.MaxDisplayNameLength)
+            .When(x => !string.IsNullOrWhiteSpace(x.DisplayName));
+
+        // Appearing on the leaderboard needs a label to show.
+        RuleFor(x => x.DisplayName)
+            .Must(name => !string.IsNullOrWhiteSpace(name))
+            .When(x => x.ShowOnLeaderboard)
+            .WithMessage("A display name is required to appear on the leaderboard.");
     }
 }

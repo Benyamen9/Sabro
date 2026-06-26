@@ -4,4 +4,6 @@ namespace Sabro.Identity.Application.UserProfiles;
 
 public sealed record UpdateUserProfileRequest(
     string PreferredLanguage,
-    ScriptVariant PreferredScriptVariant);
+    ScriptVariant PreferredScriptVariant,
+    string? DisplayName = null,
+    bool ShowOnLeaderboard = false);

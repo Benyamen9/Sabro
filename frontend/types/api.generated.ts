@@ -2102,6 +2102,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/play/meltho/leaderboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["MelthoLeaderboardDto"];
+                        "application/json": components["schemas"]["MelthoLeaderboardDto"];
+                        "text/json": components["schemas"]["MelthoLeaderboardDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/play/results/me": {
         parameters: {
             query?: never;
@@ -3272,6 +3309,31 @@ export interface components {
          * @enum {string}
          */
         LibrarySort: "Recent" | "Alphabetical" | "Length";
+        MelthoLeaderboardDto: {
+            top: components["schemas"]["MelthoLeaderboardEntryDto"][];
+            me: components["schemas"]["MelthoLeaderboardMeDto"];
+        };
+        MelthoLeaderboardEntryDto: {
+            /** Format: int32 */
+            rank: number | string;
+            displayName: string;
+            /** Format: int32 */
+            longestStreak: number | string;
+            /** Format: int32 */
+            currentStreak: number | string;
+            isMe: boolean;
+        };
+        MelthoLeaderboardMeDto: {
+            /** Format: int32 */
+            rank: null | number | string;
+            displayName: null | string;
+            /** Format: int32 */
+            longestStreak: number | string;
+            /** Format: int32 */
+            currentStreak: number | string;
+            onLeaderboard: boolean;
+            hasPlayed: boolean;
+        };
         MelthoLibraryDetailDto: {
             /** Format: uuid */
             lexiconEntryId: string;
@@ -3595,6 +3657,9 @@ export interface components {
         UpdateUserProfileRequest: {
             preferredLanguage: string;
             preferredScriptVariant: components["schemas"]["ScriptVariant"];
+            displayName?: null | string;
+            /** @default false */
+            showOnLeaderboard: boolean;
         };
         UserProfileDto: {
             /** Format: uuid */
@@ -3603,6 +3668,8 @@ export interface components {
             preferredLanguage: string;
             preferredScriptVariant: components["schemas"]["ScriptVariant"];
             role: components["schemas"]["Role"];
+            displayName: null | string;
+            showOnLeaderboard: boolean;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */

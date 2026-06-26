@@ -153,4 +153,62 @@ public class UserProfileTests
         profile.Role.Should().Be(originalRole);
         profile.UpdatedAt.Should().Be(originalUpdatedAt);
     }
+
+    [Fact]
+    public void Create_DefaultsLeaderboardOptOutAndNoDisplayName()
+    {
+        var profile = UserProfile.Create(LogtoUserId).Value!;
+
+        profile.DisplayName.Should().BeNull();
+        profile.ShowOnLeaderboard.Should().BeFalse();
+    }
+
+    [Fact]
+    public void UpdateAccount_WithNameAndOptIn_ReturnsNullAndMutates()
+    {
+        var profile = UserProfile.Create(LogtoUserId).Value!;
+        var originalUpdatedAt = profile.UpdatedAt;
+
+        var error = profile.UpdateAccount("  Ephrem  ", showOnLeaderboard: true);
+
+        error.Should().BeNull();
+        profile.DisplayName.Should().Be("Ephrem"); // trimmed
+        profile.ShowOnLeaderboard.Should().BeTrue();
+        profile.UpdatedAt.Should().BeOnOrAfter(originalUpdatedAt);
+    }
+
+    [Fact]
+    public void UpdateAccount_WithEmptyName_StoresNull()
+    {
+        var profile = UserProfile.Create(LogtoUserId).Value!;
+
+        var error = profile.UpdateAccount("   ", showOnLeaderboard: false);
+
+        error.Should().BeNull();
+        profile.DisplayName.Should().BeNull();
+    }
+
+    [Fact]
+    public void UpdateAccount_OptInWithoutName_ReturnsValidationErrorAndDoesNotMutate()
+    {
+        var profile = UserProfile.Create(LogtoUserId).Value!;
+
+        var error = profile.UpdateAccount(null, showOnLeaderboard: true);
+
+        error.Should().NotBeNull();
+        error!.Code.Should().Be("validation");
+        profile.ShowOnLeaderboard.Should().BeFalse();
+        profile.DisplayName.Should().BeNull();
+    }
+
+    [Fact]
+    public void UpdateAccount_NameTooLong_ReturnsValidationError()
+    {
+        var profile = UserProfile.Create(LogtoUserId).Value!;
+
+        var error = profile.UpdateAccount(new string('a', UserProfile.MaxDisplayNameLength + 1), showOnLeaderboard: false);
+
+        error.Should().NotBeNull();
+        error!.Code.Should().Be("validation");
+    }
 }

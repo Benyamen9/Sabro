@@ -20,6 +20,25 @@ export function useAuth() {
   const isSignedIn = computed(() => Boolean(logtoUser))
   const user = computed(() => logtoUser)
 
+  // Display-friendly identity claims, resolved once here so the header menu and
+  // the profile page render the same values. Logto is the single source of
+  // truth for name/email/avatar (we never mirror them locally), so anything the
+  // token doesn't carry is simply absent and the UI omits it.
+  const displayName = computed(() => {
+    const u = user.value
+    if (!u) return ''
+    return (u.name as string) || (u.username as string) || (u.email as string) || (u.sub as string) || ''
+  })
+  const email = computed(() => (user.value?.email as string) || '')
+  const username = computed(() => (user.value?.username as string) || '')
+  const avatarUrl = computed(() => (user.value?.picture as string) || '')
+
+  // First character of the best available label, for the fallback avatar tile.
+  const initial = computed(() => {
+    const source = displayName.value.trim()
+    return source ? source.charAt(0).toUpperCase() : '?'
+  })
+
   function signIn() {
     if (!isConfigured.value) return
     window.location.href = '/sign-in'
@@ -43,5 +62,17 @@ export function useAuth() {
     }
   }
 
-  return { isConfigured, isSignedIn, user, signIn, signOut, getAccessToken }
+  return {
+    isConfigured,
+    isSignedIn,
+    user,
+    displayName,
+    email,
+    username,
+    avatarUrl,
+    initial,
+    signIn,
+    signOut,
+    getAccessToken,
+  }
 }

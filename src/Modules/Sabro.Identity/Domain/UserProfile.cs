@@ -5,6 +5,9 @@ namespace Sabro.Identity.Domain;
 
 public sealed class UserProfile : Entity<Guid>, IAggregateRoot
 {
+    /// <summary>Maximum length of a public display name (leaderboard, future social surfaces).</summary>
+    public const int MaxDisplayNameLength = 40;
+
     private UserProfile(string logtoUserId, string preferredLanguage, ScriptVariant preferredScriptVariant)
     {
         Id = Guid.NewGuid();
@@ -15,6 +18,7 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
         PreferredLanguage = preferredLanguage;
         PreferredScriptVariant = preferredScriptVariant;
         Role = Role.Reader;
+        ShowOnLeaderboard = false;
     }
 
     /// <summary>
@@ -26,6 +30,20 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
     public string PreferredLanguage { get; private set; }
 
     public ScriptVariant PreferredScriptVariant { get; private set; }
+
+    /// <summary>
+    /// Optional public-facing name, shown on the leaderboard and any future social
+    /// surface. Null until the user sets one. Distinct from the Logto name (which
+    /// Sabro never mirrors) so the user controls exactly how they appear.
+    /// </summary>
+    public string? DisplayName { get; private set; }
+
+    /// <summary>
+    /// Whether the user has opted in to appear on the public leaderboard. Defaults
+    /// to <c>false</c> — appearing is a deliberate choice (the platform is private
+    /// by default). Requires a <see cref="DisplayName"/> to be set.
+    /// </summary>
+    public bool ShowOnLeaderboard { get; private set; }
 
     /// <summary>
     /// Authorization role. New profiles start as <see cref="Domain.Role.Reader"/>;
@@ -72,6 +90,34 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
 
         PreferredLanguage = languageResult.Value!;
         PreferredScriptVariant = preferredScriptVariant;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        return null;
+    }
+
+    /// <summary>
+    /// Sets the public display name and leaderboard opt-in. Returns <c>null</c> on
+    /// success, an <see cref="Error"/> on validation failure (mirrors
+    /// <see cref="UpdatePreferences"/>). An empty/whitespace name is stored as
+    /// <c>null</c>. Opting in to the leaderboard requires a non-empty name — you
+    /// cannot appear without a label.
+    /// </summary>
+    public Error? UpdateAccount(string? displayName, bool showOnLeaderboard)
+    {
+        var trimmed = displayName?.Trim();
+        var normalized = string.IsNullOrEmpty(trimmed) ? null : trimmed;
+
+        if (normalized is not null && normalized.Length > MaxDisplayNameLength)
+        {
+            return Error.Validation($"DisplayName must not exceed {MaxDisplayNameLength} characters.");
+        }
+
+        if (showOnLeaderboard && normalized is null)
+        {
+            return Error.Validation("A display name is required to appear on the leaderboard.");
+        }
+
+        DisplayName = normalized;
+        ShowOnLeaderboard = showOnLeaderboard;
         UpdatedAt = DateTimeOffset.UtcNow;
         return null;
     }

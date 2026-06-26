@@ -63,6 +63,63 @@
     "signInHint": "Sign in with your account to view this content.",
     "signedInAs": "Signed in as {name}"
   },
+  "account": {
+    "menu": "Account menu",
+    "profileSettings": "Profile & settings",
+    "eyebrow": "Your account",
+    "title": "Profile",
+    "signInRequired": "Sign in to view your profile.",
+    "identityNote": "Your name, email and password are managed by your sign-in account.",
+    "role": {
+      "Reader": "Reader",
+      "ExpertReviewer": "Expert reviewer",
+      "Owner": "Owner"
+    },
+    "fields": {
+      "username": "Username",
+      "email": "Email",
+      "memberSince": "Member since"
+    },
+    "preferences": {
+      "heading": "Preferences",
+      "body": "These follow your account across every app in the ecosystem."
+    },
+    "stats": {
+      "heading": "Meltho",
+      "subtitle": "Your daily word game",
+      "play": "Play",
+      "empty": "You haven't played Meltho yet. Your stats will appear here once you do.",
+      "played": "Played",
+      "winRate": "Win %",
+      "currentStreak": "Current streak",
+      "maxStreak": "Max streak",
+      "distribution": "Guess distribution",
+      "averageGuesses": "Avg. {value} guesses"
+    },
+    "leaderboard": {
+      "optInHeading": "Leaderboard",
+      "optInBody": "Compete on the longest Meltho streak. Choose how you appear and whether to join — you're off the board until you opt in.",
+      "displayName": "Display name",
+      "displayNamePlaceholder": "How you'll appear",
+      "optInToggle": "Show me on the leaderboard",
+      "optInHint": "A display name is required to appear.",
+      "saved": "Saved",
+      "saveError": "Could not save. Please try again.",
+      "heading": "Top streaks",
+      "subtitle": "The longest Meltho streaks",
+      "you": "You",
+      "yourRank": "Ranked #{rank}",
+      "optedInUnranked": "Build a streak to climb the board.",
+      "notOptedIn": "You're not on the leaderboard yet — opt in above to join.",
+      "dayStreak": "day streak",
+      "days": "{count} days",
+      "empty": "No streaks on the board yet — start one today."
+    },
+    "session": {
+      "heading": "Session",
+      "body": "Sign out of Sabro on this device."
+    }
+  },
   "translations": {
     "title": "Translations",
     "empty": "No sources yet.",
