@@ -70,6 +70,7 @@
     "title": "Profil",
     "signInRequired": "Connectez-vous pour voir votre profil.",
     "identityNote": "Votre nom, votre e-mail et votre mot de passe sont gérés par votre compte de connexion.",
+    "manageAccount": "Gérer le compte et la sécurité",
     "role": {
       "Reader": "Lecteur",
       "ExpertReviewer": "Relecteur expert",

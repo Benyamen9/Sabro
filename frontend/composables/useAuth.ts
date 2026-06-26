@@ -49,6 +49,16 @@ export function useAuth() {
     window.location.href = '/sign-out'
   }
 
+  // Hands the user off to Logto's hosted Account Center to change their email,
+  // password, etc. Logto owns credentials — Sabro never writes them — so this is
+  // a redirect, not an in-app form. `redirect` brings the user back to /profile.
+  function manageAccount() {
+    if (!isConfigured.value) return
+    const endpoint = config.public.logtoEndpoint.replace(/\/$/, '')
+    const redirect = encodeURIComponent(window.location.href)
+    window.location.href = `${endpoint}/account?redirect=${redirect}`
+  }
+
   async function getAccessToken(): Promise<string | null> {
     if (!isConfigured.value || !isSignedIn.value) return null
     try {
@@ -73,6 +83,7 @@ export function useAuth() {
     initial,
     signIn,
     signOut,
+    manageAccount,
     getAccessToken,
   }
 }

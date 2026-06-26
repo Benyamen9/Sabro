@@ -70,6 +70,7 @@
     "title": "Profile",
     "signInRequired": "Sign in to view your profile.",
     "identityNote": "Your name, email and password are managed by your sign-in account.",
+    "manageAccount": "Manage account & security",
     "role": {
       "Reader": "Reader",
       "ExpertReviewer": "Expert reviewer",
