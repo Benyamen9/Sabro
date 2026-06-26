@@ -69,8 +69,27 @@
     "eyebrow": "Uw account",
     "title": "Profiel",
     "signInRequired": "Meld u aan om uw profiel te bekijken.",
-    "identityNote": "Uw naam, e-mail en wachtwoord worden beheerd door uw aanmeldaccount.",
-    "manageAccount": "Account en beveiliging beheren",
+    "identityNote": "Uw naam en e-mail worden beheerd door uw aanmeldaccount.",
+    "security": {
+      "heading": "Wachtwoord",
+      "body": "Wijzig het wachtwoord waarmee u zich aanmeldt.",
+      "current": "Huidig wachtwoord",
+      "new": "Nieuw wachtwoord",
+      "confirm": "Bevestig nieuw wachtwoord",
+      "hint": "Minimaal 8 tekens.",
+      "save": "Wachtwoord bijwerken",
+      "success": "Wachtwoord bijgewerkt.",
+      "errors": {
+        "required": "Vul alle velden in.",
+        "tooShort": "Uw nieuwe wachtwoord moet minstens 8 tekens bevatten.",
+        "mismatch": "De nieuwe wachtwoorden komen niet overeen.",
+        "sameAsCurrent": "Uw nieuwe wachtwoord moet verschillen van uw huidige.",
+        "current_invalid": "Uw huidige wachtwoord is onjuist.",
+        "new_rejected": "Dat wachtwoord is geweigerd — kies een langer of minder gebruikelijk wachtwoord.",
+        "unauthenticated": "Uw sessie is verlopen. Meld u opnieuw aan.",
+        "unavailable": "Er is iets misgegaan. Probeer het opnieuw."
+      }
+    },
     "role": {
       "Reader": "Lezer",
       "ExpertReviewer": "Expertbeoordelaar",

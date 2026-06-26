@@ -69,8 +69,27 @@
     "eyebrow": "Your account",
     "title": "Profile",
     "signInRequired": "Sign in to view your profile.",
-    "identityNote": "Your name, email and password are managed by your sign-in account.",
-    "manageAccount": "Manage account & security",
+    "identityNote": "Your name and email are managed by your sign-in account.",
+    "security": {
+      "heading": "Password",
+      "body": "Change the password you use to sign in.",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "hint": "At least 8 characters.",
+      "save": "Update password",
+      "success": "Password updated.",
+      "errors": {
+        "required": "Please fill in every field.",
+        "tooShort": "Your new password must be at least 8 characters.",
+        "mismatch": "The new passwords don't match.",
+        "sameAsCurrent": "Your new password must be different from your current one.",
+        "current_invalid": "Your current password is incorrect.",
+        "new_rejected": "That password was rejected — try a longer or less common one.",
+        "unauthenticated": "Your session expired. Please sign in again.",
+        "unavailable": "Something went wrong. Please try again."
+      }
+    },
     "role": {
       "Reader": "Reader",
       "ExpertReviewer": "Expert reviewer",

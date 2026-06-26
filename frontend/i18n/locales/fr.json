@@ -69,8 +69,27 @@
     "eyebrow": "Votre compte",
     "title": "Profil",
     "signInRequired": "Connectez-vous pour voir votre profil.",
-    "identityNote": "Votre nom, votre e-mail et votre mot de passe sont gérés par votre compte de connexion.",
-    "manageAccount": "Gérer le compte et la sécurité",
+    "identityNote": "Votre nom et votre e-mail sont gérés par votre compte de connexion.",
+    "security": {
+      "heading": "Mot de passe",
+      "body": "Modifiez le mot de passe que vous utilisez pour vous connecter.",
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe",
+      "hint": "Au moins 8 caractères.",
+      "save": "Mettre à jour le mot de passe",
+      "success": "Mot de passe mis à jour.",
+      "errors": {
+        "required": "Veuillez remplir tous les champs.",
+        "tooShort": "Votre nouveau mot de passe doit comporter au moins 8 caractères.",
+        "mismatch": "Les nouveaux mots de passe ne correspondent pas.",
+        "sameAsCurrent": "Votre nouveau mot de passe doit être différent de l'actuel.",
+        "current_invalid": "Votre mot de passe actuel est incorrect.",
+        "new_rejected": "Ce mot de passe a été refusé — essayez-en un plus long ou moins courant.",
+        "unauthenticated": "Votre session a expiré. Veuillez vous reconnecter.",
+        "unavailable": "Une erreur s'est produite. Veuillez réessayer."
+      }
+    },
     "role": {
       "Reader": "Lecteur",
       "ExpertReviewer": "Relecteur expert",
