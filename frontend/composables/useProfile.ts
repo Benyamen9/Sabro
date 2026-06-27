@@ -109,5 +109,18 @@ export function useProfile() {
     }
   }
 
-  return { profile, load, persist, saveAccount }
+  // Permanently delete the account: Sabro data + the Logto identity, server-side
+  // (DELETE /profile/me). Returns true on success so the caller can sign out.
+  async function deleteAccount(): Promise<boolean> {
+    if (!isConfigured.value || !isSignedIn.value) return false
+    try {
+      await api('/profile/me', { method: 'DELETE' })
+      return true
+    }
+    catch {
+      return false
+    }
+  }
+
+  return { profile, load, persist, saveAccount, deleteAccount }
 }

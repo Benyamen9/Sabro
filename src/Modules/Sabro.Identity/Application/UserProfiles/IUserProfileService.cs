@@ -16,4 +16,11 @@ public interface IUserProfileService
     /// distinguish "new user" from "returning user".
     /// </summary>
     Task<Result<UserProfileDto>> UpdateAsync(string logtoUserId, UpdateUserProfileRequest request, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Permanently deletes the caller's profile row. Idempotent: succeeds with
+    /// <c>false</c> when there is no profile to delete, <c>true</c> when one was
+    /// removed. Used by account deletion (right to erasure).
+    /// </summary>
+    Task<Result<bool>> DeleteAsync(string logtoUserId, CancellationToken cancellationToken);
 }

@@ -3,6 +3,7 @@ using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Sabro.API.Configuration;
+using Sabro.API.Logto;
 using Sabro.Biblical.Public;
 using Sabro.Identity.Public;
 using Sabro.Lexicon.Public;
@@ -124,6 +125,12 @@ try
     builder.Services.AddHealthChecks();
 
     builder.Services.AddSabroSearch(builder.Configuration);
+
+    // Logto Management API client — used by account deletion to erase the
+    // caller's identity. Inert until Logto:ManagementApi credentials are set.
+    builder.Services.Configure<LogtoManagementOptions>(
+        builder.Configuration.GetSection(LogtoManagementOptions.SectionName));
+    builder.Services.AddHttpClient<ILogtoManagementClient, LogtoManagementClient>();
 
     var modules = new IModuleRegistration[]
     {

@@ -79,7 +79,8 @@
       "preferences": "Preferences",
       "leaderboard": "Leaderboard",
       "password": "Password",
-      "session": "Session"
+      "session": "Session",
+      "delete": "Delete account"
     },
     "security": {
       "heading": "Password",
@@ -155,6 +156,16 @@
     "session": {
       "heading": "Session",
       "body": "Sign out of Sabro on this device."
+    },
+    "delete": {
+      "heading": "Delete account",
+      "body": "Permanently delete your account, your profile, and your game history. This also removes your sign-in identity and cannot be undone.",
+      "start": "Delete account",
+      "confirmPrompt": "Type {word} to confirm.",
+      "confirmWord": "DELETE",
+      "confirmButton": "Permanently delete",
+      "deleting": "Deleting…",
+      "error": "Could not delete your account. Please try again."
     }
   },
   "translations": {

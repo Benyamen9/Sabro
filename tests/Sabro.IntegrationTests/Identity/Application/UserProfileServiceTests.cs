@@ -152,6 +152,40 @@ public class UserProfileServiceTests
         result.Error.Fields.Should().ContainKey("preferredLanguage");
     }
 
+    [Fact]
+    public async Task DeleteAsync_ExistingProfile_RemovesItAndReportsTrue()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var logtoUserId = NewLogtoUserId();
+
+        await using (var seed = postgres.CreateIdentityContext())
+        {
+            await NewService(seed).GetOrCreateForLogtoUserAsync(logtoUserId, ct);
+        }
+
+        await using var ctx = postgres.CreateIdentityContext();
+        var result = await NewService(ctx).DeleteAsync(logtoUserId, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeTrue();
+
+        await using var read = postgres.CreateIdentityContext();
+        var exists = await read.UserProfiles.AnyAsync(p => p.LogtoUserId == logtoUserId, ct);
+        exists.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task DeleteAsync_NoProfile_SucceedsWithFalse()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await using var ctx = postgres.CreateIdentityContext();
+        var result = await NewService(ctx).DeleteAsync(NewLogtoUserId(), ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeFalse();
+    }
+
     private static UserProfileService NewService(Sabro.Identity.Infrastructure.IdentityDbContext ctx) =>
         new(
             ctx,

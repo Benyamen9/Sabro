@@ -141,6 +141,28 @@ internal sealed class UserProfileService : IUserProfileService
         return Result<UserProfileDto>.Success(Map(profile));
     }
 
+    public async Task<Result<bool>> DeleteAsync(string logtoUserId, CancellationToken cancellationToken)
+    {
+        var trimmedLogtoUserId = (logtoUserId ?? string.Empty).Trim();
+        if (trimmedLogtoUserId.Length == 0)
+        {
+            return Result<bool>.Failure(Error.Validation("LogtoUserId is required."));
+        }
+
+        var profile = await dbContext.UserProfiles
+            .FirstOrDefaultAsync(p => p.LogtoUserId == trimmedLogtoUserId, cancellationToken);
+        if (profile is null)
+        {
+            return Result<bool>.Success(false);
+        }
+
+        dbContext.UserProfiles.Remove(profile);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("UserProfile deleted. Id={ProfileId} LogtoUserId={LogtoUserId}", profile.Id, profile.LogtoUserId);
+        return Result<bool>.Success(true);
+    }
+
     private static UserProfileDto Map(UserProfile profile) => new(
         profile.Id,
         profile.LogtoUserId,

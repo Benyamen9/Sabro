@@ -142,6 +142,26 @@ internal sealed class GameResultService : IGameResultService
             new PagedResult<GameResultDto>(items.Select(Map).ToArray(), total, page, pageSize));
     }
 
+    public async Task<Result<int>> DeleteAllForUserAsync(string logtoUserId, CancellationToken cancellationToken)
+    {
+        var trimmedUserId = (logtoUserId ?? string.Empty).Trim();
+        if (trimmedUserId.Length == 0)
+        {
+            return Result<int>.Failure(Error.Validation("LogtoUserId is required."));
+        }
+
+        var deleted = await dbContext.GameResults
+            .Where(r => r.LogtoUserId == trimmedUserId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if (deleted > 0)
+        {
+            logger.LogInformation("GameResults deleted for user. Count={DeletedCount}", deleted);
+        }
+
+        return Result<int>.Success(deleted);
+    }
+
     private static GameResultDto Map(GameResult result) => new(
         result.Id,
         result.LogtoUserId,

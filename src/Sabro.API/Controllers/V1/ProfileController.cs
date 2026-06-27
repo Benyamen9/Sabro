@@ -2,7 +2,9 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
+using Sabro.API.Logto;
 using Sabro.Identity.Application.UserProfiles;
+using Sabro.Play.Application.GameResults;
 
 namespace Sabro.API.Controllers.V1;
 
@@ -15,10 +17,20 @@ namespace Sabro.API.Controllers.V1;
 public sealed class ProfileController : ApiControllerBase
 {
     private readonly IUserProfileService userProfileService;
+    private readonly IGameResultService gameResultService;
+    private readonly ILogtoManagementClient logtoManagementClient;
+    private readonly ILogger<ProfileController> logger;
 
-    public ProfileController(IUserProfileService userProfileService)
+    public ProfileController(
+        IUserProfileService userProfileService,
+        IGameResultService gameResultService,
+        ILogtoManagementClient logtoManagementClient,
+        ILogger<ProfileController> logger)
     {
         this.userProfileService = userProfileService;
+        this.gameResultService = gameResultService;
+        this.logtoManagementClient = logtoManagementClient;
+        this.logger = logger;
     }
 
     /// <summary>
@@ -72,5 +84,48 @@ public sealed class ProfileController : ApiControllerBase
         }
 
         return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Permanently deletes the caller's account: their play results, their
+    /// profile, and finally their Logto identity. The identity is removed last
+    /// so that a failure there leaves the caller still able to sign in and
+    /// retry. Right to erasure (GDPR).
+    /// </summary>
+    [HttpDelete("me")]
+    [Authorize(Policy = AuthPolicies.Write)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> DeleteMe(CancellationToken cancellationToken)
+    {
+        var logtoUserIdResult = ResolveLogtoUserId();
+        if (!logtoUserIdResult.IsSuccess)
+        {
+            return FromError(logtoUserIdResult.Error!);
+        }
+
+        var userId = logtoUserIdResult.Value!;
+
+        var resultsResult = await gameResultService.DeleteAllForUserAsync(userId, cancellationToken);
+        if (!resultsResult.IsSuccess)
+        {
+            return FromError(resultsResult.Error!);
+        }
+
+        var profileResult = await userProfileService.DeleteAsync(userId, cancellationToken);
+        if (!profileResult.IsSuccess)
+        {
+            return FromError(profileResult.Error!);
+        }
+
+        var identityResult = await logtoManagementClient.DeleteUserAsync(userId, cancellationToken);
+        if (!identityResult.IsSuccess)
+        {
+            return FromError(identityResult.Error!);
+        }
+
+        logger.LogInformation("Account deleted. ResultsRemoved={ResultsRemoved}", resultsResult.Value);
+        return NoContent();
     }
 }
