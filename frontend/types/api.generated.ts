@@ -3410,6 +3410,7 @@ export interface components {
             syriacUnvocalized: string;
             syriacVocalized: null | string;
             sblTransliteration: null | string;
+            grammaticalCategory: string;
             /** Format: int32 */
             playableLength: number | string;
             meanings: components["schemas"]["MelthoPuzzleMeaningDto"][];

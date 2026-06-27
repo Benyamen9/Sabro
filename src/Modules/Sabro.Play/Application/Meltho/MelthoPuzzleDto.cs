@@ -12,5 +12,6 @@ public sealed record MelthoPuzzleDto(
     string SyriacUnvocalized,
     string? SyriacVocalized,
     string? SblTransliteration,
+    string GrammaticalCategory,
     int PlayableLength,
     IReadOnlyList<MelthoPuzzleMeaningDto> Meanings);

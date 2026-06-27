@@ -161,7 +161,7 @@ public class MelthoPuzzleServiceTests
         pool.GetEligibleEntryIdsAsync(2, 8, Arg.Any<CancellationToken>())
             .Returns((IReadOnlyList<Guid>)eligible);
         pool.GetPlayableEntryAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(ci => new PlayableLexiconEntry(ci.Arg<Guid>(), "ܐܒ", null, null, 2, Array.Empty<LexiconMeaningDto>()));
+            .Returns(ci => new PlayableLexiconEntry(ci.Arg<Guid>(), "ܐܒ", null, null, "Noun", 2, Array.Empty<LexiconMeaningDto>()));
         return pool;
     }
 

@@ -40,6 +40,7 @@ internal sealed class LexiconPlayablePool : ILexiconPlayablePool
             entry.SyriacUnvocalized,
             entry.SyriacVocalized,
             entry.SblTransliteration,
+            entry.GrammaticalCategory.ToString(),
             entry.PlayableLength,
             entry.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray());
     }

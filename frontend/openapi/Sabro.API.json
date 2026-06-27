@@ -6156,6 +6156,7 @@
           "syriacUnvocalized",
           "syriacVocalized",
           "sblTransliteration",
+          "grammaticalCategory",
           "playableLength",
           "meanings"
         ],
@@ -6183,6 +6184,9 @@
               "null",
               "string"
             ]
+          },
+          "grammaticalCategory": {
+            "type": "string"
           },
           "playableLength": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
