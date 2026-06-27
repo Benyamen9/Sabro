@@ -20,6 +20,24 @@ const tiles = computed(() => {
   ]
 })
 
+// Whole days between today and a yyyy-mm-dd date, parsed at UTC midnight so the
+// integer gap is stable (matches the streak math in usePlayStats).
+function daysSince(date: string): number {
+  const now = new Date()
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  return Math.round((Date.parse(`${today}T00:00:00Z`) - Date.parse(`${date}T00:00:00Z`)) / 86_400_000)
+}
+
+// A small recency line so the card reflects live activity, not a static block.
+const lastPlayedLabel = computed(() => {
+  const last = stats.value?.lastPlayed
+  if (!last) return null
+  const gap = daysSince(last)
+  if (gap <= 0) return t('account.stats.lastPlayedToday')
+  if (gap === 1) return t('account.stats.lastPlayedYesterday')
+  return t('account.stats.lastPlayedDaysAgo', { count: gap })
+})
+
 // Width % for a histogram bar, with a floor so a non-zero count is always visible.
 function barWidth(value: number): string {
   const max = stats.value?.maxBucket ?? 0
@@ -66,8 +84,17 @@ function barWidth(value: number): string {
     </div>
 
     <template v-else-if="stats">
+      <!-- Recency signal — when the player last took the daily puzzle. -->
+      <p
+        v-if="lastPlayedLabel"
+        class="mt-4 inline-flex items-center gap-1.5 font-sans text-xs text-[var(--color-text-muted)]"
+      >
+        <span class="size-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
+        {{ lastPlayedLabel }}
+      </p>
+
       <!-- Headline tiles. -->
-      <dl class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <dl class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div
           v-for="tile in tiles"
           :key="tile.key"

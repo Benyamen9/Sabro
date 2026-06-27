@@ -128,7 +128,10 @@
       "currentStreak": "Série en cours",
       "maxStreak": "Meilleure série",
       "distribution": "Répartition des essais",
-      "averageGuesses": "Moy. {value} essais"
+      "averageGuesses": "Moy. {value} essais",
+      "lastPlayedToday": "Joué aujourd’hui",
+      "lastPlayedYesterday": "Joué hier",
+      "lastPlayedDaysAgo": "Joué il y a {count} jours"
     },
     "leaderboard": {
       "optInHeading": "Classement",

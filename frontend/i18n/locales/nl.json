@@ -128,7 +128,10 @@
       "currentStreak": "Huidige reeks",
       "maxStreak": "Langste reeks",
       "distribution": "Verdeling van pogingen",
-      "averageGuesses": "Gem. {value} pogingen"
+      "averageGuesses": "Gem. {value} pogingen",
+      "lastPlayedToday": "Vandaag gespeeld",
+      "lastPlayedYesterday": "Gisteren gespeeld",
+      "lastPlayedDaysAgo": "{count} dagen geleden gespeeld"
     },
     "leaderboard": {
       "optInHeading": "Ranglijst",
