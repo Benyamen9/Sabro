@@ -119,42 +119,71 @@ function goToSection(id: string) {
   history.replaceState(null, '', `#${id}`)
 }
 
-// Scroll-spy: highlight the nav item for the section currently near the top.
-let observer: IntersectionObserver | null = null
+// Scroll-spy: highlight the nav item for the section currently being read.
+// Reference line sits just below the sticky header (~56px); a section becomes
+// active once its top scrolls above this line.
+const SPY_OFFSET = 96
+let ticking = false
 
-function setupScrollSpy() {
-  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return
-  observer?.disconnect()
-  const onScreen = new Set<string>()
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) onScreen.add(entry.target.id)
-        else onScreen.delete(entry.target.id)
-      }
-      const first = sectionIds.find(id => onScreen.has(id))
-      if (first) activeSection.value = first
-    },
-    { rootMargin: '-80px 0px -65% 0px', threshold: 0 },
-  )
+function updateActiveSection() {
+  if (typeof window === 'undefined') return
+
+  // Bottom guard: the last section (Session) is short and can never scroll its
+  // top above the reference line, so force it active once the page bottoms out.
+  const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
+  if (atBottom) {
+    activeSection.value = sectionIds[sectionIds.length - 1] ?? 'session'
+    return
+  }
+
+  // Otherwise: the last section whose top has passed the reference line.
+  let current = sectionIds[0] ?? 'profile'
   for (const id of sectionIds) {
     const el = document.getElementById(id)
-    if (el) observer.observe(el)
+    if (!el) continue
+    if (el.getBoundingClientRect().top <= SPY_OFFSET) current = id
+    else break
   }
+  activeSection.value = current
 }
 
-// Sections only exist once signed in; (re)wire the observer when that flips.
+function onScroll() {
+  if (ticking) return
+  ticking = true
+  requestAnimationFrame(() => {
+    updateActiveSection()
+    ticking = false
+  })
+}
+
+function setupScrollSpy() {
+  if (typeof window === 'undefined') return
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', onScroll, { passive: true })
+  updateActiveSection()
+}
+
+function teardownScrollSpy() {
+  if (typeof window === 'undefined') return
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', onScroll)
+}
+
+// Sections only exist once signed in; wire the listeners when that flips.
 watch(
   isSignedIn,
   async (signedIn) => {
-    if (!signedIn) return
+    if (!signedIn) {
+      teardownScrollSpy()
+      return
+    }
     await nextTick()
     setupScrollSpy()
   },
   { immediate: true },
 )
 
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(teardownScrollSpy)
 </script>
 
 <template>
