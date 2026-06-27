@@ -78,6 +78,8 @@
       "stats": "Statistiques",
       "preferences": "Préférences",
       "leaderboard": "Classement",
+      "username": "Nom d’utilisateur",
+      "email": "E-mail",
       "password": "Mot de passe",
       "session": "Session",
       "delete": "Supprimer le compte"
@@ -94,6 +96,29 @@
         "invalid": "Ce nom d’utilisateur n’est pas valide. Utilisez des lettres, chiffres et tirets bas.",
         "unchanged": "C’est déjà votre nom d’utilisateur.",
         "taken": "Ce nom d’utilisateur est déjà pris.",
+        "unauthenticated": "Votre session a expiré. Veuillez vous reconnecter.",
+        "unavailable": "Une erreur s’est produite. Veuillez réessayer."
+      }
+    },
+    "email": {
+      "heading": "E-mail",
+      "body": "Modifiez l’adresse e-mail de votre compte.",
+      "bodyCurrent": "L’e-mail de votre compte est {email}. Modifiez-le ci-dessous.",
+      "label": "Nouvel e-mail",
+      "sendCode": "Envoyer le code",
+      "sending": "Envoi…",
+      "sentTo": "Nous avons envoyé un code à 6 chiffres à {email}. Saisissez-le ci-dessous avec votre mot de passe actuel.",
+      "codeLabel": "Code de vérification",
+      "passwordLabel": "Mot de passe actuel",
+      "confirm": "Mettre à jour l’e-mail",
+      "useDifferent": "Utiliser un autre e-mail",
+      "success": "E-mail mis à jour.",
+      "errors": {
+        "invalid_email": "Veuillez saisir une adresse e-mail valide.",
+        "send_failed": "Impossible d’envoyer le code. Vérifiez l’adresse et réessayez.",
+        "code_invalid": "Ce code est incorrect ou a expiré.",
+        "password_invalid": "Votre mot de passe actuel est incorrect.",
+        "email_taken": "Cet e-mail est déjà utilisé.",
         "unauthenticated": "Votre session a expiré. Veuillez vous reconnecter.",
         "unavailable": "Une erreur s’est produite. Veuillez réessayer."
       }

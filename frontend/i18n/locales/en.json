@@ -79,6 +79,7 @@
       "preferences": "Preferences",
       "leaderboard": "Leaderboard",
       "username": "Username",
+      "email": "Email",
       "password": "Password",
       "session": "Session",
       "delete": "Delete account"
@@ -95,6 +96,29 @@
         "invalid": "That username isn't valid. Use letters, digits and underscores.",
         "unchanged": "That's already your username.",
         "taken": "That username is already taken.",
+        "unauthenticated": "Your session expired. Please sign in again.",
+        "unavailable": "Something went wrong. Please try again."
+      }
+    },
+    "email": {
+      "heading": "Email",
+      "body": "Change the email address for your account.",
+      "bodyCurrent": "Your account email is {email}. Change it below.",
+      "label": "New email",
+      "sendCode": "Send code",
+      "sending": "Sending…",
+      "sentTo": "We sent a 6-digit code to {email}. Enter it below along with your current password.",
+      "codeLabel": "Verification code",
+      "passwordLabel": "Current password",
+      "confirm": "Update email",
+      "useDifferent": "Use a different email",
+      "success": "Email updated.",
+      "errors": {
+        "invalid_email": "Please enter a valid email address.",
+        "send_failed": "Could not send the code. Check the address and try again.",
+        "code_invalid": "That code isn't correct or has expired.",
+        "password_invalid": "Your current password is incorrect.",
+        "email_taken": "That email is already in use.",
         "unauthenticated": "Your session expired. Please sign in again.",
         "unavailable": "Something went wrong. Please try again."
       }
