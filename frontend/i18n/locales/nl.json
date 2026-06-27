@@ -82,6 +82,22 @@
       "session": "Sessie",
       "delete": "Account verwijderen"
     },
+    "username": {
+      "heading": "Gebruikersnaam",
+      "body": "Wijzig de gebruikersnaam waarmee u zich aanmeldt.",
+      "label": "Nieuwe gebruikersnaam",
+      "hint": "Letters, cijfers en liggende streepjes; moet beginnen met een letter of liggend streepje.",
+      "save": "Gebruikersnaam bijwerken",
+      "success": "Gebruikersnaam bijgewerkt.",
+      "errors": {
+        "required": "Voer een gebruikersnaam in.",
+        "invalid": "Die gebruikersnaam is niet geldig. Gebruik letters, cijfers en liggende streepjes.",
+        "unchanged": "Dat is al uw gebruikersnaam.",
+        "taken": "Die gebruikersnaam is al in gebruik.",
+        "unauthenticated": "Uw sessie is verlopen. Meld u opnieuw aan.",
+        "unavailable": "Er is iets misgegaan. Probeer het opnieuw."
+      }
+    },
     "security": {
       "heading": "Wachtwoord",
       "body": "Wijzig het wachtwoord waarmee u zich aanmeldt.",

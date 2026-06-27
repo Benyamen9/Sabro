@@ -82,6 +82,22 @@
       "session": "Session",
       "delete": "Supprimer le compte"
     },
+    "username": {
+      "heading": "Nom d’utilisateur",
+      "body": "Modifiez le nom d’utilisateur avec lequel vous vous connectez.",
+      "label": "Nouveau nom d’utilisateur",
+      "hint": "Lettres, chiffres et tirets bas ; doit commencer par une lettre ou un tiret bas.",
+      "save": "Mettre à jour le nom d’utilisateur",
+      "success": "Nom d’utilisateur mis à jour.",
+      "errors": {
+        "required": "Veuillez saisir un nom d’utilisateur.",
+        "invalid": "Ce nom d’utilisateur n’est pas valide. Utilisez des lettres, chiffres et tirets bas.",
+        "unchanged": "C’est déjà votre nom d’utilisateur.",
+        "taken": "Ce nom d’utilisateur est déjà pris.",
+        "unauthenticated": "Votre session a expiré. Veuillez vous reconnecter.",
+        "unavailable": "Une erreur s’est produite. Veuillez réessayer."
+      }
+    },
     "security": {
       "heading": "Mot de passe",
       "body": "Modifiez le mot de passe que vous utilisez pour vous connecter.",
