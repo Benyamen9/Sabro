@@ -128,7 +128,10 @@
       "currentStreak": "Current streak",
       "maxStreak": "Max streak",
       "distribution": "Guess distribution",
-      "averageGuesses": "Avg. {value} guesses"
+      "averageGuesses": "Avg. {value} guesses",
+      "lastPlayedToday": "Played today",
+      "lastPlayedYesterday": "Played yesterday",
+      "lastPlayedDaysAgo": "Played {count} days ago"
     },
     "leaderboard": {
       "optInHeading": "Leaderboard",
