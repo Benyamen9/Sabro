@@ -131,6 +131,10 @@ services:
       ConnectionStrings__Sabro: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-sabro};Username=${POSTGRES_USER:-sabro};Password=${POSTGRES_PASSWORD}"
       Logto__Authority: "https://${LOGTO_DOMAIN}/oidc"
       Logto__Audience: ${SABRO_API_RESOURCE:?SABRO_API_RESOURCE is required}
+      # Machine-to-machine app with Logto Management API access, used by account
+      # deletion to erase the caller's identity. Blank => deletion disabled.
+      Logto__ManagementApi__ClientId: ${LOGTO_MANAGEMENT_CLIENT_ID:-}
+      Logto__ManagementApi__ClientSecret: ${LOGTO_MANAGEMENT_CLIENT_SECRET:-}
       Meilisearch__Url: "http://meilisearch:7700"
       Meilisearch__MasterKey: ${MEILI_MASTER_KEY}
       # Browser-client origins allowed to call /api/v1 directly (hub + Meltho).

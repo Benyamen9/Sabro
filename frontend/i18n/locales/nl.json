@@ -79,7 +79,8 @@
       "preferences": "Voorkeuren",
       "leaderboard": "Ranglijst",
       "password": "Wachtwoord",
-      "session": "Sessie"
+      "session": "Sessie",
+      "delete": "Account verwijderen"
     },
     "security": {
       "heading": "Wachtwoord",
@@ -155,6 +156,16 @@
     "session": {
       "heading": "Sessie",
       "body": "Afmelden bij Sabro op dit apparaat."
+    },
+    "delete": {
+      "heading": "Account verwijderen",
+      "body": "Verwijder uw account, uw profiel en uw spelgeschiedenis permanent. Dit verwijdert ook uw aanmeldidentiteit en kan niet ongedaan worden gemaakt.",
+      "start": "Account verwijderen",
+      "confirmPrompt": "Typ {word} om te bevestigen.",
+      "confirmWord": "VERWIJDEREN",
+      "confirmButton": "Definitief verwijderen",
+      "deleting": "Verwijderen…",
+      "error": "Kon uw account niet verwijderen. Probeer het opnieuw."
     }
   },
   "translations": {

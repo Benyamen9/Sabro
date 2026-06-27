@@ -5,7 +5,7 @@ const { t, locale, locales, setLocale } = useI18n()
 const { isConfigured, isSignedIn, displayName, email, username, avatarUrl, initial, signIn, signOut }
   = useAuth()
 const { variant, set: setVariant, available: scriptOptions } = useScriptVariant()
-const { profile, load, persist, saveAccount } = useProfile()
+const { profile, load, persist, saveAccount, deleteAccount } = useProfile()
 const { load: loadLeaderboard } = useLeaderboard()
 
 useHead({ title: () => `${t('account.title')} · ${t('site.title')}` })
@@ -72,6 +72,37 @@ function flagPrefsSaved() {
   prefsSavedTimer = setTimeout(() => (prefsSaved.value = false), 2000)
 }
 
+// Account deletion — irreversible, so gated behind a type-to-confirm step.
+const confirmingDelete = ref(false)
+const deleteConfirmText = ref('')
+const deleting = ref(false)
+const deleteError = ref(false)
+
+const deleteConfirmWord = computed(() => t('account.delete.confirmWord'))
+const canConfirmDelete = computed(() =>
+  deleteConfirmText.value.trim().toLowerCase() === deleteConfirmWord.value.toLowerCase(),
+)
+
+function cancelDelete() {
+  confirmingDelete.value = false
+  deleteConfirmText.value = ''
+  deleteError.value = false
+}
+
+async function confirmDelete() {
+  if (!canConfirmDelete.value || deleting.value) return
+  deleting.value = true
+  deleteError.value = false
+  const ok = await deleteAccount()
+  if (ok) {
+    // Identity is gone; clear the Logto session and leave the app.
+    await signOut()
+    return
+  }
+  deleting.value = false
+  deleteError.value = true
+}
+
 async function chooseLocale(code: string) {
   if (code === locale.value) return
   await setLocale(code as typeof locale.value)
@@ -117,6 +148,7 @@ const navGroups = computed(() => [
     items: [
       { id: 'password', label: t('account.nav.password') },
       { id: 'session', label: t('account.nav.session') },
+      { id: 'delete', label: t('account.nav.delete') },
     ],
   },
 ])
@@ -125,7 +157,7 @@ const navGroups = computed(() => [
 // horizontally-scrollable pill row.
 const flatNavItems = computed(() => navGroups.value.flatMap(group => group.items))
 
-const sectionIds = ['profile', 'preferences', 'meltho', 'leaderboard', 'password', 'session']
+const sectionIds = ['profile', 'preferences', 'meltho', 'leaderboard', 'password', 'session', 'delete']
 const activeSection = ref('profile')
 
 function goToSection(id: string) {
@@ -510,6 +542,64 @@ onBeforeUnmount(() => {
               </svg>
               {{ t('auth.signOut') }}
             </button>
+          </section>
+
+          <!-- Delete account — danger zone, irreversible, gated by type-to-confirm. -->
+          <section
+            id="delete"
+            class="scroll-mt-24 rounded-2xl border border-[color-mix(in_oklab,var(--color-accent)_35%,var(--color-border))] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]"
+          >
+            <h2 class="font-serif text-lg font-semibold tracking-tight text-[var(--color-accent)]">
+              {{ t('account.delete.heading') }}
+            </h2>
+            <p class="mt-1 font-sans text-sm text-[var(--color-text-muted)]">
+              {{ t('account.delete.body') }}
+            </p>
+
+            <button
+              v-if="!confirmingDelete"
+              type="button"
+              class="mt-4 inline-flex cursor-pointer items-center rounded-md border border-[var(--color-accent)] px-3.5 py-2 font-sans text-sm font-medium text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent-faint)]"
+              @click="confirmingDelete = true"
+            >
+              {{ t('account.delete.start') }}
+            </button>
+
+            <div v-else class="mt-4">
+              <label for="deleteConfirm" class="block font-sans text-sm text-[var(--color-text)]">
+                {{ t('account.delete.confirmPrompt', { word: deleteConfirmWord }) }}
+              </label>
+              <input
+                id="deleteConfirm"
+                v-model="deleteConfirmText"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                class="mt-1.5 block w-full max-w-xs rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-2 font-sans text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-faint)]"
+              >
+              <div class="mt-4 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  :disabled="!canConfirmDelete || deleting"
+                  class="inline-flex cursor-pointer items-center rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                  @click="confirmDelete"
+                >
+                  {{ deleting ? t('account.delete.deleting') : t('account.delete.confirmButton') }}
+                </button>
+                <button
+                  type="button"
+                  :disabled="deleting"
+                  class="inline-flex cursor-pointer items-center rounded-md px-3.5 py-2 font-sans text-sm font-medium text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text)] disabled:opacity-50"
+                  @click="cancelDelete"
+                >
+                  {{ t('common.cancel') }}
+                </button>
+                <span
+                  v-if="deleteError"
+                  class="font-sans text-xs text-[var(--color-accent)]"
+                >{{ t('account.delete.error') }}</span>
+              </div>
+            </div>
           </section>
         </div>
       </div>

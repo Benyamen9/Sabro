@@ -138,6 +138,44 @@ public class GameResultServiceTests
         result.Error!.Code.Should().Be("validation");
     }
 
+    [Fact]
+    public async Task DeleteAllForUserAsync_RemovesOnlyOwnResults_AndReportsCount()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = NewUser();
+        var other = NewUser();
+
+        await using (var ctx = fixture.CreatePlayContext())
+        {
+            var service = NewService(ctx);
+            await service.RecordAsync(user, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 5), true, 2, null), ct);
+            await service.RecordAsync(user, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 6), false, 6, null), ct);
+            await service.RecordAsync(other, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 7), true, 1, null), ct);
+        }
+
+        await using var del = fixture.CreatePlayContext();
+        var result = await NewService(del).DeleteAllForUserAsync(user, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(2);
+
+        await using var read = fixture.CreatePlayContext();
+        (await read.GameResults.AnyAsync(r => r.LogtoUserId == user, ct)).Should().BeFalse();
+        (await read.GameResults.AnyAsync(r => r.LogtoUserId == other, ct)).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteAllForUserAsync_NoResults_ReturnsZero()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = fixture.CreatePlayContext();
+
+        var result = await NewService(ctx).DeleteAllForUserAsync(NewUser(), ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(0);
+    }
+
     private static GameResultService NewService(PlayDbContext ctx) =>
         new(
             ctx,

@@ -15,4 +15,10 @@ public interface IGameResultService
 
     /// <summary>Returns the player's own results, newest day first, paged.</summary>
     Task<Result<PagedResult<GameResultDto>>> ListForUserAsync(string logtoUserId, int page, int pageSize, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Permanently deletes every result the player owns, returning the number of
+    /// rows removed. Used by account deletion (right to erasure).
+    /// </summary>
+    Task<Result<int>> DeleteAllForUserAsync(string logtoUserId, CancellationToken cancellationToken);
 }
