@@ -73,8 +73,6 @@ function chooseScript(value: ScriptVariant) {
   persist()
 }
 
-const role = computed(() => profile.value?.role ?? 'Reader')
-
 // "Member since" from the profile's creation date, formatted in the active locale.
 const memberSince = computed(() => {
   const created = profile.value?.createdAt
@@ -228,9 +226,6 @@ onBeforeUnmount(() => observer?.disconnect())
                   v-if="email"
                   class="truncate font-sans text-sm text-[var(--color-text-muted)]"
                 >{{ email }}</p>
-                <span
-                  class="mt-1.5 inline-flex items-center rounded-full bg-[var(--color-accent-faint)] px-2.5 py-0.5 font-sans text-xs font-medium text-[var(--color-accent)]"
-                >{{ t(`account.role.${role}`) }}</span>
               </div>
             </div>
 
