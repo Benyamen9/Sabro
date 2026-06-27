@@ -5,14 +5,15 @@ const melthoUrl = useRuntimeConfig().public.melthoUrl
 // The Syriac letter tiles teasing the word library (content, not UI strings).
 const libraryTiles = ['ܐ', 'ܒ', 'ܓ', 'ܕ']
 
-// The feature card's hero: ܡܠܬܐ (Meltho) shown as a solved Meltho row — teal
-// "correct" tiles with the lomad + olaf as gold "present" tiles. Decorative, so
-// it's aria-hidden; the heading carries the name for assistive tech.
+// The feature card's hero: Meltho's letters as a tile board — teal "correct"
+// tiles with the lomad (ܠ) and olaf (ܐ) as gold "present" tiles, with those two
+// swapped in position. Decorative, so it's aria-hidden; the heading carries the
+// name for assistive tech.
 const melthoTiles = [
   { letter: 'ܡ', state: 'correct' },
-  { letter: 'ܠ', state: 'present' },
-  { letter: 'ܬ', state: 'correct' },
   { letter: 'ܐ', state: 'present' },
+  { letter: 'ܬ', state: 'correct' },
+  { letter: 'ܠ', state: 'present' },
 ] as const
 
 function tileClass(state: 'correct' | 'present') {
