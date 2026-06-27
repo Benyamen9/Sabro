@@ -115,7 +115,8 @@
     },
     "preferences": {
       "heading": "Voorkeuren",
-      "body": "Deze volgen uw account in elke app van het ecosysteem."
+      "body": "Deze volgen uw account in elke app van het ecosysteem.",
+      "saved": "Opgeslagen"
     },
     "stats": {
       "heading": "Meltho",
@@ -132,8 +133,8 @@
     "leaderboard": {
       "optInHeading": "Ranglijst",
       "optInBody": "Strijd om de langste Meltho-reeks. Kies hoe u verschijnt en of u meedoet — u staat er niet op totdat u zich aanmeldt.",
-      "displayName": "Weergavenaam",
-      "displayNamePlaceholder": "Hoe u verschijnt",
+      "displayName": "Naam op de ranglijst",
+      "displayNamePlaceholder": "Hoe u op de ranglijst verschijnt",
       "optInToggle": "Toon mij op de ranglijst",
       "optInHint": "Een weergavenaam is vereist om te verschijnen.",
       "saved": "Opgeslagen",

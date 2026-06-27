@@ -61,16 +61,29 @@ const localeOptions = computed(() =>
   (locales.value as Array<{ code: string, name: string }>).map(l => ({ code: l.code, name: l.name })),
 )
 
+// Brief "Saved" acknowledgement after a preference change, so language/script
+// edits give the same feedback as the leaderboard save (which they lacked).
+const prefsSaved = ref(false)
+let prefsSavedTimer: ReturnType<typeof setTimeout> | null = null
+
+function flagPrefsSaved() {
+  prefsSaved.value = true
+  if (prefsSavedTimer) clearTimeout(prefsSavedTimer)
+  prefsSavedTimer = setTimeout(() => (prefsSaved.value = false), 2000)
+}
+
 async function chooseLocale(code: string) {
   if (code === locale.value) return
   await setLocale(code as typeof locale.value)
   await persist()
+  flagPrefsSaved()
 }
 
-function chooseScript(value: ScriptVariant) {
+async function chooseScript(value: ScriptVariant) {
   if (value === variant.value) return
   setVariant(value)
-  persist()
+  await persist()
+  flagPrefsSaved()
 }
 
 // "Member since" from the profile's creation date, formatted in the active locale.
@@ -107,6 +120,10 @@ const navGroups = computed(() => [
     ],
   },
 ])
+
+// Flattened for the mobile nav, which drops the group headers for a single
+// horizontally-scrollable pill row.
+const flatNavItems = computed(() => navGroups.value.flatMap(group => group.items))
 
 const sectionIds = ['profile', 'preferences', 'meltho', 'leaderboard', 'password', 'session']
 const activeSection = ref('profile')
@@ -187,7 +204,10 @@ watch(
   { immediate: true },
 )
 
-onBeforeUnmount(teardownScrollSpy)
+onBeforeUnmount(() => {
+  teardownScrollSpy()
+  if (prefsSavedTimer) clearTimeout(prefsSavedTimer)
+})
 </script>
 
 <template>
@@ -218,6 +238,28 @@ onBeforeUnmount(teardownScrollSpy)
       </header>
 
       <div class="lg:grid lg:grid-cols-[190px_minmax(0,1fr)] lg:gap-x-10">
+        <!-- Mobile in-page nav: a scrollable pill row (the sidebar is hidden < lg). -->
+        <nav
+          class="no-scrollbar sticky top-14 z-30 mb-6 -mx-6 overflow-x-auto border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_88%,transparent)] px-6 backdrop-blur lg:hidden"
+          :aria-label="t('account.title')"
+        >
+          <div class="flex min-w-max gap-1.5 py-2.5">
+            <button
+              v-for="item in flatNavItems"
+              :key="item.id"
+              type="button"
+              class="whitespace-nowrap rounded-full px-3.5 py-1.5 font-sans text-sm transition-colors"
+              :class="
+                activeSection === item.id
+                  ? 'bg-[var(--color-accent-faint)] font-medium text-[var(--color-accent)]'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
+              "
+              :aria-current="activeSection === item.id ? 'true' : undefined"
+              @click="goToSection(item.id)"
+            >{{ item.label }}</button>
+          </div>
+        </nav>
+
         <!-- Documentation-style side navigation. -->
         <aside class="hidden lg:block">
           <nav class="sticky top-20 space-y-6" :aria-label="t('account.title')">
@@ -267,10 +309,6 @@ onBeforeUnmount(teardownScrollSpy)
                 <dt class="font-sans text-xs text-[var(--color-text-muted)]">{{ t('account.fields.username') }}</dt>
                 <dd class="mt-0.5 font-sans text-sm text-[var(--color-text)]">{{ username }}</dd>
               </div>
-              <div v-if="email" class="bg-[var(--color-bg-elevated)] px-4 py-3">
-                <dt class="font-sans text-xs text-[var(--color-text-muted)]">{{ t('account.fields.email') }}</dt>
-                <dd class="mt-0.5 truncate font-sans text-sm text-[var(--color-text)]">{{ email }}</dd>
-              </div>
               <div v-if="memberSince" class="bg-[var(--color-bg-elevated)] px-4 py-3">
                 <dt class="font-sans text-xs text-[var(--color-text-muted)]">{{ t('account.fields.memberSince') }}</dt>
                 <dd class="mt-0.5 font-sans text-sm text-[var(--color-text)]">{{ memberSince }}</dd>
@@ -287,9 +325,36 @@ onBeforeUnmount(teardownScrollSpy)
             id="preferences"
             class="scroll-mt-24 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]"
           >
-            <h2 class="font-serif text-lg font-semibold tracking-tight text-[var(--color-text)]">
-              {{ t('account.preferences.heading') }}
-            </h2>
+            <div class="flex items-center gap-3">
+              <h2 class="font-serif text-lg font-semibold tracking-tight text-[var(--color-text)]">
+                {{ t('account.preferences.heading') }}
+              </h2>
+              <Transition
+                enter-active-class="transition-opacity duration-200"
+                leave-active-class="transition-opacity duration-500"
+                enter-from-class="opacity-0"
+                leave-to-class="opacity-0"
+              >
+                <span
+                  v-if="prefsSaved"
+                  class="inline-flex items-center gap-1 font-sans text-xs text-[var(--color-text-muted)]"
+                >
+                  <svg
+                    class="size-3.5 text-[var(--color-accent)]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                  {{ t('account.preferences.saved') }}
+                </span>
+              </Transition>
+            </div>
             <p class="mt-1 font-sans text-sm text-[var(--color-text-muted)]">
               {{ t('account.preferences.body') }}
             </p>
@@ -451,3 +516,14 @@ onBeforeUnmount(teardownScrollSpy)
     </template>
   </div>
 </template>
+
+<style scoped>
+/* Keep the mobile nav horizontally scrollable but hide the scrollbar chrome. */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+</style>
