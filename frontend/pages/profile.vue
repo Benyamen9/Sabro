@@ -333,7 +333,7 @@ onBeforeUnmount(() => observer?.disconnect())
             <div class="mt-4">
               <label
                 for="displayName"
-                class="font-sans text-sm font-medium text-[var(--color-text)]"
+                class="block font-sans text-sm font-medium text-[var(--color-text)]"
               >{{ t('account.leaderboard.displayName') }}</label>
               <input
                 id="displayName"
