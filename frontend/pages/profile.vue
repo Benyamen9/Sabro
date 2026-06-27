@@ -120,28 +120,32 @@ function goToSection(id: string) {
 }
 
 // Scroll-spy: highlight the nav item for the section currently being read.
-// Reference line sits just below the sticky header (~56px); a section becomes
-// active once its top scrolls above this line.
-const SPY_OFFSET = 96
+// The reference line sits ~30% down the viewport, so a section becomes active
+// once its heading reaches the upper-third reading area — this tracks timely
+// while scrolling down rather than only when a heading reaches the very top.
+const SPY_RATIO = 0.3
 let ticking = false
 
 function updateActiveSection() {
   if (typeof window === 'undefined') return
 
-  // Bottom guard: the last section (Session) is short and can never scroll its
-  // top above the reference line, so force it active once the page bottoms out.
-  const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
-  if (atBottom) {
-    activeSection.value = sectionIds[sectionIds.length - 1] ?? 'session'
-    return
-  }
+  const base = window.innerHeight * SPY_RATIO
 
-  // Otherwise: the last section whose top has passed the reference line.
+  // The short trailing sections (password, session) can never scroll their tops
+  // up to the base reference line — there isn't enough page below them. So as the
+  // page bottoms out, let the line drift down toward the viewport bottom. This
+  // gives each trailing section its own window (password, then session) instead
+  // of a hard bottom-guard that would jump straight to the last one and skip
+  // password.
+  const distanceToBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight)
+  const referenceLine = base + Math.max(0, window.innerHeight - base - distanceToBottom)
+
+  // Active = the last section whose top has passed the (possibly drifted) line.
   let current = sectionIds[0] ?? 'profile'
   for (const id of sectionIds) {
     const el = document.getElementById(id)
     if (!el) continue
-    if (el.getBoundingClientRect().top <= SPY_OFFSET) current = id
+    if (el.getBoundingClientRect().top <= referenceLine) current = id
     else break
   }
   activeSection.value = current
