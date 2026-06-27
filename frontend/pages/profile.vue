@@ -283,10 +283,11 @@ onBeforeUnmount(() => {
 
       <div class="lg:grid lg:grid-cols-[190px_minmax(0,1fr)] lg:gap-x-10">
         <!-- Mobile in-page nav: a scrollable pill row (the sidebar is hidden < lg).
-             Not sticky — the layout header wraps to two rows on mobile, so a
-             sticky bar tucked behind it; this scrolls with the content instead. -->
+             Sticky below the header. The header wraps to two rows on mobile
+             (~6rem tall), so it pins at top-24, not top-14 — otherwise the
+             header overlapped it. -->
         <nav
-          class="no-scrollbar mb-6 -mx-6 overflow-x-auto border-b border-[var(--color-border)] px-6 lg:hidden"
+          class="no-scrollbar sticky top-24 z-30 mb-6 -mx-6 overflow-x-auto border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_90%,transparent)] px-6 backdrop-blur lg:hidden"
           :aria-label="t('account.title')"
         >
           <div class="flex min-w-max gap-1.5 py-2.5">
