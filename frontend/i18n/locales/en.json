@@ -78,6 +78,8 @@
       "confirm": "Confirm new password",
       "hint": "At least 8 characters.",
       "save": "Update password",
+      "show": "Show password",
+      "hide": "Hide password",
       "success": "Password updated.",
       "errors": {
         "required": "Please fill in every field.",
