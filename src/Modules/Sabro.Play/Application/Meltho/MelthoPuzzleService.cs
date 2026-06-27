@@ -136,6 +136,7 @@ internal sealed class MelthoPuzzleService : IMelthoPuzzleService
             entry.SyriacUnvocalized,
             entry.SyriacVocalized,
             entry.SblTransliteration,
+            entry.GrammaticalCategory,
             entry.PlayableLength,
             entry.Meanings.Select(m => new MelthoPuzzleMeaningDto(m.Language, m.Text)).ToArray());
 

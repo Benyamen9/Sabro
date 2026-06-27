@@ -6,5 +6,6 @@ public sealed record PlayableLexiconEntry(
     string SyriacUnvocalized,
     string? SyriacVocalized,
     string? SblTransliteration,
+    string GrammaticalCategory,
     int PlayableLength,
     IReadOnlyList<LexiconMeaningDto> Meanings);
