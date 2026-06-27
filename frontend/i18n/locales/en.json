@@ -78,9 +78,26 @@
       "stats": "Stats",
       "preferences": "Preferences",
       "leaderboard": "Leaderboard",
+      "username": "Username",
       "password": "Password",
       "session": "Session",
       "delete": "Delete account"
+    },
+    "username": {
+      "heading": "Username",
+      "body": "Change the username you sign in with.",
+      "label": "New username",
+      "hint": "Letters, digits and underscores; must start with a letter or underscore.",
+      "save": "Update username",
+      "success": "Username updated.",
+      "errors": {
+        "required": "Please enter a username.",
+        "invalid": "That username isn't valid. Use letters, digits and underscores.",
+        "unchanged": "That's already your username.",
+        "taken": "That username is already taken.",
+        "unauthenticated": "Your session expired. Please sign in again.",
+        "unavailable": "Something went wrong. Please try again."
+      }
     },
     "security": {
       "heading": "Password",

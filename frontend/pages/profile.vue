@@ -146,6 +146,7 @@ const navGroups = computed(() => [
   {
     label: t('account.nav.security'),
     items: [
+      { id: 'username', label: t('account.nav.username') },
       { id: 'password', label: t('account.nav.password') },
       { id: 'session', label: t('account.nav.session') },
       { id: 'delete', label: t('account.nav.delete') },
@@ -157,7 +158,7 @@ const navGroups = computed(() => [
 // horizontally-scrollable pill row.
 const flatNavItems = computed(() => navGroups.value.flatMap(group => group.items))
 
-const sectionIds = ['profile', 'preferences', 'meltho', 'leaderboard', 'password', 'session', 'delete']
+const sectionIds = ['profile', 'preferences', 'meltho', 'leaderboard', 'username', 'password', 'session', 'delete']
 const activeSection = ref('profile')
 
 function goToSection(id: string) {
@@ -506,6 +507,11 @@ onBeforeUnmount(() => {
               <MelthoLeaderboardCard />
             </div>
           </section>
+
+          <!-- Username — change the Logto username via the Account API. -->
+          <div id="username" class="scroll-mt-24">
+            <ChangeUsernameCard />
+          </div>
 
           <!-- Password — change the sign-in password via Logto's Account API. -->
           <div id="password" class="scroll-mt-24">
