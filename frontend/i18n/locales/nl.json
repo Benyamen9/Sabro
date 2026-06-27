@@ -78,6 +78,8 @@
       "stats": "Statistieken",
       "preferences": "Voorkeuren",
       "leaderboard": "Ranglijst",
+      "username": "Gebruikersnaam",
+      "email": "E-mail",
       "password": "Wachtwoord",
       "session": "Sessie",
       "delete": "Account verwijderen"
@@ -94,6 +96,29 @@
         "invalid": "Die gebruikersnaam is niet geldig. Gebruik letters, cijfers en liggende streepjes.",
         "unchanged": "Dat is al uw gebruikersnaam.",
         "taken": "Die gebruikersnaam is al in gebruik.",
+        "unauthenticated": "Uw sessie is verlopen. Meld u opnieuw aan.",
+        "unavailable": "Er is iets misgegaan. Probeer het opnieuw."
+      }
+    },
+    "email": {
+      "heading": "E-mail",
+      "body": "Wijzig het e-mailadres van uw account.",
+      "bodyCurrent": "Het e-mailadres van uw account is {email}. Wijzig het hieronder.",
+      "label": "Nieuw e-mailadres",
+      "sendCode": "Code verzenden",
+      "sending": "Verzenden…",
+      "sentTo": "We hebben een 6-cijferige code naar {email} gestuurd. Voer deze hieronder in samen met uw huidige wachtwoord.",
+      "codeLabel": "Verificatiecode",
+      "passwordLabel": "Huidig wachtwoord",
+      "confirm": "E-mail bijwerken",
+      "useDifferent": "Een ander e-mailadres gebruiken",
+      "success": "E-mail bijgewerkt.",
+      "errors": {
+        "invalid_email": "Voer een geldig e-mailadres in.",
+        "send_failed": "Kon de code niet verzenden. Controleer het adres en probeer opnieuw.",
+        "code_invalid": "Die code is onjuist of verlopen.",
+        "password_invalid": "Uw huidige wachtwoord is onjuist.",
+        "email_taken": "Dat e-mailadres is al in gebruik.",
         "unauthenticated": "Uw sessie is verlopen. Meld u opnieuw aan.",
         "unavailable": "Er is iets misgegaan. Probeer het opnieuw."
       }
