@@ -7,12 +7,16 @@ const { isConfigured, isSignedIn, displayName, email, username, avatarUrl, initi
 const { variant, set: setVariant, available: scriptOptions } = useScriptVariant()
 const { profile, load, persist, saveAccount, deleteAccount } = useProfile()
 const { load: loadLeaderboard } = useLeaderboard()
+const { hasPassword, load: loadCapabilities } = useAccountCapabilities()
 
 useHead({ title: () => `${t('account.title')} · ${t('site.title')}` })
 
 // The layout loads the profile on mount, but the page can be hit directly, so
 // resolve it here too. Both calls are idempotent (loaded-once guard inside).
-onMounted(load)
+onMounted(() => {
+  load()
+  loadCapabilities()
+})
 
 // --- Leaderboard opt-in editing ---------------------------------------------
 // Local draft of the editable account fields. Seeded once from the profile (or
@@ -147,8 +151,14 @@ const navGroups = computed(() => [
     label: t('account.nav.security'),
     items: [
       { id: 'username', label: t('account.nav.username') },
-      { id: 'email', label: t('account.nav.email') },
-      { id: 'password', label: t('account.nav.password') },
+      // Email + password changes need the current password as identity proof,
+      // so they only apply to accounts that have one.
+      ...(hasPassword.value
+        ? [
+            { id: 'email', label: t('account.nav.email') },
+            { id: 'password', label: t('account.nav.password') },
+          ]
+        : []),
       { id: 'session', label: t('account.nav.session') },
       { id: 'delete', label: t('account.nav.delete') },
     ],
@@ -514,15 +524,19 @@ onBeforeUnmount(() => {
             <ChangeUsernameCard />
           </div>
 
-          <!-- Email — change the primary email (code + identity) via the Account API. -->
-          <div id="email" class="scroll-mt-24">
-            <ChangeEmailCard />
-          </div>
+          <!-- Email + password both prove identity with the current password, so
+               they're hidden for social-only accounts that have none. -->
+          <template v-if="hasPassword">
+            <!-- Email — change the primary email (code + identity) via the Account API. -->
+            <div id="email" class="scroll-mt-24">
+              <ChangeEmailCard />
+            </div>
 
-          <!-- Password — change the sign-in password via Logto's Account API. -->
-          <div id="password" class="scroll-mt-24">
-            <ChangePasswordCard />
-          </div>
+            <!-- Password — change the sign-in password via Logto's Account API. -->
+            <div id="password" class="scroll-mt-24">
+              <ChangePasswordCard />
+            </div>
+          </template>
 
           <!-- Session — account actions. -->
           <section
