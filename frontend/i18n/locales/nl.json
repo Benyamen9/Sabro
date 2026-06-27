@@ -70,6 +70,17 @@
     "title": "Profiel",
     "signInRequired": "Meld u aan om uw profiel te bekijken.",
     "identityNote": "Uw naam en e-mail worden beheerd door uw aanmeldaccount.",
+    "nav": {
+      "account": "Account",
+      "security": "Beveiliging",
+      "profile": "Profiel",
+      "meltho": "Meltho",
+      "stats": "Statistieken",
+      "preferences": "Voorkeuren",
+      "leaderboard": "Ranglijst",
+      "password": "Wachtwoord",
+      "session": "Sessie"
+    },
     "security": {
       "heading": "Wachtwoord",
       "body": "Wijzig het wachtwoord waarmee u zich aanmeldt.",

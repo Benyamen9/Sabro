@@ -70,6 +70,17 @@
     "title": "Profil",
     "signInRequired": "Connectez-vous pour voir votre profil.",
     "identityNote": "Votre nom et votre e-mail sont gérés par votre compte de connexion.",
+    "nav": {
+      "account": "Compte",
+      "security": "Sécurité",
+      "profile": "Profil",
+      "meltho": "Meltho",
+      "stats": "Statistiques",
+      "preferences": "Préférences",
+      "leaderboard": "Classement",
+      "password": "Mot de passe",
+      "session": "Session"
+    },
     "security": {
       "heading": "Mot de passe",
       "body": "Modifiez le mot de passe que vous utilisez pour vous connecter.",
