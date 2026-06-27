@@ -70,6 +70,17 @@
     "title": "Profile",
     "signInRequired": "Sign in to view your profile.",
     "identityNote": "Your name and email are managed by your sign-in account.",
+    "nav": {
+      "account": "Account",
+      "security": "Security",
+      "profile": "Profile",
+      "meltho": "Meltho",
+      "stats": "Stats",
+      "preferences": "Preferences",
+      "leaderboard": "Leaderboard",
+      "password": "Password",
+      "session": "Session"
+    },
     "security": {
       "heading": "Password",
       "body": "Change the password you use to sign in.",
