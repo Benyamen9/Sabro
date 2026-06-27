@@ -5,6 +5,24 @@ const melthoUrl = useRuntimeConfig().public.melthoUrl
 // The Syriac letter tiles teasing the word library (content, not UI strings).
 const libraryTiles = ['ܐ', 'ܒ', 'ܓ', 'ܕ']
 
+// The feature card's hero: ܡܠܬܐ (Meltho) shown as a solved Meltho row — teal
+// "correct" tiles with the lomad + olaf as gold "present" tiles. Decorative, so
+// it's aria-hidden; the heading carries the name for assistive tech.
+const melthoTiles = [
+  { letter: 'ܡ', state: 'correct' },
+  { letter: 'ܠ', state: 'present' },
+  { letter: 'ܬ', state: 'correct' },
+  { letter: 'ܐ', state: 'present' },
+] as const
+
+function tileClass(state: 'correct' | 'present') {
+  const base
+    = 'flex size-12 items-center justify-center rounded-xl border-2 text-2xl text-white sm:size-14 sm:text-3xl'
+  return state === 'present'
+    ? `${base} border-[var(--color-meltho-gold-dark)] bg-[var(--color-meltho-gold)]`
+    : `${base} border-[var(--color-meltho-dark)] bg-[var(--color-meltho)]`
+}
+
 const primaryButton
   = 'inline-flex items-center gap-2 rounded-xl bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(140_47_57/0.25)] transition-colors hover:bg-[var(--color-accent-hover)]'
 const ghostButton
@@ -57,13 +75,19 @@ const sectionEyebrow
       </div>
 
       <div
-        class="mt-5 flex flex-col gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:gap-7 sm:p-8"
+        class="mt-5 flex flex-col items-center gap-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:flex-row sm:gap-7 sm:p-8 sm:text-left"
       >
-        <!-- A single glyph: smaller on a phone (where it stacks above the
-             heading) so it doesn't dominate, full size on >= sm. -->
-        <SyriacText text="ܡܠܬܐ" class="!text-4xl leading-none text-[var(--color-accent)] sm:!text-5xl" />
+        <!-- The game itself as the hero: a Meltho tile row spelling ܡܠܬܐ as a
+             solved word (teal "correct" + gold "present"). On mobile it centres
+             above the text; on desktop it sits to the left like a board. -->
+        <div class="flex shrink-0 gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
+          <span v-for="tile in melthoTiles" :key="tile.letter" :class="tileClass(tile.state)">
+            <SyriacText :text="tile.letter" class="leading-none" />
+          </span>
+        </div>
+
         <div class="flex-1">
-          <h2 class="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-sans text-2xl">
+          <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
             {{ t('home.meltho.heading') }}
             <span
               class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
@@ -72,11 +96,15 @@ const sectionEyebrow
               {{ t('home.meltho.live') }}
             </span>
           </h2>
-          <p class="mt-2 max-w-md font-serif text-[var(--color-text-muted)]">
+          <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
             {{ t('home.meltho.body') }}
           </p>
         </div>
-        <a :href="melthoUrl" :class="primaryButton" class="self-start sm:ml-auto sm:self-auto">
+
+        <a
+          :href="melthoUrl"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-meltho)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-meltho-dark)] sm:ml-auto sm:w-auto"
+        >
           {{ t('home.meltho.cta') }} →
         </a>
       </div>
