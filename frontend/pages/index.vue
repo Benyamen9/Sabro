@@ -59,12 +59,11 @@ const sectionEyebrow
       <div
         class="mt-5 flex flex-col gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:gap-7 sm:p-8"
       >
-        <!-- Big left glyph on desktop. On a phone it dominated the stacked card,
-             so there it's hidden and shown small, inline with the heading. -->
-        <SyriacText text="ܡܠܬܐ" class="hidden leading-none text-[var(--color-accent)] sm:block sm:!text-5xl" />
+        <!-- A single glyph: smaller on a phone (where it stacks above the
+             heading) so it doesn't dominate, full size on >= sm. -->
+        <SyriacText text="ܡܠܬܐ" class="!text-4xl leading-none text-[var(--color-accent)] sm:!text-5xl" />
         <div class="flex-1">
           <h2 class="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-sans text-2xl">
-            <SyriacText text="ܡܠܬܐ" class="!text-3xl leading-none text-[var(--color-accent)] sm:hidden" />
             {{ t('home.meltho.heading') }}
             <span
               class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
