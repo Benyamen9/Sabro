@@ -73,7 +73,7 @@ function isActive(path: string) {
           :href="melthoUrl"
           target="_blank"
           rel="noopener"
-          class="order-5 ml-auto inline-flex items-center gap-1 rounded-full bg-[var(--color-accent-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-accent)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-accent-faint)_70%,var(--color-accent)_12%)] sm:order-3"
+          class="order-5 ml-auto inline-flex items-center gap-1 rounded-full bg-[var(--color-meltho-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-meltho)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-meltho-faint)_70%,var(--color-meltho)_14%)] sm:order-3"
         >
           {{ t('nav.meltho') }}
           <span aria-hidden="true">↗</span>
