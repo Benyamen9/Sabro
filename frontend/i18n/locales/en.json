@@ -115,7 +115,8 @@
     },
     "preferences": {
       "heading": "Preferences",
-      "body": "These follow your account across every app in the ecosystem."
+      "body": "These follow your account across every app in the ecosystem.",
+      "saved": "Saved"
     },
     "stats": {
       "heading": "Meltho",
@@ -132,8 +133,8 @@
     "leaderboard": {
       "optInHeading": "Leaderboard",
       "optInBody": "Compete on the longest Meltho streak. Choose how you appear and whether to join — you're off the board until you opt in.",
-      "displayName": "Display name",
-      "displayNamePlaceholder": "How you'll appear",
+      "displayName": "Leaderboard name",
+      "displayNamePlaceholder": "How you'll appear on the board",
       "optInToggle": "Show me on the leaderboard",
       "optInHint": "A display name is required to appear.",
       "saved": "Saved",

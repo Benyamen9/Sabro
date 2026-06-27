@@ -115,7 +115,8 @@
     },
     "preferences": {
       "heading": "Préférences",
-      "body": "Elles suivent votre compte dans toutes les applications de l’écosystème."
+      "body": "Elles suivent votre compte dans toutes les applications de l’écosystème.",
+      "saved": "Enregistré"
     },
     "stats": {
       "heading": "Meltho",
@@ -132,8 +133,8 @@
     "leaderboard": {
       "optInHeading": "Classement",
       "optInBody": "Affrontez les autres sur la plus longue série Meltho. Choisissez comment vous apparaissez et si vous participez — vous n’y figurez pas tant que vous n’avez pas adhéré.",
-      "displayName": "Nom affiché",
-      "displayNamePlaceholder": "Comment vous apparaîtrez",
+      "displayName": "Nom sur le classement",
+      "displayNamePlaceholder": "Comment vous apparaîtrez au classement",
       "optInToggle": "M’afficher dans le classement",
       "optInHint": "Un nom affiché est requis pour apparaître.",
       "saved": "Enregistré",
