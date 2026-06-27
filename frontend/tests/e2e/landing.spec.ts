@@ -32,7 +32,7 @@ test.describe('landing page', () => {
     await expect(page.getByRole('heading', { name: 'Un hub, plusieurs applications' })).toBeVisible()
   })
 
-  test('renders Serto when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {
+  test('renders the Western font when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {
     await context.addCookies([{ name: 'sabro_script_variant', value: 'serto', url: baseURL! }])
     await page.goto('/')
 
