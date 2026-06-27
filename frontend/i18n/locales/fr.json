@@ -78,6 +78,8 @@
       "confirm": "Confirmer le nouveau mot de passe",
       "hint": "Au moins 8 caractères.",
       "save": "Mettre à jour le mot de passe",
+      "show": "Afficher le mot de passe",
+      "hide": "Masquer le mot de passe",
       "success": "Mot de passe mis à jour.",
       "errors": {
         "required": "Veuillez remplir tous les champs.",

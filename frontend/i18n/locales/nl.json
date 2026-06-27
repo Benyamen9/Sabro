@@ -78,6 +78,8 @@
       "confirm": "Bevestig nieuw wachtwoord",
       "hint": "Minimaal 8 tekens.",
       "save": "Wachtwoord bijwerken",
+      "show": "Wachtwoord tonen",
+      "hide": "Wachtwoord verbergen",
       "success": "Wachtwoord bijgewerkt.",
       "errors": {
         "required": "Vul alle velden in.",
