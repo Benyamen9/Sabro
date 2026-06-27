@@ -180,6 +180,21 @@ function goToSection(id: string) {
   history.replaceState(null, '', `#${id}`)
 }
 
+// The horizontal mobile nav scrolls to keep the active pill centred as the
+// active section changes while scrolling the page — the bar tracks along.
+const mobileNav = ref<HTMLElement | null>(null)
+
+watch(activeSection, (id) => {
+  const nav = mobileNav.value
+  if (!nav) return
+  const pill = nav.querySelector<HTMLElement>(`[data-section="${id}"]`)
+  if (!pill) return
+  const navRect = nav.getBoundingClientRect()
+  const pillRect = pill.getBoundingClientRect()
+  const delta = (pillRect.left + pillRect.width / 2) - (navRect.left + navRect.width / 2)
+  nav.scrollBy({ left: delta, behavior: 'smooth' })
+})
+
 // Scroll-spy: highlight the nav item for the section currently being read.
 // The reference line sits ~30% down the viewport, so a section becomes active
 // once its heading reaches the upper-third reading area — this tracks timely
@@ -287,6 +302,7 @@ onBeforeUnmount(() => {
              (~6rem tall), so it pins at top-24, not top-14 — otherwise the
              header overlapped it. -->
         <nav
+          ref="mobileNav"
           class="no-scrollbar sticky top-24 z-30 mb-6 -mx-6 overflow-x-auto border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_90%,transparent)] px-6 backdrop-blur lg:hidden"
           :aria-label="t('account.title')"
         >
@@ -294,6 +310,7 @@ onBeforeUnmount(() => {
             <button
               v-for="item in flatNavItems"
               :key="item.id"
+              :data-section="item.id"
               type="button"
               class="whitespace-nowrap rounded-full px-3.5 py-1.5 font-sans text-sm transition-colors"
               :class="
