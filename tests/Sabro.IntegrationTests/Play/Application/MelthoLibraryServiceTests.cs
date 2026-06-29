@@ -270,13 +270,32 @@ public class MelthoLibraryServiceTests
     }
 
     [Fact]
-    public async Task GetDetail_WordServedOnlyToday_ReturnsNotFound()
+    public async Task GetDetail_WordServedToday_ResolvesWithTodayInPlayedOn()
     {
+        // The list never shows today's word, but the detail does: you can only reach it with the
+        // entry id, which Meltho only hands out via today's puzzle — i.e. once you've played. So
+        // a word served only today resolves (no need to wait for tomorrow), with today included.
         var ct = TestContext.Current.CancellationToken;
         await ClearAsync(ct);
         var today = new DateOnly(2251, 6, 15);
         var word = Guid.NewGuid();
         await SeedServedAsync(today, word, ct);
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, EchoReader(), today).GetDetailAsync(word, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.PlayedOn.Should().Equal(today);
+    }
+
+    [Fact]
+    public async Task GetDetail_WordNeverServed_ReturnsNotFound()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2256, 6, 15);
+        var word = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(1), Guid.NewGuid(), ct); // some other future word
 
         await using var ctx = fixture.CreatePlayContext();
         var result = await NewService(ctx, EchoReader(), today).GetDetailAsync(word, ct);

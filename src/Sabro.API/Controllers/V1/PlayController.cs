@@ -87,9 +87,11 @@ public sealed class PlayController : ApiControllerBase
     }
 
     /// <summary>
-    /// Returns the detail for one past Meltho word: the info table, the per-letter composition
-    /// (qushoyo/rukkokho), and every past date it was served. Public. 404 if the word has never
-    /// been served on a past day.
+    /// Returns the detail for one Meltho word: the info table, the per-letter composition
+    /// (qushoyo/rukkokho), and every date it was served (including today). Public. Unlike the
+    /// browse list, this resolves today's word too: the id is only handed out by today's puzzle,
+    /// so a caller who has it has already played and need not wait until tomorrow. 404 if the word
+    /// has never been served.
     /// </summary>
     [HttpGet("meltho/library/{lexiconEntryId:guid}")]
     [AllowAnonymous]

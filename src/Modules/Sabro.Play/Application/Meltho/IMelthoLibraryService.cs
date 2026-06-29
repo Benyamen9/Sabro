@@ -4,10 +4,11 @@ using Sabro.Shared.Results;
 namespace Sabro.Play.Application.Meltho;
 
 /// <summary>
-/// Reads the public Meltho word library — the words served on past days, joined to their
-/// lexicon detail. Today's word is never exposed (it would spoil the live puzzle). Words are
-/// deduplicated across the days they appeared: the list is per word, the detail lists every
-/// past date.
+/// Reads the public Meltho word library — the words served as daily puzzles, joined to their
+/// lexicon detail. The browse list never exposes today's word (it would spoil the live puzzle);
+/// the detail does, because its id is only handed out by today's puzzle (so the caller has
+/// played). Words are deduplicated across the days they appeared: the list is per word, the
+/// detail lists every date it was served.
 /// </summary>
 public interface IMelthoLibraryService
 {
@@ -23,8 +24,8 @@ public interface IMelthoLibraryService
     Task<Result<PagedResult<MelthoLibraryEntryDto>>> ListAsync(int page, int pageSize, LibrarySort sort, SortDirection? direction, string? search, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Returns the detail for one past word (info + composition + all past dates). Fails with
-    /// not-found if the word has never been served on a past day, or no longer resolves.
+    /// Returns the detail for one word (info + composition + every date served, today included).
+    /// Fails with not-found if the word has never been served, or no longer resolves.
     /// </summary>
     Task<Result<MelthoLibraryDetailDto>> GetDetailAsync(Guid lexiconEntryId, CancellationToken cancellationToken);
 }

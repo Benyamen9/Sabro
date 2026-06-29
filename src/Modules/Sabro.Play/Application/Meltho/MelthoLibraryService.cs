@@ -90,9 +90,14 @@ internal sealed class MelthoLibraryService : IMelthoLibraryService
     public async Task<Result<MelthoLibraryDetailDto>> GetDetailAsync(Guid lexiconEntryId, CancellationToken cancellationToken)
     {
         var today = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime);
+
+        // Detail includes today (<=), unlike the browse list (< today). The id is only obtainable
+        // from today's puzzle payload, so reaching today's detail means you've already played —
+        // no reason to make you wait until tomorrow to look the word up. Future dates can't occur
+        // (puzzles are created get-or-create for today only), but <= keeps the bound explicit.
         var playedOn = await dbContext.MelthoDailyPuzzles
             .AsNoTracking()
-            .Where(p => p.GameId == Games.Meltho && p.LexiconEntryId == lexiconEntryId && p.Date < today)
+            .Where(p => p.GameId == Games.Meltho && p.LexiconEntryId == lexiconEntryId && p.Date <= today)
             .Select(p => p.Date)
             .OrderByDescending(d => d)
             .ToListAsync(cancellationToken);
