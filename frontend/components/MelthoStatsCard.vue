@@ -61,12 +61,10 @@ function barWidth(value: number): string {
       </div>
       <a
         :href="melthoUrl"
-        target="_blank"
-        rel="noopener"
         class="inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--color-accent-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-accent)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-accent-faint)_70%,var(--color-accent)_12%)]"
       >
         {{ t('account.stats.play') }}
-        <span aria-hidden="true">↗</span>
+        <span aria-hidden="true">→</span>
       </a>
     </div>
 
