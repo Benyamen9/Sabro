@@ -71,12 +71,10 @@ function isActive(path: string) {
 
         <a
           :href="melthoUrl"
-          target="_blank"
-          rel="noopener"
           class="order-5 ml-auto inline-flex items-center gap-1 rounded-full bg-[var(--color-meltho-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-meltho)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-meltho-faint)_70%,var(--color-meltho)_14%)] sm:order-3"
         >
           {{ t('nav.meltho') }}
-          <span aria-hidden="true">↗</span>
+          <span aria-hidden="true">→</span>
         </a>
 
         <span aria-hidden="true" class="order-6 hidden h-5 w-px bg-[var(--color-border)] sm:order-4 sm:block" />
