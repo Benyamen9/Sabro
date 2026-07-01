@@ -66,7 +66,10 @@ services:
       retries: 5
 
   logto:
-    image: svhd/logto:latest
+    # Pinned, never :latest — matches prod. A newer image brings DB alterations
+    # the local database has not applied, and Logto refuses to boot until they
+    # are deployed (`npm run alteration deploy`). Bump this tag deliberately.
+    image: svhd/logto:1.41.0
     container_name: sabro-logto
     restart: unless-stopped
     depends_on:
