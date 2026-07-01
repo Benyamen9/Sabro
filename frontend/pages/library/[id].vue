@@ -108,10 +108,6 @@ function categoryLabel(category: string | undefined) {
           <dt class="font-sans text-[0.7rem] uppercase tracking-wide text-[var(--color-text-faint)]">{{ t('library.fields.length') }}</dt>
           <dd class="mt-1 font-serif text-lg">{{ data.playableLength }}</dd>
         </div>
-        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
-          <dt class="font-sans text-[0.7rem] uppercase tracking-wide text-[var(--color-text-faint)]">{{ t('library.playedOn') }}</dt>
-          <dd class="mt-1 font-sans text-sm text-[var(--color-text-muted)]">{{ data.playedOn.join(' · ') }}</dd>
-        </div>
       </dl>
 
       <!-- Meanings, one row per language -->
