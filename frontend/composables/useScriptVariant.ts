@@ -35,7 +35,7 @@ export function useScriptVariant() {
   // set, so http localhost dev still works.
   const cookieDomain = useRuntimeConfig().public.cookieDomain
   const cookie = useCookie<ScriptVariant>(cookieKey, {
-    default: () => 'estrangela',
+    default: () => 'serto',
     maxAge: 60 * 60 * 24 * 365,
     sameSite: 'lax',
     domain: cookieDomain || undefined,

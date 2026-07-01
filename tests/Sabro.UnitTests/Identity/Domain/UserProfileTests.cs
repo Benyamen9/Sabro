@@ -7,14 +7,14 @@ public class UserProfileTests
     private const string LogtoUserId = "logto|abc123";
 
     [Fact]
-    public void Create_WithLogtoUserIdOnly_DefaultsToEnglishAndEstrangela()
+    public void Create_WithLogtoUserIdOnly_DefaultsToEnglishAndSerto()
     {
         var result = UserProfile.Create(LogtoUserId);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.LogtoUserId.Should().Be(LogtoUserId);
         result.Value.PreferredLanguage.Should().Be("en");
-        result.Value.PreferredScriptVariant.Should().Be(ScriptVariant.Estrangela);
+        result.Value.PreferredScriptVariant.Should().Be(ScriptVariant.Serto);
     }
 
     [Theory]
