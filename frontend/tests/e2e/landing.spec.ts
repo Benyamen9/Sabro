@@ -10,8 +10,16 @@ test.describe('landing page', () => {
     await expect(page.getByRole('link', { name: 'Translations', exact: true })).toHaveCount(0)
     await expect(page.getByText('letter by letter.')).toBeVisible()
 
-    await expect(page.getByRole('combobox', { name: 'Syriac script' })).toBeVisible()
-    await expect(page.getByRole('combobox', { name: 'Language' })).toBeVisible()
+    // The script + language switchers are custom dropdowns: a trigger button that
+    // opens a listbox of options (replacing the native <select> popup).
+    const scriptTrigger = page.getByRole('button', { name: 'Syriac script' })
+    await expect(scriptTrigger).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Language' })).toBeVisible()
+
+    // Opening the script menu reveals the three scripts as a listbox.
+    await scriptTrigger.click()
+    await expect(page.getByRole('option', { name: 'Maherboyo' })).toBeVisible()
+    await page.keyboard.press('Escape')
 
     // With no Logto config set in the test env, the UserMenu degrades to a
     // "Auth not configured" notice rather than rendering a broken sign-in
