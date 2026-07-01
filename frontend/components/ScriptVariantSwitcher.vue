@@ -5,39 +5,38 @@ const { t } = useI18n()
 const { variant, set, available } = useScriptVariant()
 const { persist } = useProfile()
 
-// Bind the native <select> with v-model so it reflects the persisted variant on
-// load — a plain :value attribute can't drive a <select>'s selection across SSR
-// hydration. The select sits transparent over a styled icon facade: the facade
-// gives the compact icon-button look, the real <select> underneath keeps the
-// native dropdown, keyboard support, and accessibility.
-const selected = computed<ScriptVariant>({
-  get: () => variant.value,
-  set: (value) => {
-    set(value)
-    persist()
-  },
-})
+const options = computed(() =>
+  available.map(value => ({ value, label: t(`switcher.script.${value}`) })),
+)
+
+// The shared cookie updates instantly (and propagates to the other apps in this
+// browser); mirror the choice to the signed-in user's profile for cross-device.
+function onSelect(value: string) {
+  set(value as ScriptVariant)
+  persist()
+}
 </script>
 
 <template>
-  <label
-    class="group relative inline-flex items-center rounded-md focus-within:ring-2 focus-within:ring-[var(--color-accent-faint)]"
+  <!-- The trigger glyph renders in the active variant's font, so it previews the
+       current script; each menu row shows the same glyph in its own script. -->
+  <SelectMenu
+    :model-value="variant"
+    :options="options"
+    :menu-label="t('switcher.scriptLabel')"
+    @update:model-value="onSelect"
   >
-    <span
-      aria-hidden="true"
-      class="flex h-8 items-center justify-center rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-2.5 font-syriac text-lg leading-none text-[var(--color-text-muted)] transition-colors group-hover:text-[var(--color-text)]"
-    >ܐ</span>
-    <select
-      v-model="selected"
-      :aria-label="t('switcher.scriptLabel')"
-      :title="t('switcher.scriptLabel')"
-      class="absolute inset-0 size-full cursor-pointer appearance-none opacity-0"
-    >
-      <option
-        v-for="value in available"
-        :key="value"
-        :value="value"
-      >{{ t(`switcher.script.${value}`) }}</option>
-    </select>
-  </label>
+    <template #trigger>
+      <SyriacText text="ܐ" aria-hidden="true" class="!text-lg leading-none" />
+    </template>
+    <template #option="{ option }">
+      <span class="flex-1">{{ option.label }}</span>
+      <SyriacText
+        text="ܐ"
+        aria-hidden="true"
+        :variant="(option.value as ScriptVariant)"
+        class="!text-lg leading-none"
+      />
+    </template>
+  </SelectMenu>
 </template>
