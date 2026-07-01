@@ -29,7 +29,7 @@ public class UserProfileServiceTests
         result.IsSuccess.Should().BeTrue();
         result.Value!.LogtoUserId.Should().Be(logtoUserId);
         result.Value.PreferredLanguage.Should().Be("en");
-        result.Value.PreferredScriptVariant.Should().Be(ScriptVariant.Estrangela);
+        result.Value.PreferredScriptVariant.Should().Be(ScriptVariant.Serto);
         result.Value.Role.Should().Be(Role.Reader);
     }
 

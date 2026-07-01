@@ -34,7 +34,7 @@ public class ProfileControllerTests : IDisposable
         dto.Should().NotBeNull();
         dto!.LogtoUserId.Should().Be(testUser);
         dto.PreferredLanguage.Should().Be("en");
-        dto.PreferredScriptVariant.Should().Be(ScriptVariant.Estrangela);
+        dto.PreferredScriptVariant.Should().Be(ScriptVariant.Serto);
 
         await using var ctx = postgres.CreateIdentityContext();
         var loaded = await ctx.UserProfiles.FirstOrDefaultAsync(p => p.Id == dto.Id, ct);

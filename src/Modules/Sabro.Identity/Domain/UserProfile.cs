@@ -56,7 +56,7 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
     public static Result<UserProfile> Create(
         string logtoUserId,
         string preferredLanguage = "en",
-        ScriptVariant preferredScriptVariant = ScriptVariant.Estrangela)
+        ScriptVariant preferredScriptVariant = ScriptVariant.Serto)
     {
         var trimmedLogtoUserId = (logtoUserId ?? string.Empty).Trim();
         if (trimmedLogtoUserId.Length == 0)

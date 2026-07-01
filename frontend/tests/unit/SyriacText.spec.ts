@@ -14,12 +14,12 @@ describe('SyriacText', () => {
     expect(span.text()).toBe('ܫܠܡܐ')
   })
 
-  it('uses the Noto Sans Syriac (Estrangela) font family by default', async () => {
+  it('uses Noto Sans Syriac Western (Serto/Maherboyo) by default', async () => {
     const wrapper = await mountSuspended(SyriacText, {
       props: { text: 'ܫܠܡܐ' },
     })
 
-    expect(wrapper.find('span').attributes('style')).toContain('Noto Sans Syriac')
+    expect(wrapper.find('span').attributes('style')).toContain('Noto Sans Syriac Western')
   })
 
   it('uses Noto Sans Syriac Western when variant=serto', async () => {
