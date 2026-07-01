@@ -263,7 +263,7 @@ Operator recovery sequence (once the relevant modules exist): rebuild `lexicon` 
 ## Syriac / Unicode Handling
 
 ### Script Variants
-Sabro supports the three traditional Syriac scripts: **Estrangela** (default, used for patristic texts), **Serto** (Western), and **Madnhaya** (Eastern). The Unicode content is identical across variants — only the rendering font differs. User chooses default variant; switcher available everywhere Syriac text is displayed.
+Sabro supports the three traditional Syriac scripts: **Serto** (Western / Maherboyo — the default, matching the launch's West-Syriac lean), **Estrangela** (used for patristic texts, when the Translations module lands), and **Madnhaya** (Eastern). The Unicode content is identical across variants — only the rendering font differs. The default is set in code (frontend cookie default + `UserProfile.Create`); the user can override it with the switcher, available everywhere Syriac text is displayed.
 
 Recommended fonts (free, academic):
 - Beth Mardutho fonts: `Estrangelo Edessa`, `Serto Jerusalem`, `East Syriac Adiabene`
