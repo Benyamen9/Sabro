@@ -42,6 +42,7 @@
   "switcher": {
     "languageLabel": "Taal",
     "scriptLabel": "Syrisch schrift",
+    "scriptNote": "Alleen de lettervormen — klinkers, grammatica en uitspraak volgen de West-Syrische traditie.",
     "script": {
       "estrangela": "Estrangeloyo",
       "serto": "Maherboyo",

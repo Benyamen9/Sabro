@@ -38,5 +38,10 @@ function onSelect(value: string) {
         class="!text-lg leading-none"
       />
     </template>
+    <!-- The variant changes letterforms only; all grammar content on the site
+         follows the West Syriac tradition, so say so where the choice is made. -->
+    <template #footer>
+      {{ t('switcher.scriptNote') }}
+    </template>
   </SelectMenu>
 </template>
