@@ -20,7 +20,7 @@ describe('LetterCard', () => {
     const wrapper = await mountSuspended(LetterCard, { props: { letter: letter({}) } })
 
     expect(wrapper.find('span[lang="syc"]').text()).toBe('ܒ')
-    expect(wrapper.text()).toContain('Bēt')
+    expect(wrapper.text()).toContain('Beth')
   })
 
   it('shows a hardening label for a marked begadkephat letter', async () => {

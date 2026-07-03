@@ -279,15 +279,15 @@
       "meanings": "Meanings"
     },
     "letters": {
-      "Alaph": "Ālap", "Beth": "Bēt", "Gamal": "Gāmal", "Dalath": "Dālat",
-      "He": "Hē", "Waw": "Waw", "Zayn": "Zayn", "Heth": "Ḥēt", "Teth": "Ṭēt",
-      "Yudh": "Yod", "Kaph": "Kāp", "Lamadh": "Lāmad", "Mim": "Mīm", "Nun": "Nūn",
-      "Semkath": "Semkat", "Ayn": "ʿĒ", "Pe": "Pē", "Sadhe": "Ṣādē", "Qaph": "Qōp",
-      "Rish": "Rīsh", "Shin": "Shīn", "Taw": "Taw", "Unknown": "—"
+      "Alaph": "Olaf", "Beth": "Beth", "Gamal": "Gomal", "Dalath": "Dolath",
+      "He": "He", "Waw": "Waw", "Zayn": "Zayn", "Heth": "Ḥeth", "Teth": "Ṭeth",
+      "Yudh": "Yudh", "Kaph": "Kof", "Lamadh": "Lomadh", "Mim": "Mim", "Nun": "Nun",
+      "Semkath": "Semkath", "Ayn": "ʿE", "Pe": "Pe", "Sadhe": "Ṣodhe", "Qaph": "Qof",
+      "Rish": "Rish", "Shin": "Shin", "Taw": "Taw", "Unknown": "—"
     },
     "vowels": {
-      "Pthaha": "Ptāḥā (a)", "Zqapha": "Zqāpā (o)", "Rbasa": "Rbāṣā (e)",
-      "Zlama": "Zlāmā (e)", "Hbasa": "Ḥbāṣā (i)", "Esasa": "ʿṣāṣā (u)", "Rwaha": "Rwāḥā"
+      "Pthaha": "Ptoḥo (a)", "Zqapha": "Zqofo (o)", "Rbasa": "Rboṣo (e)",
+      "Zlama": "Zlomo (e)", "Hbasa": "Ḥboṣo (i)", "Esasa": "ʿṣoṣo (u)", "Rwaha": "Rwoḥo"
     },
     "hardening": {
       "Qushoyo": "Qushoyo — hard",
