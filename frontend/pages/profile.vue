@@ -121,11 +121,12 @@ async function chooseScript(value: ScriptVariant) {
   flagPrefsSaved()
 }
 
-// "Member since" from the profile's creation date, formatted in the active locale.
+// "Member since" from the profile's creation date — month + year is enough
+// for the header's meta line.
 const memberSince = computed(() => {
   const created = profile.value?.createdAt
   if (!created) return ''
-  return new Intl.DateTimeFormat(locale.value, { year: 'numeric', month: 'long', day: 'numeric' })
+  return new Intl.DateTimeFormat(locale.value, { year: 'numeric', month: 'long' })
     .format(new Date(created))
 })
 
@@ -136,7 +137,6 @@ const navGroups = computed(() => [
   {
     label: t('account.nav.account'),
     items: [
-      { id: 'profile', label: t('account.nav.profile') },
       { id: 'preferences', label: t('account.nav.preferences') },
     ],
   },
@@ -169,8 +169,8 @@ const navGroups = computed(() => [
 // horizontally-scrollable pill row.
 const flatNavItems = computed(() => navGroups.value.flatMap(group => group.items))
 
-const sectionIds = ['profile', 'preferences', 'meltho', 'leaderboard', 'username', 'email', 'password', 'session', 'delete']
-const activeSection = ref('profile')
+const sectionIds = ['preferences', 'meltho', 'leaderboard', 'username', 'email', 'password', 'session', 'delete']
+const activeSection = ref('preferences')
 
 function goToSection(id: string) {
   const el = document.getElementById(id)
@@ -287,13 +287,25 @@ onBeforeUnmount(() => {
     />
 
     <template v-else>
-      <header class="mb-8">
-        <p class="font-sans text-xs font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
-          {{ t('account.eyebrow') }}
-        </p>
-        <h1 class="mt-2 font-serif text-4xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
-          {{ t('account.title') }}
-        </h1>
+      <!-- Identity IS the page header — who you are shouldn't cost a card. -->
+      <header class="mb-9 flex items-center gap-5">
+        <UserAvatar :initial="initial" :src="avatarUrl" :label="displayName" size="lg" class="!size-[72px] !text-[28px]" />
+        <div class="min-w-0">
+          <p class="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
+            {{ t('account.eyebrow') }}
+          </p>
+          <h1 class="mt-0.5 truncate font-serif text-[2.1rem] font-semibold leading-tight tracking-[-0.02em] text-[var(--color-text)]">
+            {{ displayName || t('account.title') }}
+          </h1>
+          <p class="mt-1 flex flex-wrap items-baseline gap-x-3.5 gap-y-0.5 font-sans text-[13px] text-[var(--color-text-muted)]">
+            <span v-if="email" class="truncate">{{ email }}</span>
+            <span v-if="username">{{ username }}</span>
+            <span v-if="memberSince">{{ t('account.fields.memberSince').toLowerCase() }} {{ memberSince }}</span>
+          </p>
+          <p class="mt-1.5 font-sans text-xs text-[var(--color-text-faint)]">
+            {{ t('account.identityNote') }}
+          </p>
+        </div>
       </header>
 
       <div class="lg:grid lg:grid-cols-[190px_minmax(0,1fr)] lg:gap-x-10">
@@ -350,40 +362,9 @@ onBeforeUnmount(() => {
           </nav>
         </aside>
 
-        <!-- Content column — sections in nav order, each an anchor target. -->
+        <!-- Content column — sections in nav order, each an anchor target.
+             Identity lives in the page header above, not in a card. -->
         <div class="min-w-0 space-y-6">
-          <!-- Profile — identity, read-only, sourced from the sign-in provider (Logto). -->
-          <section
-            id="profile"
-            class="scroll-mt-24 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]"
-          >
-            <div class="flex items-center gap-4">
-              <UserAvatar :initial="initial" :src="avatarUrl" :label="displayName" size="lg" />
-              <div class="min-w-0">
-                <p class="truncate font-sans text-lg font-semibold text-[var(--color-text)]">{{ displayName }}</p>
-                <p
-                  v-if="email"
-                  class="truncate font-sans text-sm text-[var(--color-text-muted)]"
-                >{{ email }}</p>
-              </div>
-            </div>
-
-            <dl class="mt-6 grid gap-px overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-border)] sm:grid-cols-2">
-              <div v-if="username" class="bg-[var(--color-bg-elevated)] px-4 py-3">
-                <dt class="font-sans text-xs text-[var(--color-text-muted)]">{{ t('account.fields.username') }}</dt>
-                <dd class="mt-0.5 font-sans text-sm text-[var(--color-text)]">{{ username }}</dd>
-              </div>
-              <div v-if="memberSince" class="bg-[var(--color-bg-elevated)] px-4 py-3">
-                <dt class="font-sans text-xs text-[var(--color-text-muted)]">{{ t('account.fields.memberSince') }}</dt>
-                <dd class="mt-0.5 font-sans text-sm text-[var(--color-text)]">{{ memberSince }}</dd>
-              </div>
-            </dl>
-
-            <p class="mt-4 font-sans text-xs text-[var(--color-text-faint)]">
-              {{ t('account.identityNote') }}
-            </p>
-          </section>
-
           <!-- Preferences — editable, persisted to the profile + shared cookies. -->
           <section
             id="preferences"
