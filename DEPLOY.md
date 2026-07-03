@@ -197,6 +197,69 @@ from Postgres via the admin endpoints (`POST /api/v1/admin/search/rebuild/{index
 
 ---
 
+## Backups
+
+The `backup` service (built from `backup/`, image `sabro-backup`) dumps **both
+databases** (sabro + logto) nightly at 03:30 UTC in `pg_dump` custom format,
+keeps **30 daily + 12 monthly** copies in the `backup-data` volume, mirrors the
+same layout + retention to a **Hetzner Storage Box** over SFTP, and runs a
+**weekly restore test** (Sunday 04:15 UTC) that restores the newest dumps into
+a scratch cluster and checks the data is actually there. Everything logs to
+`docker logs sabro-backup`.
+
+### One-time setup (off-site)
+
+1. Order a Storage Box (BX11 is plenty) in the Hetzner console.
+2. Generate a dedicated key on the VPS and register the public half with the
+   box (Storage Box → SSH keys in the Hetzner console):
+
+   ```bash
+   mkdir -p /opt/sabro/secrets && chmod 700 /opt/sabro/secrets
+   ssh-keygen -t ed25519 -N "" -f /opt/sabro/secrets/storagebox_ed25519
+   chmod 600 /opt/sabro/secrets/storagebox_ed25519
+   ```
+
+3. Fill `STORAGE_BOX_HOST` / `STORAGE_BOX_USER` in `.env` (host looks like
+   `uXXXXXX.your-storagebox.de`; SFTP runs on **port 23**).
+4. Optional but recommended: create a check on healthchecks.io and set
+   `BACKUP_HEARTBEAT_URL` — you then get an email when a backup *doesn't* run.
+5. Recreate the service and prove the pipeline end-to-end before walking away:
+
+   ```bash
+   cd /opt/sabro
+   docker compose -f docker-compose.prod.yml up -d backup
+   docker compose -f docker-compose.prod.yml exec backup backup.sh
+   docker compose -f docker-compose.prod.yml exec backup restore-test.sh
+   ```
+
+Until step 3, backups are **local-only** (they survive a bad migration or a
+fat-fingered delete, but not the VPS disk dying).
+
+### Restore runbook
+
+Dumps are plain `pg_dump -Fc` archives — restore with stock tooling. To restore
+the sabro DB to last night's state:
+
+```bash
+cd /opt/sabro
+docker compose -f docker-compose.prod.yml stop api                   # stop writers
+docker compose -f docker-compose.prod.yml exec backup ls /backups/daily
+docker compose -f docker-compose.prod.yml exec postgres dropdb -U sabro --force sabro
+docker compose -f docker-compose.prod.yml exec postgres createdb -U sabro sabro
+docker compose -f docker-compose.prod.yml exec backup sh -c \
+  'PGPASSWORD=$POSTGRES_PASSWORD pg_restore --no-owner --no-privileges \
+     -h postgres -U sabro -d sabro /backups/daily/sabro-<DATE>.dump'
+docker compose -f docker-compose.prod.yml up -d api
+```
+
+Same shape for logto (`-h logto-db -U logto -d logto`, stop the `logto`
+service instead of `api`). If the VPS itself is gone: provision a new one
+(Phases 1–4), `sftp -P 23` the dumps back from the Storage Box, and restore
+before first bring-up. Afterwards rebuild the Meilisearch indexes (see above) —
+they are derived data and not part of the backups.
+
+---
+
 ## Common pitfalls
 
 - **No GHCR login on the VPS** → `docker compose pull` fails on private images.
@@ -212,9 +275,11 @@ from Postgres via the admin endpoints (`POST /api/v1/admin/search/rebuild/{index
 
 ## Follow-ups (post-launch, not blocking)
 
-- **pgBackRest** to the BX11: daily full + WAL archiving (PITR), 30 daily / 12
-  monthly retention, weekly restore test. Back up the Logto DB and
-  `wwwroot/media/` too. (Backup discipline is non-negotiable — see `CLAUDE.md`.)
+- **pgBackRest** to the Storage Box: upgrade the dump-based backups (above) to
+  WAL archiving for point-in-time recovery. The nightly dumps + restore test
+  stay as the safety net; pgBackRest adds PITR between them.
+- **`wwwroot/media/`** off-site sync once bibliography images actually ship
+  (currently repo-versioned; nothing user-uploaded lives there yet).
 - **UptimeRobot** pinging `/health` every 5 min.
 - **Meltho**: point it at the live API and add its hostname to the API CORS
   origins (`MELTHO_DOMAIN` in `.env`).

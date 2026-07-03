@@ -77,6 +77,21 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Backup sidecar (context = ./backup): nightly dumps + off-site sync +
+      # weekly restore test. Tiny image, but pinned to the same SHA so the
+      # deployed stack is fully reproducible from one tag.
+      - name: Build + push backup
+        uses: docker/build-push-action@v7
+        with:
+          context: ./backup
+          file: backup/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-backup:${{ env.SHA }}
+            ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-backup:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       # Frontend image (context = ./frontend). The API resource must be baked in
       # at build time (it feeds the Logto `resources` array in nuxt.config).
       - name: Build + push frontend
