@@ -42,6 +42,7 @@
   "switcher": {
     "languageLabel": "Language",
     "scriptLabel": "Syriac script",
+    "scriptNote": "Letterforms only — vowels, grammar, and pronunciation follow the West Syriac tradition.",
     "script": {
       "estrangela": "Estrangeloyo",
       "serto": "Maherboyo",

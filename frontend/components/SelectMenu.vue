@@ -12,6 +12,7 @@
  * Slots:
  *  - `trigger`  — the compact facade shown in the header (a glyph or code).
  *  - `option`   — the row content for one option ({ option }); the check is appended.
+ *  - `footer`   — optional fine print under the options (e.g. a scope note).
  */
 interface SelectOption {
   value: string
@@ -131,46 +132,58 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocumentClick))
       leave-active-class="transition duration-100 ease-in"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <ul
+      <!-- The panel wraps the listbox so the optional footer can sit below the
+           options without becoming an (invalid) listbox child. -->
+      <div
         v-show="open"
-        :id="listId"
-        ref="list"
-        role="listbox"
-        tabindex="-1"
-        :aria-label="menuLabel"
-        :aria-activedescendant="`${listId}-${highlighted}`"
-        class="absolute right-0 top-full z-50 mt-1.5 min-w-[10.5rem] rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-1 shadow-[0_12px_32px_-12px_rgba(28,25,23,0.3),0_2px_6px_-2px_rgba(28,25,23,0.12)] focus:outline-none"
-        @keydown="onListKeydown"
+        class="absolute right-0 top-full z-50 mt-1.5 min-w-[10.5rem] rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-1 shadow-[0_12px_32px_-12px_rgba(28,25,23,0.3),0_2px_6px_-2px_rgba(28,25,23,0.12)]"
       >
-        <li
-          v-for="(option, index) in options"
-          :id="`${listId}-${index}`"
-          :key="option.value"
-          role="option"
-          :aria-selected="option.value === modelValue"
-          class="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors"
-          :class="option.value === modelValue
-            ? 'bg-[var(--color-accent-faint)] font-medium text-[var(--color-accent)]'
-            : index === highlighted ? 'bg-[var(--color-bg-subtle)] text-[var(--color-text)]' : 'text-[var(--color-text)]'"
-          @click="choose(index)"
-          @mousemove="highlighted = index"
+        <ul
+          :id="listId"
+          ref="list"
+          role="listbox"
+          tabindex="-1"
+          :aria-label="menuLabel"
+          :aria-activedescendant="`${listId}-${highlighted}`"
+          class="focus:outline-none"
+          @keydown="onListKeydown"
         >
-          <slot name="option" :option="option" />
-          <svg
-            class="ml-auto size-4 shrink-0 text-[var(--color-accent)]"
-            :class="{ 'opacity-0': option.value !== modelValue }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
+          <li
+            v-for="(option, index) in options"
+            :id="`${listId}-${index}`"
+            :key="option.value"
+            role="option"
+            :aria-selected="option.value === modelValue"
+            class="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors"
+            :class="option.value === modelValue
+              ? 'bg-[var(--color-accent-faint)] font-medium text-[var(--color-accent)]'
+              : index === highlighted ? 'bg-[var(--color-bg-subtle)] text-[var(--color-text)]' : 'text-[var(--color-text)]'"
+            @click="choose(index)"
+            @mousemove="highlighted = index"
           >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
-        </li>
-      </ul>
+            <slot name="option" :option="option" />
+            <svg
+              class="ml-auto size-4 shrink-0 text-[var(--color-accent)]"
+              :class="{ 'opacity-0': option.value !== modelValue }"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </li>
+        </ul>
+        <div
+          v-if="$slots.footer"
+          class="mt-1 max-w-[11.5rem] border-t border-[var(--color-border)] px-2 pb-1 pt-1.5 font-sans text-[0.7rem] leading-snug text-[var(--color-text-muted)]"
+        >
+          <slot name="footer" />
+        </div>
+      </div>
     </Transition>
   </div>
 </template>

@@ -42,6 +42,7 @@
   "switcher": {
     "languageLabel": "Langue",
     "scriptLabel": "Écriture syriaque",
+    "scriptNote": "Tracé des lettres uniquement — les voyelles, la grammaire et la prononciation suivent la tradition syriaque occidentale.",
     "script": {
       "estrangela": "Estrangeloyo",
       "serto": "Maherboyo",
