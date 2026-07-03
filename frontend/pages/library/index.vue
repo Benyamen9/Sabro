@@ -157,58 +157,60 @@ function goTo(nextPage: number) {
 
 <template>
   <section class="mx-auto max-w-4xl">
-    <header class="mb-6">
-      <h1 class="font-serif text-3xl sm:text-4xl">{{ t('library.heading') }}</h1>
-      <p class="mt-3 font-serif text-[var(--color-text-muted)]">{{ t('library.lede') }}</p>
+    <header class="mb-7 pt-2">
+      <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        {{ t('library.title') }}
+      </p>
+      <h1 class="mt-3 font-serif text-4xl font-semibold tracking-[-0.02em] sm:text-[2.75rem]">{{ t('library.heading') }}</h1>
+      <!-- The lede carries the living count once the first page has loaded. -->
+      <p class="mt-3 max-w-2xl font-serif text-[17px] text-[var(--color-text-muted)]">
+        <template v-if="data?.total">
+          <strong class="font-semibold text-[var(--color-text)]">{{ t('library.count', { count: data.total }) }}</strong>
+          {{ t('library.ledeCount') }}
+        </template>
+        <template v-else>{{ t('library.lede') }}</template>
+      </p>
     </header>
 
-    <!-- Search -->
-    <div class="mb-5 flex items-center gap-2 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-4 py-2.5 focus-within:border-[var(--color-accent)]">
-      <svg class="size-4 shrink-0 text-[var(--color-text-faint)]" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-        <circle cx="9" cy="9" r="6" />
-        <path d="m17 17-3.5-3.5" stroke-linecap="round" />
-      </svg>
-      <input
-        v-model="searchInput"
-        type="search"
-        :placeholder="t('library.searchPlaceholder')"
-        :aria-label="t('library.searchPlaceholder')"
-        class="min-w-0 flex-1 bg-transparent font-sans text-[15px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-faint)]"
-      >
-      <button
-        v-if="searchInput"
-        type="button"
-        class="shrink-0 font-sans text-sm text-[var(--color-text-faint)] hover:text-[var(--color-text)]"
-        :aria-label="t('library.searchClear')"
-        @click="clearSearch"
-      >✕</button>
-    </div>
-
-    <!-- Sort control + word count -->
-    <div class="mb-6 flex flex-wrap items-center gap-x-4 gap-y-3">
-      <div class="flex items-center gap-2">
-        <span class="font-sans text-xs text-[var(--color-text-faint)] uppercase tracking-wide">{{ t('library.sort.label') }}</span>
-        <div class="flex gap-1.5">
-          <button
-            v-for="option in sortOptions"
-            :key="option.key"
-            type="button"
-            class="inline-flex items-center gap-1 rounded-full border px-3 py-1 font-sans text-sm transition-colors"
-            :class="sort === option.value
-              ? 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] text-[var(--color-accent)]'
-              : 'border-[var(--color-border-strong)] text-[var(--color-text-muted)] hover:bg-[var(--color-bg-subtle)]'"
-            :title="sort === option.value ? t(`library.direction.${direction === 'Ascending' ? 'ascending' : 'descending'}`) : undefined"
-            :aria-pressed="sort === option.value"
-            @click="setSort(option.value)"
-          >
-            {{ t(`library.sort.${option.key}`) }}
-            <span v-if="sort === option.value" aria-hidden="true">{{ direction === 'Ascending' ? '↑' : '↓' }}</span>
-          </button>
-        </div>
+    <!-- One toolbar: search grows, sort sits right. -->
+    <div class="mb-2 flex flex-wrap items-center gap-3">
+      <div class="flex min-w-[260px] flex-1 items-center gap-2 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-4 py-2.5 focus-within:border-[var(--color-accent)]">
+        <svg class="size-4 shrink-0 text-[var(--color-text-faint)]" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <circle cx="9" cy="9" r="6" />
+          <path d="m17 17-3.5-3.5" stroke-linecap="round" />
+        </svg>
+        <input
+          v-model="searchInput"
+          type="search"
+          :placeholder="t('library.searchPlaceholder')"
+          :aria-label="t('library.searchPlaceholder')"
+          class="min-w-0 flex-1 bg-transparent font-sans text-[15px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-faint)]"
+        >
+        <button
+          v-if="searchInput"
+          type="button"
+          class="shrink-0 font-sans text-sm text-[var(--color-text-faint)] hover:text-[var(--color-text)]"
+          :aria-label="t('library.searchClear')"
+          @click="clearSearch"
+        >✕</button>
       </div>
-      <span v-if="data?.total" class="ml-auto font-sans text-sm text-[var(--color-text-faint)]">
-        {{ t('library.count', { count: data.total }) }}
-      </span>
+      <div class="flex gap-1.5" role="group" :aria-label="t('library.sort.label')">
+        <button
+          v-for="option in sortOptions"
+          :key="option.key"
+          type="button"
+          class="inline-flex items-center gap-1 rounded-full border px-3.5 py-1.5 font-sans text-sm transition-colors"
+          :class="sort === option.value
+            ? 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] text-[var(--color-accent)] font-medium'
+            : 'border-[var(--color-border-strong)] text-[var(--color-text-muted)] hover:bg-[var(--color-bg-subtle)]'"
+          :title="sort === option.value ? t(`library.direction.${direction === 'Ascending' ? 'ascending' : 'descending'}`) : undefined"
+          :aria-pressed="sort === option.value"
+          @click="setSort(option.value)"
+        >
+          {{ t(`library.sort.${option.key}`) }}
+          <span v-if="sort === option.value" aria-hidden="true">{{ direction === 'Ascending' ? '↑' : '↓' }}</span>
+        </button>
+      </div>
     </div>
 
     <StateMessage
@@ -236,36 +238,45 @@ function goTo(nextPage: number) {
       @action="clearSearch"
     />
     <template v-else>
-      <section v-for="group in groups" :key="group.key" class="mb-8">
-        <h2 class="mb-3 flex items-center gap-2 border-b border-[var(--color-border)] pb-2">
+      <section v-for="group in groups" :key="group.key" class="mb-9 mt-8">
+        <h2 class="mb-3.5 flex items-baseline gap-2.5 border-b border-[var(--color-border)] pb-2">
           <SyriacText
             v-if="group.isSyriac"
             :text="group.label"
             class="!text-2xl text-[var(--color-accent)]"
           />
-          <span v-else class="font-sans text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+          <span v-else class="font-sans text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
             {{ group.label }}
+          </span>
+          <span class="font-sans text-xs text-[var(--color-text-faint)]">
+            {{ t('library.count', { count: group.words.length }) }}
           </span>
         </h2>
         <ul class="grid gap-3 sm:grid-cols-2">
           <li v-for="word in group.words" :key="word.lexiconEntryId">
+            <!-- The word leads at full size; the date whispers; the letter
+                 count is a small square tile — the game's own vocabulary. -->
             <NuxtLink
               :to="`/library/${word.lexiconEntryId}`"
-              class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5 no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-bg-subtle)]"
+              class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-5 py-4 no-underline shadow-[var(--shadow-soft)] transition-[border-color,transform] hover:-translate-y-px hover:border-[color-mix(in_oklab,var(--color-accent)_45%,var(--color-border))]"
             >
-              <SyriacText :text="word.syriacUnvocalized" class="!text-3xl text-[var(--color-accent)]" />
+              <SyriacText :text="word.syriacUnvocalized" class="min-w-[4.75rem] !text-[2.1rem] leading-tight text-[var(--color-accent)]" />
               <span class="min-w-0 flex-1">
-                <span class="block truncate font-serif text-lg">
+                <span class="block truncate font-serif text-[17px]">
                   {{ preferredMeaning(word.meanings) }}
-                  <span v-if="word.sblTransliteration" class="font-serif text-base text-[var(--color-text-muted)] italic"> · {{ word.sblTransliteration }}</span>
+                  <span v-if="word.sblTransliteration" class="text-[15px] text-[var(--color-text-muted)] italic"> · {{ word.sblTransliteration }}</span>
                 </span>
-                <span class="mt-0.5 block font-sans text-xs text-[var(--color-text-faint)]">
+                <span class="mt-0.5 block font-sans text-[11.5px] text-[var(--color-text-faint)]">
                   {{ t('library.lastPlayed', { date: word.lastPlayedOn }) }}
                   <span v-if="Number(word.timesPlayed) > 1"> · {{ t('library.timesPlayed', { count: word.timesPlayed }) }}</span>
                 </span>
               </span>
-              <span class="shrink-0 rounded-lg border border-[var(--color-border)] px-2 py-1 font-sans text-[0.7rem] text-[var(--color-text-faint)]">
-                {{ t('library.lettersCount', { count: word.playableLength }) }}
+              <span
+                class="grid size-[34px] shrink-0 place-items-center rounded-[9px] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] font-sans text-[12.5px] font-semibold text-[var(--color-text-muted)]"
+                :title="t('library.lettersCount', { count: word.playableLength })"
+                :aria-label="t('library.lettersCount', { count: word.playableLength })"
+              >
+                {{ word.playableLength }}
               </span>
             </NuxtLink>
           </li>

@@ -4,7 +4,6 @@ import type { FetchError } from 'ofetch'
 const { t } = useI18n()
 const route = useRoute()
 const { getWord } = useMelthoLibrary()
-const preferredMeaning = usePreferredMeaning()
 
 const id = computed(() => route.params.id as string)
 
@@ -74,80 +73,70 @@ function categoryLabel(category: string | undefined) {
       @action="refresh()"
     />
     <template v-else-if="data">
-      <!-- Hero: the word, its transliteration, gloss, and (when known) its root. -->
-      <header class="mt-6 flex flex-wrap items-baseline gap-x-5 gap-y-2">
-        <SyriacText :text="heroForm" class="!text-5xl text-[var(--color-accent)]" />
-        <p v-if="data.sblTransliteration" class="font-serif text-xl text-[var(--color-text-muted)] italic">
-          {{ data.sblTransliteration }}
-        </p>
-        <p class="font-serif text-xl">{{ preferredMeaning(data.meanings) }}</p>
-        <span
-          v-if="data.root"
-          class="ml-auto inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-1 font-sans text-xs text-[var(--color-text-muted)]"
-        >
-          {{ t('library.fields.root') }}
-          <SyriacText :text="data.root" class="!text-lg text-[var(--color-accent)]" />
-        </span>
-      </header>
-
-      <!-- Info cards -->
-      <dl class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
-          <dt class="font-sans text-[0.7rem] uppercase tracking-wide text-[var(--color-text-faint)]">{{ t('library.fields.unvocalized') }}</dt>
-          <dd class="mt-1"><SyriacText :text="data.syriacUnvocalized" class="!text-2xl text-[var(--color-accent)]" /></dd>
-        </div>
-        <div v-if="data.syriacVocalized" class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
-          <dt class="font-sans text-[0.7rem] uppercase tracking-wide text-[var(--color-text-faint)]">{{ t('library.fields.vocalized') }}</dt>
-          <dd class="mt-1"><SyriacText :text="data.syriacVocalized" class="!text-2xl text-[var(--color-accent)]" /></dd>
-        </div>
-        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
-          <dt class="font-sans text-[0.7rem] uppercase tracking-wide text-[var(--color-text-faint)]">{{ t('library.fields.category') }}</dt>
-          <dd class="mt-1 font-serif text-lg">{{ categoryLabel(data.grammaticalCategory) }}</dd>
-        </div>
-        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
-          <dt class="font-sans text-[0.7rem] uppercase tracking-wide text-[var(--color-text-faint)]">{{ t('library.fields.length') }}</dt>
-          <dd class="mt-1 font-serif text-lg">{{ data.playableLength }}</dd>
-        </div>
-        <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
-          <dt class="font-sans text-[0.7rem] uppercase tracking-wide text-[var(--color-text-faint)]">{{ t('library.playedOn') }}</dt>
-          <dd class="mt-1 font-sans text-sm text-[var(--color-text-muted)]">{{ data.playedOn.join(' · ') }}</dd>
-        </div>
-      </dl>
-
-      <!-- Meanings, one row per language -->
-      <div class="mt-4 overflow-hidden rounded-xl border border-[var(--color-border)]">
-        <div
-          v-for="m in orderedMeanings"
-          :key="m.language"
-          class="flex gap-4 border-t border-[var(--color-border)] px-4 py-3 first:border-t-0"
-        >
-          <span class="w-7 shrink-0 font-sans text-xs font-semibold uppercase text-[var(--color-text-faint)]">{{ m.language }}</span>
-          <span class="font-serif">{{ m.text }}</span>
-        </div>
-      </div>
-
-      <!-- Composition -->
-      <section class="mt-12">
-        <h2 class="font-serif text-2xl">{{ t('library.composition.heading') }}</h2>
-        <template v-if="hasComposition">
-          <!-- Connected strip: the word as it reads, with soft (rukkokho) letters tinted. RTL so
-               it matches the Syriac reading direction. -->
-          <div class="mt-5 flex flex-wrap justify-center gap-1" dir="rtl">
+      <!-- The word as a dictionary entry: form, pronunciation, meta chips, and
+           senses in one composed block — not a metadata grid. -->
+      <article class="mt-5 overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] shadow-[var(--shadow-soft)]">
+        <div class="px-6 pb-7 pt-9 text-center sm:px-9">
+          <SyriacText :text="heroForm" class="!text-[4.25rem] leading-[1.4] text-[var(--color-accent)]" />
+          <p v-if="data.sblTransliteration" class="mt-1.5 font-serif text-[21px] text-[var(--color-text-muted)] italic">
+            {{ data.sblTransliteration }}
+          </p>
+          <div class="mt-4 flex flex-wrap items-center justify-center gap-2 font-sans text-[12.5px]">
+            <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-1 text-[var(--color-text-muted)]">
+              {{ categoryLabel(data.grammaticalCategory) }}
+            </span>
+            <span class="rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-muted)]">
+              {{ t('library.lettersCount', { count: data.playableLength }) }}
+            </span>
             <span
-              v-for="(letter, index) in data.composition"
-              :key="`strip-${index}`"
-              class="rounded-lg px-2 py-1 font-syriac text-3xl"
-              :class="letter.hardening === 'Rukkokho'
-                ? 'bg-[var(--color-accent-faint)] text-[var(--color-accent)]'
-                : 'text-[var(--color-text)]'"
-            >{{ letter.letter }}</span>
+              v-if="data.syriacVocalized"
+              class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-muted)]"
+            >
+              {{ t('library.fields.unvocalized') }}
+              <SyriacText :text="data.syriacUnvocalized" class="!text-[17px] leading-none text-[var(--color-accent)]" />
+            </span>
+            <span
+              v-if="data.root"
+              class="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-muted)]"
+            >
+              {{ t('library.fields.root') }}
+              <SyriacText :text="data.root" class="!text-[17px] leading-none text-[var(--color-accent)]" />
+            </span>
           </div>
-          <!-- Per-letter cards, left-to-right in word order (Kaph, Taw, Beth, Alaph for ktobo). -->
-          <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        </div>
+        <!-- Senses: the meanings belong to the entry itself, one row per language. -->
+        <div class="border-t border-[var(--color-border)]">
+          <div
+            v-for="m in orderedMeanings"
+            :key="m.language"
+            class="flex gap-4 border-t border-[var(--color-border)] px-6 py-3 first:border-t-0 sm:px-9"
+          >
+            <span class="w-7 shrink-0 pt-1 font-sans text-[11px] font-bold uppercase text-[var(--color-text-faint)]">{{ m.language }}</span>
+            <span class="font-serif text-[16.5px]">{{ m.text }}</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Letter by letter: the page's centrepiece — one right-to-left row of
+           cards, read in the same direction as the word itself. -->
+      <section class="mt-11">
+        <div class="flex flex-wrap items-baseline gap-x-3.5 gap-y-1">
+          <h2 class="font-serif text-[26px] font-semibold tracking-[-0.01em]">{{ t('library.composition.heading') }}</h2>
+          <span v-if="hasComposition" class="font-sans text-[12.5px] text-[var(--color-text-faint)]">
+            {{ t('library.composition.hint') }}
+          </span>
+        </div>
+        <template v-if="hasComposition">
+          <div
+            class="mt-4 grid gap-2.5"
+            dir="rtl"
+            :style="{ gridTemplateColumns: `repeat(${Math.min(data.composition.length, 5)}, minmax(0, 1fr))` }"
+          >
             <LetterCard
               v-for="(letter, index) in data.composition"
               :key="index"
               :letter="letter"
+              dir="ltr"
             />
           </div>
         </template>

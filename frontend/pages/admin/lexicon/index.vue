@@ -59,7 +59,10 @@ function goTo(nextPage: number) {
   <section>
     <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 class="font-serif text-3xl">{{ t('admin.lexicon.title') }}</h1>
+        <p class="mb-2 font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
+          {{ t('nav.admin') }}
+        </p>
+        <h1 class="font-serif text-3xl font-semibold tracking-[-0.015em]">{{ t('admin.lexicon.title') }}</h1>
         <p class="mt-2 font-sans text-sm text-[var(--color-text-muted)]">
           {{ t('admin.lexicon.subtitle') }}
         </p>
