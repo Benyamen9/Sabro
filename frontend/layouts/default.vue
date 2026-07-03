@@ -37,8 +37,12 @@ function isActive(path: string) {
 
 <template>
   <div class="flex min-h-screen flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
+    <!-- The 2px accent rail on top puts the app's colour on every page; the
+         bottom hairline fades toward the edges so the bar sits on the page
+         rather than cutting it. Both are pseudo-elements so the glass
+         background stays a single layer. -->
     <header
-      class="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_85%,transparent)] backdrop-blur-md backdrop-saturate-150"
+      class="sticky top-0 z-40 bg-[color-mix(in_oklab,var(--color-bg)_85%,transparent)] backdrop-blur-md backdrop-saturate-150 before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-[var(--color-accent)] after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-[linear-gradient(to_right,transparent,var(--color-border-strong)_14%,var(--color-border-strong)_86%,transparent)]"
     >
       <!-- On mobile this wraps into two balanced rows: brand + controls on top,
            nav + the Meltho link below. The basis-full spacer forces that break.
@@ -46,13 +50,19 @@ function isActive(path: string) {
       <div class="mx-auto flex min-h-14 max-w-6xl flex-wrap items-center gap-x-3 gap-y-2.5 px-4 py-2.5 sm:flex-nowrap sm:gap-x-6 sm:gap-y-0 sm:px-6 sm:py-0">
         <NuxtLink
           to="/"
-          class="order-1 flex shrink-0 items-center gap-2 font-sans text-base font-semibold tracking-tight no-underline"
+          class="group order-1 flex shrink-0 items-center gap-2 font-sans text-base font-semibold tracking-tight no-underline"
         >
           <span
             aria-hidden="true"
-            class="flex size-6 items-center justify-center rounded-md bg-[var(--color-accent)] font-syriac text-[0.95rem] leading-none text-white"
+            class="flex size-6 items-center justify-center rounded-[7px] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-accent)_86%,white)_0%,var(--color-accent)_55%)] font-syriac text-[0.95rem] leading-none text-white shadow-[var(--shadow-soft),inset_0_1px_0_rgb(255_255_255/0.28)]"
           >ܣ</span>
           {{ t('site.title') }}
+          <!-- The word the name transliterates, set like a dictionary gloss. -->
+          <span
+            aria-hidden="true"
+            dir="rtl"
+            class="font-syriac text-lg font-normal leading-none text-[var(--color-text-faint)] transition-colors group-hover:text-[var(--color-accent)]"
+          >ܣܒܪܐ</span>
         </NuxtLink>
 
         <nav class="order-4 flex items-center gap-1 sm:order-2" :aria-label="t('nav.primary')">
@@ -71,10 +81,14 @@ function isActive(path: string) {
 
         <a
           :href="melthoUrl"
-          class="order-5 ml-auto inline-flex items-center gap-1 rounded-full bg-[var(--color-meltho-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-meltho)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-meltho-faint)_70%,var(--color-meltho)_14%)] sm:order-3"
+          class="order-5 ml-auto inline-flex items-center gap-1.5 rounded-full bg-[var(--color-meltho-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-meltho)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-meltho-faint)_70%,var(--color-meltho)_14%)] sm:order-3"
         >
+          <!-- Meltho's own mini badge, so the pill shows where it goes. -->
+          <span
+            aria-hidden="true"
+            class="flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-meltho)] font-syriac text-[0.66rem] leading-none text-white"
+          >ܡ</span>
           {{ t('nav.meltho') }}
-          <span aria-hidden="true">→</span>
         </a>
 
         <span aria-hidden="true" class="order-6 hidden h-5 w-px bg-[var(--color-border)] sm:order-4 sm:block" />
