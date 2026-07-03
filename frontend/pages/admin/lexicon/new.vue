@@ -46,7 +46,10 @@ async function onSubmit(payload: CreateLexiconEntryRequest) {
       :hint="t('admin.adminRequiredHint')"
     />
     <template v-else>
-      <h1 class="mb-6 mt-4 font-serif text-3xl">{{ t('admin.lexicon.form.createTitle') }}</h1>
+      <p class="mt-4 font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        {{ t('nav.admin') }}
+      </p>
+      <h1 class="mb-6 mt-2 font-serif text-3xl font-semibold tracking-[-0.015em]">{{ t('admin.lexicon.form.createTitle') }}</h1>
 
       <p
         v-if="errorMessage"

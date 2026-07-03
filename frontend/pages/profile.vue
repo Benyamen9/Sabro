@@ -291,7 +291,7 @@ onBeforeUnmount(() => {
         <p class="font-sans text-xs font-medium uppercase tracking-[0.18em] text-[var(--color-accent)]">
           {{ t('account.eyebrow') }}
         </p>
-        <h1 class="mt-1.5 font-serif text-3xl font-semibold tracking-tight text-[var(--color-text)]">
+        <h1 class="mt-2 font-serif text-4xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
           {{ t('account.title') }}
         </h1>
       </header>

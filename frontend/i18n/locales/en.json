@@ -23,12 +23,12 @@
       "eyebrow": "Word library",
       "heading": "Every word, broken down",
       "body": "Browse each word Meltho has shown — its letters, sounds, root, and meaning, one at a time.",
-      "cta": "Open the library"
+      "cta": "Open the library",
+      "latestTag": "Latest word"
     },
     "about": {
       "eyebrow": "What Sabro is",
-      "heading": "One hub, many apps",
-      "body": "Sabro carries the shared identity, lexicon, and API the ecosystem is built on. More apps for the Syriac language will follow Meltho."
+      "body": "One hub, many apps: Sabro carries the shared identity, lexicon, and API the ecosystem is built on. More apps for the Syriac language will follow Meltho."
     }
   },
   "nav": {
@@ -243,6 +243,7 @@
     "title": "Word library",
     "heading": "Meltho word library",
     "lede": "Every word Meltho has shown, with its letters and sounds.",
+    "ledeCount": "so far — every word Meltho has shown, with its letters and sounds. A new one arrives each day.",
     "empty": "No past words yet — check back after today's puzzle.",
     "loadFailed": "Could not load the word library.",
     "notFound": "This word is not in the library yet.",
@@ -267,6 +268,7 @@
     },
     "composition": {
       "heading": "Letter by letter",
+      "hint": "reads right to left, like the word",
       "none": "Add a vocalized form to this word to see its letters broken down."
     },
     "fields": {

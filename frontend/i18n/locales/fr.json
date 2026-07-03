@@ -23,12 +23,12 @@
       "eyebrow": "Bibliothèque de mots",
       "heading": "Chaque mot, décomposé",
       "body": "Parcourez chaque mot proposé par Meltho — ses lettres, ses sons, sa racine et son sens, un par un.",
-      "cta": "Ouvrir la bibliothèque"
+      "cta": "Ouvrir la bibliothèque",
+      "latestTag": "Dernier mot"
     },
     "about": {
       "eyebrow": "Ce qu’est Sabro",
-      "heading": "Un hub, plusieurs applications",
-      "body": "Sabro porte l’identité partagée, le lexique et l’API sur lesquels repose l’écosystème. D’autres applications pour la langue syriaque suivront Meltho."
+      "body": "Un hub, plusieurs applications : Sabro porte l’identité partagée, le lexique et l’API sur lesquels repose l’écosystème. D’autres applications pour la langue syriaque suivront Meltho."
     }
   },
   "nav": {
@@ -243,6 +243,7 @@
     "title": "Bibliothèque des mots",
     "heading": "Bibliothèque des mots Meltho",
     "lede": "Chaque mot proposé par Meltho, avec ses lettres et ses sons.",
+    "ledeCount": "à ce jour — chaque mot proposé par Meltho, avec ses lettres et ses sons. Un nouveau arrive chaque jour.",
     "empty": "Aucun mot passé pour l’instant — revenez après l’énigme du jour.",
     "loadFailed": "Impossible de charger la bibliothèque des mots.",
     "notFound": "Ce mot n’est pas encore dans la bibliothèque.",
@@ -267,6 +268,7 @@
     },
     "composition": {
       "heading": "Lettre par lettre",
+      "hint": "se lit de droite à gauche, comme le mot",
       "none": "Ajoutez une forme vocalisée à ce mot pour voir ses lettres détaillées."
     },
     "fields": {

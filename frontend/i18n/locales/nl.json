@@ -23,12 +23,12 @@
       "eyebrow": "Woordbibliotheek",
       "heading": "Elk woord, ontleed",
       "body": "Bekijk elk woord dat Meltho heeft getoond — de letters, klanken, wortel en betekenis, één voor één.",
-      "cta": "Open de bibliotheek"
+      "cta": "Open de bibliotheek",
+      "latestTag": "Laatste woord"
     },
     "about": {
       "eyebrow": "Wat Sabro is",
-      "heading": "Eén hub, vele apps",
-      "body": "Sabro draagt de gedeelde identiteit, het lexicon en de API waarop het ecosysteem is gebouwd. Meer apps voor de Syrische taal zullen Meltho volgen."
+      "body": "Eén hub, vele apps: Sabro draagt de gedeelde identiteit, het lexicon en de API waarop het ecosysteem is gebouwd. Meer apps voor de Syrische taal zullen Meltho volgen."
     }
   },
   "nav": {
@@ -243,6 +243,7 @@
     "title": "Woordbibliotheek",
     "heading": "Meltho-woordbibliotheek",
     "lede": "Elk woord dat Meltho heeft getoond, met zijn letters en klanken.",
+    "ledeCount": "tot nu toe — elk woord dat Meltho heeft getoond, met zijn letters en klanken. Elke dag komt er een nieuw woord bij.",
     "empty": "Nog geen eerdere woorden — kom terug na de puzzel van vandaag.",
     "loadFailed": "Kon de woordbibliotheek niet laden.",
     "notFound": "Dit woord staat nog niet in de bibliotheek.",
@@ -267,6 +268,7 @@
     },
     "composition": {
       "heading": "Letter voor letter",
+      "hint": "leest van rechts naar links, zoals het woord",
       "none": "Voeg een gevocaliseerde vorm toe aan dit woord om de letters uitgesplitst te zien."
     },
     "fields": {

@@ -35,9 +35,9 @@ test.describe('landing page', () => {
     await context.addCookies([{ name: 'sabro_locale', value: 'fr', url: baseURL! }])
     await page.goto('/')
 
-    // The locale cookie switches rendered text; assert a French heading from
-    // the home page (the "what Sabro is" section) is present.
-    await expect(page.getByRole('heading', { name: 'Un hub, plusieurs applications' })).toBeVisible()
+    // The locale cookie switches rendered text; assert French copy from the
+    // home page (the "what Sabro is" line) is present.
+    await expect(page.getByText('Ce qu’est Sabro')).toBeVisible()
   })
 
   test('renders the Western font when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {
