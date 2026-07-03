@@ -193,6 +193,40 @@ services:
       NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
     networks: [internal]
 
+  # Nightly logical backups of both databases (30 daily + 12 monthly), with
+  # optional off-site sync to a Hetzner Storage Box and a weekly automated
+  # restore test. Dumps live in the backup-data volume; off-site sync starts
+  # once STORAGE_BOX_* is configured and ./secrets/storagebox_ed25519 exists.
+  # Run on demand:  docker compose exec backup backup.sh
+  # Restore runbook: see DEPLOY.md § Backups.
+  backup:
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-backup:${SABRO_IMAGE_TAG:-latest}
+    container_name: sabro-backup
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      logto-db:
+        condition: service_healthy
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sabro}
+      POSTGRES_USER: ${POSTGRES_USER:-sabro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      LOGTO_DB_PASSWORD: ${LOGTO_DB_PASSWORD}
+      # Off-site target (Hetzner Storage Box over SFTP). Blank => local-only.
+      STORAGE_BOX_HOST: ${STORAGE_BOX_HOST:-}
+      STORAGE_BOX_USER: ${STORAGE_BOX_USER:-}
+      STORAGE_BOX_PORT: ${STORAGE_BOX_PORT:-23}
+      STORAGE_BOX_REMOTE_DIR: ${STORAGE_BOX_REMOTE_DIR:-sabro-backups}
+      # Optional heartbeat (e.g. healthchecks.io) — pinged after every backup,
+      # <url>/fail on failure, so a dead backup job alerts instead of rotting.
+      BACKUP_HEARTBEAT_URL: ${BACKUP_HEARTBEAT_URL:-}
+    volumes:
+      - backup-data:/backups
+      # SSH key for the Storage Box lives on the VPS, never in the repo.
+      - ./secrets:/run/secrets:ro
+    networks: [internal]
+
   caddy:
     image: caddy:2-alpine
     container_name: sabro-caddy
@@ -229,3 +263,4 @@ volumes:
   logto-db-data:
   caddy-data:
   caddy-config:
+  backup-data:

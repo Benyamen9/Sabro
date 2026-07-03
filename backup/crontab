@@ -1,0 +1,6 @@
+# Backup schedule (container runs UTC). Output is redirected to PID 1's stdout
+# so everything shows in `docker logs sabro-backup`.
+# Nightly dump + off-site sync at 03:30 UTC.
+30 3 * * * /usr/local/bin/backup.sh >> /proc/1/fd/1 2>&1
+# Weekly restore test, Sundays at 04:15 UTC (after that night's backup).
+15 4 * * 0 /usr/local/bin/restore-test.sh >> /proc/1/fd/1 2>&1

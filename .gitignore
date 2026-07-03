@@ -65,3 +65,7 @@ docker-compose.override.yml
 
 # Claude Code per-user local settings
 .claude/settings.local.json
+
+# VPS-side secrets directory mounted into the backup container (SSH key for
+# the Storage Box). Exists only on the server, never in the repo.
+secrets/
