@@ -2,3 +2,7 @@
 # stays stable across Windows (dev) and Linux (CI) checkouts.
 frontend/openapi/Sabro.API.json text eol=lf
 frontend/types/api.generated.ts text eol=lf
+# The backup sidecar's scripts are COPY'd into a Linux image — a CRLF checkout
+# on Windows would produce broken shebangs/'\r' errors inside the container.
+backup/*.sh text eol=lf
+backup/crontab text eol=lf
