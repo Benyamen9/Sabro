@@ -4,7 +4,6 @@ import type { FetchError } from 'ofetch'
 const { t } = useI18n()
 const route = useRoute()
 const { getWord } = useMelthoLibrary()
-const preferredMeaning = usePreferredMeaning()
 
 const id = computed(() => route.params.id as string)
 
