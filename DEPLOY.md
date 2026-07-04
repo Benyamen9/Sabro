@@ -128,10 +128,24 @@ Keep the Logto pages consistent with the apps for signed-out users:
 
 - **Language.** Both frontends pass the user's chosen locale to Logto as OIDC
   `ui_locales` on every sign-in (`server/routes/sign-in.get.ts` in each app),
-  which overrides Logto's browser-language detection. French ships with Logto;
-  **Dutch does not** — add it under *Sign-in experience → Content → Manage
-  language* (clone from English and translate), otherwise `ui_locales: nl`
-  falls back to English.
+  which overrides Logto's browser-language detection. French ships complete
+  with Logto; Logto's built-in **Dutch** is partial, so a complete pack lives
+  at `scripts/logto/nl-phrases.json` — apply it through the Management API
+  (M2M credentials from the VPS `.env`):
+
+  ```bash
+  TOKEN=$(curl -s -X POST https://auth.<domain>/oidc/token \
+    -u "$LOGTO_MANAGEMENT_CLIENT_ID:$LOGTO_MANAGEMENT_CLIENT_SECRET" \
+    -d grant_type=client_credentials -d resource=https://default.logto.app/api -d scope=all \
+    | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+  curl -X PUT https://auth.<domain>/api/custom-phrases/nl \
+    -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+    --data-binary @scripts/logto/nl-phrases.json
+  ```
+
+  Note: a custom phrase pack **replaces** the built-in language (it falls back
+  to English, not to built-in Dutch), which is why the file is the complete
+  tree rather than only the corrected strings.
 - **Typography.** Paste this under *Sign-in experience → Custom CSS* so the
   pages use the same fonts as the apps (Inter for the UI, Serto for any Syriac
   glyphs):
