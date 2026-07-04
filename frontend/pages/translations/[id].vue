@@ -216,6 +216,18 @@ function goTo(nextPage: number) {
   gap: 0.5rem 1.5rem;
 }
 
+/* Phones: label-over-value instead of a fixed 220px label column. */
+@media (max-width: 640px) {
+  .source-detail__meta {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .source-detail__meta dd {
+    margin-bottom: 0.75rem;
+  }
+}
+
 .source-detail__meta dt {
   font-weight: 600;
   color: #444;
