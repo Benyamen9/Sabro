@@ -76,8 +76,8 @@ function categoryLabel(category: string | undefined) {
       <!-- The word as a dictionary entry: form, pronunciation, meta chips, and
            senses in one composed block — not a metadata grid. -->
       <article class="mt-5 overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] shadow-[var(--shadow-soft)]">
-        <div class="px-6 pb-7 pt-9 text-center sm:px-9">
-          <SyriacText :text="heroForm" class="!text-[4.25rem] leading-[1.4] text-[var(--color-accent)]" />
+        <div class="px-5 pb-7 pt-9 text-center sm:px-9">
+          <SyriacText :text="heroForm" class="!text-[3.1rem] leading-[1.4] text-[var(--color-accent)] sm:!text-[4.25rem]" />
           <p v-if="data.sblTransliteration" class="mt-1.5 font-serif text-[21px] text-[var(--color-text-muted)] italic">
             {{ data.sblTransliteration }}
           </p>
@@ -127,10 +127,15 @@ function categoryLabel(category: string | undefined) {
           </span>
         </div>
         <template v-if="hasComposition">
+          <!-- Phones cap the row at 3 columns so the cards keep readable width;
+               wrapped rows still read right-to-left, row by row. -->
           <div
-            class="mt-4 grid gap-2.5"
+            class="composition-grid mt-4 grid gap-2.5"
             dir="rtl"
-            :style="{ gridTemplateColumns: `repeat(${Math.min(data.composition.length, 5)}, minmax(0, 1fr))` }"
+            :style="{
+              '--cols-base': Math.min(data.composition.length, 3),
+              '--cols-sm': Math.min(data.composition.length, 5),
+            }"
           >
             <LetterCard
               v-for="(letter, index) in data.composition"
@@ -147,3 +152,17 @@ function categoryLabel(category: string | undefined) {
     </template>
   </section>
 </template>
+
+<style scoped>
+/* The letter row: one right-to-left line of up to five cards on larger
+   screens; phones wrap at three so each card keeps readable width. */
+.composition-grid {
+  grid-template-columns: repeat(var(--cols-base), minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .composition-grid {
+    grid-template-columns: repeat(var(--cols-sm), minmax(0, 1fr));
+  }
+}
+</style>

@@ -542,7 +542,7 @@ onBeforeUnmount(() => {
           <!-- Session — account actions. -->
           <section
             id="session"
-            class="scroll-mt-24 flex items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-6 py-4 shadow-[var(--shadow-soft)]"
+            class="scroll-mt-24 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-6 py-4 shadow-[var(--shadow-soft)]"
           >
             <div>
               <p class="font-sans text-sm font-medium text-[var(--color-text)]">{{ t('account.session.heading') }}</p>

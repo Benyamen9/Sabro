@@ -132,6 +132,14 @@ function goTo(nextPage: number) {
   color: inherit;
 }
 
+/* Phones: the three columns stack into a single readable block. */
+@media (max-width: 640px) {
+  .sources-list__link {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}
+
 .sources-list__link:hover {
   background: #f6f6f6;
 }

@@ -194,7 +194,7 @@ function goTo(nextPage: number) {
           @click="clearSearch"
         >✕</button>
       </div>
-      <div class="flex gap-1.5" role="group" :aria-label="t('library.sort.label')">
+      <div class="flex flex-wrap gap-1.5" role="group" :aria-label="t('library.sort.label')">
         <button
           v-for="option in sortOptions"
           :key="option.key"
@@ -252,7 +252,7 @@ function goTo(nextPage: number) {
             {{ t('library.count', { count: group.words.length }) }}
           </span>
         </h2>
-        <ul class="grid gap-3 sm:grid-cols-2">
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <li v-for="word in group.words" :key="word.lexiconEntryId">
             <!-- The word leads at full size; the date whispers; the letter
                  count is a small square tile — the game's own vocabulary. -->

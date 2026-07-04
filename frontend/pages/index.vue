@@ -90,11 +90,11 @@ const ghostButton
       </div>
 
       <div class="text-center" :aria-label="t('home.nameGloss')">
-        <div class="flex justify-center gap-2.5 sm:gap-3" dir="rtl">
+        <div class="flex justify-center gap-2 sm:gap-3" dir="rtl">
           <div
             v-for="(tile, index) in wordBoard"
             :key="tile.code + index"
-            class="word-tile w-[20vw] max-w-24 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-0 pb-3.5 pt-4 shadow-[var(--shadow-soft)] lg:w-[6.75rem] lg:max-w-none"
+            class="word-tile w-[19vw] max-w-24 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-0 pb-3.5 pt-4 shadow-[var(--shadow-soft)] lg:w-[6.75rem] lg:max-w-none"
           >
             <SyriacText :text="tile.glyph" class="!text-[3.4rem] leading-[1.35] text-[var(--color-accent)]" />
             <p class="mt-2 font-sans text-xs font-semibold">{{ t(`library.letters.${tile.code}`) }}</p>
