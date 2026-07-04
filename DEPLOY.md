@@ -122,6 +122,33 @@ In `https://auth-admin.<domain>`:
 4. Create the **Owner/admin role** mapping to `api:v1:admin`; assign it to your
    user.
 
+#### Sign-in experience — language and typography
+
+Keep the Logto pages consistent with the apps for signed-out users:
+
+- **Language.** Both frontends pass the user's chosen locale to Logto as OIDC
+  `ui_locales` on every sign-in (`server/routes/sign-in.get.ts` in each app),
+  which overrides Logto's browser-language detection. French ships with Logto;
+  **Dutch does not** — add it under *Sign-in experience → Content → Manage
+  language* (clone from English and translate), otherwise `ui_locales: nl`
+  falls back to English.
+- **Typography.** Paste this under *Sign-in experience → Custom CSS* so the
+  pages use the same fonts as the apps (Inter for the UI, Serto for any Syriac
+  glyphs):
+
+  ```css
+  /* Sabro ecosystem typography — match the apps (Inter UI + Serto Syriac). */
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Syriac+Western&display=swap');
+
+  body,
+  body * {
+    font-family: 'Inter', 'Noto Sans Syriac Western', ui-sans-serif, system-ui, sans-serif;
+  }
+  ```
+
+  The brand color under *Sign-in experience → Branding* should match the hub
+  accent: `#8C2F39` (light) / `#D97585` (dark).
+
 ### Phase 6 — First full bring-up
 
 ```bash

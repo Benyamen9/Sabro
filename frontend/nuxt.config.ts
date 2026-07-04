@@ -58,6 +58,16 @@ export default defineNuxtConfig({
       endpoint: '',
       appId: '',
       appSecret: '',
+      // Park the module's built-in sign-in route on an unused path: /sign-in
+      // is served by our own server route (server/routes/sign-in.get.ts) so
+      // the redirect to Logto can carry the user's chosen language via the
+      // OIDC ui_locales parameter. Sign-out and the callback stay with the
+      // module's handler.
+      pathnames: {
+        signIn: '/logto/sign-in',
+        signOut: '/sign-out',
+        callback: '/callback',
+      },
       // Non-empty placeholder so the Logto event handler doesn't throw on
       // every request when running unconfigured (CookieStorage requires a
       // non-empty key). The cookie has no signed-in user when Logto isn't
