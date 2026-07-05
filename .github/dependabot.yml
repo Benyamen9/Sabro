@@ -1,0 +1,49 @@
+# Dependabot watches pinned Docker image tags and opens a PR when a newer tag
+# exists — updates stay deliberate (PRs are reviewed and merged by hand, never
+# auto-merged). Two images need their runbook on merge:
+#   - svhd/logto: bump the tag, then run `npm run alteration deploy` on the VPS
+#     before restarting (see the Logto upgrade notes in docker-compose.prod.yml).
+#   - getmeili/meilisearch: after rollout, rebuild indexes from Postgres via the
+#     admin endpoints if the engine refuses the existing data directory.
+version: 2
+updates:
+  # Service images in both compose files (dev + prod): postgres, meilisearch,
+  # logto, caddy, seq. The GHCR sabro-*/meltho images use variable tags pinned
+  # by CD and are ignored by Dependabot automatically.
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    ignore:
+      # A postgres major bump cannot be applied by swapping the image — the
+      # data directory format changes and the container refuses to boot on the
+      # existing volume. Majors need a planned dump/restore, not a tag PR.
+      - dependency-name: "postgres"
+        update-types: ["version-update:semver-major"]
+
+  # Base images in the three Dockerfiles (API/migrator, frontend, backup).
+  - package-ecosystem: "docker"
+    directories:
+      - "/src/Sabro.API"
+      - "/frontend"
+      - "/backup"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Action pins in the CI/CD workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"

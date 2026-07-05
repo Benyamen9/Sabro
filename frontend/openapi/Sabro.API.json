@@ -4663,6 +4663,18 @@
           }
         }
       }
+    },
+    "/version": {
+      "get": {
+        "tags": [
+          "Sabro.API"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -7592,6 +7604,9 @@
     },
     {
       "name": "SuggestedEdits"
+    },
+    {
+      "name": "Sabro.API"
     }
   ]
 }

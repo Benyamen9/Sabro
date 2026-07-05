@@ -167,6 +167,12 @@ try
     app.MapControllers();
     app.MapHealthChecks("/health");
 
+    // Deployed build identity. BUILD_SHA is baked into the image by CD; the
+    // post-deploy step asserts this endpoint carries the commit it just
+    // shipped, so a stale container can never pass a deploy silently.
+    var buildSha = app.Configuration["BUILD_SHA"] ?? "unknown";
+    app.MapGet("/version", () => Results.Ok(new { sha = buildSha }));
+
     app.Run();
 }
 catch (Exception ex) when (ex is not HostAbortedException)
