@@ -7,6 +7,9 @@ interface LibraryItem { lexiconEntryId: string, lastPlayedOn?: string }
 interface LibraryPage { items: LibraryItem[], total: number, page: number, pageSize: number }
 
 export default defineCachedEventHandler(async (event) => {
+  // Method-agnostic route (no .get suffix) so HEAD works too — search-engine
+  // validators probe sitemaps with HEAD before fetching the body, and a
+  // method-suffixed route 404s those probes.
   const config = useRuntimeConfig()
   const siteUrl = config.public.siteUrl.replace(/\/$/, '')
   const apiBaseUrl = config.public.apiBaseUrl.replace(/\/$/, '')
