@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sabro brand asset renderer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Syriac+Western:wght@400;500;700&display=swap">
+<style>
+  :root { --accent-l: #8c2f39; --accent-d: #d97585; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: transparent; font-family: Inter, system-ui, sans-serif; display: flex; flex-direction: column; gap: 40px; align-items: flex-start; padding: 40px; }
+  .syriac { font-family: "Noto Sans Syriac Western", serif; }
+
+  /* Badge: the app-header recipe. Icons drop the outer shadow (an asset must
+     not carry its own drop shadow) but keep the inset top light. */
+  .badge { display: flex; align-items: center; justify-content: center; color: #fff; line-height: 1;
+           background: linear-gradient(180deg, color-mix(in oklab, var(--accent-l) 86%, white) 0%, var(--accent-l) 55%);
+           box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.28); }
+  #icon-512 { width: 512px; height: 512px; border-radius: 152px; font-size: 320px; box-shadow: inset 0 8px 0 rgb(255 255 255 / 0.28); }
+  /* apple-touch-icon: full-bleed square — iOS applies its own corner mask. */
+  #icon-180 { width: 180px; height: 180px; border-radius: 0; font-size: 104px; box-shadow: inset 0 3px 0 rgb(255 255 255 / 0.28); }
+  #icon-32  { width: 32px;  height: 32px;  border-radius: 9px;  font-size: 20px; }
+  #icon-16  { width: 16px;  height: 16px;  border-radius: 4.5px; font-size: 10.5px; }
+
+  /* Lockup: badge + Sabro + gloss, transparent background, one per theme. */
+  .lockup { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 30px; letter-spacing: -0.02em; padding: 6px; }
+  .lockup .b { width: 42px; height: 42px; border-radius: 12px; font-size: 26px;
+               box-shadow: 0 1px 2px rgb(28 25 23 / 0.10), inset 0 1px 0 rgb(255 255 255 / 0.28); }
+  .lockup .gloss { font-weight: 400; font-size: 33px; }
+  #lockup-light { color: #1c1917; }
+  #lockup-light .gloss { color: #a8a29e; }
+  #lockup-dark { color: #f5f5f4; }
+  #lockup-dark .b { background: linear-gradient(180deg, color-mix(in oklab, var(--accent-d) 86%, white) 0%, var(--accent-d) 55%); }
+  #lockup-dark .gloss { color: #57534e; }
+
+  /* Seal: accent monogram in a double ring, transparent background. */
+  .seal { width: 108px; height: 108px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; font-size: 50px; }
+  .seal::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; border: 1.5px solid currentColor; opacity: 0.45; }
+  #seal-light { color: var(--accent-l); border: 2px solid var(--accent-l); }
+  #seal-dark  { color: var(--accent-d); border: 2px solid var(--accent-d); }
+
+  /* og:image at exact spec size, both themes. */
+  .og { width: 1200px; height: 630px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .og::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 10px; }
+  .og .word { font-size: 168px; line-height: 1.15; }
+  .og .latin { font-size: 30px; letter-spacing: 0.42em; text-indent: 0.42em; font-weight: 500; text-transform: uppercase; margin-top: 8px; }
+  .og .tag { position: absolute; bottom: 26px; font-size: 23px; }
+  #og-light { background: #fafaf9; }
+  #og-light::before { background: var(--accent-l); }
+  #og-light .word { color: var(--accent-l); }
+  #og-light .latin { color: #78716c; }
+  #og-light .tag { color: #a8a29e; }
+  #og-dark { background: #0c0a09; }
+  #og-dark::before { background: var(--accent-d); }
+  #og-dark .word { color: var(--accent-d); }
+  #og-dark .latin { color: #a8a29e; }
+  #og-dark .tag { color: #57534e; }
+</style>
+</head>
+<body>
+  <span id="icon-512" class="badge syriac">ܣ</span>
+  <span id="icon-180" class="badge syriac">ܣ</span>
+  <span id="icon-32"  class="badge syriac">ܣ</span>
+  <span id="icon-16"  class="badge syriac">ܣ</span>
+
+  <div id="lockup-light" class="lockup"><span class="badge b syriac">ܣ</span>Sabro<span class="gloss syriac" dir="rtl">ܣܒܪܐ</span></div>
+  <div id="lockup-dark"  class="lockup"><span class="badge b syriac">ܣ</span>Sabro<span class="gloss syriac" dir="rtl">ܣܒܪܐ</span></div>
+
+  <span id="seal-light" class="seal syriac">ܣ</span>
+  <span id="seal-dark"  class="seal syriac">ܣ</span>
+
+  <div id="og-light" class="og"><div class="word syriac" dir="rtl">ܣܒܪܐ</div><div class="latin">Sabro</div><div class="tag">the Syriac language ecosystem</div></div>
+  <div id="og-dark"  class="og"><div class="word syriac" dir="rtl">ܣܒܪܐ</div><div class="latin">Sabro</div><div class="tag">the Syriac language ecosystem</div></div>
+</body>
+</html>
