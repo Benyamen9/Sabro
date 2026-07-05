@@ -9,7 +9,9 @@ const { profile, load, persist, saveAccount, deleteAccount } = useProfile()
 const { load: loadLeaderboard } = useLeaderboard()
 const { hasPassword, load: loadCapabilities } = useAccountCapabilities()
 
-useHead({ title: () => `${t('account.title')} · ${t('site.title')}` })
+// The app titleTemplate appends "— Sabro"; personal pages stay out of search.
+useHead({ title: () => t('account.title') })
+useSeoMeta({ robots: 'noindex, nofollow' })
 
 // The layout loads the profile on mount, but the page can be hit directly, so
 // resolve it here too. Both calls are idempotent (loaded-once guard inside).

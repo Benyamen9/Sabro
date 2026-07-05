@@ -395,5 +395,19 @@
         "Other": "Other"
       }
     }
+  },
+  "seo": {
+    "home": {
+      "title": "Sabro — the Syriac language ecosystem",
+      "description": "Discover Syriac word by word — a living lexicon and daily word games, in English, French and Dutch."
+    },
+    "library": {
+      "title": "Meltho word library",
+      "description": "Every word the daily Syriac word game Meltho has shown — with letters, vowels, roots and meanings in English, French and Dutch."
+    },
+    "libraryWord": {
+      "title": "{translit} · {meaning}",
+      "description": "The Syriac word {translit} (“{meaning}”): its letters, vowels, root and pronunciation in the Meltho word library."
+    }
   }
 }

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { CreateLexiconEntryRequest } from '~/types/api'
 
+// Editorial / deferred surface — keep out of search indexes.
+useSeoMeta({ robots: 'noindex, nofollow' })
+
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { create } = useLexiconAdmin()
