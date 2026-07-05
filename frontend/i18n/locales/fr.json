@@ -395,5 +395,19 @@
         "Other": "Autre"
       }
     }
+  },
+  "seo": {
+    "home": {
+      "title": "Sabro — l’écosystème de la langue syriaque",
+      "description": "Découvrez le syriaque mot après mot — un lexique vivant et des jeux de mots quotidiens, en anglais, français et néerlandais."
+    },
+    "library": {
+      "title": "Bibliothèque de mots Meltho",
+      "description": "Tous les mots montrés par le jeu quotidien Meltho — lettres, voyelles, racines et sens en anglais, français et néerlandais."
+    },
+    "libraryWord": {
+      "title": "{translit} · {meaning}",
+      "description": "Le mot syriaque {translit} (« {meaning} ») : ses lettres, ses voyelles, sa racine et sa prononciation dans la bibliothèque Meltho."
+    }
   }
 }

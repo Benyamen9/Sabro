@@ -1,0 +1,9 @@
+# sabro.be — public surface is the home page and the Meltho word library.
+User-agent: *
+Disallow: /admin
+Disallow: /profile
+Disallow: /translations
+Disallow: /sign-in
+Disallow: /callback
+
+Sitemap: https://sabro.be/sitemap.xml

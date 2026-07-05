@@ -396,5 +396,19 @@
         "Other": "Overig"
       }
     }
+  },
+  "seo": {
+    "home": {
+      "title": "Sabro — het ecosysteem van de Syrische taal",
+      "description": "Ontdek het Syrisch woord voor woord — een levend lexicon en dagelijkse woordspellen, in het Engels, Frans en Nederlands."
+    },
+    "library": {
+      "title": "Meltho-woordbibliotheek",
+      "description": "Elk woord dat het dagelijkse Syrische woordspel Meltho heeft getoond — met letters, klinkers, wortels en betekenissen in het Engels, Frans en Nederlands."
+    },
+    "libraryWord": {
+      "title": "{translit} · {meaning}",
+      "description": "Het Syrische woord {translit} (“{meaning}”): letters, klinkers, wortel en uitspraak in de Meltho-woordbibliotheek."
+    }
   }
 }

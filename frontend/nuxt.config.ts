@@ -11,7 +11,8 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      htmlAttrs: { lang: 'en' },
+      // <html lang> is set reactively from the active locale in app.vue —
+      // hardcoding it here would leave FR/NL sessions declared as English.
       link: [
         // Brand favicons — rendered from the header badge (see public/brand/,
         // regenerated via the render-brand assets pipeline, not hand-drawn).
@@ -95,6 +96,9 @@ export default defineNuxtConfig({
     },
     public: {
       apiBaseUrl: 'http://localhost:5082/api/v1',
+      // Canonical origin for SEO surfaces (canonical links, og:url, absolute
+      // og:image, sitemap <loc>s). Override with NUXT_PUBLIC_SITE_URL.
+      siteUrl: 'https://sabro.be',
       // Deployed build identity, served at /version (server/routes/version.get.ts)
       // and asserted by CD post-deploy. Baked into the prod image as the
       // NUXT_PUBLIC_BUILD_SHA env (Dockerfile BUILD_SHA build-arg); empty in dev.

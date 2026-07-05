@@ -5,6 +5,13 @@ const { t, locale } = useI18n()
 const { listWords } = useMelthoLibrary()
 const preferredMeaning = usePreferredMeaning()
 
+useSeoMeta({
+  title: () => t('seo.library.title'),
+  description: () => t('seo.library.description'),
+  ogTitle: () => t('seo.library.title'),
+  ogDescription: () => t('seo.library.description'),
+})
+
 const route = useRoute()
 const router = useRouter()
 

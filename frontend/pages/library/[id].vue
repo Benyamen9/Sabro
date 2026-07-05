@@ -28,6 +28,23 @@ const hasComposition = computed(() => (data.value?.composition ?? []).length > 0
 // The form shown large in the hero: the vocalized spelling when authored, else the bare word.
 const heroForm = computed(() => data.value?.syriacVocalized || data.value?.syriacUnvocalized || '')
 
+// Word-specific title/description ("bartho · daughter — Sabro") for the
+// long-tail search surface; app-level defaults hold while loading or on 404.
+const preferredMeaning = usePreferredMeaning()
+const seoWord = computed(() => {
+  const word = data.value
+  if (!word) return null
+  const translit = word.sblTransliteration || word.syriacUnvocalized
+  const meaning = preferredMeaning(word.meanings)
+  return meaning ? { translit, meaning } : null
+})
+useSeoMeta({
+  title: () => (seoWord.value ? t('seo.libraryWord.title', seoWord.value) : null),
+  description: () => (seoWord.value ? t('seo.libraryWord.description', seoWord.value) : null),
+  ogTitle: () => (seoWord.value ? t('seo.libraryWord.title', seoWord.value) : null),
+  ogDescription: () => (seoWord.value ? t('seo.libraryWord.description', seoWord.value) : null),
+})
+
 const meaningLanguages = ['en', 'fr', 'nl'] as const
 const orderedMeanings = computed(() => {
   const meanings = data.value?.meanings ?? []
