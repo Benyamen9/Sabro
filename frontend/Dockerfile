@@ -10,7 +10,7 @@
 # is exactly what this image does (node:22 bookworm).
 
 # ---- Build: install deps + nuxt build ----------------------------------------
-FROM node:22-bookworm-slim AS build
+FROM node:26-bookworm-slim AS build
 WORKDIR /app
 
 # NUXT_PUBLIC_SABRO_API_RESOURCE is read at nuxt.config eval (build) time to
@@ -40,7 +40,7 @@ COPY . .
 RUN npm run build
 
 # ---- Runtime: Nitro node server ----------------------------------------------
-FROM node:22-bookworm-slim AS runtime
+FROM node:26-bookworm-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 # Nitro binds $HOST:$PORT — listen on all interfaces inside the container.
