@@ -49,7 +49,8 @@ jobs:
         id: ns
         run: echo "value=$(echo '${{ env.IMAGE_NAMESPACE }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
-      # API runtime image (context = repo root).
+      # API runtime image (context = repo root). BUILD_SHA is served at /version
+      # and asserted by the deploy job after the swap.
       - name: Build + push API
         uses: docker/build-push-action@v7
         with:
@@ -57,6 +58,8 @@ jobs:
           file: src/Sabro.API/Dockerfile
           target: runtime
           push: true
+          build-args: |
+            BUILD_SHA=${{ env.SHA }}
           tags: |
             ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-api:${{ env.SHA }}
             ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-api:latest
@@ -103,6 +106,7 @@ jobs:
           build-args: |
             NUXT_PUBLIC_SABRO_API_RESOURCE=${{ secrets.NUXT_PUBLIC_SABRO_API_RESOURCE }}
             NUXT_PUBLIC_COOKIE_DOMAIN=${{ vars.COOKIE_DOMAIN || '.sabro.be' }}
+            BUILD_SHA=${{ env.SHA }}
           tags: |
             ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-frontend:${{ env.SHA }}
             ${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-frontend:latest
@@ -114,6 +118,23 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.SHA }}
+
+      # Ship the compose file with every deploy so the VPS copy can never
+      # drift from the repo. (Caddyfile changes stay manual: the container
+      # mounts it but only re-reads it on a caddy reload/restart.)
+      - name: Ship docker-compose.prod.yml to VPS
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: docker-compose.prod.yml
+          target: ${{ secrets.APP_DIR }}
+
       - name: SSH deploy
         uses: appleboy/ssh-action@v1
         with:
@@ -142,14 +163,32 @@ jobs:
             # Post-deploy health check through Caddy from the host (the API
             # container exposes no host port and ships no wget/curl).
             set -a; . ./.env; set +a
+            healthy=""
             for i in $(seq 1 30); do
               if curl -fsS "https://${SABRO_API_DOMAIN}/health" >/dev/null 2>&1; then
-                echo "API healthy"
-                # Diagnostic: the puzzle endpoint must be public (200), not 401.
-                echo "anon /play/meltho/today -> HTTP $(curl -s -o /dev/null -w '%{http_code}' "https://${SABRO_API_DOMAIN}/api/v1/play/meltho/today")"
-                exit 0
+                healthy=1
+                break
               fi
               echo "waiting for API health ($i)..."; sleep 2
             done
-            echo "API did not become healthy in time" >&2
-            exit 1
+            if [ -z "$healthy" ]; then
+              echo "API did not become healthy in time" >&2
+              exit 1
+            fi
+            echo "API healthy"
+            # Diagnostic: the puzzle endpoint must be public (200), not 401.
+            echo "anon /play/meltho/today -> HTTP $(curl -s -o /dev/null -w '%{http_code}' "https://${SABRO_API_DOMAIN}/api/v1/play/meltho/today")"
+            # Assert the running containers actually carry the commit we just
+            # shipped — a green health check alone does not prove the swap
+            # happened (a stale container also answers /health).
+            expected="${{ needs.build-and-push.outputs.tag }}"
+            for url in "https://${SABRO_API_DOMAIN}/version" "https://${SABRO_DOMAIN}/version"; do
+              # Retry briefly: the frontend may still be booting when the API
+              # health gate opens (both were just force-recreated together).
+              deployed=$(curl -fsS --retry 5 --retry-delay 2 --retry-all-errors "$url" || echo "unreachable")
+              echo "$url -> $deployed"
+              case "$deployed" in
+                *"$expected"*) ;;
+                *) echo "$url does not carry build $expected — stale container?" >&2; exit 1;;
+              esac
+            done

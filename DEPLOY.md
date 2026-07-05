@@ -97,7 +97,9 @@ Wait for resolution before bringing Caddy up, or ACME issuance fails.
 ### Phase 4 — Place files on the VPS
 
 Copy into `APP_DIR` (e.g. `/opt/sabro`): `docker-compose.prod.yml`, `Caddyfile`,
-and a filled **`.env`** (from `.env.prod.example`). Fill domains,
+and a filled **`.env`** (from `.env.prod.example`). (This is first-bring-up
+only — once CD is live it re-ships `docker-compose.prod.yml` on every deploy;
+`Caddyfile` and `.env` remain manually managed.) Fill domains,
 `CADDY_ACME_EMAIL`, strong `POSTGRES_PASSWORD` / `LOGTO_DB_PASSWORD`,
 `MEILI_MASTER_KEY`, and `SABRO_API_RESOURCE`. Leave `NUXT_LOGTO_*` blank for now.
 
@@ -209,10 +211,15 @@ From here, every merge to `main` auto-deploys.
 Triggered automatically: **merge to `main`** → `sabro-ci` (green) → `sabro-cd`:
 
 1. Build + push `sabro-api` / `sabro-frontend` / `sabro-migrator` to GHCR,
-   tagged with the commit SHA.
-2. SSH to the VPS, pin `SABRO_IMAGE_TAG` to that SHA, `docker compose pull`.
-3. **Migrate first** (`--profile migrate run --rm migrator`), then `up -d`.
-4. Health-check `https://api.sabro.<domain>/health` through Caddy.
+   tagged with the commit SHA (also baked in as `BUILD_SHA`, served at `/version`).
+2. Ship `docker-compose.prod.yml` to `APP_DIR` over scp, so the VPS copy never
+   drifts from the repo. (`Caddyfile` and `.env` stay manual: Caddy only
+   re-reads its config on reload/restart, and the `.env` holds secrets.)
+3. SSH to the VPS, pin `SABRO_IMAGE_TAG` to that SHA, `docker compose pull`.
+4. **Migrate first** (`--profile migrate run --rm migrator`), then `up -d`.
+5. Health-check `https://api.sabro.<domain>/health` through Caddy, then assert
+   `/version` on both the API and the hub frontend carries the shipped SHA — a
+   stale container answering `/health` now fails the deploy instead of passing.
 
 Caddy buffers the ~2–3 s API restart, so no blue-green is needed at this scale.
 
