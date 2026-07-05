@@ -31,7 +31,7 @@ jobs:
       tag: ${{ env.SHA }}
     steps:
       - name: Checkout tested commit
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.SHA }}
 
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout tested commit
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.SHA }}
 
