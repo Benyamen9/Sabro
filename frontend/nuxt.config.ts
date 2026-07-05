@@ -90,6 +90,10 @@ export default defineNuxtConfig({
     },
     public: {
       apiBaseUrl: 'http://localhost:5082/api/v1',
+      // Deployed build identity, served at /version (server/routes/version.get.ts)
+      // and asserted by CD post-deploy. Baked into the prod image as the
+      // NUXT_PUBLIC_BUILD_SHA env (Dockerfile BUILD_SHA build-arg); empty in dev.
+      buildSha: '',
       // Shared cookie domain for ecosystem-wide preferences (locale + Syriac
       // script variant). Empty = host-only (dev); ".sabro.be" in prod so the
       // cookies are shared with Meltho and future apps. Baked from the same

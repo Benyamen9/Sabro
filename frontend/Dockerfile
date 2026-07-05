@@ -51,4 +51,11 @@ EXPOSE 3000
 COPY --from=build /app/.output ./.output
 
 USER node
+
+# Deployed build identity, served at /version and asserted by CD post-deploy.
+# Set as a runtime env override (not a build-time bake) and declared last so
+# the per-commit value only invalidates this final layer.
+ARG BUILD_SHA=""
+ENV NUXT_PUBLIC_BUILD_SHA=${BUILD_SHA}
+
 ENTRYPOINT ["node", ".output/server/index.mjs"]

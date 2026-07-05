@@ -68,4 +68,9 @@ RUN useradd --create-home --uid 1001 sabro \
     && chown -R sabro:sabro /app
 USER sabro
 
+# Deployed build identity, served at /version and asserted by CD post-deploy.
+# Declared last so the per-commit value only invalidates this final layer.
+ARG BUILD_SHA=unknown
+ENV BUILD_SHA=${BUILD_SHA}
+
 ENTRYPOINT ["dotnet", "Sabro.API.dll"]
