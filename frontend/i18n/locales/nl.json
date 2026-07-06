@@ -250,7 +250,6 @@
     "notFound": "Dit woord staat nog niet in de bibliotheek.",
     "back": "Terug naar de bibliotheek",
     "lastPlayed": "Laatst getoond op {date}",
-    "playedOn": "Getoond op",
     "count": "{count} woorden",
     "timesPlayed": "{count}× getoond",
     "lettersCount": "{count} letters",

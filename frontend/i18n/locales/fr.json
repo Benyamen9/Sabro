@@ -250,7 +250,6 @@
     "notFound": "Ce mot n’est pas encore dans la bibliothèque.",
     "back": "Retour à la bibliothèque",
     "lastPlayed": "Dernière fois le {date}",
-    "playedOn": "Proposé le",
     "count": "{count} mots",
     "timesPlayed": "proposé {count}×",
     "lettersCount": "{count} lettres",

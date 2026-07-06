@@ -250,7 +250,6 @@
     "notFound": "This word is not in the library yet.",
     "back": "Back to the library",
     "lastPlayed": "Last shown {date}",
-    "playedOn": "Shown on",
     "count": "{count} words",
     "timesPlayed": "shown {count}×",
     "lettersCount": "{count} letters",
