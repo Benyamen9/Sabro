@@ -630,6 +630,14 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </section>
+
+          <!-- The data-handling reference for the account surface above. -->
+          <p class="font-sans text-xs text-[var(--color-text-faint)]">
+            <NuxtLink
+              to="/privacy"
+              class="underline decoration-[var(--color-border-strong)] underline-offset-2 transition-colors hover:text-[var(--color-text-muted)]"
+            >{{ t('privacy.title') }}</NuxtLink>
+          </p>
         </div>
       </div>
     </template>

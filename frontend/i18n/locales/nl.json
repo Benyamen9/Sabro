@@ -410,5 +410,46 @@
       "title": "{translit} · {meaning}",
       "description": "Het Syrische woord {translit} (“{meaning}”): letters, klinkers, wortel en uitspraak in de Meltho-woordbibliotheek."
     }
+  },
+  "privacy": {
+    "title": "Privacybeleid",
+    "metaDescription": "Hoe het Sabro-ecosysteem met uw gegevens omgaat: wat we bewaren, cookies, uw rechten en hoe u ons bereikt.",
+    "updated": "Laatst bijgewerkt: 6 juli 2026",
+    "intro": "Sabro is een persoonlijk, niet-commercieel academisch project gewijd aan de Syrische taal. Dit beleid legt uit welke gegevens het Sabro-ecosysteem (sabro.be en meltho.sabro.be) over u bewaart, en waarom.",
+    "who": {
+      "title": "Wie is verantwoordelijk",
+      "b1": "Het Sabro-ecosysteem wordt beheerd door zijn eigenaar, Benyamen Kaplan, als persoonlijk project. Voor alles wat uw gegevens betreft kunt u terecht op het contactadres hieronder."
+    },
+    "data": {
+      "title": "Wat we bewaren",
+      "b1": "Wanneer u een account aanmaakt, bewaart onze zelfgehoste aanmelddienst (Logto) uw e-mailadres, uw gebruikersnaam en een gehashte vorm van uw wachtwoord. Het wachtwoord zelf zien of bewaren we nooit.",
+      "b2": "Uw profiel bevat wat u instelt op de profielpagina: een weergavenaam, uw voorkeurstaal en uw favoriete Syrische schrift.",
+      "b3": "Wanneer u aangemeld speelt, bewaren we één resultaat per spel en per dag: de datum, of u het woord vond, en in hoeveel beurten. Spelen zonder account bewaart niets op de server.",
+      "b4": "Onze servers houden technische logboeken bij (waaronder IP-adressen en, voor aangemelde verzoeken, uw gebruikers-ID) voor probleemoplossing en misbruikpreventie. Ze worden niet gebruikt voor profilering en slechts zo lang als nodig bewaard.",
+      "b5": "Er is geen reclame, geen analyse- of trackingdienst, en uw gegevens worden nooit verkocht of gedeeld voor marketing."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "b1": "We gebruiken enkel een klein aantal functionele cookies: uw taal- en schriftvoorkeuren (gedeeld tussen sabro.be en zijn subdomeinen zodat de apps consistent blijven) en een sessiecookie die u aangemeld houdt. Er zijn geen reclame- of analysecookies."
+    },
+    "third": {
+      "title": "Diensten van derden",
+      "b1": "De lettertypen van de interface worden geladen via Google Fonts; uw browser contacteert dus de servers van Google bij het laden van een pagina, en Google kan daarbij uw IP-adres zien.",
+      "b2": "Accountmails (zoals verificatiecodes) worden bezorgd via Resend, dat het bestemmings-e-mailadres uitsluitend daarvoor verwerkt."
+    },
+    "storage": {
+      "title": "Waar uw gegevens staan",
+      "b1": "Alles draait op een server in de Europese Unie (Hetzner, Duitsland), met nachtelijke back-ups op Europese opslag — 30 dagelijkse en 12 maandelijkse kopieën, die daarna worden overschreven."
+    },
+    "rights": {
+      "title": "Uw rechten",
+      "b1": "U kunt uw profiel op elk moment bekijken en bewerken op de profielpagina, en daar ook uw account verwijderen — verwijdering wist uw aanmeldidentiteit, uw profiel en uw spelresultaten.",
+      "b2": "U kunt een kopie van de aan uw account gekoppelde gegevens (een export) aanvragen via het contactadres; u kunt ook vragen om gegevens te corrigeren of te verwijderen.",
+      "b3": "Meent u dat uw gegevens verkeerd worden behandeld, dan kunt u klacht indienen bij uw gegevensbeschermingsautoriteit (in België de GBA)."
+    },
+    "contact": {
+      "title": "Contact",
+      "b1": "Voor vragen of verzoeken over uw gegevens schrijft u naar benyamen-kaplan{'@'}hotmail.com."
+    }
   }
 }

@@ -409,5 +409,46 @@
       "title": "{translit} · {meaning}",
       "description": "The Syriac word {translit} (“{meaning}”): its letters, vowels, root and pronunciation in the Meltho word library."
     }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "metaDescription": "How the Sabro ecosystem handles your data: what we store, cookies, your rights, and how to contact us.",
+    "updated": "Last updated: 6 July 2026",
+    "intro": "Sabro is a personal, non-commercial academic project dedicated to the Syriac language. This policy explains what data the Sabro ecosystem (sabro.be and meltho.sabro.be) stores about you, and why.",
+    "who": {
+      "title": "Who is responsible",
+      "b1": "The Sabro ecosystem is run by its owner, Benyamen Kaplan, as a personal project. For anything related to your data, use the contact address below."
+    },
+    "data": {
+      "title": "What we store",
+      "b1": "When you create an account, our self-hosted sign-in service (Logto) stores your email address, your username, and a hashed form of your password. We never see or store the password itself.",
+      "b2": "Your profile holds what you set on the profile page: a display name, your preferred language, and your preferred Syriac script.",
+      "b3": "When you play a game while signed in, we store one result per game and day: the date, whether you solved it, and in how many attempts. Playing without an account stores nothing on the server.",
+      "b4": "Our servers keep technical logs (including IP addresses and, for signed-in requests, your user ID) for troubleshooting and abuse prevention. They are not used for profiling and are kept only as long as needed.",
+      "b5": "There is no advertising, no analytics or tracking service, and your data is never sold or shared for marketing."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "b1": "We use a small set of functional cookies only: your language and Syriac-script preferences (shared across sabro.be and its subdomains so the apps stay consistent) and a session cookie that keeps you signed in. There are no advertising or analytics cookies."
+    },
+    "third": {
+      "title": "Third-party services",
+      "b1": "The interface fonts are loaded from Google Fonts, so your browser contacts Google's servers when a page loads; Google may see your IP address in that request.",
+      "b2": "Account emails (such as verification codes) are delivered through Resend, which processes the destination email address for that purpose only."
+    },
+    "storage": {
+      "title": "Where your data lives",
+      "b1": "Everything runs on a server in the European Union (Hetzner, Germany), with nightly backups kept on EU storage — 30 daily and 12 monthly copies, after which they are overwritten."
+    },
+    "rights": {
+      "title": "Your rights",
+      "b1": "You can view and edit your profile at any time on the profile page, and delete your account there too — deletion removes your sign-in identity, your profile and your play results.",
+      "b2": "You can request a copy of the data linked to your account (an export) by writing to the contact address; you can also ask us to correct or delete anything.",
+      "b3": "If you believe your data is mishandled, you can lodge a complaint with your data-protection authority (in Belgium, the GBA/APD)."
+    },
+    "contact": {
+      "title": "Contact",
+      "b1": "For any question or request about your data, write to benyamen-kaplan{'@'}hotmail.com."
+    }
   }
 }
