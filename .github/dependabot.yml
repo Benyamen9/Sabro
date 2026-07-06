@@ -37,6 +37,12 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+    ignore:
+      # Same rationale as the compose-file rule: the backup sidecar's postgres
+      # base image stays on the database's major (client tools may lead the
+      # server by a major, but keeping them in lockstep removes the question).
+      - dependency-name: "postgres"
+        update-types: ["version-update:semver-major"]
 
   # Action pins in the CI/CD workflows.
   - package-ecosystem: "github-actions"
