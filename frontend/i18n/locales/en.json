@@ -417,7 +417,7 @@
     "intro": "Sabro is a personal, non-commercial academic project dedicated to the Syriac language. This policy explains what data the Sabro ecosystem (sabro.be and meltho.sabro.be) stores about you, and why.",
     "who": {
       "title": "Who is responsible",
-      "b1": "The Sabro ecosystem is run by its owner, Benyamen Kaplan, as a personal project. For anything related to your data, use the contact address below."
+      "b1": "The Sabro ecosystem is run privately by its owner as a personal, non-commercial project. For anything related to your data, use the contact address below."
     },
     "data": {
       "title": "What we store",
@@ -448,7 +448,7 @@
     },
     "contact": {
       "title": "Contact",
-      "b1": "For any question or request about your data, write to benyamen-kaplan{'@'}hotmail.com."
+      "b1": "For any question or request about your data, write to contact{'@'}sabro.be."
     }
   }
 }
