@@ -14,7 +14,7 @@
     { "syriacUnvocalized": "ܣܗܪܐ",  "sblTransliteration": "sahro",    "syriacVocalized": "ܣܰܗܪܳܐ",    "root": "ܣܗܪ" },
     { "syriacUnvocalized": "ܟܘܟܒܐ", "sblTransliteration": "kawkvo",   "syriacVocalized": "ܟ݁ܰܘܟ݁ܒ݂ܳܐ", "root": null },
     { "syriacUnvocalized": "ܐܪܥܐ",  "sblTransliteration": "arʿo",     "syriacVocalized": "ܐܰܪܥܳܐ",    "root": null },
-    { "syriacUnvocalized": "ܫܡܝܐ",  "sblTransliteration": "shmayo",   "syriacVocalized": "ܫܡܰܝܳܐ",    "root": "ܫܡܐ" },
+    { "syriacUnvocalized": "ܫܡܝ̈ܐ",  "sblTransliteration": "shmayo",   "syriacVocalized": "ܫܡܰܝ̈ܳܐ",    "root": "ܫܡܐ" },
     { "syriacUnvocalized": "ܠܚܡܐ",  "sblTransliteration": "laḥmo",    "syriacVocalized": "ܠܰܚܡܳܐ",    "root": "ܠܚܡ" },
     { "syriacUnvocalized": "ܚܡܪܐ",  "sblTransliteration": "ḥamro",    "syriacVocalized": "ܚܰܡܪܳܐ",    "root": "ܚܡܪ" },
     { "syriacUnvocalized": "ܡܫܚܐ",  "sblTransliteration": "meshḥo",   "syriacVocalized": "ܡܶܫܚܳܐ",    "root": "ܡܫܚ" },
