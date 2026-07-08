@@ -41,4 +41,40 @@ public class SyriacTextTests
     {
         SyriacText.CountLetters(input).Should().Be(0);
     }
+
+    [Fact]
+    public void IsSyriacOnly_WithPlainSyriacWord_ReturnsTrue()
+    {
+        // ܟܬܒ — three base Syriac letters, no marks.
+        SyriacText.IsSyriacOnly("ܟܬܒ").Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsSyriacOnly_WithVocalizationMarks_ReturnsTrue()
+    {
+        // ܟܬ݂ܳܒ݂ — base letters plus combining rukkakha/zqapha marks in the Syriac block.
+        SyriacText.IsSyriacOnly("ܟܬ݂ܳܒ݂").Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsSyriacOnly_WithSeyame_ReturnsTrue()
+    {
+        // ܡܝ̈ܐ — mayo "water", with seyame (U+0308 COMBINING DIAERESIS) over the Yodh.
+        SyriacText.IsSyriacOnly("ܡܝ̈ܐ").Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsSyriacOnly_WithWhitespace_IsIgnoredAndReturnsTrue()
+    {
+        SyriacText.IsSyriacOnly("ܒܪ ܐܢܫܐ").Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData("mayo")]
+    [InlineData("ܟܬܒa")]
+    [InlineData("café")]
+    public void IsSyriacOnly_WithNonSyriacCharacters_ReturnsFalse(string input)
+    {
+        SyriacText.IsSyriacOnly(input).Should().BeFalse();
+    }
 }
