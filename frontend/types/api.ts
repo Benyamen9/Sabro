@@ -56,6 +56,7 @@ export type SuggestedEditDto = Schemas['SuggestedEditDto']
 // Identity.
 export type UserProfileDto = Schemas['UserProfileDto']
 export type UpdateUserProfileRequest = Schemas['UpdateUserProfileRequest']
+export type ProfileExportDto = Schemas['ProfileExportDto']
 
 // Lexicon.
 export type GrammaticalCategory = Schemas['GrammaticalCategory']

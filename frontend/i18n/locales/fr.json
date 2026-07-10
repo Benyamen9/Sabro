@@ -83,6 +83,7 @@
       "email": "E-mail",
       "password": "Mot de passe",
       "session": "Session",
+      "export": "Vos données",
       "delete": "Supprimer le compte"
     },
     "username": {
@@ -198,6 +199,14 @@
     "session": {
       "heading": "Session",
       "body": "Se déconnecter de Sabro sur cet appareil."
+    },
+    "export": {
+      "heading": "Exporter vos données",
+      "body": "Téléchargez tout ce que Sabro conserve à votre sujet — votre profil et votre historique de jeu — dans un fichier JSON.",
+      "button": "Télécharger mes données",
+      "exporting": "Préparation…",
+      "done": "Téléchargé",
+      "error": "Impossible d’exporter vos données. Veuillez réessayer."
     },
     "delete": {
       "heading": "Supprimer le compte",
