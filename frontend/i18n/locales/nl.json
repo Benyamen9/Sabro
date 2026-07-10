@@ -83,6 +83,7 @@
       "email": "E-mail",
       "password": "Wachtwoord",
       "session": "Sessie",
+      "export": "Uw gegevens",
       "delete": "Account verwijderen"
     },
     "username": {
@@ -198,6 +199,14 @@
     "session": {
       "heading": "Sessie",
       "body": "Afmelden bij Sabro op dit apparaat."
+    },
+    "export": {
+      "heading": "Uw gegevens exporteren",
+      "body": "Download alles wat Sabro over u bewaart — uw profiel en uw spelgeschiedenis — als een JSON-bestand.",
+      "button": "Mijn gegevens downloaden",
+      "exporting": "Voorbereiden…",
+      "done": "Gedownload",
+      "error": "Kon uw gegevens niet exporteren. Probeer het opnieuw."
     },
     "delete": {
       "heading": "Account verwijderen",

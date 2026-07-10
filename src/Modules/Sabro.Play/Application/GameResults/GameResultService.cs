@@ -142,6 +142,25 @@ internal sealed class GameResultService : IGameResultService
             new PagedResult<GameResultDto>(items.Select(Map).ToArray(), total, page, pageSize));
     }
 
+    public async Task<Result<IReadOnlyList<GameResultDto>>> ListAllForUserAsync(string logtoUserId, CancellationToken cancellationToken)
+    {
+        var trimmedUserId = (logtoUserId ?? string.Empty).Trim();
+        if (trimmedUserId.Length == 0)
+        {
+            return Result<IReadOnlyList<GameResultDto>>.Failure(Error.Validation("LogtoUserId is required."));
+        }
+
+        var items = await dbContext.GameResults
+            .AsNoTracking()
+            .Where(r => r.LogtoUserId == trimmedUserId)
+            .OrderBy(r => r.PlayedOn)
+            .ThenBy(r => r.CreatedAt)
+            .ThenBy(r => r.Id)
+            .ToListAsync(cancellationToken);
+
+        return Result<IReadOnlyList<GameResultDto>>.Success(items.Select(Map).ToArray());
+    }
+
     public async Task<Result<int>> DeleteAllForUserAsync(string logtoUserId, CancellationToken cancellationToken)
     {
         var trimmedUserId = (logtoUserId ?? string.Empty).Trim();
