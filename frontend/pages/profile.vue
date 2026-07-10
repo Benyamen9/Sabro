@@ -5,7 +5,7 @@ const { t, locale, locales, setLocale } = useI18n()
 const { isConfigured, isSignedIn, displayName, email, username, avatarUrl, initial, signIn, signOut }
   = useAuth()
 const { variant, set: setVariant, available: scriptOptions } = useScriptVariant()
-const { profile, load, persist, saveAccount, deleteAccount } = useProfile()
+const { profile, load, persist, saveAccount, exportData, deleteAccount } = useProfile()
 const { load: loadLeaderboard } = useLeaderboard()
 const { hasPassword, load: loadCapabilities } = useAccountCapabilities()
 
@@ -76,6 +76,19 @@ function flagPrefsSaved() {
   prefsSaved.value = true
   if (prefsSavedTimer) clearTimeout(prefsSavedTimer)
   prefsSavedTimer = setTimeout(() => (prefsSaved.value = false), 2000)
+}
+
+// Data export — one-click JSON download of everything Sabro stores (GDPR).
+const exporting = ref(false)
+const exportState = ref<'idle' | 'done' | 'error'>('idle')
+
+async function downloadExport() {
+  if (exporting.value) return
+  exporting.value = true
+  exportState.value = 'idle'
+  const ok = await exportData()
+  exporting.value = false
+  exportState.value = ok ? 'done' : 'error'
 }
 
 // Account deletion — irreversible, so gated behind a type-to-confirm step.
@@ -162,6 +175,7 @@ const navGroups = computed(() => [
           ]
         : []),
       { id: 'session', label: t('account.nav.session') },
+      { id: 'export', label: t('account.nav.export') },
       { id: 'delete', label: t('account.nav.delete') },
     ],
   },
@@ -171,7 +185,7 @@ const navGroups = computed(() => [
 // horizontally-scrollable pill row.
 const flatNavItems = computed(() => navGroups.value.flatMap(group => group.items))
 
-const sectionIds = ['preferences', 'meltho', 'leaderboard', 'username', 'email', 'password', 'session', 'delete']
+const sectionIds = ['preferences', 'meltho', 'leaderboard', 'username', 'email', 'password', 'session', 'export', 'delete']
 const activeSection = ref('preferences')
 
 function goToSection(id: string) {
@@ -571,6 +585,49 @@ onBeforeUnmount(() => {
               </svg>
               {{ t('auth.signOut') }}
             </button>
+          </section>
+
+          <!-- Export — one-click JSON download of everything Sabro stores (GDPR). -->
+          <section
+            id="export"
+            class="scroll-mt-24 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-6 py-4 shadow-[var(--shadow-soft)]"
+          >
+            <div>
+              <p class="font-sans text-sm font-medium text-[var(--color-text)]">{{ t('account.export.heading') }}</p>
+              <p class="font-sans text-xs text-[var(--color-text-muted)]">{{ t('account.export.body') }}</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span
+                v-if="exportState === 'done'"
+                class="font-sans text-xs text-[var(--color-text-muted)]"
+              >{{ t('account.export.done') }}</span>
+              <span
+                v-else-if="exportState === 'error'"
+                class="font-sans text-xs text-[var(--color-accent)]"
+              >{{ t('account.export.error') }}</span>
+              <button
+                type="button"
+                :disabled="exporting"
+                class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--color-border-strong)] px-3.5 py-2 font-sans text-sm font-medium text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-text-faint)] hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-50"
+                @click="downloadExport"
+              >
+                <svg
+                  class="size-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="M7 10l5 5 5-5" />
+                  <path d="M12 15V3" />
+                </svg>
+                {{ exporting ? t('account.export.exporting') : t('account.export.button') }}
+              </button>
+            </div>
           </section>
 
           <!-- Delete account — danger zone, irreversible, gated by type-to-confirm. -->

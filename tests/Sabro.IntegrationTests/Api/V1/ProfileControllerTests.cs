@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Sabro.API.Controllers.V1;
 using Sabro.API.Logto;
 using Sabro.Identity.Application.UserProfiles;
 using Sabro.Identity.Domain;
@@ -107,6 +108,40 @@ public class ProfileControllerTests : IDisposable
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
         problem!.Errors.Should().ContainKey("preferredLanguage");
+    }
+
+    [Fact]
+    public async Task ExportMe_WithProfileAndResults_ReturnsCompletePersonalData()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var testUser = NewTestUser();
+
+        await GetAsTestUserAsync("/api/v1/profile/me", testUser, ct); // auto-creates the profile
+        await SeedGameResultAsync(testUser, ct);
+
+        var response = await GetAsTestUserAsync("/api/v1/profile/me/export", testUser, ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var export = await response.Content.ReadFromJsonAsync<ProfileExportDto>(SabroApiFactory.JsonOptions, ct);
+        export.Should().NotBeNull();
+        export!.Profile.LogtoUserId.Should().Be(testUser);
+        export.GameResults.Should().ContainSingle().Which.LogtoUserId.Should().Be(testUser);
+        export.Scope.Should().NotBeNullOrWhiteSpace();
+        export.ExportedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, precision: TimeSpan.FromMinutes(1));
+    }
+
+    [Fact]
+    public async Task ExportMe_ForNewUser_ReturnsProfileAndEmptyResults()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var testUser = NewTestUser();
+
+        var response = await GetAsTestUserAsync("/api/v1/profile/me/export", testUser, ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var export = await response.Content.ReadFromJsonAsync<ProfileExportDto>(SabroApiFactory.JsonOptions, ct);
+        export!.Profile.LogtoUserId.Should().Be(testUser);
+        export.GameResults.Should().BeEmpty();
     }
 
     [Fact]
