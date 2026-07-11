@@ -148,19 +148,27 @@ Keep the Logto pages consistent with the apps for signed-out users:
   Note: a custom phrase pack **replaces** the built-in language (it falls back
   to English, not to built-in Dutch), which is why the file is the complete
   tree rather than only the corrected strings.
-- **Typography.** Paste this under *Sign-in experience → Custom CSS* so the
-  pages use the same fonts as the apps (Inter for the UI, Serto for any Syriac
-  glyphs):
+- **Custom CSS.** The full sign-in stylesheet lives at
+  `scripts/logto/signin-custom.css` — the "open paper" editorial treatment:
+  apps' fonts (Inter UI + Serto Syriac), warm paper background, no card,
+  fade hairlines, accent focus rings. Colors mirror
+  `frontend/assets/css/main.css`; if the app tokens change, update both.
+  Apply through the Management API (or paste under *Sign-in experience →
+  Custom CSS*):
 
-  ```css
-  /* Sabro ecosystem typography — match the apps (Inter UI + Serto Syriac). */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Syriac+Western&display=swap');
-
-  body,
-  body * {
-    font-family: 'Inter', 'Noto Sans Syriac Western', ui-sans-serif, system-ui, sans-serif;
-  }
+  ```bash
+  TOKEN=$(curl -s -X POST https://auth.<domain>/oidc/token \
+    -u "$LOGTO_MANAGEMENT_CLIENT_ID:$LOGTO_MANAGEMENT_CLIENT_SECRET" \
+    -d grant_type=client_credentials -d resource=https://default.logto.app/api -d scope=all \
+    | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+  python3 -c 'import json; print(json.dumps({"customCss": open("scripts/logto/signin-custom.css").read()}))' \
+    | curl -X PATCH https://auth.<domain>/api/sign-in-exp \
+      -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" --data-binary @-
   ```
+
+  The stable selectors are Logto's exported `logto_*` classes plus the
+  readable local-name suffixes of its hashed CSS-module classes
+  (`[class*='_headline']` etc.) — re-verify those after a Logto upgrade.
 
   The brand color under *Sign-in experience → Branding* should match the hub
   accent: `#8C2F39` (light) / `#D97585` (dark).
