@@ -18,6 +18,28 @@ useHead({
   titleTemplate: (title?: string | null) =>
     title ? `${title} — ${t('site.title')}` : t('seo.home.title'),
   link: [{ rel: 'canonical', href: canonical }],
+  script: [
+    {
+      // Sitewide WebSite entity; the SearchAction points crawlers at the
+      // library's typo-tolerant dictionary search.
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        'name': 'Sabro',
+        'url': `${siteUrl}/`,
+        'inLanguage': ['en', 'fr', 'nl'],
+        'potentialAction': {
+          '@type': 'SearchAction',
+          'target': {
+            '@type': 'EntryPoint',
+            'urlTemplate': `${siteUrl}/library?q={search_term_string}`,
+          },
+          'query-input': 'required name=search_term_string',
+        },
+      }),
+    },
+  ],
 })
 
 useSeoMeta({
