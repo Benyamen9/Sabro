@@ -49,6 +49,35 @@ useSeoMeta({
   ogDescription: () => (seoWord.value ? t('seo.libraryWord.description', seoWord.value) : null),
 })
 
+// Structured data: each word is a DefinedTerm in the library's DefinedTermSet,
+// so search engines can treat the pages as dictionary entries. Emitted only
+// once the word has resolved (crawlers see the SSR payload).
+const config = useRuntimeConfig()
+const siteUrl = config.public.siteUrl.replace(/\/$/, '')
+useHead({
+  script: computed(() => {
+    const word = data.value
+    if (!word || !seoWord.value) return []
+    return [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'DefinedTerm',
+        'name': seoWord.value.translit,
+        'alternateName': [word.syriacUnvocalized, word.syriacVocalized].filter(Boolean),
+        'description': seoWord.value.meaning,
+        'inLanguage': 'syc',
+        'url': `${siteUrl}/library/${word.id}`,
+        'inDefinedTermSet': {
+          '@type': 'DefinedTermSet',
+          'name': 'Sabro Syriac word library',
+          'url': `${siteUrl}/library`,
+        },
+      }),
+    }]
+  }),
+})
+
 const meaningLanguages = ['en', 'fr', 'nl'] as const
 const orderedMeanings = computed(() => {
   const meanings = data.value?.meanings ?? []
