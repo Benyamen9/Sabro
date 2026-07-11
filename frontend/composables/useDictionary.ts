@@ -80,7 +80,8 @@ export function useDictionary() {
       syriacVocalized: item.syriacVocalized ?? null,
       sblTransliteration: item.sblTransliteration ?? null,
       grammaticalCategory: item.grammaticalCategory,
-      letterCount: item.letterCount,
+      // int32 fields come through the generated types as number | string.
+      letterCount: Number(item.letterCount),
       meanings: item.meanings,
     }
   }
@@ -118,7 +119,7 @@ export function useDictionary() {
         syriacVocalized: detail.syriacVocalized ?? null,
         sblTransliteration: detail.sblTransliteration ?? null,
         grammaticalCategory: detail.grammaticalCategory,
-        letterCount: detail.letterCount,
+        letterCount: Number(detail.letterCount),
         root: detail.root ?? null,
         meanings: detail.meanings,
         composition: detail.composition,
@@ -136,7 +137,7 @@ export function useDictionary() {
         syriacVocalized: played.syriacVocalized ?? null,
         sblTransliteration: played.sblTransliteration ?? null,
         grammaticalCategory: played.grammaticalCategory,
-        letterCount: played.playableLength,
+        letterCount: Number(played.playableLength),
         root: played.root ?? null,
         meanings: played.meanings,
         composition: played.composition,
