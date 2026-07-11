@@ -2449,6 +2449,249 @@
         }
       }
     },
+    "/api/v1/dictionary": {
+      "get": {
+        "tags": [
+          "Dictionary"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 50
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/GrammaticalCategory"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfDictionaryEntryListItem"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfDictionaryEntryListItem"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfDictionaryEntryListItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dictionary/search": {
+      "get": {
+        "tags": [
+          "Dictionary"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/GrammaticalCategory"
+            }
+          },
+          {
+            "name": "rootId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfLexiconSearchHitDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfLexiconSearchHitDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfLexiconSearchHitDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dictionary/{id}": {
+      "get": {
+        "tags": [
+          "Dictionary"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictionaryEntryDetailResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictionaryEntryDetailResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DictionaryEntryDetailResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/lexicon-entries/{id}": {
       "get": {
         "tags": [
@@ -5557,6 +5800,138 @@
           }
         }
       },
+      "DictionaryEntryDetailResponse": {
+        "required": [
+          "id",
+          "syriacUnvocalized",
+          "syriacVocalized",
+          "sblTransliteration",
+          "transliterationVariants",
+          "grammaticalCategory",
+          "morphology",
+          "letterCount",
+          "root",
+          "meanings",
+          "composition",
+          "playedInMeltho"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "syriacUnvocalized": {
+            "type": "string"
+          },
+          "syriacVocalized": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sblTransliteration": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "transliterationVariants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grammaticalCategory": {
+            "type": "string"
+          },
+          "morphology": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "letterCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "root": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "meanings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LexiconMeaningDto"
+            }
+          },
+          "composition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyriacLetter"
+            }
+          },
+          "playedInMeltho": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DictionaryEntryListItem": {
+        "required": [
+          "id",
+          "syriacUnvocalized",
+          "syriacVocalized",
+          "sblTransliteration",
+          "grammaticalCategory",
+          "letterCount",
+          "meanings"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "syriacUnvocalized": {
+            "type": "string"
+          },
+          "syriacVocalized": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sblTransliteration": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "grammaticalCategory": {
+            "type": "string"
+          },
+          "letterCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "meanings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LexiconMeaningDto"
+            }
+          }
+        }
+      },
       "EditAnnotationBody": {
         "required": [
           "newBody"
@@ -6539,6 +6914,47 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BiblicalPassageSearchHitDto"
+            }
+          },
+          "total": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "page": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "PagedResultOfDictionaryEntryListItem": {
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DictionaryEntryListItem"
             }
           },
           "total": {
@@ -7656,6 +8072,9 @@
     },
     {
       "name": "BiblicalPassages"
+    },
+    {
+      "name": "Dictionary"
     },
     {
       "name": "LexiconEntries"

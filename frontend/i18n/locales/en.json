@@ -251,7 +251,18 @@
   },
   "library": {
     "title": "Word library",
-    "heading": "Meltho word library",
+    "heading": "Word library",
+    "tabs": {
+      "label": "Library views",
+      "dictionary": "Dictionary",
+      "meltho": "From Meltho"
+    },
+    "dictionary": {
+      "lede": "Every published word in Sabro's lexicon — searchable by Syriac, transliteration, or meaning.",
+      "ledeCount": "in the lexicon so far — browsable letter by letter, searchable in any script. The dictionary grows as words are added.",
+      "empty": "No words in the dictionary yet."
+    },
+    "playedInMeltho": "This word has appeared in Meltho — see the words from the game",
     "lede": "Every word Meltho has shown, with its letters and sounds.",
     "ledeCount": "so far — every word Meltho has shown, with its letters and sounds. A new one arrives each day.",
     "empty": "No past words yet — check back after today's puzzle.",
@@ -260,7 +271,7 @@
     "back": "Back to the library",
     "lastPlayed": "Last shown {date}",
     "playedOn": "Shown on",
-    "count": "{count} words",
+    "count": "{count} words | {count} word | {count} words",
     "timesPlayed": "shown {count}×",
     "lettersCount": "{count} letters",
     "searchPlaceholder": "Search a word, meaning, or transliteration…",
@@ -411,12 +422,12 @@
       "description": "Discover Syriac word by word — a living lexicon and daily word games, in English, French and Dutch."
     },
     "library": {
-      "title": "Meltho word library",
-      "description": "Every word the daily Syriac word game Meltho has shown — with letters, vowels, roots and meanings in English, French and Dutch."
+      "title": "Syriac word library",
+      "description": "Every published word in Sabro's Syriac lexicon — letters, vowels, roots and meanings in English, French and Dutch, including every word the daily game Meltho has shown."
     },
     "libraryWord": {
       "title": "{translit} · {meaning}",
-      "description": "The Syriac word {translit} (“{meaning}”): its letters, vowels, root and pronunciation in the Meltho word library."
+      "description": "The Syriac word {translit} (“{meaning}”): its letters, vowels, root and pronunciation in the Sabro word library."
     }
   },
   "privacy": {

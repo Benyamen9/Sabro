@@ -251,7 +251,18 @@
   },
   "library": {
     "title": "Bibliothèque des mots",
-    "heading": "Bibliothèque des mots Meltho",
+    "heading": "Bibliothèque de mots",
+    "tabs": {
+      "label": "Vues de la bibliothèque",
+      "dictionary": "Dictionnaire",
+      "meltho": "Vus dans Meltho"
+    },
+    "dictionary": {
+      "lede": "Tous les mots publiés du lexique de Sabro — recherche en syriaque, en translittération ou par sens.",
+      "ledeCount": "dans le lexique à ce jour — à parcourir lettre par lettre, interrogeable dans toutes les écritures. Le dictionnaire s'enrichit au fil des ajouts.",
+      "empty": "Aucun mot dans le dictionnaire pour l'instant."
+    },
+    "playedInMeltho": "Ce mot est apparu dans Meltho — voir les mots du jeu",
     "lede": "Chaque mot proposé par Meltho, avec ses lettres et ses sons.",
     "ledeCount": "à ce jour — chaque mot proposé par Meltho, avec ses lettres et ses sons. Un nouveau arrive chaque jour.",
     "empty": "Aucun mot passé pour l’instant — revenez après l’énigme du jour.",
@@ -260,7 +271,7 @@
     "back": "Retour à la bibliothèque",
     "lastPlayed": "Dernière fois le {date}",
     "playedOn": "Proposé le",
-    "count": "{count} mots",
+    "count": "{count} mots | {count} mot | {count} mots",
     "timesPlayed": "proposé {count}×",
     "lettersCount": "{count} lettres",
     "searchPlaceholder": "Rechercher un mot, un sens ou une translittération…",
@@ -411,12 +422,12 @@
       "description": "Découvrez le syriaque mot après mot — un lexique vivant et des jeux de mots quotidiens, en anglais, français et néerlandais."
     },
     "library": {
-      "title": "Bibliothèque de mots Meltho",
-      "description": "Tous les mots montrés par le jeu quotidien Meltho — lettres, voyelles, racines et sens en anglais, français et néerlandais."
+      "title": "Bibliothèque de mots syriaques",
+      "description": "Tous les mots publiés du lexique syriaque de Sabro — lettres, voyelles, racines et sens en anglais, français et néerlandais, y compris chaque mot montré par le jeu quotidien Meltho."
     },
     "libraryWord": {
       "title": "{translit} · {meaning}",
-      "description": "Le mot syriaque {translit} (« {meaning} ») : ses lettres, ses voyelles, sa racine et sa prononciation dans la bibliothèque Meltho."
+      "description": "Le mot syriaque {translit} (« {meaning} ») : ses lettres, ses voyelles, sa racine et sa prononciation dans la bibliothèque Sabro."
     }
   },
   "privacy": {

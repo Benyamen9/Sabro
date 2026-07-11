@@ -251,7 +251,18 @@
   },
   "library": {
     "title": "Woordbibliotheek",
-    "heading": "Meltho-woordbibliotheek",
+    "heading": "Woordbibliotheek",
+    "tabs": {
+      "label": "Bibliotheekweergaven",
+      "dictionary": "Woordenboek",
+      "meltho": "Uit Meltho"
+    },
+    "dictionary": {
+      "lede": "Elk gepubliceerd woord uit het lexicon van Sabro — doorzoekbaar op Syrisch, transliteratie of betekenis.",
+      "ledeCount": "in het lexicon tot nu toe — letter voor letter te doorbladeren, doorzoekbaar in elk schrift. Het woordenboek groeit met elke toevoeging.",
+      "empty": "Nog geen woorden in het woordenboek."
+    },
+    "playedInMeltho": "Dit woord verscheen in Meltho — bekijk de woorden uit het spel",
     "lede": "Elk woord dat Meltho heeft getoond, met zijn letters en klanken.",
     "ledeCount": "tot nu toe — elk woord dat Meltho heeft getoond, met zijn letters en klanken. Elke dag komt er een nieuw woord bij.",
     "empty": "Nog geen eerdere woorden — kom terug na de puzzel van vandaag.",
@@ -260,7 +271,7 @@
     "back": "Terug naar de bibliotheek",
     "lastPlayed": "Laatst getoond op {date}",
     "playedOn": "Getoond op",
-    "count": "{count} woorden",
+    "count": "{count} woorden | {count} woord | {count} woorden",
     "timesPlayed": "{count}× getoond",
     "lettersCount": "{count} letters",
     "searchPlaceholder": "Zoek een woord, betekenis of transliteratie…",
@@ -412,12 +423,12 @@
       "description": "Ontdek het Syrisch woord voor woord — een levend lexicon en dagelijkse woordspellen, in het Engels, Frans en Nederlands."
     },
     "library": {
-      "title": "Meltho-woordbibliotheek",
-      "description": "Elk woord dat het dagelijkse Syrische woordspel Meltho heeft getoond — met letters, klinkers, wortels en betekenissen in het Engels, Frans en Nederlands."
+      "title": "Syrische woordbibliotheek",
+      "description": "Elk gepubliceerd woord uit het Syrische lexicon van Sabro — letters, klinkers, wortels en betekenissen in het Engels, Frans en Nederlands, inclusief elk woord dat het dagelijkse spel Meltho heeft getoond."
     },
     "libraryWord": {
       "title": "{translit} · {meaning}",
-      "description": "Het Syrische woord {translit} (“{meaning}”): letters, klinkers, wortel en uitspraak in de Meltho-woordbibliotheek."
+      "description": "Het Syrische woord {translit} (“{meaning}”): letters, klinkers, wortel en uitspraak in de Sabro-woordbibliotheek."
     }
   },
   "privacy": {

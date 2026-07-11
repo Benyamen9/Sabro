@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sabro.Lexicon.Application.Dictionary;
 using Sabro.Lexicon.Application.Entries;
 using Sabro.Lexicon.Application.Roots;
 using Sabro.Lexicon.Application.Search;
@@ -30,6 +31,7 @@ public sealed class LexiconModule : IModuleRegistration
         });
 
         services.AddScoped<ILexiconRootService, LexiconRootService>();
+        services.AddScoped<IDictionaryService, DictionaryService>();
         services.AddScoped<ILexiconEntryService, LexiconEntryService>();
         services.AddScoped<ILexiconSearchService, LexiconSearchService>();
         services.AddScoped<ILexiconPlayablePool, LexiconPlayablePool>();

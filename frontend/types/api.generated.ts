@@ -1558,6 +1558,162 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/dictionary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                    category?: components["schemas"]["GrammaticalCategory"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfDictionaryEntryListItem"];
+                        "application/json": components["schemas"]["PagedResultOfDictionaryEntryListItem"];
+                        "text/json": components["schemas"]["PagedResultOfDictionaryEntryListItem"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dictionary/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    q?: string;
+                    category?: components["schemas"]["GrammaticalCategory"];
+                    rootId?: string;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfLexiconSearchHitDto"];
+                        "application/json": components["schemas"]["PagedResultOfLexiconSearchHitDto"];
+                        "text/json": components["schemas"]["PagedResultOfLexiconSearchHitDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dictionary/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["DictionaryEntryDetailResponse"];
+                        "application/json": components["schemas"]["DictionaryEntryDetailResponse"];
+                        "text/json": components["schemas"]["DictionaryEntryDetailResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/lexicon-entries/{id}": {
         parameters: {
             query?: never;
@@ -3329,6 +3485,33 @@ export interface components {
         DecisionRequest: {
             note?: null | string;
         };
+        DictionaryEntryDetailResponse: {
+            /** Format: uuid */
+            id: string;
+            syriacUnvocalized: string;
+            syriacVocalized: null | string;
+            sblTransliteration: null | string;
+            transliterationVariants: string[];
+            grammaticalCategory: string;
+            morphology: null | string;
+            /** Format: int32 */
+            letterCount: number | string;
+            root: null | string;
+            meanings: components["schemas"]["LexiconMeaningDto"][];
+            composition: components["schemas"]["SyriacLetter"][];
+            playedInMeltho: boolean;
+        };
+        DictionaryEntryListItem: {
+            /** Format: uuid */
+            id: string;
+            syriacUnvocalized: string;
+            syriacVocalized: null | string;
+            sblTransliteration: null | string;
+            grammaticalCategory: string;
+            /** Format: int32 */
+            letterCount: number | string;
+            meanings: components["schemas"]["LexiconMeaningDto"][];
+        };
         EditAnnotationBody: {
             newBody: string;
         };
@@ -3556,6 +3739,15 @@ export interface components {
         };
         PagedResultOfBiblicalPassageSearchHitDto: {
             items: components["schemas"]["BiblicalPassageSearchHitDto"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+        };
+        PagedResultOfDictionaryEntryListItem: {
+            items: components["schemas"]["DictionaryEntryListItem"][];
             /** Format: int32 */
             total: number | string;
             /** Format: int32 */
