@@ -3,12 +3,16 @@ import type { FetchError } from 'ofetch'
 
 const { t } = useI18n()
 const route = useRoute()
-const { getWord } = useMelthoLibrary()
+
+// The unified word detail: the dictionary endpoint resolves every published
+// word; useDictionary().getWord falls back to the Meltho library endpoint for
+// served words that were later unpublished, so old links never break.
+const { getWord } = useDictionary()
 
 const id = computed(() => route.params.id as string)
 
 const { data, pending, error, refresh } = await useAsyncData(
-  () => `meltho-library-${id.value}`,
+  () => `library-word-${id.value}`,
   () => getWord(id.value),
   { watch: [id], lazy: true, default: () => null },
 )
@@ -103,7 +107,7 @@ function categoryLabel(category: string | undefined) {
               {{ categoryLabel(data.grammaticalCategory) }}
             </span>
             <span class="rounded-full border border-[var(--color-border)] px-3 py-1 text-[var(--color-text-muted)]">
-              {{ t('library.lettersCount', { count: data.playableLength }) }}
+              {{ t('library.lettersCount', { count: data.letterCount }) }}
             </span>
             <span
               v-if="data.syriacVocalized"
@@ -133,6 +137,21 @@ function categoryLabel(category: string | undefined) {
           </div>
         </div>
       </article>
+
+      <!-- Cross-link: this word has been a Meltho daily puzzle on a past day,
+           so it also lives in the game view of the library. -->
+      <NuxtLink
+        v-if="data.playedInMeltho"
+        to="/library?view=meltho"
+        class="mt-4 flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-meltho-faint)] px-5 py-3.5 font-sans text-sm text-[var(--color-meltho)] no-underline transition-colors hover:border-[var(--color-meltho)]"
+      >
+        <span
+          aria-hidden="true"
+          class="flex size-5 items-center justify-center rounded-[6px] bg-[var(--color-meltho)] font-syriac text-[0.8rem] leading-none text-white"
+        >ܡ</span>
+        {{ t('library.playedInMeltho') }}
+        <span aria-hidden="true" class="ml-auto">→</span>
+      </NuxtLink>
 
       <!-- Letter by letter: the page's centrepiece — one right-to-left row of
            cards, read in the same direction as the word itself. -->

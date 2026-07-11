@@ -1,10 +1,14 @@
-// Sitemap for the public surface: the home page, the Meltho word library, and
-// one URL per library word (the long-tail entry points). Word URLs come from
-// the same public API the pages render from; if the API is unreachable the
-// static URLs still ship rather than failing the whole sitemap. Cached for an
-// hour — the library gains at most one word per day.
+// Sitemap for the public surface: the home page, the word library, and one
+// URL per published word (the long-tail entry points). The dictionary list
+// supplies every word; the Meltho library list supplies lastmod for the words
+// the game has shown (and any served word that later left the dictionary).
+// Both come from the same public API the pages render from; if the API is
+// unreachable the static URLs still ship rather than failing the whole
+// sitemap. Cached for an hour — the pools grow slowly.
 interface LibraryItem { lexiconEntryId: string, lastPlayedOn?: string }
 interface LibraryPage { items: LibraryItem[], total: number, page: number, pageSize: number }
+interface DictionaryItem { id: string }
+interface DictionaryPage { items: DictionaryItem[], total: number, page: number, pageSize: number }
 
 export default defineCachedEventHandler(async (event) => {
   // Method-agnostic route (no .get suffix) so HEAD works too — search-engine
@@ -20,6 +24,26 @@ export default defineCachedEventHandler(async (event) => {
     { loc: `${siteUrl}/privacy` },
   ]
 
+  // Word id → lastmod (only known for words Meltho has shown).
+  const words = new Map<string, string | undefined>()
+
+  try {
+    let page = 1
+    for (;;) {
+      const res = await $fetch<DictionaryPage>(`${apiBaseUrl}/dictionary`, {
+        query: { page, pageSize: 100 },
+      })
+      for (const item of res.items) {
+        words.set(item.id, undefined)
+      }
+      if (res.page * res.pageSize >= res.total || res.items.length === 0) break
+      page += 1
+    }
+  }
+  catch {
+    // API unavailable — fall through; the played list below may still respond.
+  }
+
   try {
     let page = 1
     for (;;) {
@@ -27,17 +51,18 @@ export default defineCachedEventHandler(async (event) => {
         query: { page, pageSize: 100 },
       })
       for (const item of res.items) {
-        urls.push({
-          loc: `${siteUrl}/library/${item.lexiconEntryId}`,
-          lastmod: item.lastPlayedOn,
-        })
+        words.set(item.lexiconEntryId, item.lastPlayedOn)
       }
       if (res.page * res.pageSize >= res.total || res.items.length === 0) break
       page += 1
     }
   }
   catch {
-    // API unavailable — serve the static URLs; the next cache refresh retries.
+    // API unavailable — serve what we have; the next cache refresh retries.
+  }
+
+  for (const [id, lastmod] of words) {
+    urls.push({ loc: `${siteUrl}/library/${id}`, lastmod })
   }
 
   setHeader(event, 'content-type', 'application/xml; charset=utf-8')

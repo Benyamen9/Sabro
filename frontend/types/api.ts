@@ -76,6 +76,11 @@ export type MelthoLeaderboardDto = Schemas['MelthoLeaderboardDto']
 export type MelthoLeaderboardEntryDto = Schemas['MelthoLeaderboardEntryDto']
 export type MelthoLeaderboardMeDto = Schemas['MelthoLeaderboardMeDto']
 
+// Public dictionary (every published word; anonymous).
+export type DictionaryEntryListItem = Schemas['DictionaryEntryListItem']
+export type DictionaryEntryDetail = Schemas['DictionaryEntryDetailResponse']
+export type LexiconSearchHitDto = Schemas['LexiconSearchHitDto']
+
 // Meltho play + library.
 export type MelthoPuzzleMeaningDto = Schemas['MelthoPuzzleMeaningDto']
 export type MelthoLibraryEntryDto = Schemas['MelthoLibraryEntryDto']
