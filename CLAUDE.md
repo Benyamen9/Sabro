@@ -92,7 +92,7 @@ Sabro/
 │   │   └── admin/                  ← Backoffice (role-gated)
 │   ├── components/
 │   ├── composables/
-│   └── locales/                    ← i18n files (en, fr, nl)
+│   └── i18n/locales/               ← i18n files (en, fr, nl)
 ├── tests/
 │   ├── Sabro.UnitTests/
 │   ├── Sabro.IntegrationTests/
@@ -434,10 +434,11 @@ GitHub Actions builds Docker images for the API and frontend, pushes them to **G
 **Rejected approaches:** Coolify / Dokku / CapRover (PaaS overhead + maintenance surface), Watchtower (skips migrations + health checks), Kubernetes / k3s (no justification at modular-monolith / single-VPS scale).
 
 ### Branching Strategy
-- `main` — protected, always deployable, requires PR + green CI
-- `develop` — integration branch
-- `feature/short-description` — feature branches off `develop`
-- `fix/short-description` — bug fix branches
+- `main` — protected, always deployable, requires PR + green CI; every merge auto-deploys
+- `feature/short-description` — feature branches off `main`
+- `fix/short-description` — bug fix branches off `main`
+
+(No `develop` integration branch — trunk-based off `main`; an earlier draft documented one, it was never used.)
 
 ### Commits — Conventional Commits
 ```

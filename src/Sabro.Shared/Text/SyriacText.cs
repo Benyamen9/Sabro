@@ -14,6 +14,13 @@ public static class SyriacText
     private const int SyriacSupplementStart = 0x0860;
     private const int SyriacSupplementEnd = 0x086F;
 
+    /// <summary>
+    /// COMBINING DIAERESIS — the Unicode-standard encoding for seyame (the two dots
+    /// marking an inherently-plural noun, e.g. mayo "water"). It has no dedicated
+    /// code point in the Syriac block itself, so it must be allowed explicitly.
+    /// </summary>
+    private const int Seyame = 0x0308;
+
     /// <summary>Normalizes input to NFC. Always call this before persisting Syriac text.</summary>
     public static string Normalize(string input)
     {
@@ -23,7 +30,11 @@ public static class SyriacText
             : input.Normalize(NormalizationForm.FormC);
     }
 
-    /// <summary>True when every non-whitespace code point falls in the Syriac or Syriac Supplement block.</summary>
+    /// <summary>
+    /// True when every non-whitespace code point falls in the Syriac or Syriac Supplement
+    /// block, or is the seyame combining diaeresis (the sole standard exception — see
+    /// <see cref="Seyame"/>).
+    /// </summary>
     public static bool IsSyriacOnly(string input)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -38,7 +49,7 @@ public static class SyriacText
             var inSyriac = value >= SyriacStart && value <= SyriacEnd;
             var inSupplement = value >= SyriacSupplementStart && value <= SyriacSupplementEnd;
 
-            if (!inSyriac && !inSupplement)
+            if (!inSyriac && !inSupplement && value != Seyame)
             {
                 return false;
             }

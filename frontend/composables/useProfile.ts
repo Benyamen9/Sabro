@@ -1,4 +1,4 @@
-import type { ScriptVariant as ApiScriptVariant, UpdateUserProfileRequest, UserProfileDto } from '~/types/api'
+import type { ScriptVariant as ApiScriptVariant, ProfileExportDto, UpdateUserProfileRequest, UserProfileDto } from '~/types/api'
 import type { ScriptVariant } from '~/composables/useScriptVariant'
 
 // The API models the script variant in PascalCase; the frontend preference uses
@@ -109,6 +109,27 @@ export function useProfile() {
     }
   }
 
+  // Download everything Sabro stores about the user as one JSON file (GDPR data
+  // portability, GET /profile/me/export). Returns true on success; false on a
+  // network/auth error so the caller can surface it.
+  async function exportData(): Promise<boolean> {
+    if (!isConfigured.value || !isSignedIn.value) return false
+    try {
+      const dto = await api<ProfileExportDto>('/profile/me/export')
+      const blob = new Blob([JSON.stringify(dto, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `sabro-data-export-${new Date().toISOString().slice(0, 10)}.json`
+      link.click()
+      URL.revokeObjectURL(url)
+      return true
+    }
+    catch {
+      return false
+    }
+  }
+
   // Permanently delete the account: Sabro data + the Logto identity, server-side
   // (DELETE /profile/me). Returns true on success so the caller can sign out.
   async function deleteAccount(): Promise<boolean> {
@@ -122,5 +143,5 @@ export function useProfile() {
     }
   }
 
-  return { profile, load, persist, saveAccount, deleteAccount }
+  return { profile, load, persist, saveAccount, exportData, deleteAccount }
 }

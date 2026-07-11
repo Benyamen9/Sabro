@@ -16,20 +16,31 @@ namespace Sabro.API.Controllers.V1;
 [Route("api/v{version:apiVersion}/profile")]
 public sealed class ProfileController : ApiControllerBase
 {
+    /// <summary>
+    /// Names what the export covers. Identity-provider data (email, password,
+    /// social links) is held by Logto, not Sabro, so it is out of scope here.
+    /// </summary>
+    private const string ExportScope =
+        "All personal data stored by Sabro: your profile and your game results. "
+        + "Sign-in identity data (email, password, linked social accounts) is managed by the identity provider and is not included.";
+
     private readonly IUserProfileService userProfileService;
     private readonly IGameResultService gameResultService;
     private readonly ILogtoManagementClient logtoManagementClient;
+    private readonly TimeProvider timeProvider;
     private readonly ILogger<ProfileController> logger;
 
     public ProfileController(
         IUserProfileService userProfileService,
         IGameResultService gameResultService,
         ILogtoManagementClient logtoManagementClient,
+        TimeProvider timeProvider,
         ILogger<ProfileController> logger)
     {
         this.userProfileService = userProfileService;
         this.gameResultService = gameResultService;
         this.logtoManagementClient = logtoManagementClient;
+        this.timeProvider = timeProvider;
         this.logger = logger;
     }
 
@@ -84,6 +95,46 @@ public sealed class ProfileController : ApiControllerBase
         }
 
         return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Returns everything Sabro stores about the caller in one portable JSON
+    /// document: their profile and all their game results. Right to data
+    /// portability / right of access (GDPR). Uses the write scope like the
+    /// other personal-data surfaces (results/me, account deletion).
+    /// </summary>
+    [HttpGet("me/export")]
+    [Authorize(Policy = AuthPolicies.Write)]
+    [ProducesResponseType(typeof(ProfileExportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<ProfileExportDto>> ExportMe(CancellationToken cancellationToken)
+    {
+        var logtoUserIdResult = ResolveLogtoUserId();
+        if (!logtoUserIdResult.IsSuccess)
+        {
+            return FromError(logtoUserIdResult.Error!);
+        }
+
+        var userId = logtoUserIdResult.Value!;
+
+        var profileResult = await userProfileService.GetOrCreateForLogtoUserAsync(userId, cancellationToken);
+        if (!profileResult.IsSuccess)
+        {
+            return FromError(profileResult.Error!);
+        }
+
+        var resultsResult = await gameResultService.ListAllForUserAsync(userId, cancellationToken);
+        if (!resultsResult.IsSuccess)
+        {
+            return FromError(resultsResult.Error!);
+        }
+
+        logger.LogInformation("Personal-data export served. ResultCount={ResultCount}", resultsResult.Value!.Count);
+        return Ok(new ProfileExportDto(
+            timeProvider.GetUtcNow(),
+            ExportScope,
+            profileResult.Value!,
+            resultsResult.Value!));
     }
 
     /// <summary>

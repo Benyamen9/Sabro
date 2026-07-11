@@ -83,6 +83,7 @@
       "email": "E-mail",
       "password": "Mot de passe",
       "session": "Session",
+      "export": "Vos données",
       "delete": "Supprimer le compte"
     },
     "username": {
@@ -198,6 +199,14 @@
     "session": {
       "heading": "Session",
       "body": "Se déconnecter de Sabro sur cet appareil."
+    },
+    "export": {
+      "heading": "Exporter vos données",
+      "body": "Téléchargez tout ce que Sabro conserve à votre sujet — votre profil et votre historique de jeu — dans un fichier JSON.",
+      "button": "Télécharger mes données",
+      "exporting": "Préparation…",
+      "done": "Téléchargé",
+      "error": "Impossible d’exporter vos données. Veuillez réessayer."
     },
     "delete": {
       "heading": "Supprimer le compte",
@@ -408,6 +417,47 @@
     "libraryWord": {
       "title": "{translit} · {meaning}",
       "description": "Le mot syriaque {translit} (« {meaning} ») : ses lettres, ses voyelles, sa racine et sa prononciation dans la bibliothèque Meltho."
+    }
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "metaDescription": "Comment l’écosystème Sabro traite vos données : ce que nous conservons, les cookies, vos droits et comment nous contacter.",
+    "updated": "Dernière mise à jour : 6 juillet 2026",
+    "intro": "Sabro est un projet académique personnel et non commercial consacré à la langue syriaque. Cette politique explique quelles données l’écosystème Sabro (sabro.be et meltho.sabro.be) conserve à votre sujet, et pourquoi.",
+    "who": {
+      "title": "Qui est responsable",
+      "b1": "L’écosystème Sabro est géré à titre privé par son propriétaire, dans le cadre d’un projet personnel et non commercial. Pour toute question concernant vos données, utilisez l’adresse de contact ci-dessous."
+    },
+    "data": {
+      "title": "Ce que nous conservons",
+      "b1": "Lorsque vous créez un compte, notre service de connexion auto-hébergé (Logto) conserve votre adresse e-mail, votre nom d’utilisateur et une forme hachée de votre mot de passe. Nous ne voyons ni ne conservons jamais le mot de passe lui-même.",
+      "b2": "Votre profil contient ce que vous définissez sur la page de profil : un nom d’affichage, votre langue préférée et votre écriture syriaque préférée.",
+      "b3": "Lorsque vous jouez en étant connecté, nous conservons un résultat par jeu et par jour : la date, si vous avez trouvé le mot, et en combien d’essais. Jouer sans compte ne conserve rien sur le serveur.",
+      "b4": "Nos serveurs conservent des journaux techniques (dont les adresses IP et, pour les requêtes connectées, votre identifiant) à des fins de dépannage et de prévention des abus. Ils ne servent à aucun profilage et ne sont conservés que le temps nécessaire.",
+      "b5": "Il n’y a ni publicité, ni service d’analyse ou de suivi, et vos données ne sont jamais vendues ni partagées à des fins commerciales."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "b1": "Nous n’utilisons qu’un petit nombre de cookies fonctionnels : vos préférences de langue et d’écriture syriaque (partagées entre sabro.be et ses sous-domaines pour que les applications restent cohérentes) et un cookie de session qui vous maintient connecté. Il n’y a aucun cookie publicitaire ou d’analyse."
+    },
+    "third": {
+      "title": "Services tiers",
+      "b1": "Les polices de l’interface sont chargées depuis Google Fonts ; votre navigateur contacte donc les serveurs de Google au chargement d’une page, et Google peut voir votre adresse IP dans cette requête.",
+      "b2": "Les e-mails liés au compte (comme les codes de vérification) sont envoyés via Resend, qui traite l’adresse e-mail de destination à cette seule fin."
+    },
+    "storage": {
+      "title": "Où se trouvent vos données",
+      "b1": "Tout fonctionne sur un serveur situé dans l’Union européenne (Hetzner, Allemagne), avec des sauvegardes nocturnes conservées sur un stockage européen — 30 copies quotidiennes et 12 mensuelles, ensuite écrasées."
+    },
+    "rights": {
+      "title": "Vos droits",
+      "b1": "Vous pouvez consulter et modifier votre profil à tout moment sur la page de profil, et y supprimer votre compte — la suppression retire votre identité de connexion, votre profil et vos résultats de jeu.",
+      "b2": "Vous pouvez demander une copie des données liées à votre compte (un export) en écrivant à l’adresse de contact ; vous pouvez aussi demander la correction ou la suppression de toute donnée.",
+      "b3": "Si vous estimez que vos données sont mal traitées, vous pouvez déposer une plainte auprès de votre autorité de protection des données (en Belgique, l’APD)."
+    },
+    "contact": {
+      "title": "Contact",
+      "b1": "Pour toute question ou demande concernant vos données, écrivez à contact{'@'}sabro.be."
     }
   }
 }

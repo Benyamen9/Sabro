@@ -17,6 +17,13 @@ public interface IGameResultService
     Task<Result<PagedResult<GameResultDto>>> ListForUserAsync(string logtoUserId, int page, int pageSize, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Returns every result the player owns, oldest day first, unpaged. Used by
+    /// the personal-data export (right to data portability), which must be
+    /// complete rather than a page.
+    /// </summary>
+    Task<Result<IReadOnlyList<GameResultDto>>> ListAllForUserAsync(string logtoUserId, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Permanently deletes every result the player owns, returning the number of
     /// rows removed. Used by account deletion (right to erasure).
     /// </summary>

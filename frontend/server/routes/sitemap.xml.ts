@@ -17,6 +17,7 @@ export default defineCachedEventHandler(async (event) => {
   const urls: { loc: string, lastmod?: string }[] = [
     { loc: `${siteUrl}/` },
     { loc: `${siteUrl}/library` },
+    { loc: `${siteUrl}/privacy` },
   ]
 
   try {
