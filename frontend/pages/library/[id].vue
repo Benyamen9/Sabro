@@ -66,7 +66,6 @@ useHead({
         'name': seoWord.value.translit,
         'alternateName': [word.syriacUnvocalized, word.syriacVocalized].filter(Boolean),
         'description': seoWord.value.meaning,
-        'inLanguage': 'syc',
         'url': `${siteUrl}/library/${word.id}`,
         'inDefinedTermSet': {
           '@type': 'DefinedTermSet',
