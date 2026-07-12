@@ -3193,6 +3193,35 @@
         }
       }
     },
+    "/api/v1/play/mno/today": {
+      "get": {
+        "tags": [
+          "Play"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MnoPuzzleDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MnoPuzzleDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MnoPuzzleDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/play/meltho/library": {
       "get": {
         "tags": [
@@ -6651,6 +6680,44 @@
             "type": "string"
           },
           "text": {
+            "type": "string"
+          }
+        }
+      },
+      "MnoPuzzleDto": {
+        "required": [
+          "date",
+          "target",
+          "tileCount",
+          "expression",
+          "tileForm"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "target": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "tileCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "expression": {
+            "type": "string"
+          },
+          "tileForm": {
             "type": "string"
           }
         }

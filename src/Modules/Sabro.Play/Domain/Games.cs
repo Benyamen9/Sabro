@@ -10,4 +10,6 @@ namespace Sabro.Play.Domain;
 public static class Games
 {
     public const string Meltho = "meltho";
+
+    public const string Mno = "mno";
 }

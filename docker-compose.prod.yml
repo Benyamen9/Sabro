@@ -141,9 +141,10 @@ services:
       Logto__ManagementApi__ClientSecret: ${LOGTO_MANAGEMENT_CLIENT_SECRET:-}
       Meilisearch__Url: "http://meilisearch:7700"
       Meilisearch__MasterKey: ${MEILI_MASTER_KEY}
-      # Browser-client origins allowed to call /api/v1 directly (hub + Meltho).
+      # Browser-client origins allowed to call /api/v1 directly (hub + Meltho + Mno).
       Cors__AllowedOrigins__0: "https://${SABRO_DOMAIN}"
       Cors__AllowedOrigins__1: "https://${MELTHO_DOMAIN:-localhost}"
+      Cors__AllowedOrigins__2: "https://${MNO_DOMAIN:-localhost}"
       # Ship structured logs to the co-located Seq.
       Serilog__WriteTo__1__Args__serverUrl: "http://seq:5341"
     networks: [internal]

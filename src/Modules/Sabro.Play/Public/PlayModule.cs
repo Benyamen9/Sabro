@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Application.Meltho;
+using Sabro.Play.Application.Mno;
 using Sabro.Play.Infrastructure;
 using Sabro.Shared.Abstractions;
 
@@ -35,5 +36,6 @@ public sealed class PlayModule : IModuleRegistration
         services.AddScoped<IMelthoPuzzleService, MelthoPuzzleService>();
         services.AddScoped<IMelthoLibraryService, MelthoLibraryService>();
         services.AddScoped<IMelthoLeaderboardService, MelthoLeaderboardService>();
+        services.AddScoped<IMnoPuzzleService, MnoPuzzleService>();
     }
 }
