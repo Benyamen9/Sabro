@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Application.Meltho;
+using Sabro.Play.Application.Mno;
 using Sabro.Shared.Pagination;
 
 namespace Sabro.API.Controllers.V1;
@@ -21,17 +22,20 @@ public sealed class PlayController : ApiControllerBase
     private readonly IMelthoLibraryService melthoLibraryService;
     private readonly IGameResultService gameResultService;
     private readonly IMelthoLeaderboardService melthoLeaderboardService;
+    private readonly IMnoPuzzleService mnoPuzzleService;
 
     public PlayController(
         IMelthoPuzzleService melthoPuzzleService,
         IMelthoLibraryService melthoLibraryService,
         IGameResultService gameResultService,
-        IMelthoLeaderboardService melthoLeaderboardService)
+        IMelthoLeaderboardService melthoLeaderboardService,
+        IMnoPuzzleService mnoPuzzleService)
     {
         this.melthoPuzzleService = melthoPuzzleService;
         this.melthoLibraryService = melthoLibraryService;
         this.gameResultService = gameResultService;
         this.melthoLeaderboardService = melthoLeaderboardService;
+        this.mnoPuzzleService = mnoPuzzleService;
     }
 
     /// <summary>
@@ -48,6 +52,27 @@ public sealed class PlayController : ApiControllerBase
     public async Task<ActionResult<MelthoPuzzleDto>> GetTodaysMelthoPuzzle(CancellationToken cancellationToken)
     {
         var result = await melthoPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Returns today's Mno puzzle (get-or-create per date; identical for all
+    /// players). The full solution ships with the puzzle: like Meltho's word,
+    /// guess evaluation is client logic and per-tile feedback needs the exact
+    /// board form. Public: anyone can play without an account — login is only
+    /// needed to persist a result. Rate-limited as a public endpoint.
+    /// </summary>
+    [HttpGet("mno/today")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(MnoPuzzleDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<MnoPuzzleDto>> GetTodaysMnoPuzzle(CancellationToken cancellationToken)
+    {
+        var result = await mnoPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

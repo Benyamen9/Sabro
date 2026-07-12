@@ -2089,6 +2089,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/play/mno/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["MnoPuzzleDto"];
+                        "application/json": components["schemas"]["MnoPuzzleDto"];
+                        "text/json": components["schemas"]["MnoPuzzleDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/play/meltho/library": {
         parameters: {
             query?: never;
@@ -3682,6 +3719,16 @@ export interface components {
         MelthoPuzzleMeaningDto: {
             language: string;
             text: string;
+        };
+        MnoPuzzleDto: {
+            /** Format: date */
+            date: string;
+            /** Format: int32 */
+            target: number | string;
+            /** Format: int32 */
+            tileCount: number | string;
+            expression: string;
+            tileForm: string;
         };
         PagedResultOfAnnotationDto: {
             items: components["schemas"]["AnnotationDto"][];
