@@ -2098,7 +2098,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    difficulty?: components["schemas"]["MnoDifficulty"];
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -2114,6 +2116,17 @@ export interface paths {
                         "text/plain": components["schemas"]["MnoPuzzleDto"];
                         "application/json": components["schemas"]["MnoPuzzleDto"];
                         "text/json": components["schemas"]["MnoPuzzleDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
                     };
                 };
             };
@@ -3720,9 +3733,15 @@ export interface components {
             language: string;
             text: string;
         };
+        /**
+         * @default 2
+         * @enum {string}
+         */
+        MnoDifficulty: "Beginner" | "Easy" | "Normal" | "Hard" | "Extreme";
         MnoPuzzleDto: {
             /** Format: date */
             date: string;
+            difficulty: string;
             /** Format: int32 */
             target: number | string;
             /** Format: int32 */

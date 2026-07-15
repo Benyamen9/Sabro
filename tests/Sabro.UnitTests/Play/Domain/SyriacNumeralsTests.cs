@@ -114,6 +114,87 @@ public class SyriacNumeralsTests
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
+    // The compact marked form the Extreme ladder uses: one tile per non-zero
+    // decimal digit, every rank carried by its mark. Placeholders keep the
+    // expected strings readable: '.' = mawotho (×10), '!' = alfayo (×1000),
+    // '_' = hsiroyuth alfayo (×10,000), '^' = mawoth alfayo (×100,000).
+    [Theory]
+    [InlineData(7, "ܙ")]
+    [InlineData(99, "ܨܛ")]
+    [InlineData(400, "ܬ")]
+    [InlineData(450, "ܬܢ")]
+    [InlineData(500, "ܢ.")]
+    [InlineData(600, "ܣ.")]
+    [InlineData(900, "ܨ.")]
+    [InlineData(1000, "ܐ!")]
+    [InlineData(12345, "ܐ_ܒ!ܫܡܗ")]
+    [InlineData(100000, "ܐ^")]
+    [InlineData(999999, "ܛ^ܛ_ܛ!ܨ.ܨܛ")]
+    public void SpellMarked_UsesOneTilePerDigitWithTheRankMark(int value, string expected)
+    {
+        var withMarks = expected
+            .Replace('.', SyriacNumerals.Mawotho)
+            .Replace('!', SyriacNumerals.Alfayo)
+            .Replace('_', SyriacNumerals.HsiroyuthAlfayo)
+            .Replace('^', SyriacNumerals.MawothAlfayo);
+
+        SyriacNumerals.SpellMarked(value).Should().Be(withMarks);
+    }
+
+    // Round-trip: multiplying each letter by its mark recovers the value for
+    // the whole range, and the tile count is the number of non-zero digits.
+    [Fact]
+    public void SpellMarked_RoundTripsThroughMarkMultipliers()
+    {
+        for (var value = 1; value <= 999_999; value += 137)
+        {
+            var spelled = SyriacNumerals.SpellMarked(value);
+            var recovered = 0;
+            for (var i = 0; i < spelled.Length; i++)
+            {
+                var ch = spelled[i];
+                if (SyriacNumerals.Marks.Contains(ch))
+                {
+                    continue;
+                }
+
+                var multiplier = i + 1 < spelled.Length
+                    ? spelled[i + 1] switch
+                    {
+                        var m when m == SyriacNumerals.Mawotho => 10,
+                        var m when m == SyriacNumerals.Alfayo => 1_000,
+                        var m when m == SyriacNumerals.HsiroyuthAlfayo => 10_000,
+                        var m when m == SyriacNumerals.MawothAlfayo => 100_000,
+                        _ => 1,
+                    }
+                    : 1;
+                recovered += SyriacNumerals.ValueOf(ch) * multiplier;
+            }
+
+            recovered.Should().Be(value, because: "the marked spelling of {0} must multiply back to itself", value);
+
+            var nonZeroDigits = value.ToString().Count(d => d != '0');
+            SyriacNumerals.TileCountOf(spelled).Should().Be(nonZeroDigits, because: "one tile per non-zero digit of {0}", value);
+        }
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1_000_000)]
+    public void SpellMarked_OutOfRange_Throws(int value)
+    {
+        var act = () => SyriacNumerals.SpellMarked(value);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void TileCountOf_CountsOperatorsAndLettersButNeverMarks()
+    {
+        SyriacNumerals.TileCountOf("ܝܒ*ܗ-ܚ").Should().Be(6);
+        SyriacNumerals.TileCountOf(SyriacNumerals.SpellMarked(12345) + "+ܐ").Should().Be(7);
+    }
+
     private static List<int> EffectiveValues(string spelled)
     {
         var values = new List<int>();

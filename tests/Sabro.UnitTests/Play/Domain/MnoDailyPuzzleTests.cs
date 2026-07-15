@@ -10,12 +10,13 @@ public class MnoDailyPuzzleTests
     [Fact]
     public void Create_WithValidInput_Succeeds()
     {
-        var result = MnoDailyPuzzle.Create("mno", Date, Equation);
+        var result = MnoDailyPuzzle.Create("mno", Date, MnoDifficulty.Normal, Equation);
 
         result.IsSuccess.Should().BeTrue();
         var puzzle = result.Value!;
         puzzle.GameId.Should().Be("mno");
         puzzle.Date.Should().Be(Date);
+        puzzle.Difficulty.Should().Be(MnoDifficulty.Normal);
         puzzle.Expression.Should().Be("12*5-8");
         puzzle.TileForm.Should().Be("ܝܒ*ܗ-ܚ");
         puzzle.Target.Should().Be(52);
@@ -25,7 +26,7 @@ public class MnoDailyPuzzleTests
     [Fact]
     public void Create_NormalizesGameIdToTrimmedLowerCase()
     {
-        var result = MnoDailyPuzzle.Create("  MNO ", Date, Equation);
+        var result = MnoDailyPuzzle.Create("  MNO ", Date, MnoDifficulty.Normal, Equation);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.GameId.Should().Be("mno");
@@ -36,7 +37,7 @@ public class MnoDailyPuzzleTests
     [InlineData("   ")]
     public void Create_WithoutGameId_Fails(string gameId)
     {
-        var result = MnoDailyPuzzle.Create(gameId, Date, Equation);
+        var result = MnoDailyPuzzle.Create(gameId, Date, MnoDifficulty.Normal, Equation);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -45,7 +46,7 @@ public class MnoDailyPuzzleTests
     [Fact]
     public void Create_WithDefaultDate_Fails()
     {
-        var result = MnoDailyPuzzle.Create("mno", default, Equation);
+        var result = MnoDailyPuzzle.Create("mno", default, MnoDifficulty.Normal, Equation);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -58,7 +59,7 @@ public class MnoDailyPuzzleTests
     [InlineData("12*5-8", "ܝܒ*ܗ-ܚ", -3)]
     public void Create_WithInvalidEquation_Fails(string expression, string tileForm, int target)
     {
-        var result = MnoDailyPuzzle.Create("mno", Date, new MnoEquation(expression, tileForm, target));
+        var result = MnoDailyPuzzle.Create("mno", Date, MnoDifficulty.Hard, new MnoEquation(expression, tileForm, target));
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");

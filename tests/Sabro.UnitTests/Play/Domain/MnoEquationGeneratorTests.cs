@@ -4,35 +4,115 @@ namespace Sabro.UnitTests.Play.Domain;
 
 public class MnoEquationGeneratorTests
 {
-    [Fact]
-    public void Generate_SatisfiesEveryBoardInvariant()
+    [Theory]
+    [InlineData(MnoDifficulty.Beginner)]
+    [InlineData(MnoDifficulty.Easy)]
+    [InlineData(MnoDifficulty.Normal)]
+    [InlineData(MnoDifficulty.Hard)]
+    [InlineData(MnoDifficulty.Extreme)]
+    public void Generate_SatisfiesEveryBoardInvariant(MnoDifficulty difficulty)
     {
         for (var seed = 0; seed < 300; seed++)
         {
-            var equation = MnoEquationGenerator.Generate(new Random(seed));
+            var equation = MnoEquationGenerator.Generate(difficulty, new Random(seed));
 
             var (numbers, operators) = Tokenize(equation.Expression);
 
             operators.Count.Should().BeInRange(1, 2, because: "seed {0} must use 1-2 operators", seed);
-            numbers.Should().OnlyContain(n => n >= 1 && n <= 999, because: "seed {0} operands stay in the unmarked range", seed);
 
-            var tiles = numbers.Sum(SyriacNumerals.TileCount) + operators.Count;
+            var tiles = SyriacNumerals.TileCountOf(equation.TileForm);
             tiles.Should().Be(MnoEquationGenerator.TileWidth, because: "seed {0} must fill the board exactly", seed);
 
             Evaluate(numbers, operators).Should().Be(equation.Target, because: "seed {0} expression must equal its target", seed);
             equation.Target.Should().BeGreaterThanOrEqualTo(1);
 
             AssertNoDegenerateSteps(numbers, operators, seed);
+        }
+    }
 
-            equation.TileForm.Should().Be(ExpectedTileForm(numbers, operators), because: "seed {0} tile form is the spelled expression", seed);
+    [Theory]
+    [InlineData(MnoDifficulty.Beginner, 99, 199, "+-")]
+    [InlineData(MnoDifficulty.Easy, 499, 999, "+-*")]
+    [InlineData(MnoDifficulty.Normal, 999, 9_999, "+-*/")]
+    [InlineData(MnoDifficulty.Hard, 9_999, 99_999, "+-*/")]
+    [InlineData(MnoDifficulty.Extreme, 999_999, 999_999, "+-*/")]
+    public void Generate_StaysInsideTheLevelsBand(MnoDifficulty difficulty, int maxOperand, int maxTarget, string allowedOperators)
+    {
+        for (var seed = 0; seed < 300; seed++)
+        {
+            var equation = MnoEquationGenerator.Generate(difficulty, new Random(seed));
+            var (numbers, operators) = Tokenize(equation.Expression);
+
+            numbers.Should().OnlyContain(n => n >= 1 && n <= maxOperand, because: "seed {0} operands stay inside the level", seed);
+            equation.Target.Should().BeLessThanOrEqualTo(maxTarget, because: "seed {0} target stays inside the level", seed);
+            operators.Should().OnlyContain(op => allowedOperators.Contains(op), because: "seed {0} uses only the level's operators", seed);
+        }
+    }
+
+    [Fact]
+    public void Generate_Beginner_UsesOnlyUnitsAndTensLetters()
+    {
+        for (var seed = 0; seed < 300; seed++)
+        {
+            var equation = MnoEquationGenerator.Generate(MnoDifficulty.Beginner, new Random(seed));
+
+            equation.TileForm.Should().NotContainAny("ܩ", "ܪ", "ܫ", "ܬ");
+            equation.TileForm.Should().NotContainAny(SyriacNumerals.Marks.Select(m => m.ToString()).ToArray());
+        }
+    }
+
+    [Fact]
+    public void Generate_Hard_AlwaysCarriesAThousandsOperand()
+    {
+        for (var seed = 0; seed < 200; seed++)
+        {
+            var equation = MnoEquationGenerator.Generate(MnoDifficulty.Hard, new Random(seed));
+            var (numbers, _) = Tokenize(equation.Expression);
+
+            numbers.Should().Contain(n => n >= 1_000, because: "seed {0}: Hard without a thousands operand is just Normal", seed);
+            equation.TileForm.Should().Contain(SyriacNumerals.Alfayo.ToString(), because: "seed {0}: the thousands operand spells with alfayo", seed);
+        }
+    }
+
+    [Fact]
+    public void Generate_Extreme_SpellsOperandsInTheCompactMarkedForm()
+    {
+        var marksSeen = new HashSet<char>();
+        for (var seed = 0; seed < 300; seed++)
+        {
+            var equation = MnoEquationGenerator.Generate(MnoDifficulty.Extreme, new Random(seed));
+            var (numbers, operators) = Tokenize(equation.Expression);
+
+            numbers.Should().Contain(n => n >= 10_000, because: "seed {0}: Extreme keeps at least one big operand", seed);
+            equation.TileForm.Should().Be(ExpectedTileForm(numbers, operators, SyriacNumerals.SpellMarked), because: "seed {0} tile form uses the marked spelling", seed);
+
+            foreach (var ch in equation.TileForm.Where(SyriacNumerals.Marks.Contains))
+            {
+                marksSeen.Add(ch);
+            }
+        }
+
+        // Across a run of days the level meets the whole multiplier system.
+        marksSeen.Should().BeEquivalentTo(SyriacNumerals.Marks);
+    }
+
+    [Fact]
+    public void Generate_UpToHard_SpellsOperandsCanonically()
+    {
+        foreach (var difficulty in new[] { MnoDifficulty.Beginner, MnoDifficulty.Easy, MnoDifficulty.Normal, MnoDifficulty.Hard })
+        {
+            var equation = MnoEquationGenerator.Generate(difficulty, new Random(7));
+            var (numbers, operators) = Tokenize(equation.Expression);
+
+            equation.TileForm.Should().Be(ExpectedTileForm(numbers, operators, SyriacNumerals.Spell));
         }
     }
 
     [Fact]
     public void Generate_AvoidsExcludedExpressions()
     {
-        var first = MnoEquationGenerator.Generate(new Random(42));
-        var retry = MnoEquationGenerator.Generate(new Random(42), new HashSet<string> { first.Expression });
+        var first = MnoEquationGenerator.Generate(MnoDifficulty.Normal, new Random(42));
+        var retry = MnoEquationGenerator.Generate(MnoDifficulty.Normal, new Random(42), new HashSet<string> { first.Expression });
 
         retry.Expression.Should().NotBe(first.Expression);
     }
@@ -43,7 +123,7 @@ public class MnoEquationGeneratorTests
         var expressions = new HashSet<string>();
         for (var seed = 0; seed < 200; seed++)
         {
-            expressions.Add(MnoEquationGenerator.Generate(new Random(seed)).Expression);
+            expressions.Add(MnoEquationGenerator.Generate(MnoDifficulty.Normal, new Random(seed)).Expression);
         }
 
         expressions.Count.Should().BeGreaterThan(150, because: "the space is enormous; near-duplicates would signal a biased picker");
@@ -55,7 +135,7 @@ public class MnoEquationGeneratorTests
         var seen = new HashSet<char>();
         for (var seed = 0; seed < 300; seed++)
         {
-            foreach (var op in MnoEquationGenerator.Generate(new Random(seed)).Expression.Where(c => c is '+' or '-' or '*' or '/'))
+            foreach (var op in MnoEquationGenerator.Generate(MnoDifficulty.Normal, new Random(seed)).Expression.Where(c => c is '+' or '-' or '*' or '/'))
             {
                 seen.Add(op);
             }
@@ -141,12 +221,12 @@ public class MnoEquationGeneratorTests
         }
     }
 
-    private static string ExpectedTileForm(List<int> numbers, List<char> operators)
+    private static string ExpectedTileForm(List<int> numbers, List<char> operators, Func<int, string> spell)
     {
-        var form = SyriacNumerals.Spell(numbers[0]);
+        var form = spell(numbers[0]);
         for (var i = 0; i < operators.Count; i++)
         {
-            form += operators[i] + SyriacNumerals.Spell(numbers[i + 1]);
+            form += operators[i] + spell(numbers[i + 1]);
         }
 
         return form;

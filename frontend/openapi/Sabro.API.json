@@ -3198,6 +3198,15 @@
         "tags": [
           "Play"
         ],
+        "parameters": [
+          {
+            "name": "difficulty",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/MnoDifficulty"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -3215,6 +3224,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MnoPuzzleDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
               }
             }
@@ -6684,9 +6713,21 @@
           }
         }
       },
+      "MnoDifficulty": {
+        "enum": [
+          "Beginner",
+          "Easy",
+          "Normal",
+          "Hard",
+          "Extreme"
+        ],
+        "type": "string",
+        "default": 2
+      },
       "MnoPuzzleDto": {
         "required": [
           "date",
+          "difficulty",
           "target",
           "tileCount",
           "expression",
@@ -6697,6 +6738,9 @@
           "date": {
             "type": "string",
             "format": "date"
+          },
+          "difficulty": {
+            "type": "string"
           },
           "target": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",

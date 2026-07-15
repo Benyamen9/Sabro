@@ -6,39 +6,49 @@ namespace Sabro.Play.Domain;
 /// Generates the daily Mno equation by rejection sampling: pick a shape
 /// (operator count, operators, per-number tile lengths), pick numbers of those
 /// tile lengths, and keep the draw only when it satisfies every board rule —
-/// exactly six tiles, an integer target of at least 1, every division exact,
-/// and no degenerate steps (multiplying or dividing with 1, dividing a number
-/// by itself). Operands stay in the unmarked range (1–999) at launch; how often
-/// solutions venture higher is generator tuning, not a system cap.
+/// exactly six tiles, an integer target inside the level's band, every
+/// division exact, and no degenerate steps (multiplying or dividing with 1,
+/// dividing a number by itself).
+///
+/// Difficulty (owner-defined ladder, 2026-07-15) shapes the draw: which
+/// operand range and operators are allowed, how big the target may get, and
+/// which spelling the tile form uses — canonical up to Hard (alfayo enters
+/// naturally with the thousands), the compact marked spelling on Extreme so
+/// all four multiplier marks are met in play.
 /// </summary>
 public static class MnoEquationGenerator
 {
     /// <summary>The fixed Mno board width: every equation renders to exactly this many tiles.</summary>
     public const int TileWidth = 6;
 
-    private const int MaxOperandValue = 999;
     private const int MaxAttempts = 100_000;
-    private static readonly char[] Operators = ['+', '-', '*', '/'];
 
-    /// <summary>Numbers 1-999 grouped by canonical tile length, so a draw for a given slot width is O(1).</summary>
-    private static readonly Dictionary<int, int[]> NumbersByTileCount = Enumerable
-        .Range(1, MaxOperandValue)
-        .GroupBy(SyriacNumerals.TileCount)
-        .ToDictionary(g => g.Key, g => g.ToArray());
+    private static readonly Dictionary<MnoDifficulty, DifficultyProfile> Profiles = new()
+    {
+        // Units + tens only; a 1-operator draw cannot fill the board with
+        // two-tile-max numbers, so Beginner always uses two operators.
+        [MnoDifficulty.Beginner] = new(MaxOperand: 99, Operators: ['+', '-'], MaxTarget: 199, OperatorCounts: [2], RequireOperandAtLeast: 0, SyriacNumerals.Spell),
+        [MnoDifficulty.Easy] = new(MaxOperand: 499, Operators: ['+', '-', '*'], MaxTarget: 999, OperatorCounts: [1, 2], RequireOperandAtLeast: 0, SyriacNumerals.Spell),
+        [MnoDifficulty.Normal] = new(MaxOperand: 999, Operators: ['+', '-', '*', '/'], MaxTarget: 9_999, OperatorCounts: [1, 2], RequireOperandAtLeast: 0, SyriacNumerals.Spell),
+        [MnoDifficulty.Hard] = new(MaxOperand: 9_999, Operators: ['+', '-', '*', '/'], MaxTarget: 99_999, OperatorCounts: [1, 2], RequireOperandAtLeast: 1_000, SyriacNumerals.Spell),
+        [MnoDifficulty.Extreme] = new(MaxOperand: 999_999, Operators: ['+', '-', '*', '/'], MaxTarget: 999_999, OperatorCounts: [1, 2], RequireOperandAtLeast: 10_000, SyriacNumerals.SpellMarked),
+    };
 
     /// <summary>
-    /// Draws a valid equation. <paramref name="excludedExpressions"/> lets the
-    /// caller replay-guard against recently served expressions.
+    /// Draws a valid equation for the level. <paramref name="excludedExpressions"/>
+    /// lets the caller replay-guard against recently served expressions.
     /// </summary>
-    public static MnoEquation Generate(Random random, IReadOnlySet<string>? excludedExpressions = null)
+    public static MnoEquation Generate(MnoDifficulty difficulty, Random random, IReadOnlySet<string>? excludedExpressions = null)
     {
+        var profile = Profiles[difficulty];
+
         for (var attempt = 0; attempt < MaxAttempts; attempt++)
         {
-            var operatorCount = random.Next(1, 3);
+            var operatorCount = profile.OperatorCounts[random.Next(profile.OperatorCounts.Length)];
             var operators = new char[operatorCount];
             for (var i = 0; i < operatorCount; i++)
             {
-                operators[i] = Operators[random.Next(Operators.Length)];
+                operators[i] = profile.Operators[random.Next(profile.Operators.Length)];
             }
 
             var lengths = SplitTiles(random, TileWidth - operatorCount, operatorCount + 1);
@@ -48,10 +58,26 @@ public static class MnoEquationGenerator
             }
 
             var numbers = new int[lengths.Length];
+            var drawable = true;
             for (var i = 0; i < lengths.Length; i++)
             {
-                var pool = NumbersByTileCount[lengths[i]];
+                if (!profile.PoolsByTileCount.TryGetValue(lengths[i], out var pool))
+                {
+                    drawable = false;
+                    break;
+                }
+
                 numbers[i] = pool[random.Next(pool.Length)];
+            }
+
+            if (!drawable)
+            {
+                continue;
+            }
+
+            if (profile.RequireOperandAtLeast > 0 && !numbers.Any(n => n >= profile.RequireOperandAtLeast))
+            {
+                continue;
             }
 
             if (HasDegenerateStep(numbers, operators))
@@ -60,7 +86,7 @@ public static class MnoEquationGenerator
             }
 
             var target = TryEvaluate(numbers, operators);
-            if (target is null or < 1)
+            if (target is null or < 1 || target > profile.MaxTarget)
             {
                 continue;
             }
@@ -71,7 +97,7 @@ public static class MnoEquationGenerator
                 continue;
             }
 
-            return new MnoEquation(expression, BuildTileForm(numbers, operators), target.Value);
+            return new MnoEquation(expression, BuildTileForm(numbers, operators, profile.Spell), target.Value);
         }
 
         throw new InvalidOperationException("Mno equation generation exhausted its attempts — the constraints have become unsatisfiable.");
@@ -168,14 +194,34 @@ public static class MnoEquationGenerator
         return builder.ToString();
     }
 
-    private static string BuildTileForm(int[] numbers, char[] operators)
+    private static string BuildTileForm(int[] numbers, char[] operators, Func<int, string> spell)
     {
-        var builder = new StringBuilder().Append(SyriacNumerals.Spell(numbers[0]));
+        var builder = new StringBuilder().Append(spell(numbers[0]));
         for (var i = 0; i < operators.Length; i++)
         {
-            builder.Append(operators[i]).Append(SyriacNumerals.Spell(numbers[i + 1]));
+            builder.Append(operators[i]).Append(spell(numbers[i + 1]));
         }
 
         return builder.ToString();
+    }
+
+    /// <summary>
+    /// One ladder level's draw constraints. <paramref name="RequireOperandAtLeast"/>
+    /// demands at least one operand that large (0 = no floor) — without it a
+    /// Hard/Extreme draw could land entirely in a lower level's range.
+    /// </summary>
+    private sealed record DifficultyProfile(
+        int MaxOperand,
+        char[] Operators,
+        int MaxTarget,
+        int[] OperatorCounts,
+        int RequireOperandAtLeast,
+        Func<int, string> Spell)
+    {
+        /// <summary>Numbers grouped by the tile length of this level's spelling, so a draw for a slot width is O(1).</summary>
+        public Dictionary<int, int[]> PoolsByTileCount { get; } = Enumerable
+            .Range(1, MaxOperand)
+            .GroupBy(value => SyriacNumerals.TileCountOf(Spell(value)))
+            .ToDictionary(g => g.Key, g => g.ToArray());
     }
 }
