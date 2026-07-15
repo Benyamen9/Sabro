@@ -5,6 +5,7 @@ using Sabro.API.Configuration;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Application.Meltho;
 using Sabro.Play.Application.Mno;
+using Sabro.Play.Domain;
 using Sabro.Shared.Pagination;
 
 namespace Sabro.API.Controllers.V1;
@@ -61,18 +62,24 @@ public sealed class PlayController : ApiControllerBase
     }
 
     /// <summary>
-    /// Returns today's Mno puzzle (get-or-create per date; identical for all
-    /// players). The full solution ships with the puzzle: like Meltho's word,
-    /// guess evaluation is client logic and per-tile feedback needs the exact
-    /// board form. Public: anyone can play without an account — login is only
-    /// needed to persist a result. Rate-limited as a public endpoint.
+    /// Returns today's Mno puzzle for the requested ladder level (get-or-create
+    /// per date and difficulty; identical for every player on the level). Valid
+    /// difficulty values: beginner, easy, normal, hard, extreme — normal when
+    /// omitted, so pre-ladder clients keep working. The full solution ships
+    /// with the puzzle: like Meltho's word, guess evaluation is client logic
+    /// and per-tile feedback needs the exact board form. Public: anyone can
+    /// play without an account — login is only needed to persist a result.
+    /// Rate-limited as a public endpoint.
     /// </summary>
     [HttpGet("mno/today")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(MnoPuzzleDto), StatusCodes.Status200OK)]
-    public async Task<ActionResult<MnoPuzzleDto>> GetTodaysMnoPuzzle(CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MnoPuzzleDto>> GetTodaysMnoPuzzle(
+        [FromQuery] MnoDifficulty difficulty = MnoDifficulty.Normal,
+        CancellationToken cancellationToken = default)
     {
-        var result = await mnoPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
+        var result = await mnoPuzzleService.GetTodaysPuzzleAsync(difficulty, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

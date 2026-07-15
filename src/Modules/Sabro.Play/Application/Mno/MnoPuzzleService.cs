@@ -11,7 +11,8 @@ internal sealed class MnoPuzzleService : IMnoPuzzleService
     /// <summary>
     /// Recently served expressions are excluded from generation. Purely a
     /// replay guard — the equation space is enormous, so unlike Meltho's
-    /// word pool this can never starve and needs no configuration.
+    /// word pool this can never starve and needs no configuration. The guard
+    /// spans every ladder level, so no level repeats another's recent equation.
     /// </summary>
     private const int ReplayGuardWindowDays = 365;
 
@@ -29,13 +30,13 @@ internal sealed class MnoPuzzleService : IMnoPuzzleService
         this.logger = logger;
     }
 
-    public async Task<Result<MnoPuzzleDto>> GetTodaysPuzzleAsync(CancellationToken cancellationToken)
+    public async Task<Result<MnoPuzzleDto>> GetTodaysPuzzleAsync(MnoDifficulty difficulty, CancellationToken cancellationToken)
     {
         var today = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime);
 
         var existing = await dbContext.MnoDailyPuzzles
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.GameId == Games.Mno && p.Date == today, cancellationToken);
+            .FirstOrDefaultAsync(p => p.GameId == Games.Mno && p.Date == today && p.Difficulty == difficulty, cancellationToken);
         if (existing is not null)
         {
             return Result<MnoPuzzleDto>.Success(ToDto(existing));
@@ -48,8 +49,8 @@ internal sealed class MnoPuzzleService : IMnoPuzzleService
             .Select(p => p.Expression)
             .ToListAsync(cancellationToken);
 
-        var equation = MnoEquationGenerator.Generate(Random.Shared, recentExpressions.ToHashSet());
-        var puzzleResult = MnoDailyPuzzle.Create(Games.Mno, today, equation);
+        var equation = MnoEquationGenerator.Generate(difficulty, Random.Shared, recentExpressions.ToHashSet());
+        var puzzleResult = MnoDailyPuzzle.Create(Games.Mno, today, difficulty, equation);
         if (!puzzleResult.IsSuccess)
         {
             return Result<MnoPuzzleDto>.Failure(puzzleResult.Error!);
@@ -63,13 +64,13 @@ internal sealed class MnoPuzzleService : IMnoPuzzleService
         }
         catch (DbUpdateException)
         {
-            // Lost a race on the unique (game, date) key — another request created
-            // today's puzzle first. Re-read and serve their equation so every
-            // player sees the same one.
+            // Lost a race on the unique (game, date, difficulty) key — another
+            // request created this level's puzzle first. Re-read and serve their
+            // equation so every player on the level sees the same one.
             dbContext.Entry(puzzle).State = EntityState.Detached;
             var raced = await dbContext.MnoDailyPuzzles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.GameId == Games.Mno && p.Date == today, cancellationToken);
+                .FirstOrDefaultAsync(p => p.GameId == Games.Mno && p.Date == today && p.Difficulty == difficulty, cancellationToken);
             if (raced is null)
             {
                 throw;
@@ -79,29 +80,21 @@ internal sealed class MnoPuzzleService : IMnoPuzzleService
         }
 
         logger.LogInformation(
-            "Mno daily puzzle generated. Date={Date} Target={Target} Tiles={Tiles}",
+            "Mno daily puzzle generated. Date={Date} Difficulty={Difficulty} Target={Target} Tiles={Tiles}",
             today,
+            difficulty,
             puzzle.Target,
-            CountTiles(puzzle.TileForm));
+            SyriacNumerals.TileCountOf(puzzle.TileForm));
 
         return Result<MnoPuzzleDto>.Success(ToDto(puzzle));
     }
 
     private static MnoPuzzleDto ToDto(MnoDailyPuzzle puzzle) =>
-        new(puzzle.Date, puzzle.Target, CountTiles(puzzle.TileForm), puzzle.Expression, puzzle.TileForm);
-
-    /// <summary>Board width of a tile form: every character is a tile except combining marks.</summary>
-    private static int CountTiles(string tileForm)
-    {
-        var count = 0;
-        foreach (var ch in tileForm)
-        {
-            if (ch != SyriacNumerals.Alfayo)
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
+        new(
+            puzzle.Date,
+            puzzle.Difficulty.ToString().ToLowerInvariant(),
+            puzzle.Target,
+            SyriacNumerals.TileCountOf(puzzle.TileForm),
+            puzzle.Expression,
+            puzzle.TileForm);
 }
