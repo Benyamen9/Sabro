@@ -9,7 +9,7 @@
     "titleLine1": "Syriac,",
     "titleLine2": "letter by letter.",
     "nameGloss": "sabro — Syriac for “hope”",
-    "lede": "Sabro is the home of a growing family of apps for the Syriac language. It begins with {app}.",
+    "lede": "Sabro is the home of a growing family of apps for the Syriac language — beginning with two daily games, {meltho} and {mno}.",
     "liveNow": "Live now",
     "exploreCta": "Explore the words",
     "meltho": {
@@ -18,6 +18,13 @@
       "body": "A daily Syriac word game — six tries to find the hidden word. A new one every day, drawn from the lexicon.",
       "cta": "Play today’s word",
       "ctaShort": "Play Meltho"
+    },
+    "mno": {
+      "heading": "Mno",
+      "live": "Live",
+      "body": "A daily equation puzzle in Syriac numerals — six tries to hit the target, from Beginner to Extreme. The letters are the numbers.",
+      "cta": "Play today’s equation",
+      "ctaShort": "Play Mno"
     },
     "library": {
       "eyebrow": "Word library",
@@ -28,7 +35,7 @@
     },
     "about": {
       "eyebrow": "What Sabro is",
-      "body": "One hub, many apps: Sabro carries the shared identity, lexicon, and API the ecosystem is built on. More apps for the Syriac language will follow Meltho."
+      "body": "One hub, many apps: Sabro carries the shared identity, lexicon, and API the ecosystem is built on. Meltho and Mno lead the way; more apps for the Syriac language will follow."
     }
   },
   "nav": {
@@ -37,7 +44,8 @@
     "translations": "Translations",
     "library": "Library",
     "admin": "Backoffice",
-    "meltho": "Meltho"
+    "meltho": "Meltho",
+    "mno": "Mno"
   },
   "switcher": {
     "languageLabel": "Language",
@@ -75,8 +83,9 @@
       "account": "Account",
       "security": "Security",
       "profile": "Profile",
+      "games": "Games",
       "meltho": "Meltho",
-      "stats": "Stats",
+      "mno": "Mno",
       "preferences": "Preferences",
       "leaderboard": "Leaderboard",
       "username": "Username",
@@ -165,6 +174,9 @@
     "stats": {
       "heading": "Meltho",
       "subtitle": "Your daily word game",
+      "mnoHeading": "Mno",
+      "mnoSubtitle": "Your daily numbers game",
+      "mnoEmpty": "You haven't played Mno yet. Your stats will appear here once you do.",
       "play": "Play",
       "empty": "You haven't played Meltho yet. Your stats will appear here once you do.",
       "played": "Played",

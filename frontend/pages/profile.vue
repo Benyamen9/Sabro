@@ -8,6 +8,8 @@ const { variant, set: setVariant, available: scriptOptions } = useScriptVariant(
 const { profile, load, persist, saveAccount, exportData, deleteAccount } = useProfile()
 const { load: loadLeaderboard } = useLeaderboard()
 const { hasPassword, load: loadCapabilities } = useAccountCapabilities()
+const { melthoStats, mnoStats, loading: statsLoading, loaded: statsLoaded, load: loadStats } = usePlayStats()
+const { melthoUrl, mnoUrl } = useRuntimeConfig().public
 
 // The app titleTemplate appends "— Sabro"; personal pages stay out of search.
 useHead({ title: () => t('account.title') })
@@ -18,6 +20,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 onMounted(() => {
   load()
   loadCapabilities()
+  loadStats()
 })
 
 // --- Leaderboard opt-in editing ---------------------------------------------
@@ -156,9 +159,10 @@ const navGroups = computed(() => [
     ],
   },
   {
-    label: t('account.nav.meltho'),
+    label: t('account.nav.games'),
     items: [
-      { id: 'meltho', label: t('account.nav.stats') },
+      { id: 'meltho', label: t('account.nav.meltho') },
+      { id: 'mno', label: t('account.nav.mno') },
       { id: 'leaderboard', label: t('account.nav.leaderboard') },
     ],
   },
@@ -185,7 +189,7 @@ const navGroups = computed(() => [
 // horizontally-scrollable pill row.
 const flatNavItems = computed(() => navGroups.value.flatMap(group => group.items))
 
-const sectionIds = ['preferences', 'meltho', 'leaderboard', 'username', 'email', 'password', 'session', 'export', 'delete']
+const sectionIds = ['preferences', 'meltho', 'mno', 'leaderboard', 'username', 'email', 'password', 'session', 'export', 'delete']
 const activeSection = ref('preferences')
 
 function goToSection(id: string) {
@@ -467,9 +471,32 @@ onBeforeUnmount(() => {
             </div>
           </section>
 
-          <!-- Meltho — player stats derived from the user's own results. -->
+          <!-- Game stats — derived per game from the user's own results
+               (one fetch serves both cards). -->
           <div id="meltho" class="scroll-mt-24">
-            <MelthoStatsCard />
+            <GameStatsCard
+              :stats="melthoStats"
+              :loading="statsLoading"
+              :loaded="statsLoaded"
+              :heading="t('account.stats.heading')"
+              :subtitle="t('account.stats.subtitle')"
+              :empty="t('account.stats.empty')"
+              :play-url="melthoUrl"
+              palette="meltho"
+            />
+          </div>
+
+          <div id="mno" class="scroll-mt-24">
+            <GameStatsCard
+              :stats="mnoStats"
+              :loading="statsLoading"
+              :loaded="statsLoaded"
+              :heading="t('account.stats.mnoHeading')"
+              :subtitle="t('account.stats.mnoSubtitle')"
+              :empty="t('account.stats.mnoEmpty')"
+              :play-url="mnoUrl"
+              palette="mno"
+            />
           </div>
 
           <!-- Leaderboard — opt-in controls + the board itself. -->

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { t, locale } = useI18n()
-const melthoUrl = useRuntimeConfig().public.melthoUrl
+const { melthoUrl, mnoUrl } = useRuntimeConfig().public
 const { listWords } = useMelthoLibrary()
 const preferredMeaning = usePreferredMeaning()
 
@@ -32,6 +32,15 @@ function tileClass(state: 'correct' | 'present') {
     ? `${base} border-[var(--color-meltho-gold-dark)] bg-[var(--color-meltho-gold)]`
     : `${base} border-[var(--color-meltho-dark)] bg-[var(--color-meltho)]`
 }
+
+// Mno's hero: the opening of an equation in Syriac numerals — amber tiles
+// with the game's signature value hints. Decorative, like Meltho's board.
+const mnoTiles = [
+  { glyph: 'ܝ', hint: '10' },
+  { glyph: 'ܒ', hint: '2' },
+  { glyph: '×', hint: '' },
+  { glyph: 'ܗ', hint: '5' },
+] as const
 
 // The newest past word, shown as the library band's live chip. Best-effort:
 // with the API unreachable the band simply renders without it.
@@ -78,13 +87,17 @@ const ghostButton
           tag="p"
           class="mt-6 max-w-xl font-serif text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl"
         >
-          <template #app>
+          <template #meltho>
             <strong class="font-semibold text-[var(--color-text)]">Meltho</strong>
+          </template>
+          <template #mno>
+            <strong class="font-semibold text-[var(--color-text)]">Mno</strong>
           </template>
         </i18n-t>
 
         <div class="mt-8 flex flex-wrap gap-3">
           <a :href="melthoUrl" :class="primaryButton">{{ t('home.meltho.ctaShort') }} →</a>
+          <a :href="mnoUrl" :class="ghostButton">{{ t('home.mno.ctaShort') }} →</a>
           <NuxtLink to="/library" :class="ghostButton">{{ t('home.exploreCta') }}</NuxtLink>
         </div>
       </div>
@@ -105,7 +118,8 @@ const ghostButton
       </div>
     </section>
 
-    <!-- Live now: Meltho, the launched app, as a real feature with a direct play CTA. -->
+    <!-- Live now: the two launched games, each in its own colour, each with a
+         direct play CTA. -->
     <section class="mt-14 sm:mt-16">
       <div class="border-b border-[var(--color-border)] pb-3.5">
         <span class="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
@@ -113,36 +127,77 @@ const ghostButton
         </span>
       </div>
 
-      <div
-        class="mt-5 flex flex-col items-center gap-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:flex-row sm:gap-7 sm:p-8 sm:text-left"
-      >
-        <div class="flex shrink-0 gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
-          <span v-for="tile in melthoTiles" :key="tile.letter" :class="tileClass(tile.state)">
-            <SyriacText :text="tile.letter" class="leading-none" />
-          </span>
-        </div>
-
-        <div class="flex-1">
-          <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
-            {{ t('home.meltho.heading') }}
-            <span
-              class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
-            >
-              <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
-              {{ t('home.meltho.live') }}
-            </span>
-          </h2>
-          <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
-            {{ t('home.meltho.body') }}
-          </p>
-        </div>
-
-        <a
-          :href="melthoUrl"
-          class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-meltho)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-meltho-dark)] sm:ml-auto sm:w-auto"
+      <div class="mt-5 grid gap-5 lg:grid-cols-2">
+        <!-- Meltho — the word game, in its teal. -->
+        <div
+          class="flex flex-col items-center gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:items-start sm:text-left"
         >
-          {{ t('home.meltho.cta') }} →
-        </a>
+          <div class="flex gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
+            <span v-for="tile in melthoTiles" :key="tile.letter" :class="tileClass(tile.state)">
+              <SyriacText :text="tile.letter" class="leading-none" />
+            </span>
+          </div>
+
+          <div class="flex-1">
+            <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
+              {{ t('home.meltho.heading') }}
+              <span
+                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
+              >
+                <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
+                {{ t('home.meltho.live') }}
+              </span>
+            </h2>
+            <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
+              {{ t('home.meltho.body') }}
+            </p>
+          </div>
+
+          <a
+            :href="melthoUrl"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-meltho)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-meltho-dark)] sm:w-auto"
+          >
+            {{ t('home.meltho.cta') }} →
+          </a>
+        </div>
+
+        <!-- Mno — the numbers game, in its honey amber, value hints showing. -->
+        <div
+          class="flex flex-col items-center gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:items-start sm:text-left"
+        >
+          <div class="flex gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
+            <span
+              v-for="(tile, index) in mnoTiles"
+              :key="index"
+              class="flex size-12 flex-col items-center justify-center rounded-xl border-2 border-[var(--color-mno-dark)] bg-[var(--color-mno)] text-white sm:size-14"
+            >
+              <SyriacText :text="tile.glyph" class="text-2xl leading-none sm:text-3xl" />
+              <span v-if="tile.hint" class="mt-0.5 font-sans text-[10px] leading-none opacity-80" dir="ltr">{{ tile.hint }}</span>
+            </span>
+          </div>
+
+          <div class="flex-1">
+            <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
+              {{ t('home.mno.heading') }}
+              <span
+                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
+              >
+                <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
+                {{ t('home.mno.live') }}
+              </span>
+            </h2>
+            <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
+              {{ t('home.mno.body') }}
+            </p>
+          </div>
+
+          <a
+            :href="mnoUrl"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-mno)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-mno-dark)] sm:w-auto"
+          >
+            {{ t('home.mno.cta') }} →
+          </a>
+        </div>
       </div>
     </section>
 

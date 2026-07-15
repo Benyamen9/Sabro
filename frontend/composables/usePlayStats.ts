@@ -1,13 +1,12 @@
 import type { GameResultDto, PagedResult } from '~/types/api'
 
-// Meltho gives six tries; its results carry attempts 1..6 on a win and
+// Both daily games give six tries; results carry attempts 1..6 on a win and
 // attempts == max on a loss (solved=false). The guess distribution buckets the
 // wins by attempt count — the familiar Wordle histogram.
-const MELTHO_GAME_ID = 'meltho'
 const MAX_ATTEMPTS = 6
 const MAX_PAGE_SIZE = 200
 
-export interface MelthoStats {
+export interface GameStats {
   played: number
   wins: number
   losses: number
@@ -21,7 +20,7 @@ export interface MelthoStats {
   maxAttempts: number
 }
 
-function emptyStats(): MelthoStats {
+function emptyStats(): GameStats {
   return {
     played: 0,
     wins: 0,
@@ -44,10 +43,10 @@ function dayGap(a: string, b: string): number {
   return Math.round(ms / 86_400_000)
 }
 
-/** Derive the Meltho stats from a player's raw results (no server aggregate). */
-export function computeMelthoStats(results: GameResultDto[]): MelthoStats {
+/** Derive one game's stats from a player's raw results (no server aggregate). */
+export function computeGameStats(results: GameResultDto[], gameId: string): GameStats {
   const games = results
-    .filter(r => r.gameId === MELTHO_GAME_ID)
+    .filter(r => r.gameId === gameId)
     .sort((a, b) => a.playedOn.localeCompare(b.playedOn)) // oldest → newest
 
   if (games.length === 0) return emptyStats()
@@ -112,17 +111,22 @@ export function computeMelthoStats(results: GameResultDto[]): MelthoStats {
 }
 
 /**
- * Loads the signed-in player's Meltho stats, derived client-side from
+ * Loads the signed-in player's play stats, derived client-side from
  * /play/results/me (Sabro stores raw results; streaks and aggregates are not
- * persisted). Fetches every page so streaks span the full history.
+ * persisted). One fetch serves every game: results are kept raw and each
+ * game's stats are derived from them. Fetches every page so streaks span the
+ * full history.
  */
 export function usePlayStats() {
   const { isConfigured, isSignedIn } = useAuth()
   const api = useSabroApi()
 
-  const stats = useState<MelthoStats | null>('sabro-play-stats', () => null)
+  const results = useState<GameResultDto[] | null>('sabro-play-results', () => null)
   const loading = useState<boolean>('sabro-play-stats-loading', () => false)
   const loaded = useState<boolean>('sabro-play-stats-loaded', () => false)
+
+  const melthoStats = computed(() => (results.value ? computeGameStats(results.value, 'meltho') : null))
+  const mnoStats = computed(() => (results.value ? computeGameStats(results.value, 'mno') : null))
 
   async function load() {
     if (!isConfigured.value || !isSignedIn.value || loaded.value) return
@@ -139,16 +143,16 @@ export function usePlayStats() {
         if (all.length >= result.total || result.items.length === 0) break
         page += 1
       }
-      stats.value = computeMelthoStats(all)
+      results.value = all
       loaded.value = true
     }
     catch {
-      // Signed out / network error: leave stats null so the page shows nothing.
+      // Signed out / network error: leave results null so the page shows nothing.
     }
     finally {
       loading.value = false
     }
   }
 
-  return { stats, loading, loaded, load }
+  return { melthoStats, mnoStats, loading, loaded, load }
 }

@@ -121,6 +121,8 @@ export default defineNuxtConfig({
       // to prod so the link works without extra config; override with
       // NUXT_PUBLIC_MELTHO_URL.
       melthoUrl: 'https://meltho.sabro.be',
+      // Mno, the numbers game, same convention (NUXT_PUBLIC_MNO_URL).
+      mnoUrl: 'https://mno.sabro.be',
     },
   },
 })

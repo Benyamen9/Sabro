@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import type { GameResultDto } from '~/types/api'
-import { computeMelthoStats } from '~/composables/usePlayStats'
+import { computeGameStats } from '~/composables/usePlayStats'
+
+// The derivation is game-agnostic; these specs exercise it through Meltho.
+const computeMelthoStats = (results: GameResultDto[]) => computeGameStats(results, 'meltho')
 
 // Minimal result factory — only the fields the stats derivation reads matter.
 function result(playedOn: string, solved: boolean, attempts: number, gameId = 'meltho'): GameResultDto {
@@ -96,6 +99,18 @@ describe('computeMelthoStats', () => {
     ])
     expect(s.played).toBe(1)
     expect(s.wins).toBe(1)
+  })
+
+  it('derives per-game stats from one mixed result set', () => {
+    const mixed = [
+      result('2026-06-01', true, 2),
+      result('2026-06-01', true, 4, 'mno'),
+      result('2026-06-02', false, 6, 'mno'),
+    ]
+    const mno = computeGameStats(mixed, 'mno')
+    expect(mno.played).toBe(2)
+    expect(mno.wins).toBe(1)
+    expect(computeGameStats(mixed, 'meltho').played).toBe(1)
   })
 
   it('is order-independent (sorts by date before deriving)', () => {

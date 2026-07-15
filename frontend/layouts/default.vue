@@ -7,6 +7,7 @@ const { load: loadProfile } = useProfile()
 
 // The hub surfaces its launched app: a link out to Meltho (its own deployment).
 const melthoUrl = config.public.melthoUrl
+const mnoUrl = config.public.mnoUrl
 
 // Resolve admin status once on mount so the backoffice link only appears for
 // editors. The API enforces the admin scope regardless of what we show here.
@@ -91,7 +92,20 @@ function isActive(path: string) {
           {{ t('nav.meltho') }}
         </a>
 
-        <span aria-hidden="true" class="order-6 hidden h-5 w-px bg-[var(--color-border)] sm:order-4 sm:block" />
+        <a
+          :href="mnoUrl"
+          class="order-6 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-mno-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-mno)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-mno-faint)_70%,var(--color-mno)_14%)] sm:order-4"
+        >
+          <!-- Mno's badge glyph: ܐ݈, the numeral 1000. -->
+          <span
+            aria-hidden="true"
+            dir="rtl"
+            class="flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-mno)] font-syriac text-[0.66rem] leading-none text-white"
+          >ܐ݈</span>
+          {{ t('nav.mno') }}
+        </a>
+
+        <span aria-hidden="true" class="order-7 hidden h-5 w-px bg-[var(--color-border)] sm:order-5 sm:block" />
 
         <div class="order-2 ml-auto flex items-center gap-1.5 sm:order-5 sm:ml-0 sm:gap-2">
           <ScriptVariantSwitcher />
