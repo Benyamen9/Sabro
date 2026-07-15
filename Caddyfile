@@ -37,6 +37,13 @@
 	reverse_proxy meltho:3000
 }
 
+# Mno — Syriac numbers game (own repo, own container), sharing Sabro's API +
+# database behind this same Caddy on its own hostname.
+{$MNO_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy mno:3000
+}
+
 # --- Future ecosystem clients register their own block here -------------------
 # Additional clients add one reverse_proxy block per hostname, each pointing at
 # their own compose service on the internal network.
