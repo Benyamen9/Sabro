@@ -194,6 +194,29 @@ services:
       NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
     networks: [internal]
 
+  # Mno — Syriac numbers game. Same shape as Meltho: own repo (Hito/Mno), own
+  # GHCR image and CD, own Logto OIDC app (MNO_LOGTO_*), running as another
+  # container in this shared stack behind the same Caddy. It reads the daily
+  # equation and writes play results through the Sabro API only.
+  mno:
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/mno:${MNO_IMAGE_TAG:-latest}
+    container_name: sabro-mno
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NUXT_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_LOGTO_APP_ID: ${MNO_LOGTO_APP_ID:?MNO_LOGTO_APP_ID is required}
+      NUXT_LOGTO_APP_SECRET: ${MNO_LOGTO_APP_SECRET:?MNO_LOGTO_APP_SECRET is required}
+      NUXT_LOGTO_COOKIE_ENCRYPTION_KEY: ${MNO_LOGTO_COOKIE_ENCRYPTION_KEY:?MNO_LOGTO_COOKIE_ENCRYPTION_KEY is required}
+      NUXT_PUBLIC_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_PUBLIC_SABRO_API_RESOURCE: ${SABRO_API_RESOURCE}
+      NUXT_PUBLIC_API_BASE_URL: "https://${SABRO_API_DOMAIN}/api/v1"
+      # Same shared cookie domain as the hub and Meltho — locale + script
+      # preferences carry across every app in the ecosystem.
+      NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
+    networks: [internal]
+
   # Nightly logical backups of both databases (30 daily + 12 monthly), with
   # optional off-site sync to a Hetzner Storage Box and a weekly automated
   # restore test. Dumps live in the backup-data volume; off-site sync starts
@@ -247,6 +270,7 @@ services:
       LOGTO_DOMAIN: ${LOGTO_DOMAIN}
       LOGTO_ADMIN_DOMAIN: ${LOGTO_ADMIN_DOMAIN}
       MELTHO_DOMAIN: ${MELTHO_DOMAIN}
+      MNO_DOMAIN: ${MNO_DOMAIN}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
