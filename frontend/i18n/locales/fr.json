@@ -9,7 +9,7 @@
     "titleLine1": "Le syriaque,",
     "titleLine2": "lettre par lettre.",
     "nameGloss": "sabro — « espoir » en syriaque",
-    "lede": "Sabro est le foyer d’une famille grandissante d’applications pour la langue syriaque. Tout commence avec {app}.",
+    "lede": "Sabro est le foyer d’une famille grandissante d’applications pour la langue syriaque — à commencer par deux jeux quotidiens, {meltho} et {mno}.",
     "liveNow": "En ligne",
     "exploreCta": "Explorer les mots",
     "meltho": {
@@ -18,6 +18,13 @@
       "body": "Un jeu de mots syriaque quotidien — six essais pour trouver le mot caché. Un nouveau chaque jour, tiré du lexique.",
       "cta": "Jouer au mot du jour",
       "ctaShort": "Jouer à Meltho"
+    },
+    "mno": {
+      "heading": "Mno",
+      "live": "En ligne",
+      "body": "Un puzzle d’équation quotidien en chiffres syriaques — six essais pour atteindre la cible, de Débutant à Extrême. Les lettres sont les nombres.",
+      "cta": "Jouer l’équation du jour",
+      "ctaShort": "Jouer à Mno"
     },
     "library": {
       "eyebrow": "Bibliothèque de mots",
@@ -28,7 +35,7 @@
     },
     "about": {
       "eyebrow": "Ce qu’est Sabro",
-      "body": "Un hub, plusieurs applications : Sabro porte l’identité partagée, le lexique et l’API sur lesquels repose l’écosystème. D’autres applications pour la langue syriaque suivront Meltho."
+      "body": "Un hub, plusieurs applications : Sabro porte l’identité partagée, le lexique et l’API sur lesquels repose l’écosystème. Meltho et Mno ouvrent la voie ; d’autres applications pour la langue syriaque suivront."
     }
   },
   "nav": {
@@ -37,7 +44,8 @@
     "translations": "Traductions",
     "library": "Bibliothèque",
     "admin": "Back-office",
-    "meltho": "Meltho"
+    "meltho": "Meltho",
+    "mno": "Mno"
   },
   "switcher": {
     "languageLabel": "Langue",
@@ -75,8 +83,9 @@
       "account": "Compte",
       "security": "Sécurité",
       "profile": "Profil",
+      "games": "Jeux",
       "meltho": "Meltho",
-      "stats": "Statistiques",
+      "mno": "Mno",
       "preferences": "Préférences",
       "leaderboard": "Classement",
       "username": "Nom d’utilisateur",
@@ -165,6 +174,9 @@
     "stats": {
       "heading": "Meltho",
       "subtitle": "Votre jeu de mots quotidien",
+      "mnoHeading": "Mno",
+      "mnoSubtitle": "Votre jeu de nombres quotidien",
+      "mnoEmpty": "Vous n’avez pas encore joué à Mno. Vos statistiques apparaîtront ici dès que vous jouerez.",
       "play": "Jouer",
       "empty": "Vous n’avez pas encore joué à Meltho. Vos statistiques apparaîtront ici dès que vous jouerez.",
       "played": "Parties",

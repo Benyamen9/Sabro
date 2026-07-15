@@ -1,32 +1,59 @@
 <script setup lang="ts">
+import type { GameStats } from '~/composables/usePlayStats'
+
+/**
+ * One game's stats block on the profile page — streaks, totals, and the guess
+ * histogram, coloured in the game's own palette (games speak their colour,
+ * not the hub's burgundy). Data comes from the parent: one results fetch
+ * serves every game's card.
+ */
+const props = defineProps<{
+  stats: GameStats | null
+  loading: boolean
+  loaded: boolean
+  heading: string
+  subtitle: string
+  empty: string
+  playUrl: string
+  palette: 'meltho' | 'mno'
+}>()
+
 const { t, n } = useI18n()
-const config = useRuntimeConfig()
-const { stats, loading, loaded, load } = usePlayStats()
 
-const melthoUrl = config.public.melthoUrl
+const hasPlayed = computed(() => Boolean(props.stats && props.stats.played > 0))
 
-onMounted(load)
-
-const hasPlayed = computed(() => Boolean(stats.value && stats.value.played > 0))
-
-// The streak leads (it's the habit the game builds), best streak in the
-// game's gold, then the totals. Tone per tile via the Meltho palette.
+// The streak leads (it's the habit the game builds), best streak accented,
+// then the totals. Tone per tile via the game's palette. Class strings stay
+// literal per palette so Tailwind sees them at build time.
 const tiles = computed(() => {
-  const s = stats.value
+  const s = props.stats
   if (!s) return []
   return [
     { key: 'currentStreak', label: t('account.stats.currentStreak'), value: String(s.currentStreak), tone: 'hero' },
-    { key: 'maxStreak', label: t('account.stats.maxStreak'), value: String(s.maxStreak), tone: 'gold' },
+    { key: 'maxStreak', label: t('account.stats.maxStreak'), value: String(s.maxStreak), tone: 'accent' },
     { key: 'played', label: t('account.stats.played'), value: String(s.played), tone: 'plain' },
     { key: 'winRate', label: t('account.stats.winRate'), value: `${s.winRate}%`, tone: 'plain' },
   ]
 })
 
-const tileClasses: Record<string, string> = {
-  hero: 'border-[color-mix(in_oklab,var(--color-meltho)_35%,var(--color-border))] bg-[var(--color-meltho-faint)] [&>dd]:text-[var(--color-meltho)]',
-  gold: 'border-[var(--color-border)] bg-[var(--color-bg)] [&>dd]:text-[var(--color-meltho-gold)]',
-  plain: 'border-[var(--color-border)] bg-[var(--color-bg)]',
+const paletteClasses: Record<'meltho' | 'mno', Record<string, string>> = {
+  meltho: {
+    hero: 'border-[color-mix(in_oklab,var(--color-meltho)_35%,var(--color-border))] bg-[var(--color-meltho-faint)] [&>dd]:text-[var(--color-meltho)]',
+    accent: 'border-[var(--color-border)] bg-[var(--color-bg)] [&>dd]:text-[var(--color-meltho-gold)]',
+    plain: 'border-[var(--color-border)] bg-[var(--color-bg)]',
+    bar: 'bg-[var(--color-meltho)]',
+    dot: 'bg-[var(--color-meltho)]',
+  },
+  mno: {
+    hero: 'border-[color-mix(in_oklab,var(--color-mno)_35%,var(--color-border))] bg-[var(--color-mno-faint)] [&>dd]:text-[var(--color-mno)]',
+    accent: 'border-[var(--color-border)] bg-[var(--color-bg)] [&>dd]:text-[var(--color-mno-dark)]',
+    plain: 'border-[var(--color-border)] bg-[var(--color-bg)]',
+    bar: 'bg-[var(--color-mno)]',
+    dot: 'bg-[var(--color-mno)]',
+  },
 }
+
+const classes = computed(() => paletteClasses[props.palette])
 
 // Whole days between today and a yyyy-mm-dd date, parsed at UTC midnight so the
 // integer gap is stable (matches the streak math in usePlayStats).
@@ -38,7 +65,7 @@ function daysSince(date: string): number {
 
 // A small recency line so the card reflects live activity, not a static block.
 const lastPlayedLabel = computed(() => {
-  const last = stats.value?.lastPlayed
+  const last = props.stats?.lastPlayed
   if (!last) return null
   const gap = daysSince(last)
   if (gap <= 0) return t('account.stats.lastPlayedToday')
@@ -48,7 +75,7 @@ const lastPlayedLabel = computed(() => {
 
 // Width % for a histogram bar, with a floor so a non-zero count is always visible.
 function barWidth(value: number): string {
-  const max = stats.value?.maxBucket ?? 0
+  const max = props.stats?.maxBucket ?? 0
   if (value === 0 || max === 0) return '0%'
   return `${Math.max(12, Math.round((value / max) * 100))}%`
 }
@@ -61,14 +88,14 @@ function barWidth(value: number): string {
     <div class="flex items-baseline justify-between gap-3">
       <div>
         <h2 class="font-serif text-lg font-semibold tracking-tight text-[var(--color-text)]">
-          {{ t('account.stats.heading') }}
+          {{ heading }}
         </h2>
         <p class="mt-0.5 font-sans text-sm text-[var(--color-text-muted)]">
-          {{ t('account.stats.subtitle') }}
+          {{ subtitle }}
         </p>
       </div>
       <a
-        :href="melthoUrl"
+        :href="playUrl"
         class="inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--color-accent-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-accent)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-accent-faint)_70%,var(--color-accent)_12%)]"
       >
         {{ t('account.stats.play') }}
@@ -86,7 +113,7 @@ function barWidth(value: number): string {
       v-else-if="!hasPlayed"
       class="mt-5 rounded-xl border border-dashed border-[var(--color-border-strong)] px-5 py-6 text-center"
     >
-      <p class="font-sans text-sm text-[var(--color-text-muted)]">{{ t('account.stats.empty') }}</p>
+      <p class="font-sans text-sm text-[var(--color-text-muted)]">{{ empty }}</p>
     </div>
 
     <template v-else-if="stats">
@@ -95,7 +122,7 @@ function barWidth(value: number): string {
         v-if="lastPlayedLabel"
         class="mt-4 inline-flex items-center gap-1.5 font-sans text-xs text-[var(--color-text-muted)]"
       >
-        <span class="size-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" aria-hidden="true" />
+        <span class="size-1.5 shrink-0 rounded-full" :class="classes.dot" aria-hidden="true" />
         {{ lastPlayedLabel }}
       </p>
 
@@ -105,7 +132,7 @@ function barWidth(value: number): string {
           v-for="tile in tiles"
           :key="tile.key"
           class="rounded-xl border px-3 py-3 text-center"
-          :class="tileClasses[tile.tone]"
+          :class="classes[tile.tone]"
         >
           <dd class="font-sans text-2xl font-bold tabular-nums text-[var(--color-text)]">{{ tile.value }}</dd>
           <dt class="mt-0.5 font-sans text-[11px] uppercase tracking-[0.05em] text-[var(--color-text-faint)]">{{ tile.label }}</dt>
@@ -129,10 +156,9 @@ function barWidth(value: number): string {
           >
             <span class="w-3 shrink-0 text-right font-sans text-xs tabular-nums text-[var(--color-text-muted)]">{{ i + 1 }}</span>
             <div class="flex-1">
-              <!-- Bars in Meltho's teal — these are game results, so they speak
-                   the game's colour, not the hub's burgundy. -->
               <div
-                class="flex h-5 items-center justify-end rounded-sm bg-[var(--color-meltho)] px-1.5 font-sans text-xs font-medium tabular-nums text-white transition-all"
+                class="flex h-5 items-center justify-end rounded-sm px-1.5 font-sans text-xs font-medium tabular-nums text-white transition-all"
+                :class="classes.bar"
                 :style="{ width: barWidth(count) }"
               >
                 <span v-if="count > 0">{{ count }}</span>

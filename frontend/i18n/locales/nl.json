@@ -9,7 +9,7 @@
     "titleLine1": "Syrisch,",
     "titleLine2": "letter voor letter.",
     "nameGloss": "sabro — Syrisch voor „hoop”",
-    "lede": "Sabro is het thuis van een groeiende familie van apps voor de Syrische taal. Het begint met {app}.",
+    "lede": "Sabro is het thuis van een groeiende familie van apps voor de Syrische taal — te beginnen met twee dagelijkse spellen, {meltho} en {mno}.",
     "liveNow": "Live",
     "exploreCta": "Verken de woorden",
     "meltho": {
@@ -18,6 +18,13 @@
       "body": "Een dagelijks Syrisch woordspel — zes pogingen om het verborgen woord te vinden. Elke dag een nieuw woord, uit het lexicon.",
       "cta": "Speel het woord van vandaag",
       "ctaShort": "Speel Meltho"
+    },
+    "mno": {
+      "heading": "Mno",
+      "live": "Live",
+      "body": "Een dagelijkse vergelijkingspuzzel in Syrische cijfers — zes pogingen om het doel te raken, van Beginner tot Extreem. De letters zijn de getallen.",
+      "cta": "Speel de vergelijking van vandaag",
+      "ctaShort": "Speel Mno"
     },
     "library": {
       "eyebrow": "Woordbibliotheek",
@@ -28,7 +35,7 @@
     },
     "about": {
       "eyebrow": "Wat Sabro is",
-      "body": "Eén hub, vele apps: Sabro draagt de gedeelde identiteit, het lexicon en de API waarop het ecosysteem is gebouwd. Meer apps voor de Syrische taal zullen Meltho volgen."
+      "body": "Eén hub, vele apps: Sabro draagt de gedeelde identiteit, het lexicon en de API waarop het ecosysteem is gebouwd. Meltho en Mno gaan voorop; meer apps voor de Syrische taal zullen volgen."
     }
   },
   "nav": {
@@ -37,7 +44,8 @@
     "translations": "Vertalingen",
     "library": "Bibliotheek",
     "admin": "Backoffice",
-    "meltho": "Meltho"
+    "meltho": "Meltho",
+    "mno": "Mno"
   },
   "switcher": {
     "languageLabel": "Taal",
@@ -75,8 +83,9 @@
       "account": "Account",
       "security": "Beveiliging",
       "profile": "Profiel",
+      "games": "Spellen",
       "meltho": "Meltho",
-      "stats": "Statistieken",
+      "mno": "Mno",
       "preferences": "Voorkeuren",
       "leaderboard": "Ranglijst",
       "username": "Gebruikersnaam",
@@ -165,6 +174,9 @@
     "stats": {
       "heading": "Meltho",
       "subtitle": "Uw dagelijkse woordspel",
+      "mnoHeading": "Mno",
+      "mnoSubtitle": "Uw dagelijkse getallenspel",
+      "mnoEmpty": "U hebt Mno nog niet gespeeld. Uw statistieken verschijnen hier zodra u speelt.",
       "play": "Spelen",
       "empty": "U hebt Meltho nog niet gespeeld. Uw statistieken verschijnen hier zodra u speelt.",
       "played": "Gespeeld",
