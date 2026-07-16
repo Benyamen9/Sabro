@@ -11,18 +11,18 @@ namespace Sabro.Play.Domain;
 /// </summary>
 public enum MnoDifficulty
 {
-    /// <summary>Units and tens only (operands 1–99), + and −, target ≤ 199, no marks.</summary>
+    /// <summary>Two single letters (units and tens), + and −, on a 3-tile board.</summary>
     Beginner,
 
-    /// <summary>Hundreds letters join (operands 1–499), + − ×, target ≤ 999, no marks.</summary>
+    /// <summary>A two-letter compound meets a single letter (operands ≤ 99), + and −, on a 4-tile board.</summary>
     Easy,
 
-    /// <summary>Full unmarked range (operands 1–999, compound hundreds), all four operators, target ≤ 9,999.</summary>
+    /// <summary>Full unmarked range (operands ≤ 999), all four operators with a × or ÷ guaranteed, 5-tile board, target ≤ 9,999.</summary>
     Normal,
 
-    /// <summary>Thousands via alfayo (operands 1–9,999, at least one ≥ 1,000), all operators, target ≤ 99,999.</summary>
+    /// <summary>Thousands via alfayo (at least one operand ≥ 1,000), always two operators with a × or ÷, 6-tile board, target ≤ 99,999.</summary>
     Hard,
 
-    /// <summary>The whole system: all four marks in compact spellings, operands and target up to 999,999.</summary>
+    /// <summary>The whole system: compact marked spellings, at least one operand ≥ 10,000, always two operators with a × or ÷, 6-tile board, up to 999,999.</summary>
     Extreme,
 }

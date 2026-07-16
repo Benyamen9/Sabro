@@ -5,23 +5,25 @@ namespace Sabro.UnitTests.Play.Domain;
 public class MnoEquationGeneratorTests
 {
     [Theory]
-    [InlineData(MnoDifficulty.Beginner)]
-    [InlineData(MnoDifficulty.Easy)]
-    [InlineData(MnoDifficulty.Normal)]
-    [InlineData(MnoDifficulty.Hard)]
-    [InlineData(MnoDifficulty.Extreme)]
-    public void Generate_SatisfiesEveryBoardInvariant(MnoDifficulty difficulty)
+    [InlineData(MnoDifficulty.Beginner, 3, 1, 1)]
+    [InlineData(MnoDifficulty.Easy, 4, 1, 1)]
+    [InlineData(MnoDifficulty.Normal, 5, 1, 2)]
+    [InlineData(MnoDifficulty.Hard, 6, 2, 2)]
+    [InlineData(MnoDifficulty.Extreme, 6, 2, 2)]
+    public void Generate_SatisfiesEveryBoardInvariant(MnoDifficulty difficulty, int width, int minOperators, int maxOperators)
     {
+        MnoEquationGenerator.WidthOf(difficulty).Should().Be(width);
+
         for (var seed = 0; seed < 300; seed++)
         {
             var equation = MnoEquationGenerator.Generate(difficulty, new Random(seed));
 
             var (numbers, operators) = Tokenize(equation.Expression);
 
-            operators.Count.Should().BeInRange(1, 2, because: "seed {0} must use 1-2 operators", seed);
+            operators.Count.Should().BeInRange(minOperators, maxOperators, because: "seed {0} must use the level's operator count", seed);
 
             var tiles = SyriacNumerals.TileCountOf(equation.TileForm);
-            tiles.Should().Be(MnoEquationGenerator.TileWidth, because: "seed {0} must fill the board exactly", seed);
+            tiles.Should().Be(width, because: "seed {0} must fill the level's board exactly", seed);
 
             Evaluate(numbers, operators).Should().Be(equation.Target, because: "seed {0} expression must equal its target", seed);
             equation.Target.Should().BeGreaterThanOrEqualTo(1);
@@ -31,8 +33,8 @@ public class MnoEquationGeneratorTests
     }
 
     [Theory]
-    [InlineData(MnoDifficulty.Beginner, 99, 199, "+-")]
-    [InlineData(MnoDifficulty.Easy, 499, 999, "+-*")]
+    [InlineData(MnoDifficulty.Beginner, 90, 180, "+-")]
+    [InlineData(MnoDifficulty.Easy, 99, 189, "+-")]
     [InlineData(MnoDifficulty.Normal, 999, 9_999, "+-*/")]
     [InlineData(MnoDifficulty.Hard, 9_999, 99_999, "+-*/")]
     [InlineData(MnoDifficulty.Extreme, 999_999, 999_999, "+-*/")]
@@ -49,15 +51,48 @@ public class MnoEquationGeneratorTests
         }
     }
 
+    [Theory]
+    [InlineData(MnoDifficulty.Normal)]
+    [InlineData(MnoDifficulty.Hard)]
+    [InlineData(MnoDifficulty.Extreme)]
+    public void Generate_NormalAndAbove_AlwaysCarriesAMultiplicationOrDivision(MnoDifficulty difficulty)
+    {
+        for (var seed = 0; seed < 300; seed++)
+        {
+            var equation = MnoEquationGenerator.Generate(difficulty, new Random(seed));
+            var (_, operators) = Tokenize(equation.Expression);
+
+            operators.Should().Contain(op => op == '*' || op == '/', because: "seed {0}: without × or ÷ the level plays like plain addition", seed);
+        }
+    }
+
     [Fact]
-    public void Generate_Beginner_UsesOnlyUnitsAndTensLetters()
+    public void Generate_Beginner_AddsOrSubtractsTwoSingleLetterNumbers()
     {
         for (var seed = 0; seed < 300; seed++)
         {
             var equation = MnoEquationGenerator.Generate(MnoDifficulty.Beginner, new Random(seed));
+            var (numbers, _) = Tokenize(equation.Expression);
+
+            numbers.Should().HaveCount(2);
+            numbers.Should().OnlyContain(n => SyriacNumerals.TileCountOf(SyriacNumerals.Spell(n)) == 1, because: "seed {0}: Beginner numbers are single letters", seed);
 
             equation.TileForm.Should().NotContainAny("ܩ", "ܪ", "ܫ", "ܬ");
             equation.TileForm.Should().NotContainAny(SyriacNumerals.Marks.Select(m => m.ToString()).ToArray());
+        }
+    }
+
+    [Fact]
+    public void Generate_Easy_PairsATwoLetterCompoundWithASingleLetter()
+    {
+        for (var seed = 0; seed < 300; seed++)
+        {
+            var equation = MnoEquationGenerator.Generate(MnoDifficulty.Easy, new Random(seed));
+            var (numbers, _) = Tokenize(equation.Expression);
+
+            numbers.Should().HaveCount(2);
+            numbers.Select(n => SyriacNumerals.TileCountOf(SyriacNumerals.Spell(n)))
+                .Should().BeEquivalentTo([1, 2], because: "seed {0}: Easy is one compound plus one single letter", seed);
         }
     }
 
@@ -117,16 +152,21 @@ public class MnoEquationGeneratorTests
         retry.Expression.Should().NotBe(first.Expression);
     }
 
-    [Fact]
-    public void Generate_ProducesVariety()
+    [Theory]
+    [InlineData(MnoDifficulty.Beginner, 100)]
+    [InlineData(MnoDifficulty.Easy, 140)]
+    [InlineData(MnoDifficulty.Normal, 150)]
+    [InlineData(MnoDifficulty.Hard, 150)]
+    [InlineData(MnoDifficulty.Extreme, 150)]
+    public void Generate_ProducesVariety(MnoDifficulty difficulty, int minimumDistinct)
     {
         var expressions = new HashSet<string>();
         for (var seed = 0; seed < 200; seed++)
         {
-            expressions.Add(MnoEquationGenerator.Generate(MnoDifficulty.Normal, new Random(seed)).Expression);
+            expressions.Add(MnoEquationGenerator.Generate(difficulty, new Random(seed)).Expression);
         }
 
-        expressions.Count.Should().BeGreaterThan(150, because: "the space is enormous; near-duplicates would signal a biased picker");
+        expressions.Count.Should().BeGreaterThan(minimumDistinct, because: "near-duplicates would signal a biased picker or a starved pool");
     }
 
     [Fact]
