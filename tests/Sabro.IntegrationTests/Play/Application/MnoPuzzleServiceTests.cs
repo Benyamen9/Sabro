@@ -35,7 +35,7 @@ public class MnoPuzzleServiceTests
         puzzle.Date.Should().Be(today);
         puzzle.Difficulty.Should().Be("normal");
         puzzle.Target.Should().BeGreaterThanOrEqualTo(1);
-        puzzle.TileCount.Should().Be(MnoEquationGenerator.TileWidth);
+        puzzle.TileCount.Should().Be(MnoEquationGenerator.WidthOf(MnoDifficulty.Normal));
         puzzle.Expression.Should().MatchRegex(@"^\d+([+\-*/]\d+){1,2}$");
         puzzle.TileForm.Should().NotBeNullOrWhiteSpace();
 

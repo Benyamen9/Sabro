@@ -6,33 +6,37 @@ namespace Sabro.Play.Domain;
 /// Generates the daily Mno equation by rejection sampling: pick a shape
 /// (operator count, operators, per-number tile lengths), pick numbers of those
 /// tile lengths, and keep the draw only when it satisfies every board rule —
-/// exactly six tiles, an integer target inside the level's band, every
-/// division exact, and no degenerate steps (multiplying or dividing with 1,
-/// dividing a number by itself).
+/// the level's exact tile width, an integer target inside the level's band,
+/// every division exact, and no degenerate steps (multiplying or dividing
+/// with 1, dividing a number by itself).
 ///
-/// Difficulty (owner-defined ladder, 2026-07-15) shapes the draw: which
-/// operand range and operators are allowed, how big the target may get, and
-/// which spelling the tile form uses — canonical up to Hard (alfayo enters
-/// naturally with the thousands), the compact marked spelling on Extreme so
-/// all four multiplier marks are met in play.
+/// Difficulty (owner-recalibrated ladder, 2026-07-15) shapes the draw: the
+/// board width, how many operators and which, whether a × or ÷ is guaranteed,
+/// the operand range, how big the target may get, and which spelling the tile
+/// form uses — canonical up to Hard (alfayo enters naturally with the
+/// thousands), the compact marked spelling on Extreme so all four multiplier
+/// marks are met in play. The widths climb the ladder (3/4/5/6/6) so each
+/// level scales puzzle depth, not just numeral length.
 /// </summary>
 public static class MnoEquationGenerator
 {
-    /// <summary>The fixed Mno board width: every equation renders to exactly this many tiles.</summary>
-    public const int TileWidth = 6;
-
     private const int MaxAttempts = 100_000;
 
     private static readonly Dictionary<MnoDifficulty, DifficultyProfile> Profiles = new()
     {
-        // Units + tens only; a 1-operator draw cannot fill the board with
-        // two-tile-max numbers, so Beginner always uses two operators.
-        [MnoDifficulty.Beginner] = new(MaxOperand: 99, Operators: ['+', '-'], MaxTarget: 199, OperatorCounts: [2], RequireOperandAtLeast: 0, SyriacNumerals.Spell),
-        [MnoDifficulty.Easy] = new(MaxOperand: 499, Operators: ['+', '-', '*'], MaxTarget: 999, OperatorCounts: [1, 2], RequireOperandAtLeast: 0, SyriacNumerals.Spell),
-        [MnoDifficulty.Normal] = new(MaxOperand: 999, Operators: ['+', '-', '*', '/'], MaxTarget: 9_999, OperatorCounts: [1, 2], RequireOperandAtLeast: 0, SyriacNumerals.Spell),
-        [MnoDifficulty.Hard] = new(MaxOperand: 9_999, Operators: ['+', '-', '*', '/'], MaxTarget: 99_999, OperatorCounts: [1, 2], RequireOperandAtLeast: 1_000, SyriacNumerals.Spell),
-        [MnoDifficulty.Extreme] = new(MaxOperand: 999_999, Operators: ['+', '-', '*', '/'], MaxTarget: 999_999, OperatorCounts: [1, 2], RequireOperandAtLeast: 10_000, SyriacNumerals.SpellMarked),
+        // Width 3 with one operator forces two single-letter numbers; the
+        // operand cap at 90 keeps even the draw pool to units and tens.
+        [MnoDifficulty.Beginner] = new(Width: 3, MaxOperand: 90, Operators: ['+', '-'], MaxTarget: 180, OperatorCounts: [1], RequireMulOrDiv: false, RequireOperandAtLeast: 0, SyriacNumerals.Spell),
+
+        // Width 4 with one operator forces a two-letter compound plus a single letter.
+        [MnoDifficulty.Easy] = new(Width: 4, MaxOperand: 99, Operators: ['+', '-'], MaxTarget: 189, OperatorCounts: [1], RequireMulOrDiv: false, RequireOperandAtLeast: 0, SyriacNumerals.Spell),
+        [MnoDifficulty.Normal] = new(Width: 5, MaxOperand: 999, Operators: ['+', '-', '*', '/'], MaxTarget: 9_999, OperatorCounts: [1, 2], RequireMulOrDiv: true, RequireOperandAtLeast: 0, SyriacNumerals.Spell),
+        [MnoDifficulty.Hard] = new(Width: 6, MaxOperand: 9_999, Operators: ['+', '-', '*', '/'], MaxTarget: 99_999, OperatorCounts: [2], RequireMulOrDiv: true, RequireOperandAtLeast: 1_000, SyriacNumerals.Spell),
+        [MnoDifficulty.Extreme] = new(Width: 6, MaxOperand: 999_999, Operators: ['+', '-', '*', '/'], MaxTarget: 999_999, OperatorCounts: [2], RequireMulOrDiv: true, RequireOperandAtLeast: 10_000, SyriacNumerals.SpellMarked),
     };
+
+    /// <summary>The level's board width in tiles — every equation for the level renders to exactly this many.</summary>
+    public static int WidthOf(MnoDifficulty difficulty) => Profiles[difficulty].Width;
 
     /// <summary>
     /// Draws a valid equation for the level. <paramref name="excludedExpressions"/>
@@ -51,7 +55,12 @@ public static class MnoEquationGenerator
                 operators[i] = profile.Operators[random.Next(profile.Operators.Length)];
             }
 
-            var lengths = SplitTiles(random, TileWidth - operatorCount, operatorCount + 1);
+            if (profile.RequireMulOrDiv && !operators.Any(op => op is '*' or '/'))
+            {
+                continue;
+            }
+
+            var lengths = SplitTiles(random, profile.Width - operatorCount, operatorCount + 1);
             if (lengths is null)
             {
                 continue;
@@ -209,12 +218,16 @@ public static class MnoEquationGenerator
     /// One ladder level's draw constraints. <paramref name="RequireOperandAtLeast"/>
     /// demands at least one operand that large (0 = no floor) — without it a
     /// Hard/Extreme draw could land entirely in a lower level's range.
+    /// <paramref name="RequireMulOrDiv"/> guarantees a × or ÷ on every board —
+    /// without it, rejection sampling starves both exactly where they matter.
     /// </summary>
     private sealed record DifficultyProfile(
+        int Width,
         int MaxOperand,
         char[] Operators,
         int MaxTarget,
         int[] OperatorCounts,
+        bool RequireMulOrDiv,
         int RequireOperandAtLeast,
         Func<int, string> Spell)
     {
