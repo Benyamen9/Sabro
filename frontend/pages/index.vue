@@ -4,6 +4,14 @@ const { melthoUrl, mnoUrl } = useRuntimeConfig().public
 const { listWords } = useMelthoLibrary()
 const preferredMeaning = usePreferredMeaning()
 
+// The daily circuit: which games were finished today (shared cookie written
+// by Meltho and Mno). Played cards swap their LIVE dot for a check, and the
+// hero's lead button follows the next unplayed game.
+const { hasPlayed, nextUnplayed } = useDailyCircuit()
+const melthoPlayed = computed(() => hasPlayed('meltho'))
+const mnoPlayed = computed(() => hasPlayed('mno'))
+const nextGame = computed(() => nextUnplayed())
+
 // The hero word-board: the name ܣܒܪܐ spelled letter by letter, right to left.
 // Letter names come from the shared library.letters table (West Syriac forms);
 // the vocalized glyphs and romanized sounds are content, not UI strings.
@@ -64,6 +72,13 @@ const primaryButton
   = 'inline-flex items-center gap-2 rounded-xl bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(140_47_57/0.25)] transition-colors hover:bg-[var(--color-accent-hover)]'
 const ghostButton
   = 'inline-flex items-center gap-2 rounded-xl border border-[var(--color-border-strong)] px-4 py-3 font-sans text-sm font-medium text-[var(--color-text)] no-underline transition-colors hover:bg-[var(--color-bg-subtle)]'
+
+// The hero's lead button follows the circuit: today's next unplayed game, or
+// the library once both are done.
+function heroButton(target: 'meltho' | 'mno' | 'library') {
+  const isPrimary = nextGame.value === target || (nextGame.value === null && target === 'library')
+  return isPrimary ? primaryButton : ghostButton
+}
 </script>
 
 <template>
@@ -96,9 +111,9 @@ const ghostButton
         </i18n-t>
 
         <div class="mt-8 flex flex-wrap gap-3">
-          <a :href="melthoUrl" :class="primaryButton">{{ t('home.meltho.ctaShort') }} →</a>
-          <a :href="mnoUrl" :class="ghostButton">{{ t('home.mno.ctaShort') }} →</a>
-          <NuxtLink to="/library" :class="ghostButton">{{ t('home.exploreCta') }}</NuxtLink>
+          <a :href="melthoUrl" :class="heroButton('meltho')">{{ t('home.meltho.ctaShort') }} →</a>
+          <a :href="mnoUrl" :class="heroButton('mno')">{{ t('home.mno.ctaShort') }} →</a>
+          <NuxtLink to="/library" :class="heroButton('library')">{{ t('home.exploreCta') }}</NuxtLink>
         </div>
       </div>
 
@@ -142,6 +157,13 @@ const ghostButton
             <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
               {{ t('home.meltho.heading') }}
               <span
+                v-if="melthoPlayed"
+                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
+              >
+                ✓ {{ t('home.playedToday') }}
+              </span>
+              <span
+                v-else
                 class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
               >
                 <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
@@ -180,6 +202,13 @@ const ghostButton
             <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
               {{ t('home.mno.heading') }}
               <span
+                v-if="mnoPlayed"
+                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
+              >
+                ✓ {{ t('home.playedToday') }}
+              </span>
+              <span
+                v-else
                 class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
               >
                 <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
