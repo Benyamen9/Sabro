@@ -8,16 +8,7 @@ test.describe('landing page', () => {
     // nav holds no public items for an anonymous visitor.
     await expect(page.getByRole('link', { name: 'Sabro' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Translations', exact: true })).toHaveCount(0)
-    await expect(page.getByText('Learn Syriac by playing.')).toBeVisible()
-
-    // The remade home explains itself: three doors and the newcomer strip.
-    await expect(page.getByText('What you can do here')).toBeVisible()
-    await expect(page.getByText('A Wordle in Syriac', { exact: false })).toBeVisible()
-    await expect(page.getByText('What is Syriac?')).toBeVisible()
-
-    // The one tease: purple, unnamed, undescribed.
-    await expect(page.getByText('A new game is taking shape. More when it\'s ready.')).toBeVisible()
-    await expect(page.getByText('Shmo')).toHaveCount(0)
+    await expect(page.getByText('letter by letter.')).toBeVisible()
 
     // The script + language switchers are custom dropdowns: a trigger button that
     // opens a listbox of options (replacing the native <select> popup).
@@ -45,8 +36,8 @@ test.describe('landing page', () => {
     await page.goto('/')
 
     // The locale cookie switches rendered text; assert French copy from the
-    // home page (the hero title) is present.
-    await expect(page.getByText('Apprenez le syriaque en jouant.')).toBeVisible()
+    // home page (the "what Sabro is" line) is present.
+    await expect(page.getByText('Ce qu’est Sabro')).toBeVisible()
   })
 
   test('renders the Western font when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {
