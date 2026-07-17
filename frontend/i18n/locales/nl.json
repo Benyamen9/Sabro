@@ -5,38 +5,50 @@
     "statusMvp": "MVP · in ontwikkeling"
   },
   "home": {
-    "eyebrow": "De Syrische taal",
-    "titleLine1": "Syrisch,",
-    "titleLine2": "letter voor letter.",
-    "nameGloss": "sabro — Syrisch voor „hoop”",
-    "lede": "Sabro is het thuis van een groeiende familie van apps voor de Syrische taal — te beginnen met twee dagelijkse spellen, {meltho} en {mno}.",
-    "liveNow": "Live",
-    "exploreCta": "Verken de woorden",
+    "eyebrow": "sabro — Syrisch voor “hoop”",
+    "title": "Leer Syrisch door te spelen.",
+    "sub": "Een gratis thuis voor de Syrische taal: twee dagelijkse spellen die het alfabet leren terwijl je speelt, en een woordenboek dat groeit met elk woord dat ze tonen.",
+    "nameGloss": "sabro — Syrisch voor “hoop”",
+    "boardCaption": "Dat is de naam — letter voor letter gespeld, zoals alles hier wordt geleerd.",
+    "ctaLibrary": "Blader door de woorden",
+    "doorsHeading": "Wat je hier kunt doen",
+    "live": "Live",
+    "playedToday": "Vandaag gespeeld",
     "meltho": {
+      "kind": "Het woordspel",
       "heading": "Meltho",
-      "live": "Live",
-      "body": "Een dagelijks Syrisch woordspel — zes pogingen om het verborgen woord te vinden. Elke dag een nieuw woord, uit het lexicon.",
-      "cta": "Speel het woord van vandaag",
-      "ctaShort": "Speel Meltho"
+      "body": "Een Wordle in het Syrisch — zes pogingen om het woord van de dag te vinden. Je hoeft het alfabet niet te kennen: het toetsenbord toont de klank van elke letter, en een spiekbrief is altijd één tik verwijderd.",
+      "cta": "Speel het woord van vandaag"
     },
     "mno": {
+      "kind": "Het getallenspel",
       "heading": "Mno",
-      "live": "Live",
-      "body": "Een dagelijkse vergelijkingspuzzel in Syrische cijfers — zes pogingen om het doel te raken, van Beginner tot Extreem. De letters zijn de getallen.",
-      "cta": "Speel de vergelijking van vandaag",
-      "ctaShort": "Speel Mno"
+      "body": "Een dagelijkse rekenpuzzel in Syrische cijfers — in het Syrisch zijn de letters ook de getallen. Bouw de vergelijking die het doel van vandaag raakt, van Beginner tot Extreem.",
+      "cta": "Speel de vergelijking van vandaag"
     },
     "library": {
-      "eyebrow": "Woordbibliotheek",
-      "heading": "Elk woord, ontleed",
-      "body": "Bekijk elk woord dat Meltho heeft getoond — de letters, klanken, wortel en betekenis, één voor één.",
-      "cta": "Open de bibliotheek",
-      "latestTag": "Laatste woord"
+      "kind": "Het woordenboek",
+      "heading": "De woordbibliotheek",
+      "body": "Elk woord dat de spellen hebben getoond, bewaard op zijn eigen pagina — letters, klanken, wortel en betekenis in het Engels, Frans en Nederlands.",
+      "cta": "Open de bibliotheek"
     },
-    "about": {
-      "eyebrow": "Wat Sabro is",
-      "body": "Eén hub, vele apps: Sabro draagt de gedeelde identiteit, het lexicon en de API waarop het ecosysteem is gebouwd. Meltho en Mno gaan voorop; meer apps voor de Syrische taal zullen volgen."
-    }
+    "soonTag": "Binnenkort",
+    "soonBody": "Een nieuw spel krijgt vorm. Meer zodra het klaar is.",
+    "newHereHeading": "Nieuw hier?",
+    "q1": {
+      "q": "Wat is Syrisch?",
+      "a": "Een vorm van Aramees — de taal van een rijke christelijke literatuur, vandaag nog gebeden en gezongen, van Tur Abdin tot de diaspora."
+    },
+    "q2": {
+      "q": "Wat is Sabro?",
+      "a": "Eén thuis voor een familie van gratis apps rond de taal. Eén account, één woordenschat: wat je op de ene plek leert, reist met je mee naar de volgende."
+    },
+    "q3": {
+      "q": "Waar begin ik?",
+      "a": "{link} — het leert terwijl je speelt. Elk woord dat je tegenkomt, belandt in de bibliotheek en wacht daar op je.",
+      "link": "Speel het Meltho-woord van vandaag"
+    },
+    "closing": "Eerst de spellen. En dit is nog maar het begin."
   },
   "nav": {
     "primary": "Primaire navigatie",

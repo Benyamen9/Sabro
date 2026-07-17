@@ -4,6 +4,14 @@ const { melthoUrl, mnoUrl } = useRuntimeConfig().public
 const { listWords } = useMelthoLibrary()
 const preferredMeaning = usePreferredMeaning()
 
+// The daily circuit: which games were finished today (shared cookie written
+// by Meltho and Mno). Played doors get a check, and the hero's primary CTA
+// points at the next unplayed game so the day continues where it left off.
+const { hasPlayed, nextUnplayed } = useDailyCircuit()
+const melthoPlayed = computed(() => hasPlayed('meltho'))
+const mnoPlayed = computed(() => hasPlayed('mno'))
+const nextGame = computed(() => nextUnplayed())
+
 // The hero word-board: the name ܣܒܪܐ spelled letter by letter, right to left.
 // Letter names come from the shared library.letters table (West Syriac forms);
 // the vocalized glyphs and romanized sounds are content, not UI strings.
@@ -14,10 +22,9 @@ const wordBoard = [
   { glyph: 'ܐ', code: 'Alaph', sound: '—' },
 ] as const
 
-// The feature card's hero: Meltho's letters as a tile board — teal "correct"
-// tiles with the lomad (ܠ) and olaf (ܐ) as gold "present" tiles, with those two
-// swapped in position. Decorative, so it's aria-hidden; the heading carries the
-// name for assistive tech.
+// Meltho's door demo: a scored board row — teal "correct" tiles with lomad
+// and olaf as gold "present" tiles. Decorative, aria-hidden; the heading
+// carries the name for assistive tech.
 const melthoTiles = [
   { letter: 'ܡ', state: 'correct' },
   { letter: 'ܐ', state: 'present' },
@@ -27,14 +34,14 @@ const melthoTiles = [
 
 function tileClass(state: 'correct' | 'present') {
   const base
-    = 'flex size-12 items-center justify-center rounded-xl border-2 text-2xl text-white sm:size-14 sm:text-3xl'
+    = 'flex size-10 items-center justify-center rounded-lg border-2 text-xl text-white'
   return state === 'present'
     ? `${base} border-[var(--color-meltho-gold-dark)] bg-[var(--color-meltho-gold)]`
     : `${base} border-[var(--color-meltho-dark)] bg-[var(--color-meltho)]`
 }
 
-// Mno's hero: the opening of an equation in Syriac numerals — amber tiles
-// with the game's signature value hints. Decorative, like Meltho's board.
+// Mno's door demo: the opening of an equation in Syriac numerals, value
+// hints showing — the game's signature. Decorative, like Meltho's row.
 const mnoTiles = [
   { glyph: 'ܝ', hint: '10' },
   { glyph: 'ܒ', hint: '2' },
@@ -42,8 +49,8 @@ const mnoTiles = [
   { glyph: 'ܗ', hint: '5' },
 ] as const
 
-// The newest past word, shown as the library band's live chip. Best-effort:
-// with the API unreachable the band simply renders without it.
+// The newest past word, the library door's living proof. Best-effort: with
+// the API unreachable the door simply renders without it.
 const { data: latest } = await useAsyncData(
   'home-latest-word',
   async () => {
@@ -64,41 +71,38 @@ const primaryButton
   = 'inline-flex items-center gap-2 rounded-xl bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(140_47_57/0.25)] transition-colors hover:bg-[var(--color-accent-hover)]'
 const ghostButton
   = 'inline-flex items-center gap-2 rounded-xl border border-[var(--color-border-strong)] px-4 py-3 font-sans text-sm font-medium text-[var(--color-text)] no-underline transition-colors hover:bg-[var(--color-bg-subtle)]'
+
+// The hero's lead button follows the circuit: today's next unplayed game, or
+// the library once both are done.
+function heroButton(target: 'meltho' | 'mno' | 'library') {
+  const isPrimary = nextGame.value === target || (nextGame.value === null && target === 'library')
+  return isPrimary ? primaryButton : ghostButton
+}
 </script>
 
 <template>
   <div>
-    <!-- Hero: the claim on the left, the claim made visible on the right —
-         "letter by letter" shown on the name itself, in the same card anatomy
-         the library uses. -->
+    <!-- Hero: what this place is, in plain words — and the name itself as
+         the first tiny lesson, in the same card anatomy the library uses. -->
     <section class="grid items-center gap-10 pt-2 sm:pt-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
       <div class="max-w-2xl">
-        <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
+        <p class="flex items-baseline gap-2 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-accent)]">
+          <SyriacText text="ܣܒܪܐ" class="!text-[15px] normal-case tracking-normal" />
           {{ t('home.eyebrow') }}
         </p>
 
         <h1 class="mt-5 font-serif text-4xl font-semibold leading-[1.06] tracking-[-0.02em] sm:text-5xl md:text-[3.4rem]">
-          <span class="block font-normal italic">{{ t('home.titleLine1') }}</span>
-          <span class="block">{{ t('home.titleLine2') }}</span>
+          {{ t('home.title') }}
         </h1>
 
-        <i18n-t
-          keypath="home.lede"
-          tag="p"
-          class="mt-6 max-w-xl font-serif text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl"
-        >
-          <template #meltho>
-            <strong class="font-semibold text-[var(--color-text)]">Meltho</strong>
-          </template>
-          <template #mno>
-            <strong class="font-semibold text-[var(--color-text)]">Mno</strong>
-          </template>
-        </i18n-t>
+        <p class="mt-6 max-w-xl font-serif text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl">
+          {{ t('home.sub') }}
+        </p>
 
         <div class="mt-8 flex flex-wrap gap-3">
-          <a :href="melthoUrl" :class="primaryButton">{{ t('home.meltho.ctaShort') }} →</a>
-          <a :href="mnoUrl" :class="ghostButton">{{ t('home.mno.ctaShort') }} →</a>
-          <NuxtLink to="/library" :class="ghostButton">{{ t('home.exploreCta') }}</NuxtLink>
+          <a :href="melthoUrl" :class="heroButton('meltho')">{{ t('home.meltho.cta') }} →</a>
+          <a :href="mnoUrl" :class="heroButton('mno')">{{ t('home.mno.cta') }} →</a>
+          <NuxtLink to="/library" :class="heroButton('library')">{{ t('home.ctaLibrary') }}</NuxtLink>
         </div>
       </div>
 
@@ -114,131 +118,149 @@ const ghostButton
             <p class="mt-px font-sans text-[11px] text-[var(--color-text-faint)]">{{ tile.sound }}</p>
           </div>
         </div>
-        <p class="mt-4 font-sans text-sm text-[var(--color-text-muted)]">{{ t('home.nameGloss') }}</p>
+        <p class="mx-auto mt-4 max-w-[36ch] font-sans text-sm text-[var(--color-text-muted)]">
+          {{ t('home.boardCaption') }}
+        </p>
       </div>
     </section>
 
-    <!-- Live now: the two launched games, each in its own colour, each with a
-         direct play CTA. -->
+    <!-- The three doors: each explains itself in plain speech. Played games
+         carry the day's check mark (the shared circuit cookie). -->
     <section class="mt-14 sm:mt-16">
       <div class="border-b border-[var(--color-border)] pb-3.5">
         <span class="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-          {{ t('home.liveNow') }}
+          {{ t('home.doorsHeading') }}
         </span>
       </div>
 
-      <div class="mt-5 grid gap-5 lg:grid-cols-2">
-        <!-- Meltho — the word game, in its teal. -->
-        <div
-          class="flex flex-col items-center gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:items-start sm:text-left"
-        >
-          <div class="flex gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
+      <div class="mt-5 grid gap-5 lg:grid-cols-3">
+        <!-- Meltho — the word game. -->
+        <div class="flex flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]">
+          <p class="flex items-center gap-2.5 font-sans text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--color-meltho)]">
+            {{ t('home.meltho.kind') }}
+            <span v-if="melthoPlayed" class="inline-flex items-center gap-1 text-green-700 dark:text-green-400">✓ {{ t('home.playedToday') }}</span>
+            <span v-else class="inline-flex items-center gap-1.5 text-green-700 dark:text-green-400">
+              <span class="size-1.5 rounded-full bg-green-500 ring-4 ring-green-500/20" />
+              {{ t('home.live') }}
+            </span>
+          </p>
+          <h2 class="mt-2.5 font-sans text-[22px]">{{ t('home.meltho.heading') }}</h2>
+          <p class="mt-1.5 font-serif text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+            {{ t('home.meltho.body') }}
+          </p>
+          <div class="mt-5 flex gap-1.5" dir="rtl" aria-hidden="true">
             <span v-for="tile in melthoTiles" :key="tile.letter" :class="tileClass(tile.state)">
               <SyriacText :text="tile.letter" class="leading-none" />
             </span>
           </div>
-
-          <div class="flex-1">
-            <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
-              {{ t('home.meltho.heading') }}
-              <span
-                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
-              >
-                <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
-                {{ t('home.meltho.live') }}
-              </span>
-            </h2>
-            <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
-              {{ t('home.meltho.body') }}
-            </p>
-          </div>
-
           <a
             :href="melthoUrl"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-meltho)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-meltho-dark)] sm:w-auto"
+            class="mt-5 inline-flex items-center gap-1.5 font-sans text-sm font-bold text-[var(--color-meltho)] no-underline transition-opacity hover:opacity-80"
           >
             {{ t('home.meltho.cta') }} →
           </a>
         </div>
 
-        <!-- Mno — the numbers game, in its honey amber, value hints showing. -->
-        <div
-          class="flex flex-col items-center gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:items-start sm:text-left"
-        >
-          <div class="flex gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
+        <!-- Mno — the numbers game. -->
+        <div class="flex flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]">
+          <p class="flex items-center gap-2.5 font-sans text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--color-mno-dark)]">
+            {{ t('home.mno.kind') }}
+            <span v-if="mnoPlayed" class="inline-flex items-center gap-1 text-green-700 dark:text-green-400">✓ {{ t('home.playedToday') }}</span>
+            <span v-else class="inline-flex items-center gap-1.5 text-green-700 dark:text-green-400">
+              <span class="size-1.5 rounded-full bg-green-500 ring-4 ring-green-500/20" />
+              {{ t('home.live') }}
+            </span>
+          </p>
+          <h2 class="mt-2.5 font-sans text-[22px]">{{ t('home.mno.heading') }}</h2>
+          <p class="mt-1.5 font-serif text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+            {{ t('home.mno.body') }}
+          </p>
+          <div class="mt-5 flex gap-1.5" dir="rtl" aria-hidden="true">
             <span
               v-for="(tile, index) in mnoTiles"
               :key="index"
-              class="flex size-12 flex-col items-center justify-center rounded-xl border-2 border-[var(--color-mno-dark)] bg-[var(--color-mno)] text-white sm:size-14"
+              class="flex size-10 flex-col items-center justify-center rounded-lg border-2 border-[var(--color-mno-dark)] bg-[var(--color-mno)] text-white"
             >
-              <SyriacText :text="tile.glyph" class="text-2xl leading-none sm:text-3xl" />
-              <span v-if="tile.hint" class="mt-0.5 font-sans text-[10px] leading-none opacity-80" dir="ltr">{{ tile.hint }}</span>
+              <SyriacText :text="tile.glyph" class="text-lg leading-none" />
+              <span v-if="tile.hint" class="mt-0.5 font-sans text-[9px] leading-none opacity-80" dir="ltr">{{ tile.hint }}</span>
             </span>
           </div>
-
-          <div class="flex-1">
-            <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
-              {{ t('home.mno.heading') }}
-              <span
-                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
-              >
-                <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
-                {{ t('home.mno.live') }}
-              </span>
-            </h2>
-            <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
-              {{ t('home.mno.body') }}
-            </p>
-          </div>
-
           <a
             :href="mnoUrl"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-mno)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-mno-dark)] sm:w-auto"
+            class="mt-5 inline-flex items-center gap-1.5 font-sans text-sm font-bold text-[var(--color-mno-dark)] no-underline transition-opacity hover:opacity-80"
           >
             {{ t('home.mno.cta') }} →
           </a>
         </div>
+
+        <!-- The library — the dictionary door, led by its newest entry. -->
+        <div class="flex flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]">
+          <p class="font-sans text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--color-accent)]">
+            {{ t('home.library.kind') }}
+          </p>
+          <h2 class="mt-2.5 font-sans text-[22px]">{{ t('home.library.heading') }}</h2>
+          <p class="mt-1.5 font-serif text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+            {{ t('home.library.body') }}
+          </p>
+          <NuxtLink
+            v-if="latest"
+            :to="`/library/${latest.lexiconEntryId}`"
+            class="mt-5 flex items-center gap-3 rounded-xl bg-[var(--color-bg-subtle)] px-4 py-2.5 no-underline transition-colors hover:bg-[var(--color-accent-faint)]"
+          >
+            <SyriacText :text="latest.syriacUnvocalized" class="!text-[1.7rem] leading-none text-[var(--color-accent)]" />
+            <span class="font-sans text-xs text-[var(--color-text-muted)]">
+              <strong v-if="latest.sblTransliteration" class="font-semibold text-[var(--color-text)]">{{ latest.sblTransliteration }}</strong>
+              — “{{ preferredMeaning(latest.meanings) }}”
+              <template v-if="latestShownOn"> · {{ latestShownOn }}</template>
+            </span>
+          </NuxtLink>
+          <NuxtLink
+            to="/library"
+            class="mt-5 inline-flex items-center gap-1.5 font-sans text-sm font-bold text-[var(--color-accent)] no-underline transition-opacity hover:opacity-80"
+          >
+            {{ t('home.library.cta') }} →
+          </NuxtLink>
+        </div>
       </div>
     </section>
 
-    <!-- The library as a living archive, led by its newest entry. -->
-    <section class="mt-10 overflow-hidden rounded-2xl border border-[var(--color-border)]">
-      <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-7 pt-6 sm:px-8">
-        <h3 class="font-sans text-xl">{{ t('home.library.heading') }}</h3>
-        <NuxtLink to="/library" class="font-sans text-sm font-semibold text-[var(--color-accent)] no-underline">
-          {{ t('home.library.cta') }} →
-        </NuxtLink>
-      </div>
-      <p class="max-w-2xl px-7 pt-1.5 font-serif text-[var(--color-text-muted)] sm:px-8">
-        {{ t('home.library.body') }}
-      </p>
-      <NuxtLink
-        v-if="latest"
-        :to="`/library/${latest.lexiconEntryId}`"
-        class="mx-7 mb-6 mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl bg-[var(--color-bg-subtle)] px-5 py-4 no-underline transition-colors hover:bg-[var(--color-accent-faint)] sm:mx-8"
-      >
-        <SyriacText :text="latest.syriacUnvocalized" class="!text-[2.1rem] leading-none" />
-        <span class="font-sans text-sm text-[var(--color-text-muted)]">
-          <strong v-if="latest.sblTransliteration" class="font-semibold text-[var(--color-text)]">{{ latest.sblTransliteration }}</strong>
-          — “{{ preferredMeaning(latest.meanings) }}”
-          <template v-if="latestShownOn"> · {{ latestShownOn }}</template>
-        </span>
-        <span class="ml-auto font-sans text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text-faint)]">
-          {{ t('home.library.latestTag') }}
-        </span>
-      </NuxtLink>
-      <div v-else class="pb-6" />
-    </section>
-
-    <!-- What Sabro is: one honest line instead of a grey box. -->
-    <div class="mb-4 mt-11 flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[var(--color-border)] pt-6">
-      <span class="whitespace-nowrap font-sans text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-text-faint)]">
-        {{ t('home.about.eyebrow') }}
+    <!-- The one tease: something new is coming. No name, no description. -->
+    <div class="mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 rounded-2xl border border-[var(--color-border)] border-l-4 border-l-[var(--color-soon)] bg-[var(--color-soon-faint)] px-6 py-4">
+      <span class="font-sans text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-[var(--color-soon)]">
+        {{ t('home.soonTag') }}
       </span>
-      <p class="max-w-3xl font-serif text-[15.5px] text-[var(--color-text-muted)]">
-        {{ t('home.about.body') }}
-      </p>
+      <p class="font-serif text-[15px] text-[var(--color-text)]">{{ t('home.soonBody') }}</p>
     </div>
+
+    <!-- New here? The three questions a first-time visitor actually has. -->
+    <section class="mt-12">
+      <div class="border-b border-[var(--color-border)] pb-3.5">
+        <span class="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          {{ t('home.newHereHeading') }}
+        </span>
+      </div>
+      <div class="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-3">
+        <div>
+          <h3 class="font-serif text-[17px] font-semibold">{{ t('home.q1.q') }}</h3>
+          <p class="mt-2 font-sans text-[13.5px] leading-relaxed text-[var(--color-text-muted)]">{{ t('home.q1.a') }}</p>
+        </div>
+        <div>
+          <h3 class="font-serif text-[17px] font-semibold">{{ t('home.q2.q') }}</h3>
+          <p class="mt-2 font-sans text-[13.5px] leading-relaxed text-[var(--color-text-muted)]">{{ t('home.q2.a') }}</p>
+        </div>
+        <div>
+          <h3 class="font-serif text-[17px] font-semibold">{{ t('home.q3.q') }}</h3>
+          <i18n-t keypath="home.q3.a" tag="p" class="mt-2 font-sans text-[13.5px] leading-relaxed text-[var(--color-text-muted)]">
+            <template #link>
+              <a :href="melthoUrl" class="font-semibold text-[var(--color-accent)] no-underline">{{ t('home.q3.link') }}</a>
+            </template>
+          </i18n-t>
+        </div>
+      </div>
+      <p class="mt-8 text-right font-serif text-[13.5px] italic text-[var(--color-text-muted)]">
+        {{ t('home.closing') }}
+      </p>
+    </section>
   </div>
 </template>
 
