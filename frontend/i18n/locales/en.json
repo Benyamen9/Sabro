@@ -5,50 +5,38 @@
     "statusMvp": "MVP · in development"
   },
   "home": {
-    "eyebrow": "sabro — Syriac for “hope”",
-    "title": "Learn Syriac by playing.",
-    "sub": "A free home for the Syriac language: two daily games that teach the alphabet as you play, and a dictionary that grows with every word they show.",
+    "eyebrow": "The Syriac language",
+    "titleLine1": "Syriac,",
+    "titleLine2": "letter by letter.",
     "nameGloss": "sabro — Syriac for “hope”",
-    "boardCaption": "That's the name — spelled letter by letter, the way everything here is taught.",
-    "ctaLibrary": "Browse the words",
-    "doorsHeading": "What you can do here",
-    "live": "Live",
-    "playedToday": "Played today",
+    "lede": "Sabro is the home of a growing family of apps for the Syriac language — beginning with two daily games, {meltho} and {mno}.",
+    "liveNow": "Live now",
+    "exploreCta": "Explore the words",
     "meltho": {
-      "kind": "The word game",
       "heading": "Meltho",
-      "body": "A Wordle in Syriac — six tries to find the day's word. You don't need to know the alphabet: the keyboard shows every letter's sound, and a cheatsheet is always one tap away.",
-      "cta": "Play today's word"
+      "live": "Live",
+      "body": "A daily Syriac word game — six tries to find the hidden word. A new one every day, drawn from the lexicon.",
+      "cta": "Play today’s word",
+      "ctaShort": "Play Meltho"
     },
     "mno": {
-      "kind": "The numbers game",
       "heading": "Mno",
-      "body": "A daily math puzzle in Syriac numerals — in Syriac, the letters are also the numbers. Build the equation that hits today's target, from Beginner to Extreme.",
-      "cta": "Play today's equation"
+      "live": "Live",
+      "body": "A daily equation puzzle in Syriac numerals — six tries to hit the target, from Beginner to Extreme. The letters are the numbers.",
+      "cta": "Play today’s equation",
+      "ctaShort": "Play Mno"
     },
     "library": {
-      "kind": "The dictionary",
-      "heading": "The word library",
-      "body": "Every word the games have shown, kept on its own page — letters, sounds, root, and meaning in English, French, and Dutch.",
-      "cta": "Open the library"
+      "eyebrow": "Word library",
+      "heading": "Every word, broken down",
+      "body": "Browse each word Meltho has shown — its letters, sounds, root, and meaning, one at a time.",
+      "cta": "Open the library",
+      "latestTag": "Latest word"
     },
-    "soonTag": "Coming soon",
-    "soonBody": "A new game is taking shape. More when it's ready.",
-    "newHereHeading": "New here?",
-    "q1": {
-      "q": "What is Syriac?",
-      "a": "A form of Aramaic — the language of a vast Christian literature, still prayed and sung today, from Tur Abdin to the diaspora."
-    },
-    "q2": {
-      "q": "What is Sabro?",
-      "a": "One home for a family of free apps about the language. One account, one word-hoard: what you learn in one place follows you to the next."
-    },
-    "q3": {
-      "q": "Where do I start?",
-      "a": "{link} — it teaches as you play. Every word you meet ends up in the library, waiting for you.",
-      "link": "Play today's Meltho word"
-    },
-    "closing": "Games first. And this is only the beginning."
+    "about": {
+      "eyebrow": "What Sabro is",
+      "body": "One hub, many apps: Sabro carries the shared identity, lexicon, and API the ecosystem is built on. Meltho and Mno lead the way; more apps for the Syriac language will follow."
+    }
   },
   "nav": {
     "primary": "Primary navigation",
