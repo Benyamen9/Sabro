@@ -33,6 +33,11 @@
   --color-mno-dark: #855c0f;
   --color-mno-faint: #f5ecdb;
 
+  /* The historical family's purple (game colour taxonomy) — today only the
+     home page's unnamed coming-soon tease wears it. */
+  --color-soon: #6d4b9e;
+  --color-soon-faint: #f0eaf8;
+
   --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 4px 16px rgb(28 25 23 / 0.04);
 }
 
@@ -59,6 +64,9 @@
     --color-mno: #d9a84e;
     --color-mno-dark: #b8893a;
     --color-mno-faint: #2c2210;
+
+    --color-soon: #a98bd6;
+    --color-soon-faint: #241c31;
 
     --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
   }

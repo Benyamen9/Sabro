@@ -69,16 +69,15 @@ const latestShownOn = computed(() => {
 })
 
 const primaryButton
-  = 'inline-flex items-center gap-2 rounded-xl bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(140_47_57/0.25)] transition-colors hover:bg-[var(--color-accent-hover)]'
-const ghostButton
-  = 'inline-flex items-center gap-2 rounded-xl border border-[var(--color-border-strong)] px-4 py-3 font-sans text-sm font-medium text-[var(--color-text)] no-underline transition-colors hover:bg-[var(--color-bg-subtle)]'
+  = 'inline-flex items-center gap-2 rounded-xl bg-[var(--color-accent)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(140_47_57/0.25)] transition-all hover:-translate-y-px hover:bg-[var(--color-accent-hover)] hover:shadow-[0_5px_14px_rgb(140_47_57/0.3)]'
 
-// The hero's lead button follows the circuit: today's next unplayed game, or
-// the library once both are done.
-function heroButton(target: 'meltho' | 'mno' | 'library') {
-  const isPrimary = nextGame.value === target || (nextGame.value === null && target === 'library')
-  return isPrimary ? primaryButton : ghostButton
-}
+// The hero carries ONE action (the cards below hold the rest): the circuit's
+// next unplayed game, or the library once the day is complete.
+const heroAction = computed(() => {
+  if (nextGame.value === 'mno') return { href: mnoUrl, label: 'home.mno.cta' }
+  if (nextGame.value === null) return { href: '/library', label: 'home.library.cta' }
+  return { href: melthoUrl, label: 'home.meltho.cta' }
+})
 </script>
 
 <template>
@@ -110,10 +109,9 @@ function heroButton(target: 'meltho' | 'mno' | 'library') {
           </template>
         </i18n-t>
 
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a :href="melthoUrl" :class="heroButton('meltho')">{{ t('home.meltho.ctaShort') }} →</a>
-          <a :href="mnoUrl" :class="heroButton('mno')">{{ t('home.mno.ctaShort') }} →</a>
-          <NuxtLink to="/library" :class="heroButton('library')">{{ t('home.exploreCta') }}</NuxtLink>
+        <!-- One action only — the game cards below carry the rest. -->
+        <div class="mt-8">
+          <NuxtLink :to="heroAction.href" :class="primaryButton">{{ t(heroAction.label) }} →</NuxtLink>
         </div>
       </div>
 
@@ -145,8 +143,9 @@ function heroButton(target: 'meltho' | 'mno' | 'library') {
       <div class="mt-5 grid gap-5 lg:grid-cols-2">
         <!-- Meltho — the word game, in its teal. -->
         <div
-          class="flex flex-col items-center gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:items-start sm:text-left"
+          class="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgb(28_25_23/0.09)] sm:items-start sm:text-left"
         >
+          <span class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[var(--color-meltho)] to-transparent" aria-hidden="true" />
           <div class="flex gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
             <span v-for="tile in melthoTiles" :key="tile.letter" :class="tileClass(tile.state)">
               <SyriacText :text="tile.letter" class="leading-none" />
@@ -185,8 +184,9 @@ function heroButton(target: 'meltho' | 'mno' | 'library') {
 
         <!-- Mno — the numbers game, in its honey amber, value hints showing. -->
         <div
-          class="flex flex-col items-center gap-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] sm:items-start sm:text-left"
+          class="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgb(28_25_23/0.09)] sm:items-start sm:text-left"
         >
+          <span class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[var(--color-mno)] to-transparent" aria-hidden="true" />
           <div class="flex gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
             <span
               v-for="(tile, index) in mnoTiles"
@@ -230,6 +230,14 @@ function heroButton(target: 'meltho' | 'mno' | 'library') {
       </div>
     </section>
 
+    <!-- The one tease: something new is coming. No name, no description. -->
+    <div class="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 rounded-2xl border border-[var(--color-border)] border-l-4 border-l-[var(--color-soon)] bg-[var(--color-soon-faint)] px-6 py-4">
+      <span class="font-sans text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-[var(--color-soon)]">
+        {{ t('home.soonTag') }}
+      </span>
+      <p class="font-serif text-[15px] text-[var(--color-text)]">{{ t('home.soonBody') }}</p>
+    </div>
+
     <!-- The library as a living archive, led by its newest entry. -->
     <section class="mt-10 overflow-hidden rounded-2xl border border-[var(--color-border)]">
       <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-7 pt-6 sm:px-8">
@@ -259,15 +267,6 @@ function heroButton(target: 'meltho' | 'mno' | 'library') {
       <div v-else class="pb-6" />
     </section>
 
-    <!-- What Sabro is: one honest line instead of a grey box. -->
-    <div class="mb-4 mt-11 flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-[var(--color-border)] pt-6">
-      <span class="whitespace-nowrap font-sans text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-text-faint)]">
-        {{ t('home.about.eyebrow') }}
-      </span>
-      <p class="max-w-3xl font-serif text-[15.5px] text-[var(--color-text-muted)]">
-        {{ t('home.about.body') }}
-      </p>
-    </div>
   </div>
 </template>
 

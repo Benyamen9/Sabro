@@ -2,7 +2,8 @@
   "site": {
     "title": "Sabro",
     "tagline": "A platform for the Syriac language",
-    "statusMvp": "MVP · in development"
+    "statusMvp": "MVP · in development",
+    "promise": "Free, for everyone, forever."
   },
   "home": {
     "eyebrow": "The Syriac language",
@@ -10,34 +11,29 @@
     "titleLine2": "letter by letter.",
     "nameGloss": "sabro — Syriac for “hope”",
     "playedToday": "Played today",
-    "lede": "Sabro is the home of a growing family of apps for the Syriac language — beginning with two daily games, {meltho} and {mno}.",
+    "lede": "Sabro means hope — and that's the project: a living home for the Syriac language. Learn it by playing — two free daily games, {meltho} and {mno} — and keep every word they teach.",
     "liveNow": "Live now",
-    "exploreCta": "Explore the words",
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
-      "body": "A daily Syriac word game — six tries to find the hidden word. A new one every day, drawn from the lexicon.",
-      "cta": "Play today’s word",
-      "ctaShort": "Play Meltho"
+      "body": "A Wordle in Syriac — six tries to find the day's hidden word. You don't need to know the alphabet: the keyboard shows every letter's sound as you play.",
+      "cta": "Play today’s word"
     },
     "mno": {
       "heading": "Mno",
       "live": "Live",
-      "body": "A daily equation puzzle in Syriac numerals — six tries to hit the target, from Beginner to Extreme. The letters are the numbers.",
-      "cta": "Play today’s equation",
-      "ctaShort": "Play Mno"
+      "body": "A daily math puzzle in Syriac numerals — in Syriac, the letters are also the numbers. Build the equation that hits today's target, from Beginner to Extreme.",
+      "cta": "Play today’s equation"
     },
     "library": {
       "eyebrow": "Word library",
       "heading": "Every word, broken down",
-      "body": "Browse each word Meltho has shown — its letters, sounds, root, and meaning, one at a time.",
+      "body": "Browse each word the games have shown — its letters, sounds, root, and meaning in English, French, and Dutch — one at a time.",
       "cta": "Open the library",
       "latestTag": "Latest word"
     },
-    "about": {
-      "eyebrow": "What Sabro is",
-      "body": "One hub, many apps: Sabro carries the shared identity, lexicon, and API the ecosystem is built on. Meltho and Mno lead the way; more apps for the Syriac language will follow."
-    }
+    "soonTag": "Coming soon",
+    "soonBody": "A new game is taking shape. More when it's ready."
   },
   "nav": {
     "primary": "Primary navigation",

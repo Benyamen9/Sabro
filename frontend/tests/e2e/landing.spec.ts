@@ -10,6 +10,13 @@ test.describe('landing page', () => {
     await expect(page.getByRole('link', { name: 'Translations', exact: true })).toHaveCount(0)
     await expect(page.getByText('letter by letter.')).toBeVisible()
 
+    // The corrected copy: mission-bearing lede, plain-speech cards, and the
+    // one unnamed purple tease — nothing about what it is.
+    await expect(page.getByText('Sabro means hope', { exact: false })).toBeVisible()
+    await expect(page.getByText('A Wordle in Syriac', { exact: false })).toBeVisible()
+    await expect(page.getByText("A new game is taking shape. More when it's ready.")).toBeVisible()
+    await expect(page.getByText('Shmo')).toHaveCount(0)
+
     // The script + language switchers are custom dropdowns: a trigger button that
     // opens a listbox of options (replacing the native <select> popup).
     const scriptTrigger = page.getByRole('button', { name: 'Syriac script' })
@@ -36,8 +43,8 @@ test.describe('landing page', () => {
     await page.goto('/')
 
     // The locale cookie switches rendered text; assert French copy from the
-    // home page (the "what Sabro is" line) is present.
-    await expect(page.getByText('Ce qu’est Sabro')).toBeVisible()
+    // home page (the mission lede) is present.
+    await expect(page.getByText('Sabro veut dire espoir', { exact: false })).toBeVisible()
   })
 
   test('renders the Western font when the sabro_script_variant cookie is serto', async ({ page, context, baseURL }) => {
