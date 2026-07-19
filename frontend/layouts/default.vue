@@ -125,7 +125,7 @@ function isActive(path: string) {
     <footer class="border-t border-[var(--color-border)] py-6 font-sans text-xs text-[var(--color-text-faint)]">
       <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6">
         <span>{{ t('site.title') }} — {{ t('site.tagline') }}</span>
-        <span>{{ t('site.statusMvp') }}</span>
+        <span class="font-serif italic text-[var(--color-text-muted)]">{{ t('site.promise') }}</span>
       </div>
     </footer>
   </div>

@@ -2,7 +2,8 @@
   "site": {
     "title": "Sabro",
     "tagline": "Une plateforme pour la langue syriaque",
-    "statusMvp": "MVP · en développement"
+    "statusMvp": "MVP · en développement",
+    "promise": "Gratuit, pour tout le monde, pour toujours."
   },
   "home": {
     "eyebrow": "La langue syriaque",
@@ -10,34 +11,29 @@
     "titleLine2": "lettre par lettre.",
     "nameGloss": "sabro — « espoir » en syriaque",
     "playedToday": "Joué aujourd'hui",
-    "lede": "Sabro est le foyer d’une famille grandissante d’applications pour la langue syriaque — à commencer par deux jeux quotidiens, {meltho} et {mno}.",
+    "lede": "Sabro veut dire espoir — et c'est tout le projet : un foyer vivant pour la langue syriaque. Apprenez-la en jouant — deux jeux quotidiens gratuits, {meltho} et {mno} — et gardez chaque mot qu'ils enseignent.",
     "liveNow": "En ligne",
-    "exploreCta": "Explorer les mots",
     "meltho": {
       "heading": "Meltho",
       "live": "En ligne",
-      "body": "Un jeu de mots syriaque quotidien — six essais pour trouver le mot caché. Un nouveau chaque jour, tiré du lexique.",
-      "cta": "Jouer au mot du jour",
-      "ctaShort": "Jouer à Meltho"
+      "body": "Un Wordle en syriaque — six essais pour trouver le mot caché du jour. Pas besoin de connaître l'alphabet : le clavier montre le son de chaque lettre pendant que vous jouez.",
+      "cta": "Jouer au mot du jour"
     },
     "mno": {
       "heading": "Mno",
       "live": "En ligne",
-      "body": "Un puzzle d’équation quotidien en chiffres syriaques — six essais pour atteindre la cible, de Débutant à Extrême. Les lettres sont les nombres.",
-      "cta": "Jouer l’équation du jour",
-      "ctaShort": "Jouer à Mno"
+      "body": "Un casse-tête quotidien en chiffres syriaques — en syriaque, les lettres sont aussi les nombres. Construisez l'équation qui atteint la cible du jour, de Débutant à Extrême.",
+      "cta": "Jouer l’équation du jour"
     },
     "library": {
       "eyebrow": "Bibliothèque de mots",
       "heading": "Chaque mot, décomposé",
-      "body": "Parcourez chaque mot proposé par Meltho — ses lettres, ses sons, sa racine et son sens, un par un.",
+      "body": "Parcourez chaque mot montré par les jeux — ses lettres, ses sons, sa racine et son sens en anglais, français et néerlandais — un à la fois.",
       "cta": "Ouvrir la bibliothèque",
       "latestTag": "Dernier mot"
     },
-    "about": {
-      "eyebrow": "Ce qu’est Sabro",
-      "body": "Un hub, plusieurs applications : Sabro porte l’identité partagée, le lexique et l’API sur lesquels repose l’écosystème. Meltho et Mno ouvrent la voie ; d’autres applications pour la langue syriaque suivront."
-    }
+    "soonTag": "Bientôt",
+    "soonBody": "Un nouveau jeu prend forme. La suite quand il sera prêt."
   },
   "nav": {
     "primary": "Navigation principale",
