@@ -32,6 +32,7 @@ internal sealed class LexiconLibraryReader : ILexiconLibraryReader
             .Select(e => new LexiconLibraryListItem(
                 e.Id,
                 e.SyriacUnvocalized,
+                e.SyriacVocalized,
                 e.SblTransliteration,
                 e.PlayableLength,
                 e.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray()))

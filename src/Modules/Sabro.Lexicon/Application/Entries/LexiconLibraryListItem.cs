@@ -7,6 +7,7 @@ namespace Sabro.Lexicon.Application.Entries;
 public sealed record LexiconLibraryListItem(
     Guid Id,
     string SyriacUnvocalized,
+    string? SyriacVocalized,
     string? SblTransliteration,
     int PlayableLength,
     IReadOnlyList<LexiconMeaningDto> Meanings);

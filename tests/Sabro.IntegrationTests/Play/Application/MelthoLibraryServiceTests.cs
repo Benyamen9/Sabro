@@ -225,7 +225,7 @@ public class MelthoLibraryServiceTests
         var reader = Substitute.For<ILexiconLibraryReader>();
         reader.GetLibraryListAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(ci => (IReadOnlyList<LexiconLibraryListItem>)ci.Arg<IReadOnlyCollection<Guid>>()
-                .Select(id => new LexiconLibraryListItem(id, "ܟܬܒܐ", "ktōbō", 4, new[] { new LexiconMeaningDto("en", "book") }))
+                .Select(id => new LexiconLibraryListItem(id, "ܟܬܒܐ", null, "ktōbō", 4, new[] { new LexiconMeaningDto("en", "book") }))
                 .ToList());
 
         await using var ctx = fixture.CreatePlayContext();
@@ -335,6 +335,7 @@ public class MelthoLibraryServiceTests
                 .Select(id => new LexiconLibraryListItem(
                     id,
                     "ܡܠܬܐ",
+                    "ܡܶܠܬ݂ܳܐ",
                     "meltho",
                     4,
                     new[] { new LexiconMeaningDto("en", "word") }))
@@ -365,6 +366,7 @@ public class MelthoLibraryServiceTests
                 .Select(id => new LexiconLibraryListItem(
                     id,
                     words[id].Syriac,
+                    null,
                     null,
                     words[id].Length,
                     new[] { new LexiconMeaningDto("en", "word") }))

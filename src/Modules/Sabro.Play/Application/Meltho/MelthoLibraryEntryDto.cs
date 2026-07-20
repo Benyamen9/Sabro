@@ -8,6 +8,7 @@ public sealed record MelthoLibraryEntryDto(
     DateOnly LastPlayedOn,
     Guid LexiconEntryId,
     string SyriacUnvocalized,
+    string? SyriacVocalized,
     string? SblTransliteration,
     int PlayableLength,
     int TimesPlayed,

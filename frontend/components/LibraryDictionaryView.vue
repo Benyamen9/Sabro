@@ -164,7 +164,7 @@ watch(data, (value) => {
               :to="`/library/${word.id}`"
               class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-5 py-4 no-underline shadow-[var(--shadow-soft)] transition-[border-color,transform] hover:-translate-y-px hover:border-[color-mix(in_oklab,var(--color-accent)_45%,var(--color-border))]"
             >
-              <SyriacText :text="word.syriacUnvocalized" class="min-w-[4.75rem] !text-[2.1rem] leading-tight text-[var(--color-accent)]" />
+              <SyriacText :text="word.syriacVocalized ?? word.syriacUnvocalized" class="min-w-[4.75rem] !text-[2.1rem] leading-tight text-[var(--color-accent)]" />
               <span class="min-w-0 flex-1">
                 <span class="block truncate font-serif text-[17px]">
                   {{ preferredMeaning(word.meanings) }}
