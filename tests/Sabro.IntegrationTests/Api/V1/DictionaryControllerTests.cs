@@ -69,7 +69,7 @@ public class DictionaryControllerTests : IDisposable
 
         dto.PlayedInMeltho.Should().BeFalse();
         dto.LetterCount.Should().Be(4);
-        dto.Meanings.Should().HaveCount(3);
+        dto.Meanings.Should().HaveCount(5);
     }
 
     [Fact]
@@ -118,6 +118,8 @@ public class DictionaryControllerTests : IDisposable
             LexiconMeaning.Create("en", "gloss").Value!,
             LexiconMeaning.Create("fr", "glose").Value!,
             LexiconMeaning.Create("nl", "glos").Value!,
+            LexiconMeaning.Create("de", "Glosse").Value!,
+            LexiconMeaning.Create("sv", "glosa").Value!,
         };
         var entry = LexiconEntry.Create(unvocalized, "translit", GrammaticalCategory.Noun, meanings: meanings).Value!;
         if (publish)

@@ -77,7 +77,7 @@ useHead({
   }),
 })
 
-const meaningLanguages = ['en', 'fr', 'nl'] as const
+const meaningLanguages = ['en', 'fr', 'nl', 'de', 'sv'] as const
 const orderedMeanings = computed(() => {
   const meanings = data.value?.meanings ?? []
   const known = meaningLanguages

@@ -117,6 +117,8 @@ public class LexiconEntryDocumentMapperTests
                 LexiconMeaning.Create("en", "to write").Value!,
                 LexiconMeaning.Create("fr", "écrire").Value!,
                 LexiconMeaning.Create("nl", "schrijven").Value!,
+                LexiconMeaning.Create("de", "schreiben").Value!,
+                LexiconMeaning.Create("sv", "skriva").Value!,
             }).Value!;
         entry.Publish();
         entry.SetPlayable(true);

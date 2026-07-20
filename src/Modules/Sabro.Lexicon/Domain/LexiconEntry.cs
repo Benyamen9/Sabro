@@ -6,7 +6,7 @@ namespace Sabro.Lexicon.Domain;
 
 public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
 {
-    private static readonly string[] RequiredMeaningLanguages = { "en", "fr", "nl" };
+    private static readonly string[] RequiredMeaningLanguages = { "en", "fr", "nl", "de", "sv" };
 
     private readonly List<string> transliterationVariants = new();
     private readonly List<LexiconMeaning> meanings = new();
@@ -113,7 +113,7 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
         if (Status == LexiconEntryStatus.Published && !HasAllRequiredMeanings(normalized.Value!.Meanings))
         {
             return Error.Validation(
-                "A published entry must keep en, fr, and nl meanings. Unpublish before removing a gloss.");
+                "A published entry must keep en, fr, nl, de, and sv meanings. Unpublish before removing a gloss.");
         }
 
         Apply(normalized.Value!);
@@ -121,7 +121,7 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
         return null;
     }
 
-    /// <summary>Promotes a draft to published. Requires en/fr/nl meanings. Idempotent when already published.</summary>
+    /// <summary>Promotes a draft to published. Requires en/fr/nl/de/sv meanings. Idempotent when already published.</summary>
     public Error? Publish()
     {
         if (Status == LexiconEntryStatus.Published)
@@ -131,7 +131,7 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
 
         if (!HasAllRequiredMeanings(meanings))
         {
-            return Error.Validation("All of en, fr, and nl meanings are required to publish an entry.");
+            return Error.Validation("All of en, fr, nl, de, and sv meanings are required to publish an entry.");
         }
 
         Status = LexiconEntryStatus.Published;

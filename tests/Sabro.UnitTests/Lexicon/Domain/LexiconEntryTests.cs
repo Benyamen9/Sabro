@@ -239,9 +239,11 @@ public class LexiconEntryTests
     [InlineData("en")]
     [InlineData("fr")]
     [InlineData("nl")]
+    [InlineData("de")]
+    [InlineData("sv")]
     public void Publish_WithMissingRequiredGloss_ReturnsValidationAndStaysDraft(string missing)
     {
-        var meanings = AllThreeMeanings().Where(m => m.Language != missing).ToArray();
+        var meanings = AllFiveMeanings().Where(m => m.Language != missing).ToArray();
         var entry = LexiconEntry.Create(
             syriacUnvocalized: KtbUnvocalized,
             sblTransliteration: "ktb",
@@ -300,7 +302,7 @@ public class LexiconEntryTests
             syriacUnvocalized: "ܐ",
             sblTransliteration: "ʾ",
             grammaticalCategory: GrammaticalCategory.Other,
-            meanings: AllThreeMeanings()).Value!;
+            meanings: AllFiveMeanings()).Value!;
         entry.Publish();
 
         var error = entry.SetPlayable(true);
@@ -332,7 +334,7 @@ public class LexiconEntryTests
             syriacUnvocalized: "ܐܒ",
             sblTransliteration: "ʾb",
             grammaticalCategory: GrammaticalCategory.Noun,
-            meanings: AllThreeMeanings());
+            meanings: AllFiveMeanings());
 
         error.Should().BeNull();
         entry.SyriacUnvocalized.Should().Be("ܐܒ");
@@ -372,7 +374,7 @@ public class LexiconEntryTests
         error.Should().NotBeNull();
         error!.Code.Should().Be("validation");
         entry.Status.Should().Be(LexiconEntryStatus.Published);
-        entry.Meanings.Should().HaveCount(3);
+        entry.Meanings.Should().HaveCount(5);
     }
 
     [Fact]
@@ -385,22 +387,24 @@ public class LexiconEntryTests
             syriacUnvocalized: KtbUnvocalized,
             sblTransliteration: "ktb",
             grammaticalCategory: GrammaticalCategory.Verb,
-            meanings: AllThreeMeanings());
+            meanings: AllFiveMeanings());
 
         error.Should().BeNull();
         entry.UpdatedAt.Should().BeOnOrAfter(original);
     }
 
-    private static LexiconMeaning[] AllThreeMeanings() => new[]
+    private static LexiconMeaning[] AllFiveMeanings() => new[]
     {
         LexiconMeaning.Create("en", "to write").Value!,
         LexiconMeaning.Create("fr", "écrire").Value!,
         LexiconMeaning.Create("nl", "schrijven").Value!,
+        LexiconMeaning.Create("de", "schreiben").Value!,
+        LexiconMeaning.Create("sv", "skriva").Value!,
     };
 
     private static LexiconEntry CreateDraftWithAllMeanings() => LexiconEntry.Create(
         syriacUnvocalized: KtbUnvocalized,
         sblTransliteration: "ktb",
         grammaticalCategory: GrammaticalCategory.Verb,
-        meanings: AllThreeMeanings()).Value!;
+        meanings: AllFiveMeanings()).Value!;
 }

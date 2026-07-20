@@ -144,7 +144,7 @@ public class LexiconEntrySearchQueryTests
 
     /// <summary>
     /// Builds a published entry — public search only exposes published entries, so
-    /// query tests must publish before indexing. Publication requires en/fr/nl glosses.
+    /// query tests must publish before indexing. Publication requires en/fr/nl/de/sv glosses.
     /// </summary>
     private static LexiconEntry PublishedEntry(string syriacUnvocalized, string sbl, GrammaticalCategory category, Guid? rootId = null)
     {
@@ -153,6 +153,8 @@ public class LexiconEntrySearchQueryTests
             LexiconMeaning.Create("en", "gloss").Value!,
             LexiconMeaning.Create("fr", "glose").Value!,
             LexiconMeaning.Create("nl", "betekenis").Value!,
+            LexiconMeaning.Create("de", "Glosse").Value!,
+            LexiconMeaning.Create("sv", "glosa").Value!,
         };
         var entry = LexiconEntry.Create(syriacUnvocalized, sbl, category, rootId: rootId, meanings: meanings).Value!;
         entry.Publish().Should().BeNull();

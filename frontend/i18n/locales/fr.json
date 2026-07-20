@@ -408,7 +408,9 @@
       "meaning": {
         "en": "Anglais",
         "fr": "Français",
-        "nl": "Néerlandais"
+        "nl": "Néerlandais",
+        "de": "Allemand",
+        "sv": "Suédois"
       },
       "category": {
         "Noun": "Nom",

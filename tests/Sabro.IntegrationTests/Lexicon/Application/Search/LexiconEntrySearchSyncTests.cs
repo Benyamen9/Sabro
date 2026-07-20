@@ -127,6 +127,8 @@ public class LexiconEntrySearchSyncTests
                     new CreateLexiconMeaningRequest("en", "to write"),
                     new CreateLexiconMeaningRequest("fr", "écrire"),
                     new CreateLexiconMeaningRequest("nl", "schrijven"),
+                    new CreateLexiconMeaningRequest("de", "schreiben"),
+                    new CreateLexiconMeaningRequest("sv", "skriva"),
                 }),
             ct);
         created.IsSuccess.Should().BeTrue();
