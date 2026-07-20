@@ -35,9 +35,9 @@ const categories: GrammaticalCategory[] = [
   'Other',
 ]
 
-// The three languages required to publish. The backoffice edits exactly these
-// at launch; additional content languages can be added without a schema change.
-const meaningLanguages = ['en', 'fr', 'nl'] as const
+// The five languages required to publish. The backoffice edits exactly these;
+// additional content languages can be added without a schema change.
+const meaningLanguages = ['en', 'fr', 'nl', 'de', 'sv'] as const
 
 function meaningFor(language: string) {
   return props.entry?.meanings.find(m => m.language === language)?.text ?? ''
@@ -53,6 +53,8 @@ const meanings = reactive<Record<string, string>>({
   en: meaningFor('en'),
   fr: meaningFor('fr'),
   nl: meaningFor('nl'),
+  de: meaningFor('de'),
+  sv: meaningFor('sv'),
 })
 
 // Live preview of the playable length: count Unicode letters in the

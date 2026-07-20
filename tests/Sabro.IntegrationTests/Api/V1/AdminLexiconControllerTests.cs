@@ -140,6 +140,8 @@ public class AdminLexiconControllerTests : IDisposable
                 new CreateLexiconMeaningRequest("en", "to write"),
                 new CreateLexiconMeaningRequest("fr", "écrire"),
                 new CreateLexiconMeaningRequest("nl", "schrijven"),
+                new CreateLexiconMeaningRequest("de", "schreiben"),
+                new CreateLexiconMeaningRequest("sv", "skriva"),
             });
 
         var created = (await (await client.PostAsJsonAsync("/api/v1/admin/lexicon", body, ct))

@@ -11,9 +11,9 @@ public class LexiconDbContextTests
 
     private static readonly string[] TwoVariants = { "kthab", "ktab" };
 
-    private static readonly string[] ThreeLanguages = { "en", "fr", "nl" };
+    private static readonly string[] FiveLanguages = { "en", "fr", "nl", "de", "sv" };
 
-    private static readonly string[] ThreeMeaningTexts = { "to write", "écrire", "schrijven" };
+    private static readonly string[] FiveMeaningTexts = { "to write", "écrire", "schrijven", "schreiben", "skriva" };
 
     private readonly PostgresFixture fixture;
 
@@ -88,6 +88,8 @@ public class LexiconDbContextTests
             LexiconMeaning.Create("en", "to write").Value!,
             LexiconMeaning.Create("fr", "écrire").Value!,
             LexiconMeaning.Create("nl", "schrijven").Value!,
+            LexiconMeaning.Create("de", "schreiben").Value!,
+            LexiconMeaning.Create("sv", "skriva").Value!,
         };
         var entry = LexiconEntry.Create(
             syriacUnvocalized: KtbUnvocalized,
@@ -105,12 +107,12 @@ public class LexiconDbContextTests
         var loaded = await read.Entries.FirstOrDefaultAsync(e => e.Id == entry.Id, ct);
 
         loaded.Should().NotBeNull();
-        loaded!.Meanings.Should().HaveCount(3);
+        loaded!.Meanings.Should().HaveCount(5);
         loaded.Meanings.Select(m => m.Language).Should().BeEquivalentTo(
-            ThreeLanguages,
+            FiveLanguages,
             options => options.WithStrictOrdering());
         loaded.Meanings.Select(m => m.Text).Should().BeEquivalentTo(
-            ThreeMeaningTexts,
+            FiveMeaningTexts,
             options => options.WithStrictOrdering());
     }
 

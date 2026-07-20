@@ -205,14 +205,14 @@ public class LexiconEntryServiceTests
                 SyriacUnvocalized: "ܐܒ",
                 SblTransliteration: "ʾb",
                 GrammaticalCategory: GrammaticalCategory.Noun,
-                Meanings: AllThreeMeanings()),
+                Meanings: AllFiveMeanings()),
             ct);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.SyriacUnvocalized.Should().Be("ܐܒ");
         result.Value.PlayableLength.Should().Be(2);
         result.Value.GrammaticalCategory.Should().Be(GrammaticalCategory.Noun);
-        result.Value.Meanings.Should().HaveCount(3);
+        result.Value.Meanings.Should().HaveCount(5);
 
         await using var read = fixture.CreateLexiconContext();
         var loaded = await read.Entries.FirstOrDefaultAsync(e => e.Id == id, ct);
@@ -264,7 +264,7 @@ public class LexiconEntryServiceTests
     public async Task PublishAsync_WithAllRequiredGlosses_SetsPublished()
     {
         var ct = TestContext.Current.CancellationToken;
-        var id = await CreateDraftAsync(ct, AllThreeMeanings());
+        var id = await CreateDraftAsync(ct, AllFiveMeanings());
 
         await using var ctx = fixture.CreateLexiconContext();
         var service = NewService(ctx);
@@ -312,7 +312,7 @@ public class LexiconEntryServiceTests
     public async Task SetPlayableAsync_OnDraftEntry_ReturnsConflict()
     {
         var ct = TestContext.Current.CancellationToken;
-        var id = await CreateDraftAsync(ct, AllThreeMeanings());
+        var id = await CreateDraftAsync(ct, AllFiveMeanings());
 
         await using var ctx = fixture.CreateLexiconContext();
         var result = await NewService(ctx).SetPlayableAsync(id, true, ct);
@@ -366,7 +366,7 @@ public class LexiconEntryServiceTests
     public async Task GetPublishedByIdAsync_DraftEntry_ReturnsNotFound()
     {
         var ct = TestContext.Current.CancellationToken;
-        var id = await CreateDraftAsync(ct, AllThreeMeanings());
+        var id = await CreateDraftAsync(ct, AllFiveMeanings());
 
         await using var ctx = fixture.CreateLexiconContext();
         var result = await NewService(ctx).GetPublishedByIdAsync(id, ct);
@@ -393,7 +393,7 @@ public class LexiconEntryServiceTests
     public async Task ListPublishedAsync_ExcludesDrafts()
     {
         var ct = TestContext.Current.CancellationToken;
-        var draftId = await CreateDraftAsync(ct, AllThreeMeanings());
+        var draftId = await CreateDraftAsync(ct, AllFiveMeanings());
         var publishedId = await CreatePublishedAsync(ct);
 
         await using var ctx = fixture.CreateLexiconContext();
@@ -406,11 +406,13 @@ public class LexiconEntryServiceTests
         result.Value.Items.Should().OnlyContain(e => e.Status == LexiconEntryStatus.Published);
     }
 
-    private static CreateLexiconMeaningRequest[] AllThreeMeanings() => new[]
+    private static CreateLexiconMeaningRequest[] AllFiveMeanings() => new[]
     {
         new CreateLexiconMeaningRequest("en", "to write"),
         new CreateLexiconMeaningRequest("fr", "écrire"),
         new CreateLexiconMeaningRequest("nl", "schrijven"),
+        new CreateLexiconMeaningRequest("de", "schreiben"),
+        new CreateLexiconMeaningRequest("sv", "skriva"),
     };
 
     private static LexiconEntryService NewService(Sabro.Lexicon.Infrastructure.LexiconDbContext ctx) =>
@@ -438,7 +440,7 @@ public class LexiconEntryServiceTests
 
     private async Task<Guid> CreatePublishedAsync(CancellationToken ct)
     {
-        var id = await CreateDraftAsync(ct, AllThreeMeanings());
+        var id = await CreateDraftAsync(ct, AllFiveMeanings());
         await using var ctx = fixture.CreateLexiconContext();
         var result = await NewService(ctx).PublishAsync(id, ct);
         result.IsSuccess.Should().BeTrue();

@@ -104,6 +104,8 @@ public class LexiconEntriesControllerTests : IDisposable
             LexiconMeaning.Create("en", "to write").Value!,
             LexiconMeaning.Create("fr", "écrire").Value!,
             LexiconMeaning.Create("nl", "schrijven").Value!,
+            LexiconMeaning.Create("de", "schreiben").Value!,
+            LexiconMeaning.Create("sv", "skriva").Value!,
         };
         var entry = LexiconEntry.Create(KtbUnvocalized, "ktb", GrammaticalCategory.Verb, meanings: meanings).Value!;
         entry.Publish().Should().BeNull();

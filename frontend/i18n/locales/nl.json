@@ -409,7 +409,9 @@
       "meaning": {
         "en": "Engels",
         "fr": "Frans",
-        "nl": "Nederlands"
+        "nl": "Nederlands",
+        "de": "Duits",
+        "sv": "Zweeds"
       },
       "category": {
         "Noun": "Zelfstandig naamwoord",

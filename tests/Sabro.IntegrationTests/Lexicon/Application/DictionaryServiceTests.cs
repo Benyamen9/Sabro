@@ -100,7 +100,7 @@ public class DictionaryServiceTests
         detail.SyriacVocalized.Should().Be("ܡܰܠܟ݁ܳܐ");
         detail.Root.Should().Be("ܡܠܟ");
         detail.Composition.Should().NotBeEmpty();
-        detail.Meanings.Should().HaveCount(3);
+        detail.Meanings.Should().HaveCount(5);
     }
 
     [Fact]
@@ -145,6 +145,8 @@ public class DictionaryServiceTests
             LexiconMeaning.Create("en", "gloss").Value!,
             LexiconMeaning.Create("fr", "glose").Value!,
             LexiconMeaning.Create("nl", "glos").Value!,
+            LexiconMeaning.Create("de", "Glosse").Value!,
+            LexiconMeaning.Create("sv", "glosa").Value!,
         };
         var entry = LexiconEntry.Create(
             unvocalized,
