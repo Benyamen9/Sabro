@@ -35,6 +35,7 @@ export interface LibraryWordDetail {
   meanings: { language: string, text: string }[]
   composition: DictionaryEntryDetail['composition']
   playedInMeltho: boolean
+  pronunciationAudioUrl: string | null
 }
 
 export interface DictionaryListParams {
@@ -124,6 +125,7 @@ export function useDictionary() {
         meanings: detail.meanings,
         composition: detail.composition,
         playedInMeltho: detail.playedInMeltho,
+        pronunciationAudioUrl: detail.pronunciationAudioUrl ?? null,
       }
     }
     catch (error) {
@@ -142,6 +144,7 @@ export function useDictionary() {
         meanings: played.meanings,
         composition: played.composition,
         playedInMeltho: played.playedOn.some(date => date < today),
+        pronunciationAudioUrl: played.pronunciationAudioUrl ?? null,
       }
     }
   }

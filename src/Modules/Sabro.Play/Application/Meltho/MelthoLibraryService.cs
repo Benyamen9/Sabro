@@ -127,7 +127,8 @@ internal sealed class MelthoLibraryService : IMelthoLibraryService
             detail.Root,
             detail.Meanings.Select(m => new MelthoPuzzleMeaningDto(m.Language, m.Text)).ToArray(),
             detail.Composition,
-            playedOn);
+            playedOn,
+            detail.PronunciationAudioUrl);
 
         return Result<MelthoLibraryDetailDto>.Success(dto);
     }

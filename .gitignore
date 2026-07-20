@@ -59,6 +59,8 @@ Thumbs.db
 
 # Media uploads (real content goes off-site, not in git)
 wwwroot/media/uploads/
+src/Sabro.API/wwwroot/media/pronunciations/*
+!src/Sabro.API/wwwroot/media/pronunciations/.gitkeep
 
 # Docker
 docker-compose.override.yml

@@ -47,6 +47,13 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
     public bool PlayableInMeltho { get; private set; }
 
     /// <summary>
+    /// Relative URL of an uploaded pronunciation recording (e.g. "/media/pronunciations/{id}.mp3"),
+    /// or null. Optional enrichment like <see cref="SyriacVocalized"/> — never gates publication.
+    /// One recording per entry; a re-upload replaces it.
+    /// </summary>
+    public string? PronunciationAudioUrl { get; private set; }
+
+    /// <summary>
     /// Number of base Syriac letters in <see cref="SyriacUnvocalized"/> (combining marks
     /// excluded). Computed on every create/edit, never set directly. Drives Meltho's
     /// 2–8 eligible-pool window.
@@ -171,6 +178,17 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
         PlayableInMeltho = playable;
         Touch();
         return null;
+    }
+
+    /// <summary>
+    /// Sets or clears the pronunciation recording's URL. Storage (writing/deleting the file
+    /// itself) is an infrastructure concern the caller handles before/after this call; the
+    /// entry only tracks where the recording lives.
+    /// </summary>
+    public void SetPronunciationAudio(string? url)
+    {
+        PronunciationAudioUrl = string.IsNullOrWhiteSpace(url) ? null : url;
+        Touch();
     }
 
     private static Result<NormalizedFields> Normalize(

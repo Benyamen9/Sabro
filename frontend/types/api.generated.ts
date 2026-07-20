@@ -402,6 +402,107 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/lexicon/{id}/pronunciation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        file?: components["schemas"]["IFormFile"];
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["LexiconEntryDto"];
+                        "application/json": components["schemas"]["LexiconEntryDto"];
+                        "text/json": components["schemas"]["LexiconEntryDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/search/rebuild/{indexName}": {
         parameters: {
             query?: never;
@@ -3550,6 +3651,7 @@ export interface components {
             meanings: components["schemas"]["LexiconMeaningDto"][];
             composition: components["schemas"]["SyriacLetter"][];
             playedInMeltho: boolean;
+            pronunciationAudioUrl: null | string;
         };
         DictionaryEntryListItem: {
             /** Format: uuid */
@@ -3604,6 +3706,8 @@ export interface components {
         GrammaticalCategory: "Noun" | "Verb" | "Adjective" | "Adverb" | "Pronoun" | "Preposition" | "Conjunction" | "Particle" | "Numeral" | "Interjection" | "Other";
         /** @enum {string} */
         HardeningSource: "None" | "Marked" | "Computed";
+        /** Format: binary */
+        IFormFile: string;
         /** @enum {string} */
         LetterHardening: "Qushoyo" | "Rukkokho";
         LexiconEntryDto: {
@@ -3620,6 +3724,7 @@ export interface components {
             meanings: components["schemas"]["LexiconMeaningDto"][];
             status: components["schemas"]["LexiconEntryStatus"];
             playableInMeltho: boolean;
+            pronunciationAudioUrl: null | string;
             /** Format: int32 */
             playableLength: number | string;
             /** Format: date-time */
@@ -3702,6 +3807,7 @@ export interface components {
             meanings: components["schemas"]["MelthoPuzzleMeaningDto"][];
             composition: components["schemas"]["SyriacLetter"][];
             playedOn: string[];
+            pronunciationAudioUrl: null | string;
         };
         MelthoLibraryEntryDto: {
             /** Format: date */

@@ -90,6 +90,7 @@ internal sealed class DictionaryService : IDictionaryService
             entry.PlayableLength,
             root,
             entry.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray(),
-            SyriacComposition.Decompose(entry.SyriacVocalized)));
+            SyriacComposition.Decompose(entry.SyriacVocalized),
+            entry.PronunciationAudioUrl));
     }
 }

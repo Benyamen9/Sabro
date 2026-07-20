@@ -588,6 +588,159 @@
         }
       }
     },
+    "/api/v1/admin/lexicon/{id}/pronunciation": {
+      "post": {
+        "tags": [
+          "AdminLexicon"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LexiconEntryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LexiconEntryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LexiconEntryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminLexicon"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LexiconEntryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LexiconEntryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LexiconEntryDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/search/rebuild/{indexName}": {
       "post": {
         "tags": [
@@ -5871,7 +6024,8 @@
           "root",
           "meanings",
           "composition",
-          "playedInMeltho"
+          "playedInMeltho",
+          "pronunciationAudioUrl"
         ],
         "type": "object",
         "properties": {
@@ -5937,6 +6091,12 @@
           },
           "playedInMeltho": {
             "type": "boolean"
+          },
+          "pronunciationAudioUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -6166,6 +6326,10 @@
         ],
         "type": "string"
       },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
       "LetterHardening": {
         "enum": [
           "Qushoyo",
@@ -6186,6 +6350,7 @@
           "meanings",
           "status",
           "playableInMeltho",
+          "pronunciationAudioUrl",
           "playableLength",
           "createdAt",
           "updatedAt"
@@ -6244,6 +6409,12 @@
           },
           "playableInMeltho": {
             "type": "boolean"
+          },
+          "pronunciationAudioUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "playableLength": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -6517,7 +6688,8 @@
           "root",
           "meanings",
           "composition",
-          "playedOn"
+          "playedOn",
+          "pronunciationAudioUrl"
         ],
         "type": "object",
         "properties": {
@@ -6587,6 +6759,12 @@
               "type": "string",
               "format": "date"
             }
+          },
+          "pronunciationAudioUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

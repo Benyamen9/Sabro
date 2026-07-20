@@ -38,6 +38,7 @@ public class LexiconEntrySearchSyncTests
             new CreateLexiconEntryRequestValidator(),
             new UpdateLexiconEntryRequestValidator(),
             searchIndex,
+            Substitute.For<IPronunciationAudioStorage>(),
             NullLogger<LexiconEntryService>.Instance);
 
         var result = await service.CreateAsync(
@@ -83,6 +84,7 @@ public class LexiconEntrySearchSyncTests
             new CreateLexiconEntryRequestValidator(),
             new UpdateLexiconEntryRequestValidator(),
             searchIndex,
+            Substitute.For<IPronunciationAudioStorage>(),
             NullLogger<LexiconEntryService>.Instance);
 
         var result = await service.CreateAsync(
@@ -115,6 +117,7 @@ public class LexiconEntrySearchSyncTests
             new CreateLexiconEntryRequestValidator(),
             new UpdateLexiconEntryRequestValidator(),
             searchIndex,
+            Substitute.For<IPronunciationAudioStorage>(),
             NullLogger<LexiconEntryService>.Instance);
 
         var created = await service.CreateAsync(

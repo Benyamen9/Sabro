@@ -310,6 +310,10 @@
       "root": "Wortel",
       "meanings": "Betekenissen"
     },
+    "pronunciation": {
+      "listen": "Luisteren",
+      "pause": "Pauzeren"
+    },
     "letters": {
       "Alaph": "Olaf", "Beth": "Beth", "Gamal": "Gomal", "Dalath": "Dolath",
       "He": "He", "Waw": "Waw", "Zayn": "Zay", "Heth": "Ḥeth", "Teth": "Ṭeth",
@@ -392,7 +396,7 @@
         "morphology": "Morfologie",
         "morphologyHint": "Optionele vrije tekst.",
         "meanings": "Betekenissen",
-        "meaningsHint": "Engels, Frans en Nederlands zijn alle vereist om te publiceren.",
+        "meaningsHint": "Engels, Frans, Nederlands, Duits en Zweeds zijn allemaal vereist om te publiceren.",
         "playableLength": "Speelbare lengte",
         "playableLengthHint": "Geteld vanaf de onvocalisatievorm. De Meltho-pool aanvaardt 2–8 letters.",
         "playableLengthInRange": "Binnen het 2–8-venster van Meltho.",
@@ -400,11 +404,23 @@
       },
       "lifecycle": {
         "heading": "Levenscyclus",
-        "publishHint": "Publiceren vereist betekenissen in het Engels, Frans en Nederlands.",
+        "publishHint": "Publiceren vereist betekenissen in het Engels, Frans, Nederlands, Duits en Zweeds.",
         "poolHeading": "Meltho-pool",
         "poolHint": "Alleen gepubliceerde vermeldingen van 2–8 letters kunnen in de Meltho-pool.",
         "inPool": "In de Meltho-pool",
         "notInPool": "Niet in de Meltho-pool"
+      },
+      "pronunciation": {
+        "heading": "Uitspraak",
+        "hint": "Optioneel. Upload een korte opname om te laten horen hoe het woord wordt uitgesproken.",
+        "formatHint": "MP3, WAV, OGG, WebM of M4A, tot 5 MB.",
+        "none": "Nog geen opname.",
+        "upload": "Opname uploaden",
+        "replace": "Opname vervangen",
+        "remove": "Opname verwijderen",
+        "uploading": "Uploaden…",
+        "uploadFailed": "De opname kon niet worden geüpload.",
+        "removeFailed": "De opname kon niet worden verwijderd."
       },
       "meaning": {
         "en": "Engels",

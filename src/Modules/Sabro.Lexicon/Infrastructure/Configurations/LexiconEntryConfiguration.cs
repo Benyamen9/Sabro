@@ -27,6 +27,7 @@ internal sealed class LexiconEntryConfiguration : IEntityTypeConfiguration<Lexic
             .HasMaxLength(16)
             .IsRequired();
         builder.Property(e => e.PlayableInMeltho).IsRequired();
+        builder.Property(e => e.PronunciationAudioUrl).HasMaxLength(256);
         builder.Property(e => e.PlayableLength).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.UpdatedAt).IsRequired();

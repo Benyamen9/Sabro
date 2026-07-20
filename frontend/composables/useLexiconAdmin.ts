@@ -56,5 +56,29 @@ export function useLexiconAdmin() {
     })
   }
 
-  return { list, getById, create, update, remove, publish, unpublish, setPlayable }
+  function uploadPronunciation(id: string, file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api<LexiconEntryDto>(`/admin/lexicon/${id}/pronunciation`, {
+      method: 'POST',
+      body: formData,
+    })
+  }
+
+  function removePronunciation(id: string) {
+    return api<LexiconEntryDto>(`/admin/lexicon/${id}/pronunciation`, { method: 'DELETE' })
+  }
+
+  return {
+    list,
+    getById,
+    create,
+    update,
+    remove,
+    publish,
+    unpublish,
+    setPlayable,
+    uploadPronunciation,
+    removePronunciation,
+  }
 }

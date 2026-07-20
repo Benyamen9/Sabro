@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Lexicon.Application.Entries;
 using Sabro.Shared.Pagination;
+using Sabro.Shared.Results;
 
 namespace Sabro.API.Controllers.V1;
 
@@ -17,6 +18,21 @@ namespace Sabro.API.Controllers.V1;
 [Authorize(Policy = AuthPolicies.Admin)]
 public sealed class AdminLexiconController : ApiControllerBase
 {
+    // A single short recording per word, not a podcast — 5 MB comfortably covers minutes of audio.
+    private const long MaxPronunciationAudioBytes = 5 * 1024 * 1024;
+
+    private static readonly Dictionary<string, string> PronunciationAudioExtensionsByContentType = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["audio/mpeg"] = ".mp3",
+        ["audio/mp3"] = ".mp3",
+        ["audio/wav"] = ".wav",
+        ["audio/x-wav"] = ".wav",
+        ["audio/ogg"] = ".ogg",
+        ["audio/webm"] = ".webm",
+        ["audio/mp4"] = ".m4a",
+        ["audio/x-m4a"] = ".m4a",
+    };
+
     private readonly ILexiconEntryService entryService;
 
     public AdminLexiconController(ILexiconEntryService entryService)
@@ -134,6 +150,54 @@ public sealed class AdminLexiconController : ApiControllerBase
     public async Task<ActionResult<LexiconEntryDto>> SetPlayable(Guid id, SetPlayableLexiconEntryRequest request, CancellationToken cancellationToken)
     {
         var result = await entryService.SetPlayableAsync(id, request.Playable, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpPost("{id:guid}/pronunciation")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [RequestSizeLimit(MaxPronunciationAudioBytes)]
+    public async Task<ActionResult<LexiconEntryDto>> UploadPronunciation(Guid id, IFormFile file, CancellationToken cancellationToken)
+    {
+        if (file is null || file.Length == 0)
+        {
+            return FromError(Error.Validation("An audio file is required."));
+        }
+
+        if (file.Length > MaxPronunciationAudioBytes)
+        {
+            return FromError(Error.Validation("The recording must be 5 MB or smaller."));
+        }
+
+        if (!PronunciationAudioExtensionsByContentType.TryGetValue(file.ContentType, out var extension))
+        {
+            return FromError(Error.Validation(
+                $"Unsupported audio type '{file.ContentType}'. Use MP3, WAV, OGG, WebM, or M4A."));
+        }
+
+        await using var stream = file.OpenReadStream();
+        var result = await entryService.UploadPronunciationAudioAsync(id, stream, extension, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpDelete("{id:guid}/pronunciation")]
+    [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LexiconEntryDto>> RemovePronunciation(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await entryService.RemovePronunciationAudioAsync(id, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);
