@@ -3709,6 +3709,7 @@ export interface components {
             /** Format: uuid */
             lexiconEntryId: string;
             syriacUnvocalized: string;
+            syriacVocalized: null | string;
             sblTransliteration: null | string;
             /** Format: int32 */
             playableLength: number | string;

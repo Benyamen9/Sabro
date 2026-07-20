@@ -65,6 +65,7 @@ internal sealed class MelthoLibraryService : IMelthoLibraryService
                     r.LastPlayedOn,
                     item.Id,
                     item.SyriacUnvocalized,
+                    item.SyriacVocalized,
                     item.SblTransliteration,
                     item.PlayableLength,
                     r.TimesPlayed,

@@ -6595,6 +6595,7 @@
           "lastPlayedOn",
           "lexiconEntryId",
           "syriacUnvocalized",
+          "syriacVocalized",
           "sblTransliteration",
           "playableLength",
           "timesPlayed",
@@ -6612,6 +6613,12 @@
           },
           "syriacUnvocalized": {
             "type": "string"
+          },
+          "syriacVocalized": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "sblTransliteration": {
             "type": [
