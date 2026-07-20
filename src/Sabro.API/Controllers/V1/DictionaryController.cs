@@ -115,7 +115,8 @@ public sealed class DictionaryController : ApiControllerBase
             detail.Root,
             detail.Meanings,
             detail.Composition,
-            playedInMeltho));
+            playedInMeltho,
+            detail.PronunciationAudioUrl));
     }
 
     private async Task<bool> WasPlayedBeforeTodayAsync(Guid lexiconEntryId, CancellationToken cancellationToken)

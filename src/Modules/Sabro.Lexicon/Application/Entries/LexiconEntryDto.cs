@@ -14,6 +14,7 @@ public sealed record LexiconEntryDto(
     IReadOnlyList<LexiconMeaningDto> Meanings,
     LexiconEntryStatus Status,
     bool PlayableInMeltho,
+    string? PronunciationAudioUrl,
     int PlayableLength,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);

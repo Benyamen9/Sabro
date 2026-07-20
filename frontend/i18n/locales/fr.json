@@ -310,6 +310,10 @@
       "root": "Racine",
       "meanings": "Sens"
     },
+    "pronunciation": {
+      "listen": "Écouter",
+      "pause": "Pause"
+    },
     "letters": {
       "Alaph": "Olaf", "Beth": "Beth", "Gamal": "Gomal", "Dalath": "Dolath",
       "He": "He", "Waw": "Waw", "Zayn": "Zay", "Heth": "Ḥeth", "Teth": "Ṭeth",
@@ -391,7 +395,7 @@
         "morphology": "Morphologie",
         "morphologyHint": "Notes libres facultatives.",
         "meanings": "Significations",
-        "meaningsHint": "L’anglais, le français et le néerlandais sont tous requis pour publier.",
+        "meaningsHint": "L’anglais, le français, le néerlandais, l’allemand et le suédois sont tous requis pour publier.",
         "playableLength": "Longueur jouable",
         "playableLengthHint": "Comptée à partir de la forme non vocalisée. Le vivier de Meltho accepte 2 à 8 lettres.",
         "playableLengthInRange": "Dans la fenêtre 2–8 de Meltho.",
@@ -399,11 +403,23 @@
       },
       "lifecycle": {
         "heading": "Cycle de vie",
-        "publishHint": "La publication requiert les significations en anglais, français et néerlandais.",
+        "publishHint": "La publication requiert les significations en anglais, français, néerlandais, allemand et suédois.",
         "poolHeading": "Vivier de Meltho",
         "poolHint": "Seules les entrées publiées de 2 à 8 lettres peuvent rejoindre le vivier de Meltho.",
         "inPool": "Dans le vivier de Meltho",
         "notInPool": "Hors du vivier de Meltho"
+      },
+      "pronunciation": {
+        "heading": "Prononciation",
+        "hint": "Facultatif. Téléversez un court enregistrement pour montrer comment prononcer le mot.",
+        "formatHint": "MP3, WAV, OGG, WebM ou M4A, jusqu’à 5 Mo.",
+        "none": "Aucun enregistrement pour l’instant.",
+        "upload": "Téléverser un enregistrement",
+        "replace": "Remplacer l’enregistrement",
+        "remove": "Supprimer l’enregistrement",
+        "uploading": "Téléversement…",
+        "uploadFailed": "Impossible de téléverser l’enregistrement.",
+        "removeFailed": "Impossible de supprimer l’enregistrement."
       },
       "meaning": {
         "en": "Anglais",

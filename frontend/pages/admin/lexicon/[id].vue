@@ -7,7 +7,8 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
-const { getById, update, remove, publish, unpublish, setPlayable } = useLexiconAdmin()
+const { getById, update, remove, publish, unpublish, setPlayable, uploadPronunciation, removePronunciation } = useLexiconAdmin()
+const mediaUrl = useMediaUrl()
 const route = useRoute()
 const router = useRouter()
 
@@ -90,6 +91,49 @@ function onTogglePlayable() {
   if (!entry.value) return
   const next = !entry.value.playableInMeltho
   runAction(() => setPlayable(entry.value!.id, next), 'admin.lexicon.actionFailed')
+}
+
+const pronunciationInput = ref<HTMLInputElement | null>(null)
+const pronunciationUploading = ref(false)
+const pronunciationError = ref<string | null>(null)
+
+function triggerPronunciationSelect() {
+  pronunciationInput.value?.click()
+}
+
+async function onPronunciationSelected(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!entry.value || !file) return
+
+  pronunciationUploading.value = true
+  pronunciationError.value = null
+  try {
+    await uploadPronunciation(entry.value.id, file)
+    await refresh()
+  }
+  catch {
+    pronunciationError.value = t('admin.lexicon.pronunciation.uploadFailed')
+  }
+  finally {
+    pronunciationUploading.value = false
+    if (pronunciationInput.value) pronunciationInput.value.value = ''
+  }
+}
+
+async function onRemovePronunciation() {
+  if (!entry.value) return
+  pronunciationUploading.value = true
+  pronunciationError.value = null
+  try {
+    await removePronunciation(entry.value.id)
+    await refresh()
+  }
+  catch {
+    pronunciationError.value = t('admin.lexicon.pronunciation.removeFailed')
+  }
+  finally {
+    pronunciationUploading.value = false
+  }
 }
 
 async function onDelete() {
@@ -216,6 +260,62 @@ const actionButtonClass
         </div>
         <p class="mt-2 font-sans text-xs text-[var(--color-text-faint)]">
           {{ t('admin.lexicon.lifecycle.poolHint') }}
+        </p>
+
+        <hr class="my-5 border-t border-[var(--color-border)]">
+
+        <h3 class="font-sans text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          {{ t('admin.lexicon.pronunciation.heading') }}
+        </h3>
+        <p class="mt-2 font-sans text-xs text-[var(--color-text-faint)]">
+          {{ t('admin.lexicon.pronunciation.hint') }}
+        </p>
+
+        <audio
+          v-if="entry.pronunciationAudioUrl"
+          class="mt-3 w-full max-w-sm"
+          controls
+          :src="mediaUrl(entry.pronunciationAudioUrl)"
+        />
+        <p v-else class="mt-3 font-sans text-sm text-[var(--color-text-muted)]">
+          {{ t('admin.lexicon.pronunciation.none') }}
+        </p>
+
+        <p
+          v-if="pronunciationError"
+          class="mt-2 font-sans text-sm text-[var(--color-accent)]"
+        >{{ pronunciationError }}</p>
+
+        <div class="mt-3 flex flex-wrap items-center gap-3">
+          <input
+            ref="pronunciationInput"
+            type="file"
+            accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/ogg,audio/webm,audio/mp4,audio/x-m4a"
+            class="hidden"
+            @change="onPronunciationSelected"
+          >
+          <button
+            type="button"
+            :disabled="pronunciationUploading"
+            :class="actionButtonClass"
+            @click="triggerPronunciationSelect"
+          >
+            {{ pronunciationUploading
+              ? t('admin.lexicon.pronunciation.uploading')
+              : entry.pronunciationAudioUrl
+                ? t('admin.lexicon.pronunciation.replace')
+                : t('admin.lexicon.pronunciation.upload') }}
+          </button>
+          <button
+            v-if="entry.pronunciationAudioUrl"
+            type="button"
+            :disabled="pronunciationUploading"
+            :class="actionButtonClass"
+            @click="onRemovePronunciation"
+          >{{ t('admin.lexicon.pronunciation.remove') }}</button>
+        </div>
+        <p class="mt-2 font-sans text-xs text-[var(--color-text-faint)]">
+          {{ t('admin.lexicon.pronunciation.formatHint') }}
         </p>
 
         <hr class="my-5 border-t border-[var(--color-border)]">

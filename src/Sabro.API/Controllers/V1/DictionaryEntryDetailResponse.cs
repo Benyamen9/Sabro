@@ -21,4 +21,5 @@ public sealed record DictionaryEntryDetailResponse(
     string? Root,
     IReadOnlyList<LexiconMeaningDto> Meanings,
     IReadOnlyList<SyriacLetter> Composition,
-    bool PlayedInMeltho);
+    bool PlayedInMeltho,
+    string? PronunciationAudioUrl);

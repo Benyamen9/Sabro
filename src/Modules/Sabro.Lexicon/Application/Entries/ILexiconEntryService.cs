@@ -17,6 +17,17 @@ public interface ILexiconEntryService
 
     Task<Result<LexiconEntryDto>> SetPlayableAsync(Guid id, bool playable, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Stores the uploaded stream as the entry's pronunciation recording, replacing (and deleting)
+    /// any previous one. <paramref name="extension"/> is the validated file extension including the
+    /// leading dot (e.g. ".mp3"), chosen by the caller from the request's content type.
+    /// </summary>
+    Task<Result<LexiconEntryDto>> UploadPronunciationAudioAsync(
+        Guid id, Stream content, string extension, CancellationToken cancellationToken);
+
+    /// <summary>Deletes the entry's pronunciation recording, if any. Idempotent.</summary>
+    Task<Result<LexiconEntryDto>> RemovePronunciationAudioAsync(Guid id, CancellationToken cancellationToken);
+
     /// <summary>Returns any entry regardless of status. For Owner/admin surfaces.</summary>
     Task<Result<LexiconEntryDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 

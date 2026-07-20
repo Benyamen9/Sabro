@@ -18,4 +18,5 @@ public sealed record LexiconLibraryDetail(
     int PlayableLength,
     string? Root,
     IReadOnlyList<LexiconMeaningDto> Meanings,
-    IReadOnlyList<SyriacLetter> Composition);
+    IReadOnlyList<SyriacLetter> Composition,
+    string? PronunciationAudioUrl);

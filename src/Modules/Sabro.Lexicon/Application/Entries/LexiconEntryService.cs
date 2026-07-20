@@ -16,6 +16,7 @@ internal sealed class LexiconEntryService : ILexiconEntryService
     private readonly IValidator<CreateLexiconEntryRequest> createValidator;
     private readonly IValidator<UpdateLexiconEntryRequest> updateValidator;
     private readonly ISearchIndex<LexiconEntrySearchDocument> searchIndex;
+    private readonly IPronunciationAudioStorage pronunciationAudioStorage;
     private readonly ILogger<LexiconEntryService> logger;
 
     public LexiconEntryService(
@@ -23,12 +24,14 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         IValidator<CreateLexiconEntryRequest> createValidator,
         IValidator<UpdateLexiconEntryRequest> updateValidator,
         ISearchIndex<LexiconEntrySearchDocument> searchIndex,
+        IPronunciationAudioStorage pronunciationAudioStorage,
         ILogger<LexiconEntryService> logger)
     {
         this.dbContext = dbContext;
         this.createValidator = createValidator;
         this.updateValidator = updateValidator;
         this.searchIndex = searchIndex;
+        this.pronunciationAudioStorage = pronunciationAudioStorage;
         this.logger = logger;
     }
 
@@ -177,6 +180,51 @@ internal sealed class LexiconEntryService : ILexiconEntryService
     public Task<Result<LexiconEntryDto>> SetPlayableAsync(Guid id, bool playable, CancellationToken cancellationToken) =>
         MutateAsync(id, entry => entry.SetPlayable(playable), $"playable={playable}", cancellationToken);
 
+    public async Task<Result<LexiconEntryDto>> UploadPronunciationAudioAsync(
+        Guid id, Stream content, string extension, CancellationToken cancellationToken)
+    {
+        var entry = await dbContext.Entries.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        if (entry is null)
+        {
+            return Result<LexiconEntryDto>.Failure(Error.NotFound($"LexiconEntry {id} not found."));
+        }
+
+        var previousUrl = entry.PronunciationAudioUrl;
+        var newUrl = await pronunciationAudioStorage.SaveAsync(id, content, extension, cancellationToken);
+        entry.SetPronunciationAudio(newUrl);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        // Replace, not accumulate: drop the old file once the new one is safely recorded.
+        if (previousUrl is not null && previousUrl != newUrl)
+        {
+            pronunciationAudioStorage.Delete(previousUrl);
+        }
+
+        logger.LogInformation("LexiconEntry pronunciation uploaded. Id={EntryId}", id);
+        return Result<LexiconEntryDto>.Success(Map(entry));
+    }
+
+    public async Task<Result<LexiconEntryDto>> RemovePronunciationAudioAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var entry = await dbContext.Entries.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        if (entry is null)
+        {
+            return Result<LexiconEntryDto>.Failure(Error.NotFound($"LexiconEntry {id} not found."));
+        }
+
+        var previousUrl = entry.PronunciationAudioUrl;
+        entry.SetPronunciationAudio(null);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        if (previousUrl is not null)
+        {
+            pronunciationAudioStorage.Delete(previousUrl);
+        }
+
+        logger.LogInformation("LexiconEntry pronunciation removed. Id={EntryId}", id);
+        return Result<LexiconEntryDto>.Success(Map(entry));
+    }
+
     public async Task<Result<LexiconEntryDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var entry = await dbContext.Entries
@@ -221,6 +269,7 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         entry.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray(),
         entry.Status,
         entry.PlayableInMeltho,
+        entry.PronunciationAudioUrl,
         entry.PlayableLength,
         entry.CreatedAt,
         entry.UpdatedAt);

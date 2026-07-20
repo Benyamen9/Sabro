@@ -310,6 +310,10 @@
       "root": "Wurzel",
       "meanings": "Bedeutungen"
     },
+    "pronunciation": {
+      "listen": "Anhören",
+      "pause": "Pause"
+    },
     "letters": {
       "Alaph": "Olaf",
       "Beth": "Beth",
@@ -422,7 +426,7 @@
         "morphology": "Morphologie",
         "morphologyHint": "Optionale Freitextnotizen.",
         "meanings": "Bedeutungen",
-        "meaningsHint": "Englisch, Französisch und Niederländisch sind alle für die Veröffentlichung erforderlich.",
+        "meaningsHint": "Englisch, Französisch, Niederländisch, Deutsch und Schwedisch sind alle für die Veröffentlichung erforderlich.",
         "playableLength": "Spielbare Länge",
         "playableLengthHint": "Gezählt anhand der unvokalisierten Form. Der Meltho-Pool akzeptiert 2–8 Buchstaben.",
         "playableLengthInRange": "Innerhalb des 2–8-Fensters von Meltho.",
@@ -430,11 +434,23 @@
       },
       "lifecycle": {
         "heading": "Lebenszyklus",
-        "publishHint": "Die Veröffentlichung erfordert englische, französische und niederländische Bedeutungen.",
+        "publishHint": "Die Veröffentlichung erfordert englische, französische, niederländische, deutsche und schwedische Bedeutungen.",
         "poolHeading": "Meltho-Pool",
         "poolHint": "Nur veröffentlichte Einträge mit 2–8 Buchstaben können dem Meltho-Pool beitreten.",
         "inPool": "Im Meltho-Pool",
         "notInPool": "Nicht im Meltho-Pool"
+      },
+      "pronunciation": {
+        "heading": "Aussprache",
+        "hint": "Optional. Laden Sie eine kurze Aufnahme hoch, um die Aussprache des Wortes zu zeigen.",
+        "formatHint": "MP3, WAV, OGG, WebM oder M4A, bis zu 5 MB.",
+        "none": "Noch keine Aufnahme.",
+        "upload": "Aufnahme hochladen",
+        "replace": "Aufnahme ersetzen",
+        "remove": "Aufnahme entfernen",
+        "uploading": "Wird hochgeladen…",
+        "uploadFailed": "Die Aufnahme konnte nicht hochgeladen werden.",
+        "removeFailed": "Die Aufnahme konnte nicht entfernt werden."
       },
       "meaning": {
         "en": "Englisch",

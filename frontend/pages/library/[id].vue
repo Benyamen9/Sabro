@@ -3,6 +3,7 @@ import type { FetchError } from 'ofetch'
 
 const { t } = useI18n()
 const route = useRoute()
+const mediaUrl = useMediaUrl()
 
 // The unified word detail: the dictionary endpoint resolves every published
 // word; useDictionary().getWord falls back to the Meltho library endpoint for
@@ -93,6 +94,16 @@ function categoryLabel(category: string | undefined) {
   const label = t(key)
   return label === key ? category : label
 }
+
+const pronunciationAudio = ref<HTMLAudioElement | null>(null)
+const isPlayingPronunciation = ref(false)
+
+function togglePronunciation() {
+  const audio = pronunciationAudio.value
+  if (!audio) return
+  if (audio.paused) audio.play()
+  else audio.pause()
+}
 </script>
 
 <template>
@@ -130,6 +141,24 @@ function categoryLabel(category: string | undefined) {
           <p v-if="data.sblTransliteration" class="mt-1.5 font-serif text-[21px] text-[var(--color-text-muted)] italic">
             {{ data.sblTransliteration }}
           </p>
+          <template v-if="data.pronunciationAudioUrl">
+            <button
+              type="button"
+              class="mt-3 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-4 py-1.5 font-sans text-[13px] text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+              @click="togglePronunciation"
+            >
+              <span aria-hidden="true">{{ isPlayingPronunciation ? '⏸' : '▶' }}</span>
+              {{ isPlayingPronunciation ? t('library.pronunciation.pause') : t('library.pronunciation.listen') }}
+            </button>
+            <audio
+              ref="pronunciationAudio"
+              class="hidden"
+              :src="mediaUrl(data.pronunciationAudioUrl)"
+              @play="isPlayingPronunciation = true"
+              @pause="isPlayingPronunciation = false"
+              @ended="isPlayingPronunciation = false"
+            />
+          </template>
           <div class="mt-4 flex flex-wrap items-center justify-center gap-2 font-sans text-[12.5px]">
             <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-1 text-[var(--color-text-muted)]">
               {{ categoryLabel(data.grammaticalCategory) }}

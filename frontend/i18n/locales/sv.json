@@ -310,6 +310,10 @@
       "root": "Rot",
       "meanings": "Betydelser"
     },
+    "pronunciation": {
+      "listen": "Lyssna",
+      "pause": "Pausa"
+    },
     "letters": {
       "Alaph": "Olaf",
       "Beth": "Beth",
@@ -422,7 +426,7 @@
         "morphology": "Morfologi",
         "morphologyHint": "Valfria fritextanteckningar.",
         "meanings": "Betydelser",
-        "meaningsHint": "Engelska, franska och nederländska krävs alla för publicering.",
+        "meaningsHint": "Engelska, franska, nederländska, tyska och svenska krävs alla för publicering.",
         "playableLength": "Spelbar längd",
         "playableLengthHint": "Räknas utifrån den ovokaliserade formen. Meltho-poolen accepterar 2–8 bokstäver.",
         "playableLengthInRange": "Inom Melthos 2–8-fönster.",
@@ -430,11 +434,23 @@
       },
       "lifecycle": {
         "heading": "Livscykel",
-        "publishHint": "Publicering kräver engelska, franska och nederländska betydelser.",
+        "publishHint": "Publicering kräver engelska, franska, nederländska, tyska och svenska betydelser.",
         "poolHeading": "Meltho-pool",
         "poolHint": "Endast publicerade poster med 2–8 bokstäver kan gå med i Meltho-poolen.",
         "inPool": "I Meltho-poolen",
         "notInPool": "Inte i Meltho-poolen"
+      },
+      "pronunciation": {
+        "heading": "Uttal",
+        "hint": "Valfritt. Ladda upp en kort inspelning som visar hur ordet uttalas.",
+        "formatHint": "MP3, WAV, OGG, WebM eller M4A, upp till 5 MB.",
+        "none": "Ingen inspelning ännu.",
+        "upload": "Ladda upp inspelning",
+        "replace": "Ersätt inspelning",
+        "remove": "Ta bort inspelning",
+        "uploading": "Laddar upp…",
+        "uploadFailed": "Inspelningen kunde inte laddas upp.",
+        "removeFailed": "Inspelningen kunde inte tas bort."
       },
       "meaning": {
         "en": "Engelska",

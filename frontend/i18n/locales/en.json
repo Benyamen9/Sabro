@@ -310,6 +310,10 @@
       "root": "Root",
       "meanings": "Meanings"
     },
+    "pronunciation": {
+      "listen": "Listen",
+      "pause": "Pause"
+    },
     "letters": {
       "Alaph": "Olaf", "Beth": "Beth", "Gamal": "Gomal", "Dalath": "Dolath",
       "He": "He", "Waw": "Waw", "Zayn": "Zay", "Heth": "Ḥeth", "Teth": "Ṭeth",
@@ -391,7 +395,7 @@
         "morphology": "Morphology",
         "morphologyHint": "Optional free-text notes.",
         "meanings": "Meanings",
-        "meaningsHint": "English, French and Dutch are all required to publish.",
+        "meaningsHint": "English, French, Dutch, German and Swedish are all required to publish.",
         "playableLength": "Playable length",
         "playableLengthHint": "Counted from the unvocalized form. The Meltho pool accepts 2–8 letters.",
         "playableLengthInRange": "Within the 2–8 Meltho window.",
@@ -399,11 +403,23 @@
       },
       "lifecycle": {
         "heading": "Lifecycle",
-        "publishHint": "Publishing requires English, French and Dutch meanings.",
+        "publishHint": "Publishing requires English, French, Dutch, German and Swedish meanings.",
         "poolHeading": "Meltho pool",
         "poolHint": "Only published entries of 2–8 letters can join the Meltho pool.",
         "inPool": "In the Meltho pool",
         "notInPool": "Not in the Meltho pool"
+      },
+      "pronunciation": {
+        "heading": "Pronunciation",
+        "hint": "Optional. Upload a short recording to teach how the word is pronounced.",
+        "formatHint": "MP3, WAV, OGG, WebM or M4A, up to 5 MB.",
+        "none": "No recording yet.",
+        "upload": "Upload recording",
+        "replace": "Replace recording",
+        "remove": "Remove recording",
+        "uploading": "Uploading…",
+        "uploadFailed": "Could not upload the recording.",
+        "removeFailed": "Could not remove the recording."
       },
       "meaning": {
         "en": "English",

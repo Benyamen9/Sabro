@@ -160,6 +160,10 @@ try
 
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
+
+    // Serves wwwroot/media (bibliography images, pronunciation recordings) — no auth,
+    // matching "clients read content through validated URLs" for static assets.
+    app.UseStaticFiles();
     app.UseCors("frontend");
     app.UseRateLimiter();
     app.UseAuthentication();

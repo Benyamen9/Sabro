@@ -421,6 +421,7 @@ public class LexiconEntryServiceTests
             new CreateLexiconEntryRequestValidator(),
             new UpdateLexiconEntryRequestValidator(),
             Substitute.For<ISearchIndex<LexiconEntrySearchDocument>>(),
+            Substitute.For<IPronunciationAudioStorage>(),
             NullLogger<LexiconEntryService>.Instance);
 
     private async Task<Guid> CreateDraftAsync(CancellationToken ct, params CreateLexiconMeaningRequest[] meanings)

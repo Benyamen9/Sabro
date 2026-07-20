@@ -69,6 +69,7 @@ internal sealed class LexiconLibraryReader : ILexiconLibraryReader
             entry.PlayableLength,
             root,
             entry.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray(),
-            SyriacComposition.Decompose(entry.SyriacVocalized));
+            SyriacComposition.Decompose(entry.SyriacVocalized),
+            entry.PronunciationAudioUrl);
     }
 }

@@ -18,4 +18,5 @@ public sealed record MelthoLibraryDetailDto(
     string? Root,
     IReadOnlyList<MelthoPuzzleMeaningDto> Meanings,
     IReadOnlyList<SyriacLetter> Composition,
-    IReadOnlyList<DateOnly> PlayedOn);
+    IReadOnlyList<DateOnly> PlayedOn,
+    string? PronunciationAudioUrl);

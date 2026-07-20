@@ -352,7 +352,8 @@ public class MelthoLibraryServiceTests
                 4,
                 "ܡܠܠ",
                 new[] { new LexiconMeaningDto("en", "word") },
-                SyriacComposition.Decompose("ܡܶܠܬ݂ܳܐ")));
+                SyriacComposition.Decompose("ܡܶܠܬ݂ܳܐ"),
+                null));
         return reader;
     }
 

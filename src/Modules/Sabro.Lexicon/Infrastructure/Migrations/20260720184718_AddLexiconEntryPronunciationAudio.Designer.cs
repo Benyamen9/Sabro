@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sabro.Lexicon.Infrastructure;
@@ -12,9 +13,11 @@ using Sabro.Lexicon.Infrastructure;
 namespace Sabro.Lexicon.Infrastructure.Migrations
 {
     [DbContext(typeof(LexiconDbContext))]
-    partial class LexiconDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260720184718_AddLexiconEntryPronunciationAudio")]
+    partial class AddLexiconEntryPronunciationAudio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -37,6 +37,7 @@ public sealed class LexiconModule : IModuleRegistration
         services.AddScoped<ILexiconPlayablePool, LexiconPlayablePool>();
         services.AddScoped<ILexiconLibraryReader, LexiconLibraryReader>();
         services.AddScoped<ISearchRebuilder, LexiconSearchRebuilder>();
+        services.AddSingleton<IPronunciationAudioStorage, FileSystemPronunciationAudioStorage>();
 
         services.AddSearchIndex<LexiconEntrySearchDocument, LexiconEntryIndexDescriptor>();
     }
