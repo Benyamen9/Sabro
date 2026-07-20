@@ -1,0 +1,516 @@
+{
+  "site": {
+    "title": "Sabro",
+    "tagline": "Eine Plattform für die syrische Sprache",
+    "statusMvp": "MVP · in Entwicklung",
+    "promise": "Kostenlos, für alle, für immer."
+  },
+  "home": {
+    "eyebrow": "Die syrische Sprache",
+    "titleLine1": "Syrisch,",
+    "titleLine2": "Buchstabe für Buchstabe.",
+    "nameGloss": "sabro — syrisch für „Hoffnung“",
+    "playedToday": "Heute gespielt",
+    "lede": "Sabro bedeutet Hoffnung — und genau das ist das Projekt: ein lebendiges Zuhause für die syrische Sprache. Lernen Sie sie spielerisch — zwei kostenlose tägliche Spiele, {meltho} und {mno} — und behalten Sie jedes Wort, das sie vermitteln.",
+    "liveNow": "Jetzt live",
+    "meltho": {
+      "heading": "Meltho",
+      "live": "Live",
+      "body": "Ein Wordle auf Syrisch — sechs Versuche, um das versteckte Wort des Tages zu finden. Sie müssen das Alphabet nicht kennen: Die Tastatur zeigt beim Spielen den Laut jedes Buchstabens.",
+      "cta": "Heutiges Wort spielen"
+    },
+    "mno": {
+      "heading": "Mno",
+      "live": "Live",
+      "body": "Ein tägliches Zahlenrätsel mit syrischen Ziffern — im Syrischen sind die Buchstaben auch die Zahlen. Bilden Sie die Gleichung, die das heutige Ziel trifft, von Anfänger bis Extrem.",
+      "cta": "Heutige Gleichung spielen"
+    },
+    "library": {
+      "eyebrow": "Wortbibliothek",
+      "heading": "Jedes Wort, zerlegt",
+      "body": "Durchstöbern Sie jedes Wort, das die Spiele gezeigt haben — seine Buchstaben, Laute, Wurzel und Bedeutung auf Englisch, Französisch und Niederländisch — eins nach dem anderen.",
+      "cta": "Bibliothek öffnen",
+      "latestTag": "Neuestes Wort"
+    },
+    "soonTag": "Demnächst",
+    "soonBody": "Ein neues Spiel nimmt Gestalt an. Mehr, sobald es fertig ist."
+  },
+  "nav": {
+    "primary": "Hauptnavigation",
+    "home": "Startseite",
+    "translations": "Übersetzungen",
+    "library": "Bibliothek",
+    "admin": "Backoffice",
+    "meltho": "Meltho",
+    "mno": "Mno"
+  },
+  "switcher": {
+    "languageLabel": "Sprache",
+    "scriptLabel": "Syrische Schrift",
+    "scriptNote": "Nur die Buchstabenformen — Vokale, Grammatik und Aussprache folgen der westsyrischen Tradition.",
+    "script": {
+      "estrangela": "Estrangeloyo",
+      "serto": "Maherboyo",
+      "madnhaya": "Madenhoyo"
+    }
+  },
+  "common": {
+    "retry": "Erneut versuchen",
+    "loading": "Wird geladen…",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
+  "auth": {
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "notConfigured": "Authentifizierung nicht konfiguriert",
+    "signInHint": "Melden Sie sich mit Ihrem Konto an, um diesen Inhalt zu sehen.",
+    "signedInAs": "Angemeldet als {name}"
+  },
+  "account": {
+    "menu": "Kontomenü",
+    "profileSettings": "Profil & Einstellungen",
+    "eyebrow": "Ihr Konto",
+    "title": "Profil",
+    "signInRequired": "Melden Sie sich an, um Ihr Profil zu sehen.",
+    "identityNote": "Ihr Name und Ihre E-Mail-Adresse werden von Ihrem Anmeldekonto verwaltet.",
+    "nav": {
+      "account": "Konto",
+      "security": "Sicherheit",
+      "profile": "Profil",
+      "games": "Spiele",
+      "meltho": "Meltho",
+      "mno": "Mno",
+      "preferences": "Einstellungen",
+      "leaderboard": "Bestenliste",
+      "username": "Benutzername",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "session": "Sitzung",
+      "export": "Ihre Daten",
+      "delete": "Konto löschen"
+    },
+    "username": {
+      "heading": "Benutzername",
+      "body": "Ändern Sie den Benutzernamen, mit dem Sie sich anmelden.",
+      "label": "Neuer Benutzername",
+      "hint": "Buchstaben, Ziffern und Unterstriche; muss mit einem Buchstaben oder Unterstrich beginnen.",
+      "save": "Benutzernamen aktualisieren",
+      "success": "Benutzername aktualisiert.",
+      "errors": {
+        "required": "Bitte geben Sie einen Benutzernamen ein.",
+        "invalid": "Dieser Benutzername ist ungültig. Verwenden Sie Buchstaben, Ziffern und Unterstriche.",
+        "unchanged": "Das ist bereits Ihr Benutzername.",
+        "taken": "Dieser Benutzername ist bereits vergeben.",
+        "unauthenticated": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+        "unavailable": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "email": {
+      "heading": "E-Mail",
+      "body": "Ändern Sie die E-Mail-Adresse Ihres Kontos.",
+      "bodyCurrent": "Die E-Mail-Adresse Ihres Kontos lautet {email}. Ändern Sie sie unten.",
+      "label": "Neue E-Mail-Adresse",
+      "sendCode": "Code senden",
+      "sending": "Wird gesendet…",
+      "sentTo": "Wir haben einen 6-stelligen Code an {email} gesendet. Geben Sie ihn unten zusammen mit Ihrem aktuellen Passwort ein.",
+      "codeLabel": "Bestätigungscode",
+      "passwordLabel": "Aktuelles Passwort",
+      "confirm": "E-Mail aktualisieren",
+      "useDifferent": "Andere E-Mail-Adresse verwenden",
+      "success": "E-Mail aktualisiert.",
+      "errors": {
+        "invalid_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        "send_failed": "Der Code konnte nicht gesendet werden. Überprüfen Sie die Adresse und versuchen Sie es erneut.",
+        "code_invalid": "Dieser Code ist falsch oder abgelaufen.",
+        "password_invalid": "Ihr aktuelles Passwort ist falsch.",
+        "email_taken": "Diese E-Mail-Adresse wird bereits verwendet.",
+        "unauthenticated": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+        "unavailable": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "security": {
+      "heading": "Passwort",
+      "body": "Ändern Sie das Passwort, mit dem Sie sich anmelden.",
+      "current": "Aktuelles Passwort",
+      "new": "Neues Passwort",
+      "confirm": "Neues Passwort bestätigen",
+      "hint": "Mindestens 8 Zeichen.",
+      "save": "Passwort aktualisieren",
+      "show": "Passwort anzeigen",
+      "hide": "Passwort verbergen",
+      "success": "Passwort aktualisiert.",
+      "errors": {
+        "required": "Bitte füllen Sie alle Felder aus.",
+        "tooShort": "Ihr neues Passwort muss mindestens 8 Zeichen lang sein.",
+        "mismatch": "Die neuen Passwörter stimmen nicht überein.",
+        "sameAsCurrent": "Ihr neues Passwort muss sich von Ihrem aktuellen unterscheiden.",
+        "current_invalid": "Ihr aktuelles Passwort ist falsch.",
+        "new_rejected": "Dieses Passwort wurde abgelehnt — versuchen Sie ein längeres oder weniger gebräuchliches.",
+        "unauthenticated": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+        "unavailable": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "role": {
+      "Reader": "Leser",
+      "ExpertReviewer": "Fachgutachter",
+      "Owner": "Eigentümer"
+    },
+    "fields": {
+      "username": "Benutzername",
+      "email": "E-Mail",
+      "memberSince": "Mitglied seit"
+    },
+    "preferences": {
+      "heading": "Einstellungen",
+      "body": "Diese gelten für Ihr Konto in jeder App des Ökosystems.",
+      "saved": "Gespeichert"
+    },
+    "stats": {
+      "heading": "Meltho",
+      "subtitle": "Ihr tägliches Wortspiel",
+      "mnoHeading": "Mno",
+      "mnoSubtitle": "Ihr tägliches Zahlenspiel",
+      "mnoEmpty": "Sie haben Mno noch nicht gespielt. Ihre Statistiken erscheinen hier, sobald Sie spielen.",
+      "play": "Spielen",
+      "empty": "Sie haben Meltho noch nicht gespielt. Ihre Statistiken erscheinen hier, sobald Sie spielen.",
+      "played": "Gespielt",
+      "winRate": "Gewinnrate %",
+      "currentStreak": "Aktuelle Serie",
+      "maxStreak": "Längste Serie",
+      "distribution": "Verteilung der Versuche",
+      "averageGuesses": "Ø {value} Versuche",
+      "lastPlayedToday": "Heute gespielt",
+      "lastPlayedYesterday": "Gestern gespielt",
+      "lastPlayedDaysAgo": "Vor {count} Tagen gespielt"
+    },
+    "leaderboard": {
+      "optInHeading": "Bestenliste",
+      "optInBody": "Treten Sie um die längste Meltho-Serie an. Wählen Sie, wie Sie erscheinen und ob Sie teilnehmen möchten — Sie stehen erst auf der Liste, wenn Sie sich anmelden.",
+      "displayName": "Name auf der Bestenliste",
+      "displayNamePlaceholder": "So erscheinen Sie auf der Liste",
+      "optInToggle": "Mich auf der Bestenliste anzeigen",
+      "optInHint": "Ein Anzeigename ist erforderlich, um zu erscheinen.",
+      "saved": "Gespeichert",
+      "saveError": "Konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+      "heading": "Top-Serien",
+      "subtitle": "Die längsten Meltho-Serien",
+      "you": "Sie",
+      "yourRank": "Rang #{rank}",
+      "optedInUnranked": "Bauen Sie eine Serie auf, um in der Liste aufzusteigen.",
+      "notOptedIn": "Sie stehen noch nicht auf der Bestenliste — melden Sie sich oben an, um teilzunehmen.",
+      "dayStreak": "Tage-Serie",
+      "days": "{count} Tage",
+      "empty": "Noch keine Serien auf der Liste — starten Sie heute eine."
+    },
+    "session": {
+      "heading": "Sitzung",
+      "body": "Bei Sabro auf diesem Gerät abmelden."
+    },
+    "export": {
+      "heading": "Ihre Daten exportieren",
+      "body": "Laden Sie alles herunter, was Sabro über Sie speichert — Ihr Profil und Ihre Spielhistorie — als JSON-Datei.",
+      "button": "Meine Daten herunterladen",
+      "exporting": "Wird vorbereitet…",
+      "done": "Heruntergeladen",
+      "error": "Ihre Daten konnten nicht exportiert werden. Bitte versuchen Sie es erneut."
+    },
+    "delete": {
+      "heading": "Konto löschen",
+      "body": "Löschen Sie Ihr Konto, Ihr Profil und Ihre Spielhistorie dauerhaft. Dies entfernt auch Ihre Anmeldeidentität und kann nicht rückgängig gemacht werden.",
+      "start": "Konto löschen",
+      "confirmPrompt": "Geben Sie {word} ein, um zu bestätigen.",
+      "confirmWord": "LÖSCHEN",
+      "confirmButton": "Endgültig löschen",
+      "deleting": "Wird gelöscht…",
+      "error": "Ihr Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+    }
+  },
+  "translations": {
+    "title": "Übersetzungen",
+    "empty": "Noch keine Quellen.",
+    "signInRequired": "Melden Sie sich an, um die Übersetzungen zu durchsuchen.",
+    "loadFailed": "Übersetzungen konnten nicht geladen werden.",
+    "notFound": "Quelle nicht gefunden.",
+    "back": "Zurück zu den Übersetzungen",
+    "searchPlaceholder": "Segmente in dieser Quelle durchsuchen…",
+    "fields": {
+      "title": "Titel",
+      "originalLanguage": "Originalsprache",
+      "description": "Beschreibung",
+      "author": "Autor",
+      "chapter": "Kapitel",
+      "verse": "Vers",
+      "version": "Version"
+    },
+    "segments": {
+      "heading": "Segmente",
+      "empty": "Diese Quelle hat noch keine Segmente.",
+      "noMatches": "Keine Segmente entsprechen Ihrer Suche.",
+      "loadFailed": "Segmente konnten nicht geladen werden.",
+      "reference": "{chapter}:{verse}"
+    }
+  },
+  "pagination": {
+    "previous": "Zurück",
+    "next": "Weiter",
+    "pageOf": "Seite {page} von {total}"
+  },
+  "library": {
+    "title": "Wortbibliothek",
+    "heading": "Wortbibliothek",
+    "tabs": {
+      "label": "Bibliotheksansichten",
+      "dictionary": "Wörterbuch",
+      "meltho": "Aus Meltho"
+    },
+    "dictionary": {
+      "lede": "Jedes veröffentlichte Wort in Sabros Lexikon — durchsuchbar nach Syrisch, Transliteration oder Bedeutung.",
+      "ledeCount": "bisher im Lexikon — Buchstabe für Buchstabe durchstöberbar, in jeder Schrift durchsuchbar. Das Wörterbuch wächst mit jedem hinzugefügten Wort.",
+      "empty": "Noch keine Wörter im Wörterbuch."
+    },
+    "playedInMeltho": "Dieses Wort ist in Meltho erschienen — siehe die Wörter aus dem Spiel",
+    "lede": "Jedes Wort, das Meltho gezeigt hat, mit seinen Buchstaben und Lauten.",
+    "ledeCount": "bisher — jedes Wort, das Meltho gezeigt hat, mit seinen Buchstaben und Lauten. Jeden Tag kommt ein neues hinzu.",
+    "empty": "Noch keine früheren Wörter — schauen Sie nach dem heutigen Rätsel wieder vorbei.",
+    "loadFailed": "Die Wortbibliothek konnte nicht geladen werden.",
+    "notFound": "Dieses Wort ist noch nicht in der Bibliothek.",
+    "back": "Zurück zur Bibliothek",
+    "lastPlayed": "Zuletzt gezeigt am {date}",
+    "playedOn": "Gezeigt am",
+    "count": "{count} Wörter | {count} Wort | {count} Wörter",
+    "timesPlayed": "{count}× gezeigt",
+    "lettersCount": "{count} Buchstaben",
+    "searchPlaceholder": "Ein Wort, eine Bedeutung oder eine Transliteration suchen…",
+    "searchClear": "Suche löschen",
+    "noResults": "Keine Wörter entsprechen „{query}“.",
+    "sort": {
+      "label": "Sortieren",
+      "recent": "Zuletzt gezeigt",
+      "alphabetical": "Alphabetisch",
+      "length": "Wortlänge"
+    },
+    "direction": {
+      "ascending": "Aufsteigend — klicken zum Umkehren",
+      "descending": "Absteigend — klicken zum Umkehren"
+    },
+    "composition": {
+      "heading": "Buchstabe für Buchstabe",
+      "hint": "wird von rechts nach links gelesen, wie das Wort",
+      "none": "Fügen Sie diesem Wort eine vokalisierte Form hinzu, um seine Buchstaben aufgeschlüsselt zu sehen."
+    },
+    "fields": {
+      "unvocalized": "Syrisch",
+      "vocalized": "Vokalisiert",
+      "transliteration": "Transliteration",
+      "category": "Kategorie",
+      "length": "Buchstaben",
+      "root": "Wurzel",
+      "meanings": "Bedeutungen"
+    },
+    "letters": {
+      "Alaph": "Olaf",
+      "Beth": "Beth",
+      "Gamal": "Gomal",
+      "Dalath": "Dolath",
+      "He": "He",
+      "Waw": "Waw",
+      "Zayn": "Zay",
+      "Heth": "Ḥeth",
+      "Teth": "Ṭeth",
+      "Yudh": "Yudh",
+      "Kaph": "Kof",
+      "Lamadh": "Lomadh",
+      "Mim": "Mim",
+      "Nun": "Nun",
+      "Semkath": "Semkath",
+      "Ayn": "ʿE",
+      "Pe": "Pe",
+      "Sadhe": "Ṣodhe",
+      "Qaph": "Qof",
+      "Rish": "Rish",
+      "Shin": "Shin",
+      "Taw": "Taw",
+      "Unknown": "—"
+    },
+    "vowels": {
+      "Pthaha": "Ptoḥo (a)",
+      "Zqapha": "Zqofo (o)",
+      "Rbasa": "Rboṣo (e)",
+      "Zlama": "Zlomo (e)",
+      "Hbasa": "Ḥboṣo (i)",
+      "Esasa": "ʿṣoṣo (u)",
+      "Rwaha": "Rwoḥo"
+    },
+    "hardening": {
+      "Qushoyo": "Qushoyo — hart",
+      "Rukkokho": "Rukkokho — weich"
+    },
+    "dot": {
+      "above": "Punkt oben",
+      "below": "Punkt unten"
+    },
+    "rule": {
+      "marked": "in der Vokalisation markiert",
+      "computedSoft": "weich nach einem Vokal (berechnet)",
+      "computedHard": "hart am Anfang oder nach einem vokallosen Buchstaben (berechnet)"
+    }
+  },
+  "categories": {
+    "Noun": "Substantiv",
+    "Verb": "Verb",
+    "Adjective": "Adjektiv",
+    "Adverb": "Adverb",
+    "Pronoun": "Pronomen",
+    "Preposition": "Präposition",
+    "Conjunction": "Konjunktion",
+    "Particle": "Partikel",
+    "Numeral": "Numerale",
+    "Interjection": "Interjektion",
+    "Other": "Sonstige"
+  },
+  "admin": {
+    "adminRequired": "Administratorzugriff erforderlich.",
+    "adminRequiredHint": "Melden Sie sich mit einem Redakteurkonto an, um das Lexikon zu verwalten.",
+    "lexicon": {
+      "title": "Lexikon-Backoffice",
+      "subtitle": "Verwalten Sie die syrische Lexikondatenbank und den Meltho-Wortpool.",
+      "newEntry": "Neuer Eintrag",
+      "empty": "Noch keine Lexikoneinträge. Erstellen Sie den ersten.",
+      "loadFailed": "Lexikoneinträge konnten nicht geladen werden.",
+      "loadEntryFailed": "Dieser Eintrag konnte nicht geladen werden.",
+      "notFound": "Eintrag nicht gefunden.",
+      "saveFailed": "Der Eintrag konnte nicht gespeichert werden. Überprüfen Sie die markierten Felder.",
+      "deleteFailed": "Der Eintrag konnte nicht gelöscht werden.",
+      "actionFailed": "Die Aktion konnte nicht abgeschlossen werden.",
+      "backToList": "Zurück zum Lexikon",
+      "deleteConfirm": "Diesen Eintrag dauerhaft löschen? Dies kann nicht rückgängig gemacht werden.",
+      "columns": {
+        "syriac": "Syrisch",
+        "transliteration": "Transliteration",
+        "category": "Kategorie",
+        "status": "Status",
+        "playable": "Pool",
+        "length": "Länge"
+      },
+      "status": {
+        "Draft": "Entwurf",
+        "Published": "Veröffentlicht"
+      },
+      "actions": {
+        "edit": "Bearbeiten",
+        "create": "Eintrag erstellen",
+        "publish": "Veröffentlichen",
+        "unpublish": "Veröffentlichung aufheben",
+        "addToPool": "Zum Pool hinzufügen",
+        "removeFromPool": "Aus Pool entfernen"
+      },
+      "form": {
+        "createTitle": "Neuer Lexikoneintrag",
+        "editTitle": "Lexikoneintrag bearbeiten",
+        "syriacUnvocalized": "Syrisch (unvokalisiert)",
+        "syriacUnvocalizedHint": "Erforderlich. Basistext ohne Vokalzeichen.",
+        "syriacVocalized": "Syrisch (vokalisiert)",
+        "syriacVocalizedHint": "Optional. Mit Vokalzeichen.",
+        "sblTransliteration": "SBL-Transliteration",
+        "sblTransliterationHint": "Optionale Anreicherung; ist keine Voraussetzung für die Veröffentlichung.",
+        "transliterationVariants": "Transliterationsvarianten",
+        "transliterationVariantsHint": "Durch Kommas getrennte akzeptierte Schreibweisen für Suchtoleranz.",
+        "grammaticalCategory": "Grammatikalische Kategorie",
+        "morphology": "Morphologie",
+        "morphologyHint": "Optionale Freitextnotizen.",
+        "meanings": "Bedeutungen",
+        "meaningsHint": "Englisch, Französisch und Niederländisch sind alle für die Veröffentlichung erforderlich.",
+        "playableLength": "Spielbare Länge",
+        "playableLengthHint": "Gezählt anhand der unvokalisierten Form. Der Meltho-Pool akzeptiert 2–8 Buchstaben.",
+        "playableLengthInRange": "Innerhalb des 2–8-Fensters von Meltho.",
+        "playableLengthOutOfRange": "Außerhalb des 2–8-Fensters von Meltho."
+      },
+      "lifecycle": {
+        "heading": "Lebenszyklus",
+        "publishHint": "Die Veröffentlichung erfordert englische, französische und niederländische Bedeutungen.",
+        "poolHeading": "Meltho-Pool",
+        "poolHint": "Nur veröffentlichte Einträge mit 2–8 Buchstaben können dem Meltho-Pool beitreten.",
+        "inPool": "Im Meltho-Pool",
+        "notInPool": "Nicht im Meltho-Pool"
+      },
+      "meaning": {
+        "en": "Englisch",
+        "fr": "Französisch",
+        "nl": "Niederländisch",
+        "de": "Deutsch",
+        "sv": "Schwedisch"
+      },
+      "category": {
+        "Noun": "Substantiv",
+        "Verb": "Verb",
+        "Adjective": "Adjektiv",
+        "Adverb": "Adverb",
+        "Pronoun": "Pronomen",
+        "Preposition": "Präposition",
+        "Conjunction": "Konjunktion",
+        "Particle": "Partikel",
+        "Numeral": "Numerale",
+        "Interjection": "Interjektion",
+        "Other": "Sonstige"
+      }
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Sabro — das Ökosystem der syrischen Sprache",
+      "description": "Entdecken Sie Syrisch Wort für Wort — ein lebendiges Lexikon und tägliche Wortspiele, auf Englisch, Französisch und Niederländisch."
+    },
+    "library": {
+      "title": "Syrische Wortbibliothek",
+      "description": "Jedes veröffentlichte Wort in Sabros syrischem Lexikon — Buchstaben, Vokale, Wurzeln und Bedeutungen auf Englisch, Französisch und Niederländisch, einschließlich jedes Wortes, das das tägliche Spiel Meltho gezeigt hat."
+    },
+    "libraryWord": {
+      "title": "{translit} · {meaning}",
+      "description": "Das syrische Wort {translit} („{meaning}“): seine Buchstaben, Vokale, Wurzel und Aussprache in der Sabro-Wortbibliothek."
+    }
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "metaDescription": "Wie das Sabro-Ökosystem mit Ihren Daten umgeht: was wir speichern, Cookies, Ihre Rechte und wie Sie uns kontaktieren können.",
+    "updated": "Zuletzt aktualisiert: 6. Juli 2026",
+    "intro": "Sabro ist ein persönliches, nicht-kommerzielles akademisches Projekt, das der syrischen Sprache gewidmet ist. Diese Richtlinie erklärt, welche Daten das Sabro-Ökosystem (sabro.be und meltho.sabro.be) über Sie speichert und warum.",
+    "who": {
+      "title": "Wer verantwortlich ist",
+      "b1": "Das Sabro-Ökosystem wird privat von seinem Inhaber als persönliches, nicht-kommerzielles Projekt betrieben. Für alles, was Ihre Daten betrifft, nutzen Sie bitte die unten stehende Kontaktadresse."
+    },
+    "data": {
+      "title": "Was wir speichern",
+      "b1": "Wenn Sie ein Konto erstellen, speichert unser selbst gehosteter Anmeldedienst (Logto) Ihre E-Mail-Adresse, Ihren Benutzernamen und eine gehashte Form Ihres Passworts. Wir sehen oder speichern das Passwort selbst niemals.",
+      "b2": "Ihr Profil enthält das, was Sie auf der Profilseite festlegen: einen Anzeigenamen, Ihre bevorzugte Sprache und Ihre bevorzugte syrische Schrift.",
+      "b3": "Wenn Sie ein Spiel angemeldet spielen, speichern wir ein Ergebnis pro Spiel und Tag: das Datum, ob Sie es gelöst haben, und in wie vielen Versuchen. Spielen ohne Konto speichert nichts auf dem Server.",
+      "b4": "Unsere Server führen technische Protokolle (einschließlich IP-Adressen und, bei angemeldeten Anfragen, Ihrer Benutzer-ID) zur Fehlerbehebung und Missbrauchsprävention. Sie werden nicht zur Profilbildung verwendet und nur so lange aufbewahrt, wie nötig.",
+      "b5": "Es gibt keine Werbung, keinen Analyse- oder Tracking-Dienst, und Ihre Daten werden niemals verkauft oder für Marketingzwecke weitergegeben."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "b1": "Wir verwenden nur eine kleine Anzahl funktionaler Cookies: Ihre Sprach- und Syrisch-Schrift-Einstellungen (geteilt zwischen sabro.be und seinen Subdomains, damit die Apps konsistent bleiben) sowie ein Sitzungscookie, das Sie angemeldet hält. Es gibt keine Werbe- oder Analyse-Cookies."
+    },
+    "third": {
+      "title": "Dienste Dritter",
+      "b1": "Die Schriftarten der Oberfläche werden von Google Fonts geladen, sodass Ihr Browser beim Laden einer Seite die Server von Google kontaktiert; Google kann dabei Ihre IP-Adresse sehen.",
+      "b2": "Konto-E-Mails (wie Bestätigungscodes) werden über Resend zugestellt, das die Ziel-E-Mail-Adresse ausschließlich zu diesem Zweck verarbeitet."
+    },
+    "storage": {
+      "title": "Wo Ihre Daten liegen",
+      "b1": "Alles läuft auf einem Server in der Europäischen Union (Hetzner, Deutschland), mit nächtlichen Backups, die auf EU-Speicher aufbewahrt werden — 30 tägliche und 12 monatliche Kopien, danach werden sie überschrieben."
+    },
+    "rights": {
+      "title": "Ihre Rechte",
+      "b1": "Sie können Ihr Profil jederzeit auf der Profilseite einsehen und bearbeiten und dort auch Ihr Konto löschen — die Löschung entfernt Ihre Anmeldeidentität, Ihr Profil und Ihre Spielergebnisse.",
+      "b2": "Sie können eine Kopie der mit Ihrem Konto verknüpften Daten (einen Export) anfordern, indem Sie an die Kontaktadresse schreiben; Sie können uns auch bitten, etwas zu korrigieren oder zu löschen.",
+      "b3": "Wenn Sie glauben, dass Ihre Daten falsch behandelt werden, können Sie sich bei Ihrer Datenschutzbehörde beschweren (in Belgien die GBA/APD)."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "b1": "Für Fragen oder Anfragen zu Ihren Daten schreiben Sie an contact{'@'}sabro.be."
+    }
+  }
+}

@@ -1,0 +1,516 @@
+{
+  "site": {
+    "title": "Sabro",
+    "tagline": "En plattform för det syriska språket",
+    "statusMvp": "MVP · under utveckling",
+    "promise": "Gratis, för alla, för alltid."
+  },
+  "home": {
+    "eyebrow": "Det syriska språket",
+    "titleLine1": "Syriska,",
+    "titleLine2": "bokstav för bokstav.",
+    "nameGloss": "sabro — syriska för ”hopp”",
+    "playedToday": "Spelat idag",
+    "lede": "Sabro betyder hopp — och det är precis vad projektet är: ett levande hem för det syriska språket. Lär dig det genom att spela — två gratis dagliga spel, {meltho} och {mno} — och behåll varje ord de lär dig.",
+    "liveNow": "Live nu",
+    "meltho": {
+      "heading": "Meltho",
+      "live": "Live",
+      "body": "En Wordle på syriska — sex försök att hitta dagens gömda ord. Du behöver inte kunna alfabetet: tangentbordet visar varje bokstavs ljud medan du spelar.",
+      "cta": "Spela dagens ord"
+    },
+    "mno": {
+      "heading": "Mno",
+      "live": "Live",
+      "body": "Ett dagligt matematikpussel med syriska siffror — på syriska är bokstäverna också siffrorna. Bygg ekvationen som träffar dagens mål, från Nybörjare till Extrem.",
+      "cta": "Spela dagens ekvation"
+    },
+    "library": {
+      "eyebrow": "Ordbibliotek",
+      "heading": "Varje ord, uppdelat",
+      "body": "Bläddra bland varje ord som spelen har visat — dess bokstäver, ljud, rot och betydelse på engelska, franska och nederländska — ett i taget.",
+      "cta": "Öppna biblioteket",
+      "latestTag": "Senaste ordet"
+    },
+    "soonTag": "Kommer snart",
+    "soonBody": "Ett nytt spel tar form. Mer när det är klart."
+  },
+  "nav": {
+    "primary": "Primär navigering",
+    "home": "Hem",
+    "translations": "Översättningar",
+    "library": "Bibliotek",
+    "admin": "Backoffice",
+    "meltho": "Meltho",
+    "mno": "Mno"
+  },
+  "switcher": {
+    "languageLabel": "Språk",
+    "scriptLabel": "Syrisk skrift",
+    "scriptNote": "Endast bokstavsformerna — vokaler, grammatik och uttal följer den västsyriska traditionen.",
+    "script": {
+      "estrangela": "Estrangeloyo",
+      "serto": "Maherboyo",
+      "madnhaya": "Madenhoyo"
+    }
+  },
+  "common": {
+    "retry": "Försök igen",
+    "loading": "Laddar…",
+    "save": "Spara",
+    "saving": "Sparar…",
+    "cancel": "Avbryt",
+    "delete": "Ta bort"
+  },
+  "auth": {
+    "signIn": "Logga in",
+    "signOut": "Logga ut",
+    "notConfigured": "Autentisering inte konfigurerad",
+    "signInHint": "Logga in med ditt konto för att se det här innehållet.",
+    "signedInAs": "Inloggad som {name}"
+  },
+  "account": {
+    "menu": "Kontomeny",
+    "profileSettings": "Profil och inställningar",
+    "eyebrow": "Ditt konto",
+    "title": "Profil",
+    "signInRequired": "Logga in för att se din profil.",
+    "identityNote": "Ditt namn och din e-post hanteras av ditt inloggningskonto.",
+    "nav": {
+      "account": "Konto",
+      "security": "Säkerhet",
+      "profile": "Profil",
+      "games": "Spel",
+      "meltho": "Meltho",
+      "mno": "Mno",
+      "preferences": "Inställningar",
+      "leaderboard": "Topplista",
+      "username": "Användarnamn",
+      "email": "E-post",
+      "password": "Lösenord",
+      "session": "Session",
+      "export": "Dina uppgifter",
+      "delete": "Ta bort konto"
+    },
+    "username": {
+      "heading": "Användarnamn",
+      "body": "Ändra användarnamnet du loggar in med.",
+      "label": "Nytt användarnamn",
+      "hint": "Bokstäver, siffror och understreck; måste börja med en bokstav eller ett understreck.",
+      "save": "Uppdatera användarnamn",
+      "success": "Användarnamn uppdaterat.",
+      "errors": {
+        "required": "Ange ett användarnamn.",
+        "invalid": "Det användarnamnet är inte giltigt. Använd bokstäver, siffror och understreck.",
+        "unchanged": "Det är redan ditt användarnamn.",
+        "taken": "Det användarnamnet är redan upptaget.",
+        "unauthenticated": "Din session har gått ut. Logga in igen.",
+        "unavailable": "Något gick fel. Försök igen."
+      }
+    },
+    "email": {
+      "heading": "E-post",
+      "body": "Ändra e-postadressen för ditt konto.",
+      "bodyCurrent": "Ditt kontos e-postadress är {email}. Ändra den nedan.",
+      "label": "Ny e-postadress",
+      "sendCode": "Skicka kod",
+      "sending": "Skickar…",
+      "sentTo": "Vi har skickat en 6-siffrig kod till {email}. Ange den nedan tillsammans med ditt nuvarande lösenord.",
+      "codeLabel": "Bekräftelsekod",
+      "passwordLabel": "Nuvarande lösenord",
+      "confirm": "Uppdatera e-post",
+      "useDifferent": "Använd en annan e-postadress",
+      "success": "E-post uppdaterad.",
+      "errors": {
+        "invalid_email": "Ange en giltig e-postadress.",
+        "send_failed": "Koden kunde inte skickas. Kontrollera adressen och försök igen.",
+        "code_invalid": "Koden är felaktig eller har gått ut.",
+        "password_invalid": "Ditt nuvarande lösenord är felaktigt.",
+        "email_taken": "Den e-postadressen används redan.",
+        "unauthenticated": "Din session har gått ut. Logga in igen.",
+        "unavailable": "Något gick fel. Försök igen."
+      }
+    },
+    "security": {
+      "heading": "Lösenord",
+      "body": "Ändra lösenordet du loggar in med.",
+      "current": "Nuvarande lösenord",
+      "new": "Nytt lösenord",
+      "confirm": "Bekräfta nytt lösenord",
+      "hint": "Minst 8 tecken.",
+      "save": "Uppdatera lösenord",
+      "show": "Visa lösenord",
+      "hide": "Dölj lösenord",
+      "success": "Lösenord uppdaterat.",
+      "errors": {
+        "required": "Fyll i alla fält.",
+        "tooShort": "Ditt nya lösenord måste vara minst 8 tecken långt.",
+        "mismatch": "De nya lösenorden matchar inte.",
+        "sameAsCurrent": "Ditt nya lösenord måste skilja sig från ditt nuvarande.",
+        "current_invalid": "Ditt nuvarande lösenord är felaktigt.",
+        "new_rejected": "Det lösenordet avvisades — prova ett längre eller mindre vanligt.",
+        "unauthenticated": "Din session har gått ut. Logga in igen.",
+        "unavailable": "Något gick fel. Försök igen."
+      }
+    },
+    "role": {
+      "Reader": "Läsare",
+      "ExpertReviewer": "Expertgranskare",
+      "Owner": "Ägare"
+    },
+    "fields": {
+      "username": "Användarnamn",
+      "email": "E-post",
+      "memberSince": "Medlem sedan"
+    },
+    "preferences": {
+      "heading": "Inställningar",
+      "body": "Dessa följer ditt konto i alla appar i ekosystemet.",
+      "saved": "Sparat"
+    },
+    "stats": {
+      "heading": "Meltho",
+      "subtitle": "Ditt dagliga ordspel",
+      "mnoHeading": "Mno",
+      "mnoSubtitle": "Ditt dagliga sifferspel",
+      "mnoEmpty": "Du har inte spelat Mno än. Din statistik visas här så snart du gör det.",
+      "play": "Spela",
+      "empty": "Du har inte spelat Meltho än. Din statistik visas här så snart du gör det.",
+      "played": "Spelade",
+      "winRate": "Vinst %",
+      "currentStreak": "Aktuell svit",
+      "maxStreak": "Längsta svit",
+      "distribution": "Fördelning av gissningar",
+      "averageGuesses": "I snitt {value} gissningar",
+      "lastPlayedToday": "Spelat idag",
+      "lastPlayedYesterday": "Spelat igår",
+      "lastPlayedDaysAgo": "Spelat för {count} dagar sedan"
+    },
+    "leaderboard": {
+      "optInHeading": "Topplista",
+      "optInBody": "Tävla om den längsta Meltho-sviten. Välj hur du visas och om du vill delta — du syns inte på listan förrän du väljer att delta.",
+      "displayName": "Namn på topplistan",
+      "displayNamePlaceholder": "Så här visas du på listan",
+      "optInToggle": "Visa mig på topplistan",
+      "optInHint": "Ett visningsnamn krävs för att synas.",
+      "saved": "Sparat",
+      "saveError": "Det gick inte att spara. Försök igen.",
+      "heading": "Bästa sviter",
+      "subtitle": "De längsta Meltho-sviterna",
+      "you": "Du",
+      "yourRank": "Rankad #{rank}",
+      "optedInUnranked": "Bygg en svit för att klättra på listan.",
+      "notOptedIn": "Du är inte med på topplistan än — välj att delta ovan för att gå med.",
+      "dayStreak": "dagars svit",
+      "days": "{count} dagar",
+      "empty": "Inga sviter på listan än — starta en idag."
+    },
+    "session": {
+      "heading": "Session",
+      "body": "Logga ut från Sabro på den här enheten."
+    },
+    "export": {
+      "heading": "Exportera dina uppgifter",
+      "body": "Ladda ner allt Sabro lagrar om dig — din profil och din spelhistorik — som en JSON-fil.",
+      "button": "Ladda ner mina uppgifter",
+      "exporting": "Förbereder…",
+      "done": "Nedladdad",
+      "error": "Det gick inte att exportera dina uppgifter. Försök igen."
+    },
+    "delete": {
+      "heading": "Ta bort konto",
+      "body": "Ta bort ditt konto, din profil och din spelhistorik permanent. Detta tar även bort din inloggningsidentitet och kan inte ångras.",
+      "start": "Ta bort konto",
+      "confirmPrompt": "Skriv {word} för att bekräfta.",
+      "confirmWord": "RADERA",
+      "confirmButton": "Ta bort permanent",
+      "deleting": "Tar bort…",
+      "error": "Det gick inte att ta bort ditt konto. Försök igen."
+    }
+  },
+  "translations": {
+    "title": "Översättningar",
+    "empty": "Inga källor än.",
+    "signInRequired": "Logga in för att bläddra bland översättningarna.",
+    "loadFailed": "Det gick inte att läsa in översättningarna.",
+    "notFound": "Källan hittades inte.",
+    "back": "Tillbaka till översättningarna",
+    "searchPlaceholder": "Sök segment i den här källan…",
+    "fields": {
+      "title": "Titel",
+      "originalLanguage": "Originalspråk",
+      "description": "Beskrivning",
+      "author": "Författare",
+      "chapter": "Kapitel",
+      "verse": "Vers",
+      "version": "Version"
+    },
+    "segments": {
+      "heading": "Segment",
+      "empty": "Den här källan har inga segment än.",
+      "noMatches": "Inga segment matchar din sökning.",
+      "loadFailed": "Det gick inte att läsa in segmenten.",
+      "reference": "{chapter}:{verse}"
+    }
+  },
+  "pagination": {
+    "previous": "Föregående",
+    "next": "Nästa",
+    "pageOf": "Sida {page} av {total}"
+  },
+  "library": {
+    "title": "Ordbibliotek",
+    "heading": "Ordbibliotek",
+    "tabs": {
+      "label": "Biblioteksvyer",
+      "dictionary": "Ordbok",
+      "meltho": "Från Meltho"
+    },
+    "dictionary": {
+      "lede": "Varje publicerat ord i Sabros lexikon — sökbart efter syriska, translitteration eller betydelse.",
+      "ledeCount": "hittills i lexikonet — bläddringsbart bokstav för bokstav, sökbart i alla skriftsystem. Ordboken växer allt eftersom ord läggs till.",
+      "empty": "Inga ord i ordboken än."
+    },
+    "playedInMeltho": "Det här ordet har förekommit i Meltho — se orden från spelet",
+    "lede": "Varje ord Meltho har visat, med dess bokstäver och ljud.",
+    "ledeCount": "hittills — varje ord Meltho har visat, med dess bokstäver och ljud. Ett nytt kommer varje dag.",
+    "empty": "Inga tidigare ord än — kom tillbaka efter dagens pussel.",
+    "loadFailed": "Det gick inte att läsa in ordbiblioteket.",
+    "notFound": "Det här ordet finns inte i biblioteket än.",
+    "back": "Tillbaka till biblioteket",
+    "lastPlayed": "Senast visat {date}",
+    "playedOn": "Visat den",
+    "count": "{count} ord | {count} ord | {count} ord",
+    "timesPlayed": "visat {count}×",
+    "lettersCount": "{count} bokstäver",
+    "searchPlaceholder": "Sök ett ord, en betydelse eller en translitteration…",
+    "searchClear": "Rensa sökning",
+    "noResults": "Inga ord matchar ”{query}”.",
+    "sort": {
+      "label": "Sortera",
+      "recent": "Senast visade",
+      "alphabetical": "Alfabetiskt",
+      "length": "Ordlängd"
+    },
+    "direction": {
+      "ascending": "Stigande — klicka för att vända",
+      "descending": "Fallande — klicka för att vända"
+    },
+    "composition": {
+      "heading": "Bokstav för bokstav",
+      "hint": "läses från höger till vänster, som ordet",
+      "none": "Lägg till en vokaliserad form för det här ordet för att se dess bokstäver uppdelade."
+    },
+    "fields": {
+      "unvocalized": "Syriska",
+      "vocalized": "Vokaliserat",
+      "transliteration": "Translitteration",
+      "category": "Kategori",
+      "length": "Bokstäver",
+      "root": "Rot",
+      "meanings": "Betydelser"
+    },
+    "letters": {
+      "Alaph": "Olaf",
+      "Beth": "Beth",
+      "Gamal": "Gomal",
+      "Dalath": "Dolath",
+      "He": "He",
+      "Waw": "Waw",
+      "Zayn": "Zay",
+      "Heth": "Ḥeth",
+      "Teth": "Ṭeth",
+      "Yudh": "Yudh",
+      "Kaph": "Kof",
+      "Lamadh": "Lomadh",
+      "Mim": "Mim",
+      "Nun": "Nun",
+      "Semkath": "Semkath",
+      "Ayn": "ʿE",
+      "Pe": "Pe",
+      "Sadhe": "Ṣodhe",
+      "Qaph": "Qof",
+      "Rish": "Rish",
+      "Shin": "Shin",
+      "Taw": "Taw",
+      "Unknown": "—"
+    },
+    "vowels": {
+      "Pthaha": "Ptoḥo (a)",
+      "Zqapha": "Zqofo (o)",
+      "Rbasa": "Rboṣo (e)",
+      "Zlama": "Zlomo (e)",
+      "Hbasa": "Ḥboṣo (i)",
+      "Esasa": "ʿṣoṣo (u)",
+      "Rwaha": "Rwoḥo"
+    },
+    "hardening": {
+      "Qushoyo": "Qushoyo — hård",
+      "Rukkokho": "Rukkokho — mjuk"
+    },
+    "dot": {
+      "above": "punkt ovanför",
+      "below": "punkt under"
+    },
+    "rule": {
+      "marked": "markerad i vokaliseringen",
+      "computedSoft": "mjuk efter en vokal (beräknat)",
+      "computedHard": "hård i början eller efter en vokallös bokstav (beräknat)"
+    }
+  },
+  "categories": {
+    "Noun": "Substantiv",
+    "Verb": "Verb",
+    "Adjective": "Adjektiv",
+    "Adverb": "Adverb",
+    "Pronoun": "Pronomen",
+    "Preposition": "Preposition",
+    "Conjunction": "Konjunktion",
+    "Particle": "Partikel",
+    "Numeral": "Räkneord",
+    "Interjection": "Interjektion",
+    "Other": "Övrigt"
+  },
+  "admin": {
+    "adminRequired": "Administratörsbehörighet krävs.",
+    "adminRequiredHint": "Logga in med ett redaktörskonto för att hantera lexikonet.",
+    "lexicon": {
+      "title": "Lexikon-backoffice",
+      "subtitle": "Hantera den syriska lexikondatabasen och Meltho-ordpoolen.",
+      "newEntry": "Ny post",
+      "empty": "Inga lexikonposter än. Skapa den första.",
+      "loadFailed": "Det gick inte att läsa in lexikonposterna.",
+      "loadEntryFailed": "Det gick inte att läsa in den här posten.",
+      "notFound": "Posten hittades inte.",
+      "saveFailed": "Det gick inte att spara posten. Kontrollera de markerade fälten.",
+      "deleteFailed": "Det gick inte att ta bort posten.",
+      "actionFailed": "Åtgärden kunde inte slutföras.",
+      "backToList": "Tillbaka till lexikonet",
+      "deleteConfirm": "Ta bort den här posten permanent? Detta kan inte ångras.",
+      "columns": {
+        "syriac": "Syriska",
+        "transliteration": "Translitteration",
+        "category": "Kategori",
+        "status": "Status",
+        "playable": "Pool",
+        "length": "Längd"
+      },
+      "status": {
+        "Draft": "Utkast",
+        "Published": "Publicerad"
+      },
+      "actions": {
+        "edit": "Redigera",
+        "create": "Skapa post",
+        "publish": "Publicera",
+        "unpublish": "Avpublicera",
+        "addToPool": "Lägg till i poolen",
+        "removeFromPool": "Ta bort från poolen"
+      },
+      "form": {
+        "createTitle": "Ny lexikonpost",
+        "editTitle": "Redigera lexikonpost",
+        "syriacUnvocalized": "Syriska (ovokaliserad)",
+        "syriacUnvocalizedHint": "Obligatoriskt. Grundtext utan vokaltecken.",
+        "syriacVocalized": "Syriska (vokaliserad)",
+        "syriacVocalizedHint": "Valfritt. Med vokaltecken.",
+        "sblTransliteration": "SBL-translitteration",
+        "sblTransliterationHint": "Valfri berikning; är inte ett krav för publicering.",
+        "transliterationVariants": "Translitterationsvarianter",
+        "transliterationVariantsHint": "Kommaseparerade accepterade stavningar för söktolerans.",
+        "grammaticalCategory": "Grammatisk kategori",
+        "morphology": "Morfologi",
+        "morphologyHint": "Valfria fritextanteckningar.",
+        "meanings": "Betydelser",
+        "meaningsHint": "Engelska, franska och nederländska krävs alla för publicering.",
+        "playableLength": "Spelbar längd",
+        "playableLengthHint": "Räknas utifrån den ovokaliserade formen. Meltho-poolen accepterar 2–8 bokstäver.",
+        "playableLengthInRange": "Inom Melthos 2–8-fönster.",
+        "playableLengthOutOfRange": "Utanför Melthos 2–8-fönster."
+      },
+      "lifecycle": {
+        "heading": "Livscykel",
+        "publishHint": "Publicering kräver engelska, franska och nederländska betydelser.",
+        "poolHeading": "Meltho-pool",
+        "poolHint": "Endast publicerade poster med 2–8 bokstäver kan gå med i Meltho-poolen.",
+        "inPool": "I Meltho-poolen",
+        "notInPool": "Inte i Meltho-poolen"
+      },
+      "meaning": {
+        "en": "Engelska",
+        "fr": "Franska",
+        "nl": "Nederländska",
+        "de": "Tyska",
+        "sv": "Svenska"
+      },
+      "category": {
+        "Noun": "Substantiv",
+        "Verb": "Verb",
+        "Adjective": "Adjektiv",
+        "Adverb": "Adverb",
+        "Pronoun": "Pronomen",
+        "Preposition": "Preposition",
+        "Conjunction": "Konjunktion",
+        "Particle": "Partikel",
+        "Numeral": "Räkneord",
+        "Interjection": "Interjektion",
+        "Other": "Övrigt"
+      }
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Sabro — ekosystemet för det syriska språket",
+      "description": "Upptäck syriska ord för ord — ett levande lexikon och dagliga ordspel, på engelska, franska och nederländska."
+    },
+    "library": {
+      "title": "Syriskt ordbibliotek",
+      "description": "Varje publicerat ord i Sabros syriska lexikon — bokstäver, vokaler, rötter och betydelser på engelska, franska och nederländska, inklusive varje ord som det dagliga spelet Meltho har visat."
+    },
+    "libraryWord": {
+      "title": "{translit} · {meaning}",
+      "description": "Det syriska ordet {translit} (”{meaning}”): dess bokstäver, vokaler, rot och uttal i Sabros ordbibliotek."
+    }
+  },
+  "privacy": {
+    "title": "Integritetspolicy",
+    "metaDescription": "Hur Sabro-ekosystemet hanterar dina uppgifter: vad vi lagrar, cookies, dina rättigheter och hur du kontaktar oss.",
+    "updated": "Senast uppdaterad: 6 juli 2026",
+    "intro": "Sabro är ett personligt, icke-kommersiellt akademiskt projekt tillägnat det syriska språket. Denna policy förklarar vilka uppgifter Sabro-ekosystemet (sabro.be och meltho.sabro.be) lagrar om dig, och varför.",
+    "who": {
+      "title": "Vem som är ansvarig",
+      "b1": "Sabro-ekosystemet drivs privat av sin ägare som ett personligt, icke-kommersiellt projekt. För allt som rör dina uppgifter, använd kontaktadressen nedan."
+    },
+    "data": {
+      "title": "Vad vi lagrar",
+      "b1": "När du skapar ett konto lagrar vår egendrivna inloggningstjänst (Logto) din e-postadress, ditt användarnamn och en hashad form av ditt lösenord. Vi ser eller lagrar aldrig själva lösenordet.",
+      "b2": "Din profil innehåller det du anger på profilsidan: ett visningsnamn, ditt föredragna språk och din föredragna syriska skrift.",
+      "b3": "När du spelar ett spel medan du är inloggad lagrar vi ett resultat per spel och dag: datumet, om du löste det och i hur många försök. Att spela utan konto lagrar ingenting på servern.",
+      "b4": "Våra servrar för tekniska loggar (inklusive IP-adresser och, för inloggade förfrågningar, ditt användar-ID) för felsökning och missbruksförebyggande. De används inte för profilering och sparas endast så länge det behövs.",
+      "b5": "Det finns ingen reklam, ingen analys- eller spårningstjänst, och dina uppgifter säljs eller delas aldrig för marknadsföring."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "b1": "Vi använder endast en liten uppsättning funktionella cookies: dina språk- och syrisk skrift-inställningar (delade mellan sabro.be och dess underdomäner så att apparna förblir konsekventa) och en sessionscookie som håller dig inloggad. Det finns inga reklam- eller analyscookies."
+    },
+    "third": {
+      "title": "Tredjepartstjänster",
+      "b1": "Gränssnittets typsnitt laddas från Google Fonts, så din webbläsare kontaktar Googles servrar när en sida laddas; Google kan se din IP-adress i den förfrågan.",
+      "b2": "Kontorelaterade e-postmeddelanden (som bekräftelsekoder) skickas via Resend, som endast behandlar mottagarens e-postadress för det ändamålet."
+    },
+    "storage": {
+      "title": "Var dina uppgifter finns",
+      "b1": "Allt körs på en server inom Europeiska unionen (Hetzner, Tyskland), med nattliga säkerhetskopior som sparas på EU-lagring — 30 dagliga och 12 månatliga kopior, som sedan skrivs över."
+    },
+    "rights": {
+      "title": "Dina rättigheter",
+      "b1": "Du kan när som helst visa och redigera din profil på profilsidan, och även ta bort ditt konto där — borttagning tar bort din inloggningsidentitet, din profil och dina spelresultat.",
+      "b2": "Du kan begära en kopia av de uppgifter som är kopplade till ditt konto (en export) genom att skriva till kontaktadressen; du kan även be oss korrigera eller ta bort vad som helst.",
+      "b3": "Om du anser att dina uppgifter hanteras felaktigt kan du lämna in ett klagomål till din dataskyddsmyndighet (i Belgien GBA/APD)."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "b1": "För frågor eller önskemål om dina uppgifter, skriv till contact{'@'}sabro.be."
+    }
+  }
+}
