@@ -3,7 +3,8 @@
     "title": "Sabro",
     "tagline": "Une plateforme pour la langue syriaque",
     "statusMvp": "MVP · en développement",
-    "promise": "Gratuit, pour tout le monde, pour toujours."
+    "promise": "Gratuit, pour tout le monde, pour toujours.",
+    "attribution": "Données lexicales enrichies avec SEDRA, © Beth Mardutho: The Syriac Institute."
   },
   "home": {
     "eyebrow": "La langue syriaque",

@@ -127,6 +127,14 @@ function isActive(path: string) {
         <span>{{ t('site.title') }} — {{ t('site.tagline') }}</span>
         <span class="font-serif italic text-[var(--color-text-muted)]">{{ t('site.promise') }}</span>
       </div>
+      <div class="mx-auto mt-2 max-w-6xl px-6">
+        <a
+          href="https://sedra.bethmardutho.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="no-underline hover:text-[var(--color-text-muted)]"
+        >{{ t('site.attribution') }}</a>
+      </div>
     </footer>
   </div>
 </template>
