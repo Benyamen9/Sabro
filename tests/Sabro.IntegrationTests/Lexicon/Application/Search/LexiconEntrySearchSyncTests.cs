@@ -1,10 +1,12 @@
 using Meilisearch;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Sabro.Lexicon.Application.Entries;
 using Sabro.Lexicon.Application.Search;
 using Sabro.Lexicon.Domain;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Shared.Infrastructure.Search;
+using Sabro.Shared.Localization;
 using Sabro.Shared.Search;
 
 namespace Sabro.IntegrationTests.Lexicon.Application.Search;
@@ -39,6 +41,7 @@ public class LexiconEntrySearchSyncTests
             new UpdateLexiconEntryRequestValidator(),
             searchIndex,
             Substitute.For<IPronunciationAudioStorage>(),
+            Options.Create(new SupportedLanguagesOptions()),
             NullLogger<LexiconEntryService>.Instance);
 
         var result = await service.CreateAsync(
@@ -85,6 +88,7 @@ public class LexiconEntrySearchSyncTests
             new UpdateLexiconEntryRequestValidator(),
             searchIndex,
             Substitute.For<IPronunciationAudioStorage>(),
+            Options.Create(new SupportedLanguagesOptions()),
             NullLogger<LexiconEntryService>.Instance);
 
         var result = await service.CreateAsync(
@@ -118,6 +122,7 @@ public class LexiconEntrySearchSyncTests
             new UpdateLexiconEntryRequestValidator(),
             searchIndex,
             Substitute.For<IPronunciationAudioStorage>(),
+            Options.Create(new SupportedLanguagesOptions()),
             NullLogger<LexiconEntryService>.Instance);
 
         var created = await service.CreateAsync(

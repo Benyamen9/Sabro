@@ -6,7 +6,11 @@ namespace Sabro.Lexicon.Domain;
 
 public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
 {
-    private static readonly string[] RequiredMeaningLanguages = { "en", "fr", "nl", "de", "sv" };
+    // Fallback used only when a caller doesn't supply the currently configured
+    // set (e.g. older tests). Production code paths pass the real list, sourced
+    // from Sabro.Shared.Localization.SupportedLanguagesOptions — never hardcode
+    // the language set here, since the Owner intends to add more over time.
+    private static readonly string[] DefaultRequiredMeaningLanguages = { "en", "fr", "nl", "de", "sv" };
 
     private readonly List<string> transliterationVariants = new();
     private readonly List<LexiconMeaning> meanings = new();
@@ -91,7 +95,10 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
     /// Replaces the editable fields (full replace of variants and meanings). Recomputes
     /// <see cref="PlayableLength"/>. Does not change <see cref="Status"/> or
     /// <see cref="PlayableInMeltho"/>. A published entry must keep all required glosses —
-    /// an edit that would drop one is rejected; unpublish first.
+    /// an edit that would drop one is rejected; unpublish first. <paramref name="requiredMeaningLanguages"/>
+    /// is the currently configured set (see SupportedLanguagesOptions); omitting it falls
+    /// back to the built-in default, which exists only for callers (e.g. older tests) that
+    /// don't pass one explicitly.
     /// </summary>
     public Error? Update(
         string syriacUnvocalized,
@@ -101,7 +108,8 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
         Guid? rootId = null,
         IEnumerable<string>? transliterationVariants = null,
         string? morphology = null,
-        IEnumerable<LexiconMeaning>? meanings = null)
+        IEnumerable<LexiconMeaning>? meanings = null,
+        IReadOnlyCollection<string>? requiredMeaningLanguages = null)
     {
         var normalized = Normalize(
             syriacUnvocalized,
@@ -117,10 +125,11 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
             return normalized.Error;
         }
 
-        if (Status == LexiconEntryStatus.Published && !HasAllRequiredMeanings(normalized.Value!.Meanings))
+        var required = requiredMeaningLanguages ?? DefaultRequiredMeaningLanguages;
+        if (Status == LexiconEntryStatus.Published && !HasAllRequiredMeanings(normalized.Value!.Meanings, required))
         {
             return Error.Validation(
-                "A published entry must keep en, fr, nl, de, and sv meanings. Unpublish before removing a gloss.");
+                $"A published entry must keep {string.Join(", ", required)} meanings. Unpublish before removing a gloss.");
         }
 
         Apply(normalized.Value!);
@@ -128,17 +137,22 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
         return null;
     }
 
-    /// <summary>Promotes a draft to published. Requires en/fr/nl/de/sv meanings. Idempotent when already published.</summary>
-    public Error? Publish()
+    /// <summary>
+    /// Promotes a draft to published. Requires every language in <paramref name="requiredMeaningLanguages"/>
+    /// (the currently configured set — see SupportedLanguagesOptions); omitting it falls back to the
+    /// built-in default. Idempotent when already published.
+    /// </summary>
+    public Error? Publish(IReadOnlyCollection<string>? requiredMeaningLanguages = null)
     {
         if (Status == LexiconEntryStatus.Published)
         {
             return null;
         }
 
-        if (!HasAllRequiredMeanings(meanings))
+        var required = requiredMeaningLanguages ?? DefaultRequiredMeaningLanguages;
+        if (!HasAllRequiredMeanings(meanings, required))
         {
-            return Error.Validation("All of en, fr, nl, de, and sv meanings are required to publish an entry.");
+            return Error.Validation($"All of {string.Join(", ", required)} meanings are required to publish an entry.");
         }
 
         Status = LexiconEntryStatus.Published;
@@ -254,10 +268,10 @@ public sealed class LexiconEntry : Entity<Guid>, IAggregateRoot
             playableLength));
     }
 
-    private static bool HasAllRequiredMeanings(IEnumerable<LexiconMeaning> meanings)
+    private static bool HasAllRequiredMeanings(IEnumerable<LexiconMeaning> meanings, IReadOnlyCollection<string> requiredLanguages)
     {
         var languages = meanings.Select(m => m.Language).ToHashSet(StringComparer.Ordinal);
-        return RequiredMeaningLanguages.All(languages.Contains);
+        return requiredLanguages.All(languages.Contains);
     }
 
     private static Result<string> NormalizeSyriacRequired(string value, string fieldName)

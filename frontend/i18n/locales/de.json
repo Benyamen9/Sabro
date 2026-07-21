@@ -3,7 +3,8 @@
     "title": "Sabro",
     "tagline": "Eine Plattform für die syrische Sprache",
     "statusMvp": "MVP · in Entwicklung",
-    "promise": "Kostenlos, für alle, für immer."
+    "promise": "Kostenlos, für alle, für immer.",
+    "attribution": "Lexikondaten angereichert mit SEDRA, © Beth Mardutho: The Syriac Institute."
   },
   "home": {
     "eyebrow": "Die syrische Sprache",

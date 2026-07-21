@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Sabro.Identity.Application.UserProfiles;
 using Sabro.Identity.Domain;
+using Sabro.Shared.Localization;
 
 namespace Sabro.IntegrationTests.Identity.Application;
 
@@ -189,7 +191,7 @@ public class UserProfileServiceTests
     private static UserProfileService NewService(Sabro.Identity.Infrastructure.IdentityDbContext ctx) =>
         new(
             ctx,
-            new UpdateUserProfileRequestValidator(),
+            new UpdateUserProfileRequestValidator(Options.Create(new SupportedLanguagesOptions())),
             NullLogger<UserProfileService>.Instance);
 
     private static string NewLogtoUserId() => $"logto|{Guid.NewGuid():N}";

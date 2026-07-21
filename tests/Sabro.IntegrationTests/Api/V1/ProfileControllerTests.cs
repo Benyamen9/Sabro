@@ -92,9 +92,10 @@ public class ProfileControllerTests : IDisposable
         var testUser = NewTestUser();
         await GetAsTestUserAsync("/api/v1/profile/me", testUser, ct);
 
+        // "de" is a real supported language (see SupportedLanguagesOptions); "xx" is not.
         var rawJson = """
         {
-            "preferredLanguage": "de",
+            "preferredLanguage": "xx",
             "preferredScriptVariant": "Serto"
         }
         """;

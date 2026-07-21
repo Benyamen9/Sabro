@@ -1,9 +1,11 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Sabro.Lexicon.Application.Search;
 using Sabro.Lexicon.Domain;
 using Sabro.Lexicon.Infrastructure;
+using Sabro.Shared.Localization;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
 using Sabro.Shared.Search;
@@ -17,6 +19,7 @@ internal sealed class LexiconEntryService : ILexiconEntryService
     private readonly IValidator<UpdateLexiconEntryRequest> updateValidator;
     private readonly ISearchIndex<LexiconEntrySearchDocument> searchIndex;
     private readonly IPronunciationAudioStorage pronunciationAudioStorage;
+    private readonly IOptions<SupportedLanguagesOptions> supportedLanguages;
     private readonly ILogger<LexiconEntryService> logger;
 
     public LexiconEntryService(
@@ -25,6 +28,7 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         IValidator<UpdateLexiconEntryRequest> updateValidator,
         ISearchIndex<LexiconEntrySearchDocument> searchIndex,
         IPronunciationAudioStorage pronunciationAudioStorage,
+        IOptions<SupportedLanguagesOptions> supportedLanguages,
         ILogger<LexiconEntryService> logger)
     {
         this.dbContext = dbContext;
@@ -32,6 +36,7 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         this.updateValidator = updateValidator;
         this.searchIndex = searchIndex;
         this.pronunciationAudioStorage = pronunciationAudioStorage;
+        this.supportedLanguages = supportedLanguages;
         this.logger = logger;
     }
 
@@ -124,7 +129,8 @@ internal sealed class LexiconEntryService : ILexiconEntryService
             request.RootId,
             request.TransliterationVariants,
             request.Morphology,
-            meaningsResult.Value!);
+            meaningsResult.Value!,
+            supportedLanguages.Value.Codes);
         if (error is not null)
         {
             logger.LogWarning(
@@ -164,7 +170,7 @@ internal sealed class LexiconEntryService : ILexiconEntryService
     }
 
     public Task<Result<LexiconEntryDto>> PublishAsync(Guid id, CancellationToken cancellationToken) =>
-        MutateAsync(id, entry => entry.Publish(), "published", cancellationToken);
+        MutateAsync(id, entry => entry.Publish(supportedLanguages.Value.Codes), "published", cancellationToken);
 
     public Task<Result<LexiconEntryDto>> UnpublishAsync(Guid id, CancellationToken cancellationToken) =>
         MutateAsync(

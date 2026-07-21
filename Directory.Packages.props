@@ -25,7 +25,7 @@
          Microsoft.AspNetCore.OpenApi 10.0.0 compatibility. -->
     <PackageVersion Include="Microsoft.OpenApi" Version="2.9.0" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.0" />
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.7" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.10" />
   </ItemGroup>
   <ItemGroup Label="EF Core / PostgreSQL">
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />

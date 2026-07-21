@@ -3,7 +3,8 @@
     "title": "Sabro",
     "tagline": "En plattform för det syriska språket",
     "statusMvp": "MVP · under utveckling",
-    "promise": "Gratis, för alla, för alltid."
+    "promise": "Gratis, för alla, för alltid.",
+    "attribution": "Lexikondata berikad med SEDRA, © Beth Mardutho: The Syriac Institute."
   },
   "home": {
     "eyebrow": "Det syriska språket",
