@@ -6,19 +6,68 @@ const preferredMeaning = usePreferredMeaning()
 const route = useRoute()
 const router = useRouter()
 
-const initialPage = Number.parseInt(typeof route.query.page === 'string' ? route.query.page : '', 10)
 const initialSearch = typeof route.query.q === 'string' ? route.query.q : ''
-const page = ref(Number.isFinite(initialPage) && initialPage > 0 ? initialPage : 1)
 // searchInput is bound to the field; search is the debounced value that actually drives the fetch.
 const searchInput = ref(initialSearch)
 const search = ref(initialSearch.trim())
 const pageSize = 24
 
+// The first page loads through useAsyncData (SSR-friendly, refetches whenever
+// the search term changes). Every subsequent page is appended client-side by
+// loadMore() below — the library scrolls continuously rather than paging.
 const { data, pending, error, refresh } = await useAsyncData(
   'library-dictionary',
-  () => listWords({ page: page.value, pageSize, search: search.value || undefined }),
-  { watch: [page, search], lazy: true, default: () => null },
+  () => listWords({ page: 1, pageSize, search: search.value || undefined }),
+  { watch: [search], lazy: true, default: () => null },
 )
+
+type Word = NonNullable<typeof data.value>['items'][number]
+
+const loadedWords = ref<Word[]>([])
+const loadedPage = ref(1)
+const total = ref(0)
+const loadingMore = ref(false)
+const loadMoreFailed = ref(false)
+
+watch(data, (value) => {
+  loadedWords.value = value?.items ?? []
+  loadedPage.value = 1
+  total.value = value?.total ?? 0
+  loadMoreFailed.value = false
+}, { immediate: true })
+
+const hasMore = computed(() => loadedWords.value.length < total.value)
+
+async function loadMore() {
+  if (loadingMore.value || !hasMore.value) return
+  loadingMore.value = true
+  loadMoreFailed.value = false
+  try {
+    const result = await listWords({ page: loadedPage.value + 1, pageSize, search: search.value || undefined })
+    loadedWords.value = [...loadedWords.value, ...result.items]
+    loadedPage.value += 1
+  }
+  catch {
+    loadMoreFailed.value = true
+  }
+  finally {
+    loadingMore.value = false
+  }
+}
+
+// Fires loadMore() once the sentinel below the list scrolls into view.
+const sentinel = useTemplateRef<HTMLElement>('sentinel')
+let observer: IntersectionObserver | undefined
+onMounted(() => {
+  observer = new IntersectionObserver((entries) => {
+    if (entries.some(entry => entry.isIntersecting)) loadMore()
+  })
+  watch(sentinel, (el, prevEl) => {
+    if (prevEl) observer!.unobserve(prevEl)
+    if (el) observer!.observe(el)
+  }, { immediate: true })
+})
+onUnmounted(() => observer?.disconnect())
 
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 watch(searchInput, (value) => {
@@ -27,7 +76,6 @@ watch(searchInput, (value) => {
     const trimmed = value.trim()
     if (trimmed === search.value) return
     search.value = trimmed
-    page.value = 1 // a new filter invalidates the current page offset
     syncQueryString()
   }, 250)
 })
@@ -37,27 +85,23 @@ function clearSearch() {
   searchInput.value = ''
   if (search.value === '') return
   search.value = ''
-  page.value = 1
   syncQueryString()
 }
-
-const totalPages = computed(() => Math.max(1, Math.ceil((data.value?.total ?? 0) / pageSize)))
 
 const status = computed<'loading' | 'failed' | 'empty' | 'noResults' | 'ready'>(() => {
   if (pending.value) return 'loading'
   if (error.value) return 'failed'
-  if ((data.value?.items ?? []).length === 0) return search.value ? 'noResults' : 'empty'
+  if (loadedWords.value.length === 0) return search.value ? 'noResults' : 'empty'
   return 'ready'
 })
 
-type Word = NonNullable<typeof data.value>['items'][number]
 interface WordGroup { key: string, label: string, words: Word[] }
 
 // Browsing is alphabetical, so words group under their first Syriac letter.
 // Search results are relevance-ordered — grouping them by letter would shuffle
 // the ranking, so they render as one flat list.
 const groups = computed<WordGroup[]>(() => {
-  const items = data.value?.items ?? []
+  const items = loadedWords.value
   if (search.value) {
     return items.length ? [{ key: 'results', label: '', words: items }] : []
   }
@@ -78,15 +122,8 @@ const groups = computed<WordGroup[]>(() => {
 
 function syncQueryString() {
   const query: Record<string, string> = {}
-  if (page.value > 1) query.page = String(page.value)
   if (search.value) query.q = search.value
   router.replace({ query })
-}
-
-function goTo(nextPage: number) {
-  if (nextPage < 1 || nextPage > totalPages.value) return
-  page.value = nextPage
-  syncQueryString()
 }
 
 // The page header shows the living total once an unfiltered page has loaded.
@@ -186,21 +223,23 @@ watch(data, (value) => {
         </ul>
       </section>
 
-      <nav v-if="totalPages > 1" class="mt-8 flex items-center justify-center gap-4 font-sans text-sm">
-        <button
-          type="button"
-          class="rounded-md border border-[var(--color-border-strong)] px-3 py-1.5 disabled:opacity-40"
-          :disabled="page <= 1"
-          @click="goTo(page - 1)"
-        >{{ t('pagination.previous') }}</button>
-        <span class="text-[var(--color-text-muted)]">{{ t('pagination.pageOf', { page, total: totalPages }) }}</span>
-        <button
-          type="button"
-          class="rounded-md border border-[var(--color-border-strong)] px-3 py-1.5 disabled:opacity-40"
-          :disabled="page >= totalPages"
-          @click="goTo(page + 1)"
-        >{{ t('pagination.next') }}</button>
-      </nav>
+      <!-- Sentinel: an IntersectionObserver watches this element and calls
+           loadMore() as it scrolls into view, so the library grows
+           continuously instead of splitting into numbered pages. -->
+      <div v-if="hasMore || loadMoreFailed" ref="sentinel" class="mt-8 flex items-center justify-center">
+        <StateMessage
+          v-if="loadMoreFailed"
+          variant="failed"
+          :message="t('library.loadFailed')"
+          :action-label="t('common.retry')"
+          @action="loadMore()"
+        />
+        <StateMessage
+          v-else
+          variant="loading"
+          :message="t('common.loading')"
+        />
+      </div>
     </template>
   </div>
 </template>
