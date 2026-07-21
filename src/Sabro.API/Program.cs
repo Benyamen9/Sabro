@@ -11,6 +11,7 @@ using Sabro.Play.Public;
 using Sabro.Reviews.Public;
 using Sabro.Shared.Abstractions;
 using Sabro.Shared.Infrastructure.Search;
+using Sabro.Shared.Localization;
 using Sabro.Translations.Public;
 using Serilog;
 
@@ -131,6 +132,11 @@ try
     builder.Services.Configure<LogtoManagementOptions>(
         builder.Configuration.GetSection(LogtoManagementOptions.SectionName));
     builder.Services.AddHttpClient<ILogtoManagementClient, LogtoManagementClient>();
+
+    // Shared across modules (Lexicon publish gate, profile preferred-language) so
+    // adding a language is one config change here, not a hardcoded list per module.
+    builder.Services.Configure<SupportedLanguagesOptions>(
+        builder.Configuration.GetSection(SupportedLanguagesOptions.SectionName));
 
     var modules = new IModuleRegistration[]
     {

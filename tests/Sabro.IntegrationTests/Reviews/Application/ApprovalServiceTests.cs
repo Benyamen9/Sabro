@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Sabro.Identity.Application.UserProfiles;
 using Sabro.Identity.Domain;
 using Sabro.Identity.Infrastructure;
 using Sabro.Reviews.Application.Approvals;
 using Sabro.Reviews.Domain;
 using Sabro.Reviews.Infrastructure;
+using Sabro.Shared.Localization;
 using Sabro.Shared.Results;
 using Sabro.Translations.Application.Annotations;
 using Sabro.Translations.Infrastructure;
@@ -619,7 +621,7 @@ public class ApprovalServiceTests
             new CreateApprovalRequestValidator(),
             new UserProfileService(
                 NewIdentityContext(ctx),
-                new UpdateUserProfileRequestValidator(),
+                new UpdateUserProfileRequestValidator(Options.Create(new SupportedLanguagesOptions())),
                 NullLogger<UserProfileService>.Instance),
             new FakeAnnotationLookup(),
             new FakeAnnotationApprovalIndexer(),
@@ -639,7 +641,7 @@ public class ApprovalServiceTests
             new CreateApprovalRequestValidator(),
             new UserProfileService(
                 NewIdentityContext(reviewsCtx),
-                new UpdateUserProfileRequestValidator(),
+                new UpdateUserProfileRequestValidator(Options.Create(new SupportedLanguagesOptions())),
                 NullLogger<UserProfileService>.Instance),
             new AnnotationLookupService(translationsCtx),
             indexer,

@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Sabro.Identity.Application.UserProfiles;
 using Sabro.Identity.Domain;
 using Sabro.Identity.Infrastructure;
 using Sabro.Reviews.Application.SuggestedEdits;
 using Sabro.Reviews.Domain;
 using Sabro.Reviews.Infrastructure;
+using Sabro.Shared.Localization;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
 
@@ -265,7 +267,7 @@ public class SuggestedEditServiceTests
             new CreateSuggestedEditRequestValidator(),
             new UserProfileService(
                 NewIdentityContext(ctx),
-                new UpdateUserProfileRequestValidator(),
+                new UpdateUserProfileRequestValidator(Options.Create(new SupportedLanguagesOptions())),
                 NullLogger<UserProfileService>.Instance),
             NullLogger<SuggestedEditService>.Instance);
 
