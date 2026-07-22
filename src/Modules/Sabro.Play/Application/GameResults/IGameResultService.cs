@@ -13,8 +13,14 @@ public interface IGameResultService
     /// </summary>
     Task<Result<RecordGameResultOutcome>> RecordAsync(string logtoUserId, RecordGameResultRequest request, CancellationToken cancellationToken);
 
-    /// <summary>Returns the player's own results, newest day first, paged.</summary>
-    Task<Result<PagedResult<GameResultDto>>> ListForUserAsync(string logtoUserId, int page, int pageSize, CancellationToken cancellationToken);
+    /// <summary>
+    /// Returns the player's own results, newest day first, paged. When
+    /// <paramref name="gameId"/> is given, only that game's results are
+    /// returned — callers that need one game's own "did I already play
+    /// today" check (Meltho, Mno, …) must pass it, or a result from a
+    /// different game on the same day will be mistaken for theirs.
+    /// </summary>
+    Task<Result<PagedResult<GameResultDto>>> ListForUserAsync(string logtoUserId, int page, int pageSize, string? gameId, CancellationToken cancellationToken);
 
     /// <summary>
     /// Returns every result the player owns, oldest day first, unpaged. Used by

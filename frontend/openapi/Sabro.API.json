@@ -3711,6 +3711,13 @@
               "format": "int32",
               "default": 50
             }
+          },
+          {
+            "name": "gameId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

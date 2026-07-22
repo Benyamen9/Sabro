@@ -201,7 +201,11 @@ public sealed class PlayController : ApiControllerBase
         return Ok(result.Value);
     }
 
-    /// <summary>Returns the authenticated player's own results, newest day first, paged.</summary>
+    /// <summary>
+    /// Returns the authenticated player's own results, newest day first, paged.
+    /// An optional <paramref name="gameId"/> restricts the list to one game
+    /// (e.g. "meltho", "mno") — omit it for the cross-game profile view.
+    /// </summary>
     [HttpGet("results/me")]
     [Authorize(Policy = AuthPolicies.Write)]
     [ProducesResponseType(typeof(PagedResult<GameResultDto>), StatusCodes.Status200OK)]
@@ -209,6 +213,7 @@ public sealed class PlayController : ApiControllerBase
     public async Task<ActionResult<PagedResult<GameResultDto>>> GetMyResults(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = PageRequest.DefaultPageSize,
+        [FromQuery] string? gameId = null,
         CancellationToken cancellationToken = default)
     {
         var logtoUserIdResult = ResolveLogtoUserId();
@@ -217,7 +222,7 @@ public sealed class PlayController : ApiControllerBase
             return FromError(logtoUserIdResult.Error!);
         }
 
-        var result = await gameResultService.ListForUserAsync(logtoUserIdResult.Value!, page, pageSize, cancellationToken);
+        var result = await gameResultService.ListForUserAsync(logtoUserIdResult.Value!, page, pageSize, gameId, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);
