@@ -111,7 +111,7 @@ internal sealed class GameResultService : IGameResultService
         return Result<RecordGameResultOutcome>.Success(new RecordGameResultOutcome(Map(result), WasCreated: true));
     }
 
-    public async Task<Result<PagedResult<GameResultDto>>> ListForUserAsync(string logtoUserId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<GameResultDto>>> ListForUserAsync(string logtoUserId, int page, int pageSize, string? gameId, CancellationToken cancellationToken)
     {
         var trimmedUserId = (logtoUserId ?? string.Empty).Trim();
         if (trimmedUserId.Length == 0)
@@ -128,6 +128,12 @@ internal sealed class GameResultService : IGameResultService
         var query = dbContext.GameResults
             .AsNoTracking()
             .Where(r => r.LogtoUserId == trimmedUserId);
+
+        var trimmedGameId = gameId?.Trim();
+        if (!string.IsNullOrEmpty(trimmedGameId))
+        {
+            query = query.Where(r => r.GameId == trimmedGameId);
+        }
 
         var total = await query.CountAsync(cancellationToken);
         var items = await query

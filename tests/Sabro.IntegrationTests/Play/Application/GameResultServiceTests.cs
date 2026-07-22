@@ -118,7 +118,7 @@ public class GameResultServiceTests
         }
 
         await using var read = fixture.CreatePlayContext();
-        var result = await NewService(read).ListForUserAsync(user, page: 1, pageSize: 50, ct);
+        var result = await NewService(read).ListForUserAsync(user, page: 1, pageSize: 50, gameId: null, ct);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.Total.Should().Be(3);
@@ -127,12 +127,38 @@ public class GameResultServiceTests
     }
 
     [Fact]
+    public async Task ListForUserAsync_FilteredByGameId_ReturnsOnlyThatGame()
+    {
+        // Regression guard: a user with results on more than one game must be
+        // able to ask "did I already play THIS game today" without a same-day
+        // result from another game being mistaken for it (reported live on Mno,
+        // where a Meltho result from earlier the same day was surfaced as an
+        // already-played Mno puzzle).
+        var ct = TestContext.Current.CancellationToken;
+        var user = NewUser();
+
+        await using (var ctx = fixture.CreatePlayContext())
+        {
+            var service = NewService(ctx);
+            await service.RecordAsync(user, new RecordGameResultRequest("meltho", new DateOnly(2026, 6, 7), true, 4, null), ct);
+            await service.RecordAsync(user, new RecordGameResultRequest("mno", new DateOnly(2026, 6, 7), true, 2, null), ct);
+        }
+
+        await using var read = fixture.CreatePlayContext();
+        var result = await NewService(read).ListForUserAsync(user, page: 1, pageSize: 50, gameId: "mno", ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Total.Should().Be(1);
+        result.Value.Items.Should().ContainSingle(r => r.GameId == "mno" && r.Attempts == 2);
+    }
+
+    [Fact]
     public async Task ListForUserAsync_InvalidPage_ReturnsValidation()
     {
         var ct = TestContext.Current.CancellationToken;
         await using var ctx = fixture.CreatePlayContext();
 
-        var result = await NewService(ctx).ListForUserAsync(NewUser(), page: 0, pageSize: 50, ct);
+        var result = await NewService(ctx).ListForUserAsync(NewUser(), page: 0, pageSize: 50, gameId: null, ct);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");

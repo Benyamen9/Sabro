@@ -2458,6 +2458,7 @@ export interface paths {
                 query?: {
                     page?: number | string;
                     pageSize?: number | string;
+                    gameId?: string;
                 };
                 header?: never;
                 path?: never;
