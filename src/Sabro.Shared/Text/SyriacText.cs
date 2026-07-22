@@ -5,7 +5,9 @@ namespace Sabro.Shared.Text;
 /// <summary>
 /// Unicode helpers for Syriac script per CLAUDE.md rules: NFC normalization
 /// before storage, validation against the Syriac (U+0700–U+074F) and Syriac
-/// Supplement (U+0860–U+086F) ranges.
+/// Supplement (U+0860–U+086F) ranges, plus a small set of standard marks and
+/// separators (seyame, the linea occultans, and a compound-word hyphen) that
+/// have no dedicated Syriac-block code point of their own.
 /// </summary>
 public static class SyriacText
 {
@@ -21,6 +23,21 @@ public static class SyriacText
     /// </summary>
     private const int Seyame = 0x0308;
 
+    /// <summary>
+    /// COMBINING MACRON BELOW — the Unicode-standard encoding for the linea occultans,
+    /// the line marking a letter that is written but not pronounced (a quiescent
+    /// consonant, e.g. the silenced ʾolaph in ܐ̱ܚܪܺܝܢ "other"). Like seyame, it has no
+    /// dedicated Syriac-block code point, so it must be allowed explicitly.
+    /// </summary>
+    private const int LineaOccultans = 0x0331;
+
+    /// <summary>
+    /// HYPHEN-MINUS — lexicography joins the two halves of a compound idiom with a
+    /// plain hyphen in the vocalized spelling (e.g. ܐܰܚܺܝܕ݂-ܟ݁ܽܠ, "Lord of all", from
+    /// SEDRA). Treated like whitespace: a separator between words, not phonetic content.
+    /// </summary>
+    private const int HyphenMinus = 0x002D;
+
     /// <summary>Normalizes input to NFC. Always call this before persisting Syriac text.</summary>
     public static string Normalize(string input)
     {
@@ -31,16 +48,17 @@ public static class SyriacText
     }
 
     /// <summary>
-    /// True when every non-whitespace code point falls in the Syriac or Syriac Supplement
-    /// block, or is the seyame combining diaeresis (the sole standard exception — see
-    /// <see cref="Seyame"/>).
+    /// True when every non-whitespace, non-hyphen code point falls in the Syriac or
+    /// Syriac Supplement block, or is one of the two standard combining-mark exceptions
+    /// with no Syriac-block code point of their own: seyame (<see cref="Seyame"/>) and
+    /// the linea occultans (<see cref="LineaOccultans"/>).
     /// </summary>
     public static bool IsSyriacOnly(string input)
     {
         ArgumentNullException.ThrowIfNull(input);
         foreach (var rune in input.EnumerateRunes())
         {
-            if (Rune.IsWhiteSpace(rune))
+            if (Rune.IsWhiteSpace(rune) || rune.Value == HyphenMinus)
             {
                 continue;
             }
@@ -49,7 +67,7 @@ public static class SyriacText
             var inSyriac = value >= SyriacStart && value <= SyriacEnd;
             var inSupplement = value >= SyriacSupplementStart && value <= SyriacSupplementEnd;
 
-            if (!inSyriac && !inSupplement && value != Seyame)
+            if (!inSyriac && !inSupplement && value != Seyame && value != LineaOccultans)
             {
                 return false;
             }
