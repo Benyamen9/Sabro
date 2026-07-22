@@ -69,6 +69,22 @@ public class SyriacTextTests
         SyriacText.IsSyriacOnly("ܒܪ ܐܢܫܐ").Should().BeTrue();
     }
 
+    [Fact]
+    public void IsSyriacOnly_WithLineaOccultans_ReturnsTrue()
+    {
+        // ܐ̱ܚܪܺܝܢ — "other", with the linea occultans (U+0331 COMBINING MACRON BELOW)
+        // marking the silenced ʾolaph.
+        SyriacText.IsSyriacOnly("ܐ̱ܚܪܺܝܢ").Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsSyriacOnly_WithCompoundIdiomHyphen_ReturnsTrue()
+    {
+        // ܐܰܚܺܝܕ݂-ܟ݁ܽܠ — "Lord of all" (SEDRA), a two-word idiom joined by a hyphen
+        // in its vocalized spelling.
+        SyriacText.IsSyriacOnly("ܐܰܚܺܝܕ݂-ܟ݁ܽܠ").Should().BeTrue();
+    }
+
     [Theory]
     [InlineData("mayo")]
     [InlineData("ܟܬܒa")]
