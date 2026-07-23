@@ -85,6 +85,31 @@ public class SyriacTextTests
         SyriacText.IsSyriacOnly("ܐܰܚܺܝܕ݂-ܟ݁ܽܠ").Should().BeTrue();
     }
 
+    [Fact]
+    public void IsSyriacOnly_WithGenericQushoyoRukkokhoDots_ReturnsTrue()
+    {
+        // ܐܰܓ̇ܬ̣ܳܐ — SEDRA form encoding qushoyo (U+0307 COMBINING DOT ABOVE) and
+        // rukkokho (U+0323 COMBINING DOT BELOW) as generic Unicode marks rather than
+        // the dedicated Syriac-block marks.
+        SyriacText.IsSyriacOnly("ܐܰܓ̇ܬ̣ܳܐ").Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsSyriacOnly_WithZeroWidthJoiner_ReturnsTrue()
+    {
+        // ܡܚܰܠ‍ܠܳܢܳܐ — SEDRA form with a zero width joiner (U+200D) between the two
+        // halves of the word.
+        SyriacText.IsSyriacOnly("ܡܚܰܠ‍ܠܳܢܳܐ").Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsSyriacOnly_WithMacronAbove_ReturnsTrue()
+    {
+        // ܐ̄ܘ — the linea occultans placed above the letter (U+0304 COMBINING MACRON)
+        // instead of below, a SEDRA variant seen on word-final letters.
+        SyriacText.IsSyriacOnly("ܐ̄ܘ").Should().BeTrue();
+    }
+
     [Theory]
     [InlineData("mayo")]
     [InlineData("ܟܬܒa")]

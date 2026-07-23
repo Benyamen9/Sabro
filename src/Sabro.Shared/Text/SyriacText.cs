@@ -38,6 +38,31 @@ public static class SyriacText
     /// </summary>
     private const int HyphenMinus = 0x002D;
 
+    /// <summary>
+    /// COMBINING DOT ABOVE / COMBINING DOT BELOW — SEDRA encodes qushoyo (hardening,
+    /// dot above) and rukkokho (softening, dot below) with these generic Unicode
+    /// combining marks rather than the dedicated Syriac-block marks (U+0741/U+0742),
+    /// e.g. ܐܰܓ̇ܬ̣ܳܐ. Same phonetic role as the dedicated marks, just a different
+    /// source encoding, so both are accepted alongside them.
+    /// </summary>
+    private const int CombiningDotAbove = 0x0307;
+    private const int CombiningDotBelow = 0x0323;
+
+    /// <summary>
+    /// ZERO WIDTH JOINER — a cursive-joining control character with no visual width;
+    /// appears in some SEDRA transliterations as a joining artifact (e.g. ܡܚܰܠ‍ܠܳܢܳܐ).
+    /// Carries no phonetic content, so it is allowed like whitespace.
+    /// </summary>
+    private const int ZeroWidthJoiner = 0x200D;
+
+    /// <summary>
+    /// COMBINING MACRON (above) — SEDRA occasionally places the linea occultans above
+    /// the letter instead of below (e.g. word-final ܘ̄, where a mark below would be
+    /// visually ambiguous), using the plain Unicode macron rather than a below variant.
+    /// Same silenced-letter role as <see cref="LineaOccultans"/>, different position.
+    /// </summary>
+    private const int CombiningMacronAbove = 0x0304;
+
     /// <summary>Normalizes input to NFC. Always call this before persisting Syriac text.</summary>
     public static string Normalize(string input)
     {
@@ -49,9 +74,13 @@ public static class SyriacText
 
     /// <summary>
     /// True when every non-whitespace, non-hyphen code point falls in the Syriac or
-    /// Syriac Supplement block, or is one of the two standard combining-mark exceptions
-    /// with no Syriac-block code point of their own: seyame (<see cref="Seyame"/>) and
-    /// the linea occultans (<see cref="LineaOccultans"/>).
+    /// Syriac Supplement block, or is one of the standard combining-mark/control-
+    /// character exceptions with no Syriac-block code point of their own: seyame
+    /// (<see cref="Seyame"/>), the linea occultans (<see cref="LineaOccultans"/> and
+    /// its above-position variant <see cref="CombiningMacronAbove"/>), the generic
+    /// qushoyo/rukkokho dots (<see cref="CombiningDotAbove"/>,
+    /// <see cref="CombiningDotBelow"/>), and the zero width joiner
+    /// (<see cref="ZeroWidthJoiner"/>).
     /// </summary>
     public static bool IsSyriacOnly(string input)
     {
@@ -66,8 +95,14 @@ public static class SyriacText
             var value = rune.Value;
             var inSyriac = value >= SyriacStart && value <= SyriacEnd;
             var inSupplement = value >= SyriacSupplementStart && value <= SyriacSupplementEnd;
+            var isAllowedMark = value == Seyame
+                || value == LineaOccultans
+                || value == CombiningDotAbove
+                || value == CombiningDotBelow
+                || value == ZeroWidthJoiner
+                || value == CombiningMacronAbove;
 
-            if (!inSyriac && !inSupplement && value != Seyame && value != LineaOccultans)
+            if (!inSyriac && !inSupplement && !isAllowedMark)
             {
                 return false;
             }
