@@ -85,6 +85,22 @@ const nfc = (s) => (s ?? '').normalize('NFC');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const SEDRA_API = 'https://sedra.bethmardutho.org/api';
 
+// Known SEDRA data-entry slips: a handful of "western" transliterations use
+// an Arabic combining mark where the visually-identical Syriac one belongs
+// (e.g. lexeme 13698's ftoho written with Arabic fatha U+064E instead of
+// Syriac pthaha U+0730). These are one-for-one visual mix-ups in SEDRA's own
+// data, not a Syriac orthography convention — fixed here rather than by
+// loosening what Sabro's validator accepts as Syriac.
+const SEDRA_MARK_FIXUPS = new Map([
+  [0x064e, 0x0730], // ARABIC FATHA -> SYRIAC PTHAHA (ftoho)
+]);
+function fixSedraMarks(s) {
+  return [...s].map((ch) => {
+    const fixed = SEDRA_MARK_FIXUPS.get(ch.codePointAt(0));
+    return fixed ? String.fromCodePoint(fixed) : ch;
+  }).join('');
+}
+
 // SEDRA's CategoryType -> Sabro's GrammaticalCategory enum. SEDRA has no
 // "conjunction" category (folded into "particle" there); anything not listed
 // falls back to "Other".
@@ -517,7 +533,7 @@ async function main() {
 
       const draft = {
         syriacUnvocalized: form,
-        syriacVocalized: lexicalWord?.western ? nfc(lexicalWord.western) : null,
+        syriacVocalized: lexicalWord?.western ? nfc(fixSedraMarks(lexicalWord.western)) : null,
         sblTransliteration: null,
         grammaticalCategory: mapCategory(lexeme.category),
         rootId,
