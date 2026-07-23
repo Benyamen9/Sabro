@@ -282,7 +282,7 @@ Provisional standard: **SBL** (Society of Biblical Literature). Stored alongside
 ### Unicode Technical Rules
 - **Encoding everywhere**: UTF-8 (DB, network, files), UTF-16 internal (.NET)
 - **Normalization**: NFC applied to all input before storage (`text.Normalize(NormalizationForm.FormC)`)
-- **Validated Unicode ranges**: U+0700–U+074F (Syriac), U+0860–U+086F (Syriac Supplement), plus three standard exceptions with no dedicated Syriac-block code point — seyame (U+0308 COMBINING DIAERESIS), the linea occultans marking a silent letter (U+0331 COMBINING MACRON BELOW), and a hyphen joining a compound idiom's two halves (U+002D), all implemented in `Sabro.Shared.Text.SyriacText.IsSyriacOnly`
+- **Validated Unicode ranges**: U+0700–U+074F (Syriac), U+0860–U+086F (Syriac Supplement), plus standard exceptions with no dedicated Syriac-block code point — seyame (U+0308 COMBINING DIAERESIS), the linea occultans marking a silent letter (U+0331 COMBINING MACRON BELOW, or U+0304 COMBINING MACRON when SEDRA places it above the letter instead), a hyphen joining a compound idiom's two halves (U+002D), the generic qushoyo/rukkokho dots SEDRA uses in place of the dedicated Syriac marks (U+0307 COMBINING DOT ABOVE, U+0323 COMBINING DOT BELOW), and a zero width joiner from SEDRA's cursive-joining artifacts (U+200D) — all implemented in `Sabro.Shared.Text.SyriacText.IsSyriacOnly`
 - **PostgreSQL collation**: `und-x-icu` (ICU-based, language-agnostic Unicode sorting)
 - **Direction**: dedicated `<SyriacText>` Vue component applies `dir="rtl"` automatically
 - **Letter counting**: playable length counts Unicode letter-category code points only; combining marks are excluded
