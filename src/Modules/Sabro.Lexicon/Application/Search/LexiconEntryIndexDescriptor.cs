@@ -24,6 +24,15 @@ internal sealed class LexiconEntryIndexDescriptor : ISearchIndexDescriptor<Lexic
         "status",
         "playableInMeltho",
         "playableLength",
+        "hasPronunciationAudio",
+    };
+
+    private static readonly string[] Sortable =
+    {
+        "createdAtUnix",
+        "syriacUnvocalized",
+        "playableLength",
+        "status",
     };
 
     /// <summary>
@@ -45,7 +54,8 @@ internal sealed class LexiconEntryIndexDescriptor : ISearchIndexDescriptor<Lexic
     public IndexSettings Settings => new(
         SearchableAttributes: Searchable,
         FilterableAttributes: Filterable,
-        Synonyms: BuildEquivalenceClasses(SynonymGroups));
+        Synonyms: BuildEquivalenceClasses(SynonymGroups),
+        SortableAttributes: Sortable);
 
     private static Dictionary<string, IReadOnlyList<string>> BuildEquivalenceClasses(string[][] groups)
     {

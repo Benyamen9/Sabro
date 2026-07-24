@@ -373,6 +373,30 @@
         "Draft": "Draft",
         "Published": "Published"
       },
+      "filters": {
+        "searchPlaceholder": "Search Syriac, transliteration, or meaning…",
+        "searchClear": "Clear search",
+        "statusLabel": "Status",
+        "statusAll": "All statuses",
+        "categoryLabel": "Category",
+        "categoryAll": "All categories",
+        "playableLabel": "Meltho pool",
+        "playableAll": "Any pool state",
+        "playableYes": "In the pool",
+        "playableNo": "Not in the pool",
+        "clear": "Clear filters",
+        "noResults": "No entries match these filters.",
+        "sortLabel": "Sort",
+        "directionAscending": "Ascending — switch to descending",
+        "directionDescending": "Descending — switch to ascending",
+        "pageSizeLabel": "Rows per page"
+      },
+      "sort": {
+        "Recent": "Recently created",
+        "Syriac": "Syriac alphabetical",
+        "Status": "Status",
+        "Length": "Playable length"
+      },
       "actions": {
         "edit": "Edit",
         "create": "Create entry",

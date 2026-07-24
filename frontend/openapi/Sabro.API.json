@@ -79,6 +79,55 @@
         ],
         "parameters": [
           {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LexiconEntryStatus"
+            }
+          },
+          {
+            "name": "grammaticalCategory",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/GrammaticalCategory"
+            }
+          },
+          {
+            "name": "playableInMeltho",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "hasPronunciationAudio",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LexiconAdminSort"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SortDirection"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "schema": {
@@ -6343,6 +6392,16 @@
           "Rukkokho"
         ],
         "type": "string"
+      },
+      "LexiconAdminSort": {
+        "enum": [
+          "Recent",
+          "Syriac",
+          "Status",
+          "Length"
+        ],
+        "type": "string",
+        "default": 0
       },
       "LexiconEntryDto": {
         "required": [

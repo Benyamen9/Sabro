@@ -404,6 +404,30 @@
         "Draft": "Entwurf",
         "Published": "Veröffentlicht"
       },
+      "filters": {
+        "searchPlaceholder": "Nach Wort, Transliteration oder Bedeutung suchen…",
+        "searchClear": "Suche löschen",
+        "statusLabel": "Status",
+        "statusAll": "Alle Status",
+        "categoryLabel": "Kategorie",
+        "categoryAll": "Alle Kategorien",
+        "playableLabel": "Meltho-Pool",
+        "playableAll": "Beliebiger Pool-Status",
+        "playableYes": "Im Pool",
+        "playableNo": "Nicht im Pool",
+        "clear": "Filter löschen",
+        "noResults": "Keine Einträge entsprechen diesen Filtern.",
+        "sortLabel": "Sortieren",
+        "directionAscending": "Aufsteigend — zu absteigend wechseln",
+        "directionDescending": "Absteigend — zu aufsteigend wechseln",
+        "pageSizeLabel": "Zeilen pro Seite"
+      },
+      "sort": {
+        "Recent": "Zuletzt erstellt",
+        "Syriac": "Syrisch alphabetisch",
+        "Status": "Status",
+        "Length": "Spielbare Länge"
+      },
       "actions": {
         "edit": "Bearbeiten",
         "create": "Eintrag erstellen",

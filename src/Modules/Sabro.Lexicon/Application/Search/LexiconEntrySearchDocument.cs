@@ -55,4 +55,13 @@ public sealed record LexiconEntrySearchDocument
 
     [JsonPropertyName("createdAtUnix")]
     public long CreatedAtUnix { get; init; }
+
+    [JsonPropertyName("updatedAtUnix")]
+    public long UpdatedAtUnix { get; init; }
+
+    [JsonPropertyName("hasPronunciationAudio")]
+    public bool HasPronunciationAudio { get; init; }
+
+    [JsonPropertyName("pronunciationAudioUrl")]
+    public string? PronunciationAudioUrl { get; init; }
 }

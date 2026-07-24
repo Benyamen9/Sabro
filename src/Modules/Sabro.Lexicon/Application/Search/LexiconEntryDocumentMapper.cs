@@ -22,5 +22,8 @@ internal static class LexiconEntryDocumentMapper
         PlayableInMeltho = entry.PlayableInMeltho,
         PlayableLength = entry.PlayableLength,
         CreatedAtUnix = entry.CreatedAt.ToUnixTimeSeconds(),
+        UpdatedAtUnix = entry.UpdatedAt.ToUnixTimeSeconds(),
+        HasPronunciationAudio = !string.IsNullOrEmpty(entry.PronunciationAudioUrl),
+        PronunciationAudioUrl = entry.PronunciationAudioUrl,
     };
 }

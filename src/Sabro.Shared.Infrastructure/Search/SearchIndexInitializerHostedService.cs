@@ -57,6 +57,11 @@ internal sealed class SearchIndexInitializerHostedService : IHostedService
                 pair => (IEnumerable<string>)pair.Value.ToArray());
         }
 
+        if (source.SortableAttributes is { Count: > 0 })
+        {
+            meili.SortableAttributes = source.SortableAttributes.ToArray();
+        }
+
         return meili;
     }
 

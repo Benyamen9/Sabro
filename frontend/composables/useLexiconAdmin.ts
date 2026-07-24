@@ -1,13 +1,23 @@
 import type {
   CreateLexiconEntryRequest,
+  GrammaticalCategory,
+  LexiconAdminSort,
   LexiconEntryDto,
+  LexiconEntryStatus,
   PagedResult,
+  SortDirection,
   UpdateLexiconEntryRequest,
 } from '~/types/api'
 
 export interface LexiconListParams {
   page?: number
   pageSize?: number
+  search?: string
+  status?: LexiconEntryStatus
+  grammaticalCategory?: GrammaticalCategory
+  playableInMeltho?: boolean
+  sort?: LexiconAdminSort
+  direction?: SortDirection
 }
 
 /**
@@ -21,7 +31,16 @@ export function useLexiconAdmin() {
 
   function list(params: LexiconListParams = {}) {
     return api<PagedResult<LexiconEntryDto>>('/admin/lexicon', {
-      query: { page: params.page ?? 1, pageSize: params.pageSize ?? 20 },
+      query: {
+        page: params.page ?? 1,
+        pageSize: params.pageSize ?? 20,
+        search: params.search || undefined,
+        status: params.status,
+        grammaticalCategory: params.grammaticalCategory,
+        playableInMeltho: params.playableInMeltho,
+        sort: params.sort,
+        direction: params.direction,
+      },
     })
   }
 
