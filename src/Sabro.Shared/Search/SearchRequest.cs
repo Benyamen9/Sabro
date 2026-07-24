@@ -12,4 +12,5 @@ public sealed record SearchRequest(
     string? Query,
     int Page = 1,
     int PageSize = 50,
-    IReadOnlyList<SearchFilter>? Filters = null);
+    IReadOnlyList<SearchFilter>? Filters = null,
+    IReadOnlyList<SearchSort>? Sort = null);

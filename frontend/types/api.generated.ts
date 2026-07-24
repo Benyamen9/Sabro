@@ -14,6 +14,13 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
+                    search?: string;
+                    status?: components["schemas"]["LexiconEntryStatus"];
+                    grammaticalCategory?: components["schemas"]["GrammaticalCategory"];
+                    playableInMeltho?: boolean;
+                    hasPronunciationAudio?: boolean;
+                    sort?: components["schemas"]["LexiconAdminSort"];
+                    direction?: components["schemas"]["SortDirection"];
                     page?: number | string;
                     pageSize?: number | string;
                 };
@@ -3711,6 +3718,11 @@ export interface components {
         IFormFile: string;
         /** @enum {string} */
         LetterHardening: "Qushoyo" | "Rukkokho";
+        /**
+         * @default 0
+         * @enum {string}
+         */
+        LexiconAdminSort: "Recent" | "Syriac" | "Status" | "Length";
         LexiconEntryDto: {
             /** Format: uuid */
             id: string;
