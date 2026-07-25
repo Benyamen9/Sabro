@@ -225,7 +225,7 @@ public class MelthoLibraryServiceTests
         var reader = Substitute.For<ILexiconLibraryReader>();
         reader.GetLibraryListAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(ci => (IReadOnlyList<LexiconLibraryListItem>)ci.Arg<IReadOnlyCollection<Guid>>()
-                .Select(id => new LexiconLibraryListItem(id, "ܟܬܒܐ", null, "ktōbō", 4, new[] { new LexiconMeaningDto("en", "book") }))
+                .Select(id => new LexiconLibraryListItem(id, "ܟܬܒܐ", null, "ktōbō", 4, new[] { new LexiconMeaningDto("en", "book") }, "Noun"))
                 .ToList());
 
         await using var ctx = fixture.CreatePlayContext();
@@ -243,6 +243,107 @@ public class MelthoLibraryServiceTests
         await using var ctx = fixture.CreatePlayContext();
 
         var result = await NewService(ctx, EchoReader(), new DateOnly(2231, 6, 15)).ListAsync(0, 50, LibrarySort.Recent, null, null, ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Fact]
+    public async Task GetStats_ReturnsStatsOnlyForRequestedIds()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2331, 6, 15);
+        var tracked = Guid.NewGuid();
+        var untracked = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-2), tracked, ct);
+        await SeedServedAsync(today.AddDays(-1), tracked, ct);
+        await SeedServedAsync(today.AddDays(-1), untracked, ct);
+
+        await using var ctx = fixture.CreatePlayContext();
+        var stats = await NewService(ctx, EchoReader(), today).GetStatsAsync(new[] { tracked }, ct);
+
+        stats.Should().ContainKey(tracked);
+        stats[tracked].LastPlayedOn.Should().Be(today.AddDays(-1));
+        stats[tracked].TimesPlayed.Should().Be(2);
+        stats.Should().NotContainKey(untracked);
+    }
+
+    [Fact]
+    public async Task GetStats_WordNeverServed_IsAbsentFromResult()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2341, 6, 15);
+        var neverServed = Guid.NewGuid();
+
+        await using var ctx = fixture.CreatePlayContext();
+        var stats = await NewService(ctx, EchoReader(), today).GetStatsAsync(new[] { neverServed }, ct);
+
+        stats.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetStats_EmptyInput_ReturnsEmptyWithoutQuerying()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = fixture.CreatePlayContext();
+
+        var stats = await NewService(ctx, EchoReader(), new DateOnly(2351, 6, 15)).GetStatsAsync(Array.Empty<Guid>(), ct);
+
+        stats.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ListPlayedAndPublished_ExcludesWordsNoLongerPublished()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2361, 6, 15);
+        var published = Guid.NewGuid();
+        var unpublished = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), published, ct);
+        await SeedServedAsync(today.AddDays(-2), unpublished, ct);
+
+        var reader = Substitute.For<ILexiconLibraryReader>();
+        reader.GetLibraryListAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(ci => (IReadOnlyList<LexiconLibraryListItem>)ci.Arg<IReadOnlyCollection<Guid>>()
+                .Select(id => new LexiconLibraryListItem(id, "ܡܠܬܐ", null, null, 4, new[] { new LexiconMeaningDto("en", "word") }, "Noun"))
+                .ToList());
+        reader.GetPublishedIdsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new[] { published });
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, reader, today).ListPlayedAndPublishedAsync(1, 50, LibrarySort.Recent, null, null, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Items.Should().ContainSingle().Which.Id.Should().Be(published);
+    }
+
+    [Fact]
+    public async Task ListPlayedAndPublished_IncludesGrammaticalCategory()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
+        var today = new DateOnly(2371, 6, 15);
+        var word = Guid.NewGuid();
+        await SeedServedAsync(today.AddDays(-1), word, ct);
+
+        await using var ctx = fixture.CreatePlayContext();
+        var result = await NewService(ctx, EchoReader(), today).ListPlayedAndPublishedAsync(1, 50, LibrarySort.Recent, null, null, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Items.Should().ContainSingle().Which.GrammaticalCategory.Should().Be("Noun");
+    }
+
+    [Fact]
+    public async Task ListPlayedAndPublished_InvalidPage_ReturnsValidationError()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = fixture.CreatePlayContext();
+
+        var result = await NewService(ctx, EchoReader(), new DateOnly(2381, 6, 15))
+            .ListPlayedAndPublishedAsync(0, 50, LibrarySort.Recent, null, null, ct);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
@@ -338,7 +439,8 @@ public class MelthoLibraryServiceTests
                     "ܡܶܠܬ݂ܳܐ",
                     "meltho",
                     4,
-                    new[] { new LexiconMeaningDto("en", "word") }))
+                    new[] { new LexiconMeaningDto("en", "word") },
+                    "Noun"))
                 .ToList());
         reader.GetLibraryDetailAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(ci => new LexiconLibraryDetail(
@@ -354,6 +456,11 @@ public class MelthoLibraryServiceTests
                 new[] { new LexiconMeaningDto("en", "word") },
                 SyriacComposition.Decompose("ܡܶܠܬ݂ܳܐ"),
                 null));
+
+        // Default assumption for anything not specifically about the published/unpublished split:
+        // everything the caller asks about is currently published.
+        reader.GetPublishedIdsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(ci => ci.Arg<IReadOnlyCollection<Guid>>().ToList());
         return reader;
     }
 
@@ -370,8 +477,11 @@ public class MelthoLibraryServiceTests
                     null,
                     null,
                     words[id].Length,
-                    new[] { new LexiconMeaningDto("en", "word") }))
+                    new[] { new LexiconMeaningDto("en", "word") },
+                    "Noun"))
                 .ToList());
+        reader.GetPublishedIdsAsync(Arg.Any<IReadOnlyCollection<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(ci => ci.Arg<IReadOnlyCollection<Guid>>().Where(words.ContainsKey).ToList());
         return reader;
     }
 

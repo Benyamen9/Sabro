@@ -1,24 +1,61 @@
 <script setup lang="ts">
-const { t } = useI18n()
-const { listWords } = useDictionary()
+import type { LibrarySort, SortDirection } from '~/types/api'
+
+const props = defineProps<{ meltho: boolean }>()
+const emit = defineEmits<{ total: [value: number] }>()
+
+const { t, locale } = useI18n()
+const { listWords } = useUnifiedLibrary()
 const preferredMeaning = usePreferredMeaning()
 
 const route = useRoute()
 const router = useRouter()
 
+// Alphabetical/Length apply to any word; Recent only means something once there's play history to
+// sort by, so it's only offered once the Meltho filter is on. Each field has a natural direction
+// (recent → newest first, the rest → ascending); re-clicking the active field flips it.
+const sortOptions = computed<{ value: LibrarySort, key: string, natural: SortDirection }[]>(() => {
+  const base: { value: LibrarySort, key: string, natural: SortDirection }[] = [
+    { value: 'Alphabetical', key: 'alphabetical', natural: 'Ascending' },
+    { value: 'Length', key: 'length', natural: 'Ascending' },
+  ]
+  return props.meltho ? [{ value: 'Recent', key: 'recent', natural: 'Descending' }, ...base] : base
+})
+
+function naturalDirection(value: LibrarySort): SortDirection {
+  return sortOptions.value.find(o => o.value === value)?.natural ?? 'Ascending'
+}
+
+const defaultSort: LibrarySort = props.meltho ? 'Recent' : 'Alphabetical'
+
+function sortFromQuery(): LibrarySort {
+  const raw = typeof route.query.sort === 'string' ? route.query.sort : ''
+  return sortOptions.value.find(o => o.key === raw)?.value ?? defaultSort
+}
+
+function directionFromQuery(forSort: LibrarySort): SortDirection {
+  const raw = typeof route.query.dir === 'string' ? route.query.dir : ''
+  if (raw === 'asc') return 'Ascending'
+  if (raw === 'desc') return 'Descending'
+  return naturalDirection(forSort)
+}
+
 const initialSearch = typeof route.query.q === 'string' ? route.query.q : ''
+const sort = ref<LibrarySort>(sortFromQuery())
+const direction = ref<SortDirection>(directionFromQuery(sort.value))
 // searchInput is bound to the field; search is the debounced value that actually drives the fetch.
 const searchInput = ref(initialSearch)
 const search = ref(initialSearch.trim())
 const pageSize = 24
 
-// The first page loads through useAsyncData (SSR-friendly, refetches whenever
-// the search term changes). Every subsequent page is appended client-side by
-// loadMore() below — the library scrolls continuously rather than paging.
+// The first page loads through useAsyncData (SSR-friendly, refetches whenever search/sort/direction
+// change). Every subsequent page is appended client-side by loadMore() — the library scrolls
+// continuously rather than paging. Keyed by `meltho` too, even though the parent already remounts
+// this component on toggle (via :key), so a stale cache entry can never leak across states.
 const { data, pending, error, refresh } = await useAsyncData(
-  'library-dictionary',
-  () => listWords({ page: 1, pageSize, search: search.value || undefined }),
-  { watch: [search], lazy: true, default: () => null },
+  `unified-library-${props.meltho}`,
+  () => listWords({ page: 1, pageSize, search: search.value || undefined, sort: sort.value, direction: direction.value, playedInMeltho: props.meltho || undefined }),
+  { watch: [search, sort, direction], lazy: true, default: () => null },
 )
 
 type Word = NonNullable<typeof data.value>['items'][number]
@@ -34,6 +71,9 @@ watch(data, (value) => {
   loadedPage.value = 1
   total.value = value?.total ?? 0
   loadMoreFailed.value = false
+  if (value && !search.value) {
+    emit('total', value.total)
+  }
 }, { immediate: true })
 
 const hasMore = computed(() => loadedWords.value.length < total.value)
@@ -43,7 +83,14 @@ async function loadMore() {
   loadingMore.value = true
   loadMoreFailed.value = false
   try {
-    const result = await listWords({ page: loadedPage.value + 1, pageSize, search: search.value || undefined })
+    const result = await listWords({
+      page: loadedPage.value + 1,
+      pageSize,
+      search: search.value || undefined,
+      sort: sort.value,
+      direction: direction.value,
+      playedInMeltho: props.meltho || undefined,
+    })
     loadedWords.value = [...loadedWords.value, ...result.items]
     loadedPage.value += 1
   }
@@ -95,26 +142,43 @@ const status = computed<'loading' | 'failed' | 'empty' | 'noResults' | 'ready'>(
   return 'ready'
 })
 
-interface WordGroup { key: string, label: string, words: Word[] }
+interface WordGroup { key: string, label: string, isSyriac: boolean, words: Word[] }
 
-// Browsing is alphabetical, so words group under their first Syriac letter.
-// Search results are relevance-ordered — grouping them by letter would shuffle
-// the ranking, so they render as one flat list.
+// The header a word falls under, derived from the active sort: first Syriac letter
+// (Alphabetical), its letter count (Length), or the month it was last shown (Recent).
+function groupOf(word: Word): { key: string, label: string, isSyriac: boolean } {
+  if (sort.value === 'Length') {
+    return { key: `length:${word.letterCount}`, label: t('library.lettersCount', { count: word.letterCount }), isSyriac: false }
+  }
+  if (sort.value === 'Recent' && word.lastPlayedOn) {
+    const date = new Date(`${word.lastPlayedOn}T00:00:00`)
+    return {
+      key: `month:${date.getFullYear()}-${date.getMonth()}`,
+      label: date.toLocaleDateString(locale.value, { month: 'long', year: 'numeric' }),
+      isSyriac: false,
+    }
+  }
+  const first = Array.from(word.syriacUnvocalized)[0] ?? ''
+  return { key: `letter:${first}`, label: first, isSyriac: true }
+}
+
+// Search results are relevance-ordered (well, filter-ordered) — grouping them would misrepresent
+// that as alphabetical/date structure, so they render as one flat list, same as before the merge.
 const groups = computed<WordGroup[]>(() => {
   const items = loadedWords.value
   if (search.value) {
-    return items.length ? [{ key: 'results', label: '', words: items }] : []
+    return items.length ? [{ key: 'results', label: '', isSyriac: false, words: items }] : []
   }
 
   const result: WordGroup[] = []
   for (const word of items) {
-    const first = Array.from(word.syriacUnvocalized)[0] ?? ''
+    const { key, label, isSyriac } = groupOf(word)
     const current = result.at(-1)
-    if (current && current.key === `letter:${first}`) {
+    if (current && current.key === key) {
       current.words.push(word)
     }
     else {
-      result.push({ key: `letter:${first}`, label: first, words: [word] })
+      result.push({ key, label, isSyriac, words: [word] })
     }
   }
   return result
@@ -122,19 +186,33 @@ const groups = computed<WordGroup[]>(() => {
 
 function syncQueryString() {
   const query: Record<string, string> = {}
+  if (route.query.view === 'meltho') query.view = 'meltho'
+  const option = sortOptions.value.find(o => o.value === sort.value)
+  if (option && option.value !== defaultSort) query.sort = option.key
+  // Only persist direction when it deviates from the field's natural default.
+  if (direction.value !== naturalDirection(sort.value)) {
+    query.dir = direction.value === 'Ascending' ? 'asc' : 'desc'
+  }
   if (search.value) query.q = search.value
   router.replace({ query })
 }
 
-// The page header shows the living total once an unfiltered page has loaded.
-const emit = defineEmits<{ total: [value: number] }>()
-watch(data, (value) => {
-  if (value && !search.value) emit('total', value.total)
-})
+function setSort(next: LibrarySort) {
+  if (sort.value === next) {
+    // Re-clicking the active field toggles its direction.
+    direction.value = direction.value === 'Ascending' ? 'Descending' : 'Ascending'
+  }
+  else {
+    sort.value = next
+    direction.value = naturalDirection(next)
+  }
+  syncQueryString()
+}
 </script>
 
 <template>
   <div>
+    <!-- One toolbar: search grows, sort sits right. -->
     <div class="mb-2 flex flex-wrap items-center gap-3">
       <div class="flex min-w-[260px] flex-1 items-center gap-2 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-4 py-2.5 focus-within:border-[var(--color-accent)]">
         <svg class="size-4 shrink-0 text-[var(--color-text-faint)]" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
@@ -156,6 +234,23 @@ watch(data, (value) => {
           @click="clearSearch"
         >✕</button>
       </div>
+      <div class="flex flex-wrap gap-1.5" role="group" :aria-label="t('library.sort.label')">
+        <button
+          v-for="option in sortOptions"
+          :key="option.key"
+          type="button"
+          class="inline-flex items-center gap-1 rounded-full border px-3.5 py-1.5 font-sans text-sm transition-colors"
+          :class="sort === option.value
+            ? 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] text-[var(--color-accent)] font-medium'
+            : 'border-[var(--color-border-strong)] text-[var(--color-text-muted)] hover:bg-[var(--color-bg-subtle)]'"
+          :title="sort === option.value ? t(`library.direction.${direction === 'Ascending' ? 'ascending' : 'descending'}`) : undefined"
+          :aria-pressed="sort === option.value"
+          @click="setSort(option.value)"
+        >
+          {{ t(`library.sort.${option.key}`) }}
+          <span v-if="sort === option.value" aria-hidden="true">{{ direction === 'Ascending' ? '↑' : '↓' }}</span>
+        </button>
+      </div>
     </div>
 
     <StateMessage
@@ -173,7 +268,7 @@ watch(data, (value) => {
     <StateMessage
       v-else-if="status === 'empty'"
       variant="empty"
-      :message="t('library.dictionary.empty')"
+      :message="meltho ? t('library.empty') : t('library.dictionary.empty')"
     />
     <StateMessage
       v-else-if="status === 'noResults'"
@@ -186,17 +281,19 @@ watch(data, (value) => {
       <section v-for="group in groups" :key="group.key" class="mb-9 mt-8">
         <h2 v-if="group.label" class="mb-3.5 flex items-baseline gap-2.5 border-b border-[var(--color-border)] pb-2">
           <SyriacText
+            v-if="group.isSyriac"
             :text="group.label"
             class="!text-2xl text-[var(--color-accent)]"
           />
+          <span v-else class="font-sans text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
+            {{ group.label }}
+          </span>
           <span class="font-sans text-xs text-[var(--color-text-faint)]">
             {{ t('library.count', { count: group.words.length }) }}
           </span>
         </h2>
         <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" :class="{ 'mt-6': !group.label }">
           <li v-for="word in group.words" :key="word.id">
-            <!-- Same card vocabulary as the Meltho view: the word leads, the
-                 gloss follows, the letter count sits as a square tile. -->
             <NuxtLink
               :to="`/library/${word.id}`"
               class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-5 py-4 no-underline shadow-[var(--shadow-soft)] transition-[border-color,transform] hover:-translate-y-px hover:border-[color-mix(in_oklab,var(--color-accent)_45%,var(--color-border))]"
@@ -209,6 +306,10 @@ watch(data, (value) => {
                 </span>
                 <span class="mt-0.5 block font-sans text-[11.5px] text-[var(--color-text-faint)]">
                   {{ t(`categories.${word.grammaticalCategory}`) }}
+                  <template v-if="meltho && word.lastPlayedOn">
+                    · {{ t('library.lastPlayed', { date: word.lastPlayedOn }) }}
+                    <span v-if="Number(word.timesPlayed) > 1"> · {{ t('library.timesPlayed', { count: word.timesPlayed }) }}</span>
+                  </template>
                 </span>
               </span>
               <span

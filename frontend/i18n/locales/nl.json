@@ -267,6 +267,9 @@
       "dictionary": "Woordenboek",
       "meltho": "Uit Meltho"
     },
+    "toggle": {
+      "label": "Filteren op woorden getoond in Meltho"
+    },
     "dictionary": {
       "lede": "Elk gepubliceerd woord uit het lexicon van Sabro — doorzoekbaar op Syrisch, transliteratie of betekenis.",
       "ledeCount": "in het lexicon tot nu toe — letter voor letter te doorbladeren, doorzoekbaar in elk schrift. Het woordenboek groeit met elke toevoeging.",

@@ -88,6 +88,9 @@ export type MelthoLibraryEntryDto = Schemas['MelthoLibraryEntryDto']
 export type MelthoLibraryDetailDto = Schemas['MelthoLibraryDetailDto']
 export type LibrarySort = Schemas['LibrarySort']
 export type SortDirection = Schemas['SortDirection']
+
+// Unified library (/library page: dictionary words, optionally filtered to ones played in Meltho).
+export type UnifiedLibraryEntryDto = Schemas['UnifiedLibraryEntryDto']
 export type SyriacLetter = Schemas['SyriacLetter']
 export type SyriacLetterCode = Schemas['SyriacLetterCode']
 export type SyriacVowel = Schemas['SyriacVowel']

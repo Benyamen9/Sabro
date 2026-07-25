@@ -2116,6 +2116,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/library": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                    search?: string;
+                    sort?: components["schemas"]["LibrarySort"];
+                    direction?: components["schemas"]["SortDirection"];
+                    playedInMeltho?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfUnifiedLibraryEntryDto"];
+                        "application/json": components["schemas"]["PagedResultOfUnifiedLibraryEntryDto"];
+                        "text/json": components["schemas"]["PagedResultOfUnifiedLibraryEntryDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/meta": {
         parameters: {
             query?: never;
@@ -4022,6 +4077,15 @@ export interface components {
             /** Format: int32 */
             pageSize: number | string;
         };
+        PagedResultOfUnifiedLibraryEntryDto: {
+            items: components["schemas"]["UnifiedLibraryEntryDto"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+        };
         ProblemDetails: {
             type?: null | string;
             title?: null | string;
@@ -4149,6 +4213,21 @@ export interface components {
         SyriacVowel: "Pthaha" | "Zqapha" | "Rbasa" | "Zlama" | "Hbasa" | "Esasa" | "Rwaha";
         /** @enum {string} */
         Testament: "Old" | "New";
+        UnifiedLibraryEntryDto: {
+            /** Format: uuid */
+            id: string;
+            syriacUnvocalized: string;
+            syriacVocalized: null | string;
+            sblTransliteration: null | string;
+            grammaticalCategory: string;
+            /** Format: int32 */
+            letterCount: number | string;
+            meanings: components["schemas"]["LexiconMeaningDto"][];
+            /** Format: date */
+            lastPlayedOn: null | string;
+            /** Format: int32 */
+            timesPlayed: null | number | string;
+        };
         UpdateLexiconEntryRequest: {
             syriacUnvocalized: string;
             sblTransliteration: null | string;

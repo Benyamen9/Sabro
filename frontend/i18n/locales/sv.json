@@ -267,6 +267,9 @@
       "dictionary": "Ordbok",
       "meltho": "Från Meltho"
     },
+    "toggle": {
+      "label": "Filtrera till ord som visats i Meltho"
+    },
     "dictionary": {
       "lede": "Varje publicerat ord i Sabros lexikon — sökbart efter syriska, translitteration eller betydelse.",
       "ledeCount": "hittills i lexikonet — bläddringsbart bokstav för bokstav, sökbart i alla skriftsystem. Ordboken växer allt eftersom ord läggs till.",

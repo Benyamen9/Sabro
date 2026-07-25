@@ -28,4 +28,21 @@ public interface IMelthoLibraryService
     /// Fails with not-found if the word has never been served, or no longer resolves.
     /// </summary>
     Task<Result<MelthoLibraryDetailDto>> GetDetailAsync(Guid lexiconEntryId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Returns Meltho play stats (last served date, times served) for whichever of the given ids
+    /// have been served before today. Ids with no history are simply absent from the result — used
+    /// by the unified library's "off" state to optionally enrich a page of dictionary entries.
+    /// </summary>
+    Task<IReadOnlyDictionary<Guid, (DateOnly LastPlayedOn, int TimesPlayed)>> GetStatsAsync(
+        IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Lists words that are both currently Published and have been served at least once before
+    /// today — the unified library's "on" state. Unlike <see cref="ListAsync"/>, a word that has
+    /// since been unpublished is excluded (it stays reachable via the standalone Meltho archive,
+    /// just not here). Same paging/sort/search semantics as <see cref="ListAsync"/>.
+    /// </summary>
+    Task<Result<PagedResult<PlayedLibraryEntryDto>>> ListPlayedAndPublishedAsync(
+        int page, int pageSize, LibrarySort sort, SortDirection? direction, string? search, CancellationToken cancellationToken);
 }

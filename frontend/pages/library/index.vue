@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 useSeoMeta({
   title: () => t('seo.library.title'),
@@ -9,31 +10,48 @@ useSeoMeta({
   ogDescription: () => t('seo.library.description'),
 })
 
-// One library, two views: the dictionary (every published word) and the words
-// Meltho has shown. The active view is carried in the URL (?view=meltho) so
-// both surfaces stay linkable; each view owns the rest of its query string.
-const activeView = computed<'dictionary' | 'meltho'>(() =>
-  route.query.view === 'meltho' ? 'meltho' : 'dictionary',
-)
+// Remembers the last-chosen filter across visits, same pattern as sabro_locale/sabro_script_variant.
+// The URL always wins when it carries an explicit ?view=meltho (e.g. the cross-link from a word's
+// detail page), the cookie wins over the hardcoded "off" default on a fresh visit with no query.
+const cookie = useCookie<boolean>('sabro_library_meltho_filter', {
+  default: () => false,
+  maxAge: 60 * 60 * 24 * 365,
+  sameSite: 'lax',
+})
 
-const tabs = [
-  { key: 'dictionary' as const, to: { query: {} }, labelKey: 'library.tabs.dictionary' },
-  { key: 'meltho' as const, to: { query: { view: 'meltho' } }, labelKey: 'library.tabs.meltho' },
-]
+const meltho = ref(route.query.view === 'meltho' ? true : cookie.value)
 
-// The dictionary view reports its unfiltered total for the living lede.
+watch(meltho, (value) => {
+  cookie.value = value
+  router.replace({ query: value ? { view: 'meltho' } : {} })
+})
+
+// Retints every `--color-accent` reference inside (cards, sort pills, the switch itself) to
+// Meltho's established teal — same tokens the word-detail page's cross-link card already uses —
+// by overriding the custom property locally rather than threading conditional classes through
+// every child.
+const retintStyle = computed(() => meltho.value
+  ? {
+      '--color-accent': 'var(--color-meltho)',
+      '--color-accent-hover': 'var(--color-meltho-dark)',
+      '--color-accent-faint': 'var(--color-meltho-faint)',
+    }
+  : undefined)
+
+// The dictionary state reports its unfiltered total for the living lede count; the Meltho state's
+// lede is static text, unchanged from before the merge.
 const dictionaryTotal = ref<number | null>(null)
 </script>
 
 <template>
-  <section class="mx-auto max-w-4xl">
+  <section class="mx-auto max-w-4xl" :style="retintStyle">
     <header class="mb-6 pt-2">
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
         {{ t('library.title') }}
       </p>
       <h1 class="mt-3 font-serif text-4xl font-semibold tracking-[-0.02em] sm:text-[2.75rem]">{{ t('library.heading') }}</h1>
       <p class="mt-3 max-w-2xl font-serif text-[17px] text-[var(--color-text-muted)]">
-        <template v-if="activeView === 'dictionary'">
+        <template v-if="!meltho">
           <template v-if="dictionaryTotal">
             <strong class="font-semibold text-[var(--color-text)]">{{ t('library.count', { count: dictionaryTotal }) }}</strong>
             {{ t('library.dictionary.ledeCount') }}
@@ -44,28 +62,26 @@ const dictionaryTotal = ref<number | null>(null)
       </p>
     </header>
 
-    <!-- The two views as underline tabs, in the header's own visual language. -->
-    <nav
-      class="mb-6 flex gap-1 border-b border-[var(--color-border)] font-sans text-sm"
-      :aria-label="t('library.tabs.label')"
+    <button
+      type="button"
+      role="switch"
+      :aria-checked="meltho"
+      :aria-label="t('library.toggle.label')"
+      class="mb-6 inline-flex items-center gap-3 rounded-full border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] py-1.5 pl-1.5 pr-4 font-sans text-sm transition-colors hover:border-[var(--color-accent)]"
+      @click="meltho = !meltho"
     >
-      <NuxtLink
-        v-for="tab in tabs"
-        :key="tab.key"
-        :to="tab.to"
-        replace
-        class="relative px-3 pb-2.5 pt-1 no-underline transition-colors"
-        :class="activeView === tab.key
-          ? 'font-medium text-[var(--color-text)] after:absolute after:inset-x-2 after:-bottom-px after:h-0.5 after:rounded-full after:bg-[var(--color-accent)]'
-          : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'"
-        :aria-current="activeView === tab.key ? 'page' : undefined"
-      >{{ t(tab.labelKey) }}</NuxtLink>
-    </nav>
+      <span
+        class="relative h-6 w-11 shrink-0 rounded-full transition-colors"
+        :class="meltho ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border-strong)]'"
+      >
+        <span
+          class="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow-[var(--shadow-soft)] transition-transform"
+          :class="{ 'translate-x-[20px]': meltho }"
+        />
+      </span>
+      <span class="font-medium text-[var(--color-text)]">{{ meltho ? t('library.tabs.meltho') : t('library.tabs.dictionary') }}</span>
+    </button>
 
-    <LibraryDictionaryView
-      v-if="activeView === 'dictionary'"
-      @total="dictionaryTotal = $event"
-    />
-    <LibraryMelthoView v-else />
+    <LibraryView :key="meltho ? 'meltho' : 'dictionary'" :meltho="meltho" @total="dictionaryTotal = $event" />
   </section>
 </template>
