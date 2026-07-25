@@ -374,6 +374,30 @@
         "Draft": "Concept",
         "Published": "Gepubliceerd"
       },
+      "filters": {
+        "searchPlaceholder": "Zoek op woord, translitteratie of betekenis…",
+        "searchClear": "Zoekopdracht wissen",
+        "statusLabel": "Status",
+        "statusAll": "Alle statussen",
+        "categoryLabel": "Categorie",
+        "categoryAll": "Alle categorieën",
+        "playableLabel": "Meltho-pool",
+        "playableAll": "Elke poolstatus",
+        "playableYes": "In de pool",
+        "playableNo": "Niet in de pool",
+        "clear": "Filters wissen",
+        "noResults": "Geen vermeldingen komen overeen met deze filters.",
+        "sortLabel": "Sorteren",
+        "directionAscending": "Oplopend — wissel naar aflopend",
+        "directionDescending": "Aflopend — wissel naar oplopend",
+        "pageSizeLabel": "Rijen per pagina"
+      },
+      "sort": {
+        "Recent": "Recent aangemaakt",
+        "Syriac": "Syrisch alfabetisch",
+        "Status": "Status",
+        "Length": "Speelbare lengte"
+      },
       "actions": {
         "edit": "Bewerken",
         "create": "Vermelding aanmaken",

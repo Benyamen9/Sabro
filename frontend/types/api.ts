@@ -67,6 +67,7 @@ export type CreateLexiconMeaningRequest = Schemas['CreateLexiconMeaningRequest']
 export type CreateLexiconEntryRequest = Schemas['CreateLexiconEntryRequest']
 export type UpdateLexiconEntryRequest = Schemas['UpdateLexiconEntryRequest']
 export type SetPlayableLexiconEntryRequest = Schemas['SetPlayableLexiconEntryRequest']
+export type LexiconAdminSort = Schemas['LexiconAdminSort']
 
 // Play results.
 export type GameResultDto = Schemas['GameResultDto']

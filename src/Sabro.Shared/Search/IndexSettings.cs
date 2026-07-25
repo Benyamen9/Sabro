@@ -9,10 +9,12 @@ namespace Sabro.Shared.Search;
 public sealed record IndexSettings(
     IReadOnlyList<string> SearchableAttributes,
     IReadOnlyList<string> FilterableAttributes,
-    IReadOnlyDictionary<string, IReadOnlyList<string>> Synonyms)
+    IReadOnlyDictionary<string, IReadOnlyList<string>> Synonyms,
+    IReadOnlyList<string>? SortableAttributes = null)
 {
     public static IndexSettings Empty { get; } = new(
         SearchableAttributes: Array.Empty<string>(),
         FilterableAttributes: Array.Empty<string>(),
-        Synonyms: new Dictionary<string, IReadOnlyList<string>>());
+        Synonyms: new Dictionary<string, IReadOnlyList<string>>(),
+        SortableAttributes: Array.Empty<string>());
 }

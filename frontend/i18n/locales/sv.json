@@ -404,6 +404,30 @@
         "Draft": "Utkast",
         "Published": "Publicerad"
       },
+      "filters": {
+        "searchPlaceholder": "Sök på ord, translitteration eller betydelse…",
+        "searchClear": "Rensa sökning",
+        "statusLabel": "Status",
+        "statusAll": "Alla statusar",
+        "categoryLabel": "Kategori",
+        "categoryAll": "Alla kategorier",
+        "playableLabel": "Meltho-pool",
+        "playableAll": "Valfri poolstatus",
+        "playableYes": "I poolen",
+        "playableNo": "Inte i poolen",
+        "clear": "Rensa filter",
+        "noResults": "Inga poster matchar dessa filter.",
+        "sortLabel": "Sortera",
+        "directionAscending": "Stigande — byt till fallande",
+        "directionDescending": "Fallande — byt till stigande",
+        "pageSizeLabel": "Rader per sida"
+      },
+      "sort": {
+        "Recent": "Senast skapad",
+        "Syriac": "Syriskt alfabetisk",
+        "Status": "Status",
+        "Length": "Spelbar längd"
+      },
       "actions": {
         "edit": "Redigera",
         "create": "Skapa post",

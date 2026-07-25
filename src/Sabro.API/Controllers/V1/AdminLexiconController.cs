@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.Lexicon.Application.Entries;
+using Sabro.Lexicon.Application.Search;
+using Sabro.Lexicon.Domain;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
 
@@ -34,10 +36,12 @@ public sealed class AdminLexiconController : ApiControllerBase
     };
 
     private readonly ILexiconEntryService entryService;
+    private readonly IAdminLexiconSearchService searchService;
 
-    public AdminLexiconController(ILexiconEntryService entryService)
+    public AdminLexiconController(ILexiconEntryService entryService, IAdminLexiconSearchService searchService)
     {
         this.entryService = entryService;
+        this.searchService = searchService;
     }
 
     [HttpPost]
@@ -54,15 +58,38 @@ public sealed class AdminLexiconController : ApiControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id, version = "1" }, result.Value);
     }
 
+    /// <summary>
+    /// Lists Lexicon entries for the backoffice — Draft and Published alike, unlike any
+    /// public read surface. Backed by the same <c>lexicon</c> Meilisearch index the public
+    /// search uses (kept in sync on every write), just without its hardcoded Published filter,
+    /// so this scales past the SEDRA-import row count without in-memory sorting.
+    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<LexiconEntryDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PagedResult<LexiconEntryDto>>> List(
+        [FromQuery] string? search = null,
+        [FromQuery] LexiconEntryStatus? status = null,
+        [FromQuery] GrammaticalCategory? grammaticalCategory = null,
+        [FromQuery] bool? playableInMeltho = null,
+        [FromQuery] bool? hasPronunciationAudio = null,
+        [FromQuery] LexiconAdminSort sort = LexiconAdminSort.Recent,
+        [FromQuery] SortDirection? direction = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = PageRequest.DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
-        var result = await entryService.ListAsync(page, pageSize, cancellationToken);
+        var result = await searchService.SearchAsync(
+            search,
+            status,
+            grammaticalCategory,
+            playableInMeltho,
+            hasPronunciationAudio,
+            sort,
+            direction,
+            page,
+            pageSize,
+            cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

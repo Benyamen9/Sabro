@@ -373,6 +373,30 @@
         "Draft": "Brouillon",
         "Published": "Publié"
       },
+      "filters": {
+        "searchPlaceholder": "Rechercher un mot, une translittération ou un sens…",
+        "searchClear": "Effacer la recherche",
+        "statusLabel": "Statut",
+        "statusAll": "Tous les statuts",
+        "categoryLabel": "Catégorie",
+        "categoryAll": "Toutes les catégories",
+        "playableLabel": "Vivier Meltho",
+        "playableAll": "Tout état de vivier",
+        "playableYes": "Dans le vivier",
+        "playableNo": "Hors du vivier",
+        "clear": "Effacer les filtres",
+        "noResults": "Aucune entrée ne correspond à ces filtres.",
+        "sortLabel": "Trier",
+        "directionAscending": "Croissant — passer en décroissant",
+        "directionDescending": "Décroissant — passer en croissant",
+        "pageSizeLabel": "Lignes par page"
+      },
+      "sort": {
+        "Recent": "Créé récemment",
+        "Syriac": "Ordre alphabétique syriaque",
+        "Status": "Statut",
+        "Length": "Longueur jouable"
+      },
       "actions": {
         "edit": "Modifier",
         "create": "Créer l’entrée",

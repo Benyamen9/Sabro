@@ -46,6 +46,7 @@ internal sealed class MeilisearchSearchIndexQuery<TDocument> : ISearchIndexQuery
             Page = request.Page,
             HitsPerPage = request.PageSize,
             Filter = BuildFilter(request.Filters),
+            Sort = BuildSort(request.Sort),
         };
 
         var response = await index.SearchAsync<TDocument>(request.Query ?? string.Empty, meiliQuery, cancellationToken)
@@ -90,10 +91,27 @@ internal sealed class MeilisearchSearchIndexQuery<TDocument> : ISearchIndexQuery
             var filter = filters[i];
             sb.Append(filter.Field);
             sb.Append(" = ");
-            AppendQuoted(sb, filter.Value);
+            if (filter.Raw)
+            {
+                sb.Append(filter.Value);
+            }
+            else
+            {
+                AppendQuoted(sb, filter.Value);
+            }
         }
 
         return sb.ToString();
+    }
+
+    private static string[]? BuildSort(IReadOnlyList<SearchSort>? sort)
+    {
+        if (sort is null || sort.Count == 0)
+        {
+            return null;
+        }
+
+        return sort.Select(s => $"{s.Field}:{(s.Descending ? "desc" : "asc")}").ToArray();
     }
 
     private static void AppendQuoted(StringBuilder sb, string value)
