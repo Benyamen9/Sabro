@@ -23,7 +23,11 @@ test.describe('landing page', () => {
     await expect(scriptTrigger).toBeVisible()
     await expect(page.getByRole('button', { name: 'Language' })).toBeVisible()
 
-    // Opening the script menu reveals the three scripts as a listbox.
+    // Opening the script menu reveals the three scripts as a listbox. The trigger has no
+    // native fallback — a click before Vue's handler attaches is a silent no-op — so wait for
+    // hydration first (prior toBeVisible() assertions only prove the SSR HTML rendered, not
+    // that client JS has taken over).
+    await page.waitForLoadState('networkidle')
     await scriptTrigger.click()
     await expect(page.getByRole('option', { name: 'Maherboyo' })).toBeVisible()
     await page.keyboard.press('Escape')
