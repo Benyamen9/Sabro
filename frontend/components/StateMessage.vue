@@ -9,7 +9,7 @@ const props = withDefaults(
     actionLabel?: string
     compact?: boolean
   }>(),
-  { compact: false },
+  { hint: undefined, actionLabel: undefined, compact: false },
 )
 
 defineEmits<{ (e: 'action'): void }>()

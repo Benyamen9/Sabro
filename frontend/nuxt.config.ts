@@ -8,6 +8,14 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   vite: {
     plugins: [tailwindcss()],
+    // Works around a Nuxt dev-server race on cold start (nuxt/nuxt#33606, unresolved upstream
+    // as of Nuxt 3.21.6): Vite's optimizeDeps scanner tries to statically pre-bundle the
+    // `#app-manifest` virtual module before Nitro has registered it, and `/* @vite-ignore */`
+    // (already present in Nuxt's own manifest.js) doesn't suppress that scanner pass — only
+    // the main transform. Excluding it from the scan sidesteps the race entirely.
+    optimizeDeps: {
+      exclude: ['#app-manifest'],
+    },
   },
   app: {
     head: {
