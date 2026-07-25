@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sabro.Lexicon.Domain;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Shared.Text;
 
@@ -35,8 +36,24 @@ internal sealed class LexiconLibraryReader : ILexiconLibraryReader
                 e.SyriacVocalized,
                 e.SblTransliteration,
                 e.PlayableLength,
-                e.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray()))
+                e.Meanings.Select(m => new LexiconMeaningDto(m.Language, m.Text)).ToArray(),
+                e.GrammaticalCategory.ToString()))
             .ToList();
+    }
+
+    public async Task<IReadOnlyList<Guid>> GetPublishedIdsAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken)
+    {
+        if (ids.Count == 0)
+        {
+            return Array.Empty<Guid>();
+        }
+
+        var idList = ids.ToList();
+        return await dbContext.Entries
+            .AsNoTracking()
+            .Where(e => idList.Contains(e.Id) && e.Status == LexiconEntryStatus.Published)
+            .Select(e => e.Id)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<LexiconLibraryDetail?> GetLibraryDetailAsync(Guid id, CancellationToken cancellationToken)

@@ -267,6 +267,9 @@
       "dictionary": "Dictionary",
       "meltho": "From Meltho"
     },
+    "toggle": {
+      "label": "Filter to words shown in Meltho"
+    },
     "dictionary": {
       "lede": "Every published word in Sabro's lexicon — searchable by Syriac, transliteration, or meaning.",
       "ledeCount": "in the lexicon so far — browsable letter by letter, searchable in any script. The dictionary grows as words are added.",
