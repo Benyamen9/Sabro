@@ -12,4 +12,4 @@ public sealed record MelthoLibraryEntryDto(
     string? SblTransliteration,
     int PlayableLength,
     int TimesPlayed,
-    IReadOnlyList<MelthoPuzzleMeaningDto> Meanings);
+    IReadOnlyList<MelthoPuzzleMeaningDto> Meanings) : ISortableLibraryWord;

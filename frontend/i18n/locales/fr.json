@@ -267,6 +267,9 @@
       "dictionary": "Dictionnaire",
       "meltho": "Vus dans Meltho"
     },
+    "toggle": {
+      "label": "Filtrer les mots montrés dans Meltho"
+    },
     "dictionary": {
       "lede": "Tous les mots publiés du lexique de Sabro — recherche en syriaque, en translittération ou par sens.",
       "ledeCount": "dans le lexique à ce jour — à parcourir lettre par lettre, interrogeable dans toutes les écritures. Le dictionnaire s'enrichit au fil des ajouts.",

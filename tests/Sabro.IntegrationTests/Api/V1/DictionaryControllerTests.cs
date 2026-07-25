@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Sabro.API.Controllers.V1;
 using Sabro.IntegrationTests.Api;
 using Sabro.Lexicon.Application.Dictionary;
@@ -76,6 +77,7 @@ public class DictionaryControllerTests : IDisposable
     public async Task GetById_OnWordServedYesterday_ReportsPlayed()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearPuzzlesAsync(ct);
         var id = await SeedEntryAsync("ܫܠܡܐ", publish: true, playable: true, ct);
         await SeedPuzzleAsync(id, DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), ct);
 
@@ -88,6 +90,7 @@ public class DictionaryControllerTests : IDisposable
     public async Task GetById_OnTodaysLivePuzzle_StaysUnmarked()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearPuzzlesAsync(ct);
         var id = await SeedEntryAsync("ܪܒܐ", publish: true, playable: true, ct);
         await SeedPuzzleAsync(id, DateOnly.FromDateTime(DateTime.UtcNow), ct);
 
@@ -143,5 +146,15 @@ public class DictionaryControllerTests : IDisposable
         await using var ctx = postgres.CreatePlayContext();
         ctx.MelthoDailyPuzzles.Add(MelthoDailyPuzzle.Create(Games.Meltho, date, lexiconEntryId).Value!);
         await ctx.SaveChangesAsync(ct);
+    }
+
+    // The unique index is (GameId, Date); these two tests seed the real "today"/"yesterday", so
+    // any other test in this collection that seeded the same calendar date first (e.g.
+    // LibraryControllerTests) would otherwise collide on insert. Same pattern as
+    // MelthoLibraryServiceTests.ClearAsync.
+    private async Task ClearPuzzlesAsync(CancellationToken ct)
+    {
+        await using var ctx = postgres.CreatePlayContext();
+        await ctx.MelthoDailyPuzzles.ExecuteDeleteAsync(ct);
     }
 }

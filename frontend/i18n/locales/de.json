@@ -267,6 +267,9 @@
       "dictionary": "Wörterbuch",
       "meltho": "Aus Meltho"
     },
+    "toggle": {
+      "label": "Nach in Meltho gezeigten Wörtern filtern"
+    },
     "dictionary": {
       "lede": "Jedes veröffentlichte Wort in Sabros Lexikon — durchsuchbar nach Syrisch, Transliteration oder Bedeutung.",
       "ledeCount": "bisher im Lexikon — Buchstabe für Buchstabe durchstöberbar, in jeder Schrift durchsuchbar. Das Wörterbuch wächst mit jedem hinzugefügten Wort.",
