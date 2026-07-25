@@ -258,7 +258,7 @@ public class MelthoLibraryServiceTests
         var untracked = Guid.NewGuid();
         await SeedServedAsync(today.AddDays(-2), tracked, ct);
         await SeedServedAsync(today.AddDays(-1), tracked, ct);
-        await SeedServedAsync(today.AddDays(-1), untracked, ct);
+        await SeedServedAsync(today.AddDays(-3), untracked, ct);
 
         await using var ctx = fixture.CreatePlayContext();
         var stats = await NewService(ctx, EchoReader(), today).GetStatsAsync(new[] { tracked }, ct);

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Sabro.API.Controllers.V1;
 using Sabro.IntegrationTests.Api;
 using Sabro.Lexicon.Domain;
@@ -13,6 +14,13 @@ namespace Sabro.IntegrationTests.Api.V1;
 /// The unified `/api/v1/library` endpoint behind Sabro's own `/library` page. Additive: these
 /// tests only cover the new route, plus one regression check that the existing
 /// `/api/v1/dictionary` and `/play/meltho/library` contracts are untouched.
+///
+/// Puzzle-seeding tests use the real "today"/"yesterday" (the controller resolves "today" from
+/// the system clock, not an injectable TimeProvider, unlike the Application-layer tests) — so,
+/// same as MelthoLibraryServiceTests, each one clears meltho_daily_puzzles first: the unique
+/// index is (GameId, Date), and this collection runs sequentially against one shared database, so
+/// any two tests (in this file or DictionaryControllerTests) seeding the same real calendar date
+/// would otherwise collide.
 /// </summary>
 [Collection(IntegrationCollection.Name)]
 public class LibraryControllerTests : IDisposable
@@ -47,6 +55,7 @@ public class LibraryControllerTests : IDisposable
     public async Task List_Default_EnrichesWithStats_WhenWordWasPlayed()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var id = await SeedEntryAsync("ܫܠܡܐ", publish: true, ct);
         await SeedPuzzleAsync(id, DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), ct);
 
@@ -97,6 +106,7 @@ public class LibraryControllerTests : IDisposable
     public async Task List_PlayedInMeltho_ExcludesNeverPlayedWords()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var played = await SeedEntryAsync("ܫܠܡܐ", publish: true, ct);
         var neverPlayed = await SeedEntryAsync("ܪܒܐ", publish: true, ct);
         await SeedPuzzleAsync(played, DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), ct);
@@ -111,6 +121,7 @@ public class LibraryControllerTests : IDisposable
     public async Task List_PlayedInMeltho_ExcludesWordsUnpublishedSincePlayed()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var id = await SeedEntryAsync("ܡܠܬܐ", publish: true, ct);
         await SeedPuzzleAsync(id, DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), ct);
         await ReturnToDraftAsync(id, ct);
@@ -124,6 +135,7 @@ public class LibraryControllerTests : IDisposable
     public async Task List_PlayedInMeltho_ExcludesTodaysLiveWord()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var id = await SeedEntryAsync("ܪܒܐ", publish: true, ct);
         await SeedPuzzleAsync(id, DateOnly.FromDateTime(DateTime.UtcNow), ct);
 
@@ -136,6 +148,7 @@ public class LibraryControllerTests : IDisposable
     public async Task List_PlayedInMeltho_RecentSort_IsAccepted()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var id = await SeedEntryAsync("ܛܘܪܐ", publish: true, ct);
         await SeedPuzzleAsync(id, DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), ct);
 
@@ -148,11 +161,12 @@ public class LibraryControllerTests : IDisposable
     public async Task List_Regression_DictionaryAndMelthoLibraryEndpointsStillWork()
     {
         var ct = TestContext.Current.CancellationToken;
+        await ClearAsync(ct);
         var id = await SeedEntryAsync("ܟܘܟܒܐ", publish: true, ct);
         await SeedPuzzleAsync(id, DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), ct);
 
         var dictionaryResponse = await client.GetAsync("/api/v1/dictionary?pageSize=200", ct);
-        var melthoResponse = await client.GetAsync("/play/meltho/library", ct);
+        var melthoResponse = await client.GetAsync("/api/v1/play/meltho/library", ct);
 
         dictionaryResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         melthoResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -208,5 +222,11 @@ public class LibraryControllerTests : IDisposable
         await using var ctx = postgres.CreatePlayContext();
         ctx.MelthoDailyPuzzles.Add(MelthoDailyPuzzle.Create(Games.Meltho, date, lexiconEntryId).Value!);
         await ctx.SaveChangesAsync(ct);
+    }
+
+    private async Task ClearAsync(CancellationToken ct)
+    {
+        await using var ctx = postgres.CreatePlayContext();
+        await ctx.MelthoDailyPuzzles.ExecuteDeleteAsync(ct);
     }
 }
