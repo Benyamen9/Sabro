@@ -55,8 +55,8 @@ function isActive(path: string) {
         >
           <span
             aria-hidden="true"
-            class="flex size-6 items-center justify-center rounded-[7px] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-accent)_86%,white)_0%,var(--color-accent)_55%)] font-syriac text-[0.95rem] leading-none text-white shadow-[var(--shadow-soft),inset_0_1px_0_rgb(255_255_255/0.28)]"
-          >ܣ</span>
+            class="badge-swim flex size-6 items-center justify-center rounded-[7px] bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-accent)_86%,white)_0%,var(--color-accent)_55%)] font-syriac text-[0.95rem] leading-none text-white shadow-[var(--shadow-soft),inset_0_1px_0_rgb(255_255_255/0.28)] [--swim-rgb1:75,58,48] [--swim-rgb2:212,175,55] [--swim-a1:0.55] [--swim-a2:0.22]"
+          ><span>ܣ</span></span>
           {{ t('site.title') }}
           <!-- The word the name transliterates, set like a dictionary gloss. -->
           <span
@@ -87,8 +87,8 @@ function isActive(path: string) {
           <!-- Meltho's own mini badge, so the pill shows where it goes. -->
           <span
             aria-hidden="true"
-            class="flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-meltho)] font-syriac text-[0.66rem] leading-none text-white"
-          >ܡ</span>
+            class="badge-swim flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-meltho)] font-syriac text-[0.66rem] leading-none text-white [--swim-rgb:109,75,158]"
+          ><span>ܡ</span></span>
           {{ t('nav.meltho') }}
         </a>
 
@@ -100,8 +100,8 @@ function isActive(path: string) {
           <span
             aria-hidden="true"
             dir="rtl"
-            class="flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-mno)] font-syriac text-[0.66rem] leading-none text-white"
-          >ܐ݈</span>
+            class="badge-swim flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-mno)] font-syriac text-[0.66rem] leading-none text-white [--swim-rgb1:90,58,30] [--swim-rgb2:196,200,204] [--swim-a1:0.55] [--swim-a2:0.22]"
+          ><span>ܐ݈</span></span>
           {{ t('nav.mno') }}
         </a>
 

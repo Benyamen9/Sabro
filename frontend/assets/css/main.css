@@ -33,10 +33,16 @@
   --color-mno-dark: #855c0f;
   --color-mno-faint: #f5ecdb;
 
-  /* The historical family's purple (game colour taxonomy) — today only the
-     home page's unnamed coming-soon tease wears it. */
-  --color-soon: #6d4b9e;
-  --color-soon-faint: #f0eaf8;
+  /* Shmo's verdigris (historical family, game colour taxonomy) — the game
+     itself isn't built yet; today only the home page's coming-soon tease
+     wears it. */
+  --color-shmo: #587b5a;
+  --color-shmo-faint: #eaf0e8;
+
+  /* Nahlo's purple (musical family) — same status as Shmo: colour decided,
+     game not built, currently only on the home page's second tease. */
+  --color-nahlo: #6d4b9e;
+  --color-nahlo-faint: #f0eaf8;
 
   --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 4px 16px rgb(28 25 23 / 0.04);
 }
@@ -65,8 +71,11 @@
     --color-mno-dark: #b8893a;
     --color-mno-faint: #2c2210;
 
-    --color-soon: #a98bd6;
-    --color-soon-faint: #241c31;
+    --color-shmo: #94bc95;
+    --color-shmo-faint: #19251c;
+
+    --color-nahlo: #a98bd6;
+    --color-nahlo-faint: #241c31;
 
     --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
   }
@@ -100,8 +109,11 @@
   --color-mno-dark: #855c0f;
   --color-mno-faint: #f5ecdb;
 
-  --color-soon: #6d4b9e;
-  --color-soon-faint: #f0eaf8;
+  --color-shmo: #587b5a;
+  --color-shmo-faint: #eaf0e8;
+
+  --color-nahlo: #6d4b9e;
+  --color-nahlo-faint: #f0eaf8;
 
   --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 4px 16px rgb(28 25 23 / 0.04);
 }
@@ -129,8 +141,11 @@
   --color-mno-dark: #b8893a;
   --color-mno-faint: #2c2210;
 
-  --color-soon: #a98bd6;
-  --color-soon-faint: #241c31;
+  --color-shmo: #94bc95;
+  --color-shmo-faint: #19251c;
+
+  --color-nahlo: #a98bd6;
+  --color-nahlo-faint: #241c31;
 
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
 }
@@ -182,4 +197,101 @@
   font-size: 1.0625rem;
   line-height: 1.75;
   color: var(--color-text);
+}
+
+/* Swimming badge accent — a second, animated highlight color drifting behind
+   a solid badge glyph. Two blurred radial blobs; set per instance via
+   --swim-rgb (one highlight for both blobs) or --swim-rgb1/--swim-rgb2 (a
+   dominant color plus a smaller touch of a second), each "r, g, b", plus
+   --swim-a1/--swim-a2 for intensity. Pairing per game is decided in the
+   game-color-taxonomy memory — not a free choice per use. */
+.badge-swim {
+  position: relative;
+  overflow: hidden;
+}
+.badge-swim > * {
+  position: relative;
+  z-index: 1;
+}
+.badge-swim::before,
+.badge-swim::after {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  filter: blur(4px);
+  pointer-events: none;
+}
+.badge-swim::before {
+  background: radial-gradient(
+    circle at 30% 35%,
+    rgba(var(--swim-rgb1, var(--swim-rgb, 109, 75, 158)), var(--swim-a1, 0.55)) 0%,
+    rgba(var(--swim-rgb1, var(--swim-rgb, 109, 75, 158)), 0) 45%
+  );
+  animation: badge-swim-a 7s ease-in-out infinite alternate;
+}
+.badge-swim::after {
+  background: radial-gradient(
+    circle at 65% 60%,
+    rgba(var(--swim-rgb2, var(--swim-rgb, 109, 75, 158)), var(--swim-a2, 0.35)) 0%,
+    rgba(var(--swim-rgb2, var(--swim-rgb, 109, 75, 158)), 0) 40%
+  );
+  animation: badge-swim-b 9s ease-in-out infinite alternate;
+}
+@keyframes badge-swim-a {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(18%, 12%) scale(1.2); }
+  100% { transform: translate(-12%, 16%) scale(0.9); }
+}
+@keyframes badge-swim-b {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-15%, -10%) scale(1.1); }
+  100% { transform: translate(10%, -18%) scale(0.85); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge-swim::before,
+  .badge-swim::after {
+    animation: none;
+  }
+}
+
+/* Same idea as .badge-swim, sized for a card-scale surface instead of a small
+   badge — softer blur, slower drift. Same custom properties. */
+.panel-swim {
+  position: relative;
+  overflow: hidden;
+}
+.panel-swim > * {
+  position: relative;
+  z-index: 1;
+}
+.panel-swim::before,
+.panel-swim::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+}
+.panel-swim::before {
+  background: radial-gradient(
+    circle at 30% 35%,
+    rgba(var(--swim-rgb1, var(--swim-rgb, 109, 75, 158)), var(--swim-a1, 0.18)) 0%,
+    rgba(var(--swim-rgb1, var(--swim-rgb, 109, 75, 158)), 0) 38%
+  );
+  filter: blur(22px);
+  animation: badge-swim-a 14s ease-in-out infinite alternate;
+}
+.panel-swim::after {
+  background: radial-gradient(
+    circle at 65% 60%,
+    rgba(var(--swim-rgb2, var(--swim-rgb, 109, 75, 158)), var(--swim-a2, 0.1)) 0%,
+    rgba(var(--swim-rgb2, var(--swim-rgb, 109, 75, 158)), 0) 32%
+  );
+  filter: blur(24px);
+  animation: badge-swim-b 18s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel-swim::before,
+  .panel-swim::after {
+    animation: none;
+  }
 }

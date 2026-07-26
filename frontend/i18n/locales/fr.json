@@ -34,7 +34,8 @@
       "latestTag": "Dernier mot"
     },
     "soonTag": "Bientôt",
-    "soonBody": "Un nouveau jeu prend forme. La suite quand il sera prêt."
+    "soonBody": "Un nouveau jeu prend forme. La suite quand il sera prêt.",
+    "soonBody2": "Un autre aussi. La suite quand il sera prêt."
   },
   "nav": {
     "primary": "Navigation principale",
