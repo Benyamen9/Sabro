@@ -10,11 +10,9 @@ test.describe('landing page', () => {
     await expect(page.getByRole('link', { name: 'Translations', exact: true })).toHaveCount(0)
     await expect(page.getByText('letter by letter.')).toBeVisible()
 
-    // The corrected copy: mission-bearing lede, plain-speech cards, and the
-    // one unnamed purple tease — nothing about what it is.
+    // The corrected copy: mission-bearing lede, plain-speech cards.
     await expect(page.getByText('Sabro means hope', { exact: false })).toBeVisible()
     await expect(page.getByText('A Wordle in Syriac', { exact: false })).toBeVisible()
-    await expect(page.getByText("A new game is taking shape. More when it's ready.")).toBeVisible()
     await expect(page.getByText('Shmo')).toHaveCount(0)
 
     // The script + language switchers are custom dropdowns: a trigger button that
