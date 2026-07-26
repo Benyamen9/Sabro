@@ -35,8 +35,12 @@ public class MnoPuzzleServiceTests
         puzzle.Date.Should().Be(today);
         puzzle.Difficulty.Should().Be("normal");
         puzzle.Target.Should().BeGreaterThanOrEqualTo(1);
-        puzzle.TileCount.Should().Be(MnoEquationGenerator.WidthOf(MnoDifficulty.Normal));
-        puzzle.Expression.Should().MatchRegex(@"^\d+([+\-*/]\d+){1,2}$");
+
+        // Normal occasionally draws a grouped (parenthesized) equation, 2 tiles
+        // wider than the level's normal width — see MnoEquationGenerator.
+        var normalWidth = MnoEquationGenerator.WidthOf(MnoDifficulty.Normal);
+        puzzle.TileCount.Should().BeOneOf(normalWidth, normalWidth + 2);
+        puzzle.Expression.Should().MatchRegex(@"^(\(\d+[+\-*/]\d+\)[+\-*/]\d+|\d+[+\-*/]\(\d+[+\-*/]\d+\)|\d+([+\-*/]\d+){1,2})$");
         puzzle.TileForm.Should().NotBeNullOrWhiteSpace();
 
         await using var read = fixture.CreatePlayContext();
