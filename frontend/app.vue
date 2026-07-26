@@ -4,6 +4,10 @@
 // and the script-switcher icon — not just <SyriacText>.
 const { fontFamily } = useScriptVariant()
 
+// Undefined for "system" omits the attribute so main.css's prefers-color-scheme
+// query decides; SSR renders this into the initial HTML so there's no flash.
+const { htmlAttr: themeAttr } = useTheme()
+
 // --- App-wide SEO baseline; pages override title/description per surface. ---
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -14,7 +18,7 @@ const siteUrl = config.public.siteUrl.replace(/\/$/, '')
 const canonical = computed(() => `${siteUrl}${route.path}`)
 
 useHead({
-  htmlAttrs: { lang: locale },
+  htmlAttrs: { lang: locale, 'data-theme': themeAttr },
   titleTemplate: (title?: string | null) =>
     title ? `${title} — ${t('site.title')}` : t('seo.home.title'),
   link: [{ rel: 'canonical', href: canonical }],

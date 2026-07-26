@@ -1,10 +1,75 @@
 <script setup lang="ts">
 import type { ScriptVariant } from '~/composables/useScriptVariant'
+import type { Theme } from '~/composables/useTheme'
 
 const { t, locale, locales, setLocale } = useI18n()
 const { isConfigured, isSignedIn, displayName, email, username, avatarUrl, initial, signIn, signOut }
   = useAuth()
 const { variant, set: setVariant, available: scriptOptions } = useScriptVariant()
+const { theme, set: setTheme, available: themeOptions } = useTheme()
+
+// Fixed swatch colors (Sabro's own light/dark tokens, lifted verbatim from
+// main.css) rather than the live --color-* vars, so each preview shows its
+// own palette no matter which theme the page is currently rendering in. Each
+// card mimics Sabro's own chrome (header badge, nav line, content lines, an
+// accent pill like the Meltho/Mno header links) rather than generic bars.
+// System reuses the same layout but every value blends light→dark across the
+// card — a short true-white/true-black hold at each edge, then a smooth
+// blend through the middle — while the header badge/nav-line (which sit in
+// the light zone) and the pill/icon (which sit in the dark zone) stay flat.
+interface ThemeSwatch {
+  bg: string
+  headerBorder: string
+  badge: string
+  navline: string
+  line1: string
+  line2: string
+  pillBg: string
+  pillAccent: string
+  icon: string
+}
+
+// A short true-color hold at each edge (16%), blending through the middle —
+// used for the "System" card's mixed light/dark values.
+function blend(light: string, dark: string) {
+  return `linear-gradient(100deg, ${light} 0%, ${light} 16%, ${dark} 84%, ${dark} 100%)`
+}
+
+const themeSwatches: Record<Theme, ThemeSwatch> = {
+  light: {
+    bg: '#ffffff',
+    headerBorder: '#e7e3dd',
+    badge: 'linear-gradient(180deg,#ab5560 0%,#8c2f39 100%)',
+    navline: '#a7a29a',
+    line1: '#6b6660',
+    line2: '#a7a29a',
+    pillBg: '#f3e6e8',
+    pillAccent: '#8c2f39',
+    icon: '#8c2f39',
+  },
+  dark: {
+    bg: '#16130f',
+    headerBorder: '#2a2622',
+    badge: 'linear-gradient(180deg,#e7a3ac 0%,#d97585 100%)',
+    navline: '#6b6660',
+    line1: '#a8a29e',
+    line2: '#6b6660',
+    pillBg: '#2a1417',
+    pillAccent: '#d97585',
+    icon: '#d97585',
+  },
+  system: {
+    bg: blend('#ffffff', '#16130f'),
+    headerBorder: 'rgba(130,120,110,0.35)',
+    badge: 'linear-gradient(180deg,#ab5560 0%,#8c2f39 100%)',
+    navline: '#a7a29a',
+    line1: blend('#6b6660', '#a8a29e'),
+    line2: blend('#a7a29a', '#6b6660'),
+    pillBg: '#2a1417',
+    pillAccent: '#d97585',
+    icon: '#d97585',
+  },
+}
 const { profile, load, persist, saveAccount, exportData, deleteAccount } = useProfile()
 const { load: loadLeaderboard } = useLeaderboard()
 const { hasPassword, load: loadCapabilities } = useAccountCapabilities()
@@ -136,6 +201,14 @@ async function chooseScript(value: ScriptVariant) {
   if (value === variant.value) return
   setVariant(value)
   await persist()
+  flagPrefsSaved()
+}
+
+// Cookie-only (no profile sync) — appearance is a per-browser preference,
+// unlike locale/script which follow the signed-in user across devices.
+function chooseTheme(value: Theme) {
+  if (value === theme.value) return
+  setTheme(value)
   flagPrefsSaved()
 }
 
@@ -466,6 +539,104 @@ onBeforeUnmount(() => {
                     class="font-sans text-xs"
                     :class="option === variant ? 'font-medium text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'"
                   >{{ t(`switcher.script.${option}`) }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <p class="font-sans text-sm font-medium text-[var(--color-text)]">{{ t('switcher.themeLabel') }}</p>
+              <!-- Each card is a miniature of Sabro's own chrome — the header badge,
+                   a nav line, content lines, and an accent pill like the Meltho/Mno
+                   header links — previewed with fixed colors (not the --color-*
+                   tokens) so all three stay legible no matter the page's current
+                   theme. System reuses the same layout with every value blending
+                   light→dark (see themeSwatches above). -->
+              <div class="mt-2 grid grid-cols-3 gap-3" role="group" :aria-label="t('switcher.themeLabel')">
+                <button
+                  v-for="option in themeOptions"
+                  :key="option"
+                  type="button"
+                  :aria-pressed="option === theme"
+                  class="group flex cursor-pointer flex-col items-center gap-2"
+                  @click="chooseTheme(option)"
+                >
+                  <span
+                    class="relative block aspect-[4/3] w-full overflow-hidden rounded-xl transition-[transform,box-shadow] duration-150 group-hover:-translate-y-0.5 group-active:translate-y-0 group-active:scale-[0.98]"
+                    :class="option === theme
+                      ? 'shadow-[0_8px_18px_-6px_rgba(0,0,0,0.16)] ring-2 ring-[var(--color-accent)]'
+                      : 'ring-1 ring-[var(--color-border)] group-hover:shadow-[0_8px_18px_-6px_rgba(0,0,0,0.16)] group-hover:ring-[var(--color-border-strong)]'"
+                    :style="{ background: themeSwatches[option].bg }"
+                  >
+                    <span
+                      class="flex items-center gap-1.5 border-b px-2.5 py-2"
+                      :style="{ borderColor: themeSwatches[option].headerBorder }"
+                    >
+                      <span
+                        class="flex size-3.5 shrink-0 items-center justify-center rounded font-syriac text-[0.5rem] leading-none text-white"
+                        :style="{ background: themeSwatches[option].badge }"
+                      >ܐ</span>
+                      <span class="block h-0.5 w-3 rounded-full" :style="{ background: themeSwatches[option].navline }" />
+                    </span>
+                    <span class="flex flex-col gap-1.5 px-2.5 pt-2">
+                      <span class="block h-[3px] w-[85%] rounded-full" :style="{ background: themeSwatches[option].line1 }" />
+                      <span class="block h-[3px] w-[60%] rounded-full" :style="{ background: themeSwatches[option].line2 }" />
+                      <span
+                        class="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full py-0.5 pl-1 pr-1.5"
+                        :style="{ background: themeSwatches[option].pillBg }"
+                      >
+                        <span class="size-[3px] rounded-full" :style="{ background: themeSwatches[option].pillAccent }" />
+                        <span class="block h-0.5 w-4 rounded-full opacity-55" :style="{ background: themeSwatches[option].pillAccent }" />
+                      </span>
+                    </span>
+                    <svg
+                      v-if="option === 'light'"
+                      class="absolute bottom-2 right-2 size-4"
+                      :style="{ color: themeSwatches[option].icon }"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="4.5" />
+                      <path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+                    </svg>
+                    <svg
+                      v-else-if="option === 'dark'"
+                      class="absolute bottom-2 right-2 size-4"
+                      :style="{ color: themeSwatches[option].icon }"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a7 7 0 1 0 10.5 10.5Z" />
+                    </svg>
+                    <svg
+                      v-else
+                      class="absolute bottom-2 right-2 size-4"
+                      :style="{ color: themeSwatches[option].icon }"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <rect x="3" y="4.5" width="18" height="12" rx="1.5" />
+                      <path d="M8.5 20h7M12 16.5V20" />
+                    </svg>
+                  </span>
+                  <span
+                    class="font-sans text-xs"
+                    :class="option === theme ? 'font-medium text-[var(--color-accent)]' : 'text-[var(--color-text-muted)] group-hover:text-[var(--color-text)]'"
+                  >{{ t(`switcher.theme.${option}`) }}</span>
                 </button>
               </div>
             </div>

@@ -72,6 +72,74 @@
   }
 }
 
+/* Manual theme override — set via useTheme()/<html data-theme>. The attribute
+   selector outranks the plain :root above regardless of source order, so
+   picking "light" forces the palette even when the OS is dark, and picking
+   "dark" forces it even when the OS is light. Leaving the attribute unset
+   ("system") falls back to the prefers-color-scheme query above. */
+:root[data-theme="light"] {
+  --color-bg: #fafaf9;
+  --color-bg-elevated: #ffffff;
+  --color-bg-subtle: #f4f3f0;
+  --color-text: #1c1917;
+  --color-text-muted: #6b6660;
+  --color-text-faint: #a7a29a;
+  --color-border: #e7e3dd;
+  --color-border-strong: #d6d1c9;
+  --color-accent: #8c2f39;
+  --color-accent-hover: #732630;
+  --color-accent-faint: #f3e6e8;
+
+  --color-meltho: #1a6b66;
+  --color-meltho-dark: #14544f;
+  --color-meltho-faint: #e3efee;
+  --color-meltho-gold: #c79a3e;
+  --color-meltho-gold-dark: #ad8336;
+
+  --color-mno: #a87514;
+  --color-mno-dark: #855c0f;
+  --color-mno-faint: #f5ecdb;
+
+  --color-soon: #6d4b9e;
+  --color-soon-faint: #f0eaf8;
+
+  --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 4px 16px rgb(28 25 23 / 0.04);
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0c0a09;
+  --color-bg-elevated: #16130f;
+  --color-bg-subtle: #1c1917;
+  --color-text: #f5f5f4;
+  --color-text-muted: #a8a29e;
+  --color-text-faint: #6b6660;
+  --color-border: #2a2622;
+  --color-border-strong: #3a342e;
+  --color-accent: #d97585;
+  --color-accent-hover: #e88c9a;
+  --color-accent-faint: #2a1417;
+
+  --color-meltho: #3fa89f;
+  --color-meltho-dark: #2f867e;
+  --color-meltho-faint: #122e2b;
+  --color-meltho-gold: #b8893a;
+  --color-meltho-gold-dark: #9c7531;
+
+  --color-mno: #d9a84e;
+  --color-mno-dark: #b8893a;
+  --color-mno-faint: #2c2210;
+
+  --color-soon: #a98bd6;
+  --color-soon-faint: #241c31;
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+}
+
+/* Pins native UI (scrollbars, form controls) to the forced palette; "system"
+   leaves the light-dark default above so it still tracks the OS. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
 @layer base {
   html {
     color-scheme: light dark;

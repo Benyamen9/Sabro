@@ -53,6 +53,12 @@
       "estrangela": "Estrangeloyo",
       "serto": "Maherboyo",
       "madnhaya": "Madenhoyo"
+    },
+    "themeLabel": "Erscheinungsbild",
+    "theme": {
+      "light": "Hell",
+      "dark": "Dunkel",
+      "system": "System"
     }
   },
   "common": {
