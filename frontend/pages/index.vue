@@ -230,26 +230,6 @@ const heroAction = computed(() => {
       </div>
     </section>
 
-    <!-- Two teases: something new is coming, twice over. No name, no
-         description — but each wears its own game's decided colour and
-         "swim" accent (Shmo: bone + slate in verdigris; Nahlo: lilac in
-         purple), a soft preview of what the game colour taxonomy already
-         settled before either game exists. -->
-    <div class="mt-5 grid gap-3 sm:grid-cols-2">
-      <div class="panel-swim flex flex-wrap items-baseline gap-x-4 gap-y-1.5 rounded-2xl border border-[var(--color-border)] border-l-4 border-l-[var(--color-shmo)] bg-[var(--color-shmo-faint)] px-6 py-4 [--swim-rgb1:230,220,195] [--swim-rgb2:124,132,140] [--swim-a1:0.14] [--swim-a2:0.08]">
-        <span class="font-sans text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-[var(--color-shmo)]">
-          {{ t('home.soonTag') }}
-        </span>
-        <p class="font-serif text-[15px] text-[var(--color-text)]">{{ t('home.soonBody') }}</p>
-      </div>
-      <div class="panel-swim flex flex-wrap items-baseline gap-x-4 gap-y-1.5 rounded-2xl border border-[var(--color-border)] border-l-4 border-l-[var(--color-nahlo)] bg-[var(--color-nahlo-faint)] px-6 py-4 [--swim-rgb:199,168,224] [--swim-a1:0.3] [--swim-a2:0.18]">
-        <span class="font-sans text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-[var(--color-nahlo)]">
-          {{ t('home.soonTag') }}
-        </span>
-        <p class="font-serif text-[15px] text-[var(--color-text)]">{{ t('home.soonBody2') }}</p>
-      </div>
-    </div>
-
     <!-- The library as a living archive, led by its newest entry. -->
     <section class="mt-10 overflow-hidden rounded-2xl border border-[var(--color-border)]">
       <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-7 pt-6 sm:px-8">
