@@ -110,6 +110,7 @@ function isActive(path: string) {
         <div class="order-2 ml-auto flex items-center gap-1.5 sm:order-5 sm:ml-0 sm:gap-2">
           <ScriptVariantSwitcher />
           <LanguageSwitcher />
+          <ThemeSwitcher />
           <UserMenu />
         </div>
 
