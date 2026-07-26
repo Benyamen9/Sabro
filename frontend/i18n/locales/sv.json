@@ -34,7 +34,8 @@
       "latestTag": "Senaste ordet"
     },
     "soonTag": "Kommer snart",
-    "soonBody": "Ett nytt spel tar form. Mer när det är klart."
+    "soonBody": "Ett nytt spel tar form. Mer när det är klart.",
+    "soonBody2": "Ett till också. Mer när det är klart."
   },
   "nav": {
     "primary": "Primär navigering",

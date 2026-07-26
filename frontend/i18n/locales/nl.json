@@ -34,7 +34,8 @@
       "latestTag": "Laatste woord"
     },
     "soonTag": "Binnenkort",
-    "soonBody": "Een nieuw spel krijgt vorm. Meer zodra het klaar is."
+    "soonBody": "Een nieuw spel krijgt vorm. Meer zodra het klaar is.",
+    "soonBody2": "Een tweede ook. Meer zodra het klaar is."
   },
   "nav": {
     "primary": "Primaire navigatie",

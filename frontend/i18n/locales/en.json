@@ -34,7 +34,8 @@
       "latestTag": "Latest word"
     },
     "soonTag": "Coming soon",
-    "soonBody": "A new game is taking shape. More when it's ready."
+    "soonBody": "A new game is taking shape. More when it's ready.",
+    "soonBody2": "So is another. More when it's ready."
   },
   "nav": {
     "primary": "Primary navigation",
