@@ -17,6 +17,15 @@ namespace Sabro.Play.Domain;
 /// thousands), the compact marked spelling on Extreme so all four multiplier
 /// marks are met in play. The widths climb the ladder (3/4/5/6/6) so each
 /// level scales puzzle depth, not just numeral length.
+///
+/// Normal and above may also group one adjacent operand pair in parentheses
+/// when the two operators are mixed precedence (a +/- paired with a */) —
+/// grouping is the only thing that changes the result in that case, since
+/// same-tier operator pairs already evaluate left to right either way. This
+/// is deliberately bounded to a single, non-nested pair (never more, given
+/// the ladder never draws more than 2 operators) and costs 2 tiles on top of
+/// the level's normal width, so it only widens the board on the days it's
+/// actually used.
 /// </summary>
 public static class MnoEquationGenerator
 {
@@ -26,16 +35,21 @@ public static class MnoEquationGenerator
     {
         // Width 3 with one operator forces two single-letter numbers; the
         // operand cap at 90 keeps even the draw pool to units and tens.
-        [MnoDifficulty.Beginner] = new(Width: 3, MaxOperand: 90, Operators: ['+', '-'], MaxTarget: 180, OperatorCounts: [1], RequireMulOrDiv: false, RequireOperandAtLeast: 0, SyriacNumerals.Spell),
+        [MnoDifficulty.Beginner] = new(Width: 3, MaxOperand: 90, Operators: ['+', '-'], MaxTarget: 180, OperatorCounts: [1], RequireMulOrDiv: false, RequireOperandAtLeast: 0, SyriacNumerals.Spell, AllowParentheses: false),
 
         // Width 4 with one operator forces a two-letter compound plus a single letter.
-        [MnoDifficulty.Easy] = new(Width: 4, MaxOperand: 99, Operators: ['+', '-'], MaxTarget: 189, OperatorCounts: [1], RequireMulOrDiv: false, RequireOperandAtLeast: 0, SyriacNumerals.Spell),
-        [MnoDifficulty.Normal] = new(Width: 5, MaxOperand: 999, Operators: ['+', '-', '*', '/'], MaxTarget: 9_999, OperatorCounts: [1, 2], RequireMulOrDiv: true, RequireOperandAtLeast: 0, SyriacNumerals.Spell),
-        [MnoDifficulty.Hard] = new(Width: 6, MaxOperand: 9_999, Operators: ['+', '-', '*', '/'], MaxTarget: 99_999, OperatorCounts: [2], RequireMulOrDiv: true, RequireOperandAtLeast: 1_000, SyriacNumerals.Spell),
-        [MnoDifficulty.Extreme] = new(Width: 6, MaxOperand: 999_999, Operators: ['+', '-', '*', '/'], MaxTarget: 999_999, OperatorCounts: [2], RequireMulOrDiv: true, RequireOperandAtLeast: 10_000, SyriacNumerals.SpellMarked),
+        [MnoDifficulty.Easy] = new(Width: 4, MaxOperand: 99, Operators: ['+', '-'], MaxTarget: 189, OperatorCounts: [1], RequireMulOrDiv: false, RequireOperandAtLeast: 0, SyriacNumerals.Spell, AllowParentheses: false),
+        [MnoDifficulty.Normal] = new(Width: 5, MaxOperand: 999, Operators: ['+', '-', '*', '/'], MaxTarget: 9_999, OperatorCounts: [1, 2], RequireMulOrDiv: true, RequireOperandAtLeast: 0, SyriacNumerals.Spell, AllowParentheses: true),
+        [MnoDifficulty.Hard] = new(Width: 6, MaxOperand: 9_999, Operators: ['+', '-', '*', '/'], MaxTarget: 99_999, OperatorCounts: [2], RequireMulOrDiv: true, RequireOperandAtLeast: 1_000, SyriacNumerals.Spell, AllowParentheses: true),
+        [MnoDifficulty.Extreme] = new(Width: 6, MaxOperand: 999_999, Operators: ['+', '-', '*', '/'], MaxTarget: 999_999, OperatorCounts: [2], RequireMulOrDiv: true, RequireOperandAtLeast: 10_000, SyriacNumerals.SpellMarked, AllowParentheses: true),
     };
 
-    /// <summary>The level's board width in tiles — every equation for the level renders to exactly this many.</summary>
+    /// <summary>
+    /// The level's normal board width in tiles. Normal/Hard/Extreme occasionally
+    /// draw a parenthesized equation instead — 2 tiles wider than this, never
+    /// narrower — so callers should size the board from the actual returned tile
+    /// form, not assume every equation is exactly this many tiles.
+    /// </summary>
     public static int WidthOf(MnoDifficulty difficulty) => Profiles[difficulty].Width;
 
     /// <summary>
@@ -60,6 +74,20 @@ public static class MnoEquationGenerator
                 continue;
             }
 
+            // Grouping only ever changes anything with exactly 2 operators of
+            // mixed precedence (same-tier pairs already evaluate left to right
+            // the same either way) — bounded to that one shape, never nested.
+            // It costs 2 tiles on top of the level's normal budget, so it only
+            // widens the board on the days it's actually used.
+            var groupedIndex = -1;
+            if (profile.AllowParentheses && operatorCount == 2 && IsMixedPrecedence(operators[0], operators[1]) && random.Next(2) == 0)
+            {
+                groupedIndex = operators[0] is '+' or '-' ? 0 : 1;
+            }
+
+            // The operand-tile budget is unchanged either way — the 2 paren
+            // tiles are pure overhead added on top, widening the *board*
+            // (Width -> Width + 2) without taking anything from the operands.
             var lengths = SplitTiles(random, profile.Width - operatorCount, operatorCount + 1);
             if (lengths is null)
             {
@@ -94,19 +122,19 @@ public static class MnoEquationGenerator
                 continue;
             }
 
-            var target = TryEvaluate(numbers, operators);
+            var target = groupedIndex >= 0 ? TryEvaluateGrouped(numbers, operators, groupedIndex) : TryEvaluate(numbers, operators);
             if (target is null or < 1 || target > profile.MaxTarget)
             {
                 continue;
             }
 
-            var expression = BuildExpression(numbers, operators);
+            var expression = BuildExpression(numbers, operators, groupedIndex);
             if (excludedExpressions is not null && excludedExpressions.Contains(expression))
             {
                 continue;
             }
 
-            return new MnoEquation(expression, BuildTileForm(numbers, operators, profile.Spell), target.Value);
+            return new MnoEquation(expression, BuildTileForm(numbers, operators, profile.Spell, groupedIndex), target.Value);
         }
 
         throw new InvalidOperationException("Mno equation generation exhausted its attempts — the constraints have become unsatisfiable.");
@@ -151,6 +179,58 @@ public static class MnoEquationGenerator
         return false;
     }
 
+    /// <summary>+/- and */ are different precedence tiers — grouping only ever
+    /// changes the result when the two operators straddle that boundary.</summary>
+    private static bool IsMixedPrecedence(char op0, char op1)
+    {
+        bool IsAdditive(char op) => op is '+' or '-';
+        return IsAdditive(op0) != IsAdditive(op1);
+    }
+
+    /// <summary>
+    /// Evaluates one of the two bounded grouped shapes Mno currently produces —
+    /// (n0 op0 n1) op1 n2, or n0 op0 (n1 op1 n2) — never nested, never more than
+    /// one pair. Only reached when the two operators are mixed precedence, so
+    /// the grouped pair is always +/- and the outer combination always */;
+    /// null when the outer division is inexact.
+    /// </summary>
+    private static int? TryEvaluateGrouped(int[] numbers, char[] operators, int groupedIndex)
+    {
+        long Apply(char op, long a, long b) => op switch
+        {
+            '+' => a + b,
+            '-' => a - b,
+            '*' => a * b,
+            _ => a / b,
+        };
+
+        // b can be zero here even though every drawn operand is >= 1: when
+        // grouped is the outer division's divisor, b is the *grouped pair's
+        // result* (e.g. "7-7"), not a raw operand.
+        bool IsExact(char op, long a, long b) => op != '/' || (b != 0 && a % b == 0);
+
+        var groupOp = operators[groupedIndex];
+        long a = numbers[groupedIndex];
+        long b = numbers[groupedIndex + 1];
+        if (!IsExact(groupOp, a, b))
+        {
+            return null;
+        }
+
+        var groupResult = Apply(groupOp, a, b);
+
+        var outerIndex = groupedIndex == 0 ? 1 : 0;
+        var outerOp = operators[outerIndex];
+        var (left, right) = groupedIndex == 0 ? (groupResult, (long)numbers[2]) : ((long)numbers[0], groupResult);
+        if (!IsExact(outerOp, left, right))
+        {
+            return null;
+        }
+
+        var total = Apply(outerOp, left, right);
+        return total is >= int.MinValue and <= int.MaxValue ? (int)total : null;
+    }
+
     /// <summary>Standard precedence, left to right; null when any division is inexact.</summary>
     private static int? TryEvaluate(int[] numbers, char[] operators)
     {
@@ -192,26 +272,42 @@ public static class MnoEquationGenerator
         return total is >= int.MinValue and <= int.MaxValue ? (int)total : null;
     }
 
-    private static string BuildExpression(int[] numbers, char[] operators)
+    private static string BuildExpression(int[] numbers, char[] operators, int groupedIndex = -1)
     {
-        var builder = new StringBuilder().Append(numbers[0]);
-        for (var i = 0; i < operators.Length; i++)
+        if (groupedIndex < 0)
         {
-            builder.Append(operators[i]).Append(numbers[i + 1]);
+            var builder = new StringBuilder().Append(numbers[0]);
+            for (var i = 0; i < operators.Length; i++)
+            {
+                builder.Append(operators[i]).Append(numbers[i + 1]);
+            }
+
+            return builder.ToString();
         }
 
-        return builder.ToString();
+        // Bounded to the operatorCount == 2 shape — wrap the grouped pair,
+        // then apply the outer operator to the remaining operand.
+        return groupedIndex == 0
+            ? $"({numbers[0]}{operators[0]}{numbers[1]}){operators[1]}{numbers[2]}"
+            : $"{numbers[0]}{operators[0]}({numbers[1]}{operators[1]}{numbers[2]})";
     }
 
-    private static string BuildTileForm(int[] numbers, char[] operators, Func<int, string> spell)
+    private static string BuildTileForm(int[] numbers, char[] operators, Func<int, string> spell, int groupedIndex = -1)
     {
-        var builder = new StringBuilder().Append(spell(numbers[0]));
-        for (var i = 0; i < operators.Length; i++)
+        if (groupedIndex < 0)
         {
-            builder.Append(operators[i]).Append(spell(numbers[i + 1]));
+            var builder = new StringBuilder().Append(spell(numbers[0]));
+            for (var i = 0; i < operators.Length; i++)
+            {
+                builder.Append(operators[i]).Append(spell(numbers[i + 1]));
+            }
+
+            return builder.ToString();
         }
 
-        return builder.ToString();
+        return groupedIndex == 0
+            ? $"({spell(numbers[0])}{operators[0]}{spell(numbers[1])}){operators[1]}{spell(numbers[2])}"
+            : $"{spell(numbers[0])}{operators[0]}({spell(numbers[1])}{operators[1]}{spell(numbers[2])})";
     }
 
     /// <summary>
@@ -229,7 +325,8 @@ public static class MnoEquationGenerator
         int[] OperatorCounts,
         bool RequireMulOrDiv,
         int RequireOperandAtLeast,
-        Func<int, string> Spell)
+        Func<int, string> Spell,
+        bool AllowParentheses)
     {
         /// <summary>Numbers grouped by the tile length of this level's spelling, so a draw for a slot width is O(1).</summary>
         public Dictionary<int, int[]> PoolsByTileCount { get; } = Enumerable
