@@ -46,10 +46,12 @@ function isActive(path: string) {
     <header
       class="sticky top-0 z-40 bg-[color-mix(in_oklab,var(--color-bg)_85%,transparent)] backdrop-blur-md backdrop-saturate-150 before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-[var(--color-accent)] after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-[linear-gradient(to_right,transparent,var(--color-border-strong)_14%,var(--color-border-strong)_86%,transparent)]"
     >
-      <!-- On mobile this wraps into two balanced rows: brand + controls on top,
-           nav + the Meltho link below. The basis-full spacer forces that break.
-           From sm: everything sits on one row (brand · nav · ··· · Meltho · controls). -->
-      <div class="mx-auto flex min-h-14 max-w-6xl flex-wrap items-center gap-x-3 gap-y-2.5 px-4 py-2.5 sm:flex-nowrap sm:gap-x-6 sm:gap-y-0 sm:px-6 sm:py-0">
+      <!-- Below lg this wraps into two balanced rows: brand + controls on top,
+           nav + the game pills below. The basis-full spacer forces that break.
+           Three game pills (Meltho/Mno/Shmo) plus nav, divider and controls need
+           ~840px to sit on one row without squeezing — lg: (1024px) is the first
+           breakpoint that clears that with real margin; sm: (640px) does not. -->
+      <div class="mx-auto flex min-h-14 max-w-6xl flex-wrap items-center gap-x-3 gap-y-2.5 px-4 py-2.5 lg:flex-nowrap lg:gap-x-6 lg:gap-y-0 lg:px-6 lg:py-0">
         <NuxtLink
           to="/"
           class="group order-1 flex shrink-0 items-center gap-2 font-sans text-base font-semibold tracking-tight no-underline"
@@ -67,7 +69,7 @@ function isActive(path: string) {
           >ܣܒܪܐ</span>
         </NuxtLink>
 
-        <nav class="order-4 flex items-center gap-1 sm:order-2" :aria-label="t('nav.primary')">
+        <nav class="order-4 flex items-center gap-1 lg:order-2" :aria-label="t('nav.primary')">
           <NuxtLink
             v-for="item in navItems"
             :key="item.to"
@@ -83,19 +85,22 @@ function isActive(path: string) {
 
         <a
           :href="melthoUrl"
-          class="order-5 ml-auto inline-flex items-center gap-1.5 rounded-full bg-[var(--color-meltho-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-meltho)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-meltho-faint)_70%,var(--color-meltho)_14%)] sm:order-3"
+          :aria-label="t('nav.meltho')"
+          class="order-5 ml-auto inline-flex items-center gap-1.5 rounded-full bg-[var(--color-meltho-faint)] px-2 py-1 font-sans text-xs font-medium text-[var(--color-meltho)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-meltho-faint)_70%,var(--color-meltho)_14%)] lg:order-3 lg:px-3"
         >
-          <!-- Meltho's own mini badge, so the pill shows where it goes. -->
+          <!-- Meltho's own mini badge, so the pill shows where it goes. Below lg
+               this is icon-only — the name reappears once there's room for it. -->
           <span
             aria-hidden="true"
             class="badge-swim flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-meltho)] font-syriac text-[0.66rem] leading-none text-white [--swim-rgb:109,75,158]"
           ><span>ܡ</span></span>
-          {{ t('nav.meltho') }}
+          <span class="hidden lg:inline">{{ t('nav.meltho') }}</span>
         </a>
 
         <a
           :href="mnoUrl"
-          class="order-6 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-mno-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-mno)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-mno-faint)_70%,var(--color-mno)_14%)] sm:order-4"
+          :aria-label="t('nav.mno')"
+          class="order-6 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-mno-faint)] px-2 py-1 font-sans text-xs font-medium text-[var(--color-mno)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-mno-faint)_70%,var(--color-mno)_14%)] lg:order-4 lg:px-3"
         >
           <!-- Mno's badge glyph: ܐ݈, the numeral 1000. -->
           <span
@@ -103,32 +108,33 @@ function isActive(path: string) {
             dir="rtl"
             class="badge-swim flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-mno)] font-syriac text-[0.66rem] leading-none text-white [--swim-rgb1:90,58,30] [--swim-rgb2:196,200,204] [--swim-a1:0.55] [--swim-a2:0.22]"
           ><span>ܐ݈</span></span>
-          {{ t('nav.mno') }}
+          <span class="hidden lg:inline">{{ t('nav.mno') }}</span>
         </a>
 
         <a
           :href="shmoUrl"
-          class="order-7 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-shmo-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-shmo)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-shmo-faint)_70%,var(--color-shmo)_14%)] sm:order-5"
+          :aria-label="t('nav.shmo')"
+          class="order-7 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-shmo-faint)] px-2 py-1 font-sans text-xs font-medium text-[var(--color-shmo)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-shmo-faint)_70%,var(--color-shmo)_14%)] lg:order-5 lg:px-3"
         >
           <!-- Shmo's badge glyph: ܫ, the shin of ܫܡܐ ("name"). -->
           <span
             aria-hidden="true"
             class="badge-swim flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-shmo)] font-syriac text-[0.66rem] leading-none text-white [--swim-rgb1:230,220,195] [--swim-rgb2:124,132,140] [--swim-a1:0.55] [--swim-a2:0.22]"
           ><span>ܫ</span></span>
-          {{ t('nav.shmo') }}
+          <span class="hidden lg:inline">{{ t('nav.shmo') }}</span>
         </a>
 
-        <span aria-hidden="true" class="order-8 hidden h-5 w-px bg-[var(--color-border)] sm:order-6 sm:block" />
+        <span aria-hidden="true" class="order-8 hidden h-5 w-px bg-[var(--color-border)] lg:order-6 lg:block" />
 
-        <div class="order-2 ml-auto flex items-center gap-1.5 sm:order-6 sm:ml-0 sm:gap-2">
+        <div class="order-2 ml-auto flex items-center gap-1.5 lg:order-6 lg:ml-0 lg:gap-2">
           <ScriptVariantSwitcher />
           <LanguageSwitcher />
           <ThemeSwitcher />
           <UserMenu />
         </div>
 
-        <!-- Mobile-only line break: pushes nav + Meltho onto a second row. -->
-        <div aria-hidden="true" class="order-3 basis-full sm:hidden" />
+        <!-- Line break below lg: pushes nav + the game pills onto a second row. -->
+        <div aria-hidden="true" class="order-3 basis-full lg:hidden" />
       </div>
     </header>
 
@@ -140,14 +146,6 @@ function isActive(path: string) {
       <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6">
         <span>{{ t('site.title') }} — {{ t('site.tagline') }}</span>
         <span class="font-serif italic text-[var(--color-text-muted)]">{{ t('site.promise') }}</span>
-      </div>
-      <div class="mx-auto mt-2 max-w-6xl px-6">
-        <a
-          href="https://sedra.bethmardutho.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="no-underline hover:text-[var(--color-text-muted)]"
-        >{{ t('site.attribution') }}</a>
       </div>
     </footer>
   </div>
