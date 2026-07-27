@@ -1,0 +1,824 @@
+{
+  "_comment": "Launch roster for Shmo. ~83 figures across the three categories: Biblical Old Testament, Biblical New Testament, and Syriac patristic/ecclesiastical (bar Salibi's own world). Every attribute here is a GAME HINT, so an approximate era is a wrong answer, not a rounding error — the Owner must review each entry before the seed script publishes anything. Era is a signed century (-10 = 10th c. BC, 7 = 7th c. AD); there is no century zero. Entries whose dating is conventional, contested, or spans a century boundary carry a _note; the seeder strips every underscore-prefixed key before POSTing. Patristic death dates are the anchor where a figure's activity spans two centuries.",
+  "_modellingNotes": [
+    "Role 'Patriarch' is used for the ecclesiastical office only. The biblical patriarchs (Abraham, Isaac, Jacob) are 'Other' — Category already separates them, but if you would rather they read as Patriarch, that is a one-line change here, not a schema change.",
+    "Pre-Chalcedonian Syriac fathers (Ephrem, Aphrahat, Rabbula, Simeon the Stylite, Bardaisan, Mar Awgin, Febronia, Ibas) are Tradition 'NotApplicable': the West/East Syriac split postdates them, and assigning either would be an anachronism. If you want that to read as its own hint rather than sharing a bucket with pre-Christian figures, add a 'PreChalcedonian' member to HistoricalFigureTradition.",
+    "There is no 'Priest' role, so Aaron and Ezra are 'Other'. Worth adding if you want the Aaronic priesthood to be guessable.",
+    "The Region enum has no India, so Thomas — the apostle of the East in Syriac tradition — is 'Persia'.",
+    "Single primary role forces a pick where figures hold two: John and Matthew are 'Apostle' rather than 'Evangelist' (Mark and Luke, who were not apostles, carry Evangelist); Jacob of Edessa is 'Bishop' rather than 'Translator'.",
+    "Adam, Eve, and Noah are omitted: any century for them is arbitrary, and traditional (Ussher-style) dating puts Adam at c. 4004 BC = era -41, outside the -40..21 range HistoricalFigure.Normalize accepts. Widen MinEra if you want primeval figures in the roster."
+  ],
+  "figures": [
+    {
+      "name": "Abraham",
+      "category": "BiblicalOldTestament",
+      "era": -19,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Conventional Middle Bronze dating. Patriarchal chronology is debated and some scholars decline to date him at all."
+    },
+    {
+      "name": "Sarah",
+      "category": "BiblicalOldTestament",
+      "era": -19,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Dated with Abraham; same caveat."
+    },
+    {
+      "name": "Isaac",
+      "category": "BiblicalOldTestament",
+      "era": -18,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Conventional; one generation after Abraham."
+    },
+    {
+      "name": "Jacob",
+      "category": "BiblicalOldTestament",
+      "era": -18,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Conventional; same generation-count basis as Isaac."
+    },
+    {
+      "name": "Joseph",
+      "category": "BiblicalOldTestament",
+      "era": -17,
+      "role": "Other",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Conventional. Region is Egypt for the vizier narrative, not his Canaanite birth."
+    },
+    {
+      "name": "Moses",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Prophet",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Follows the late-date Exodus (13th c.). An early-date Exodus would put him at -15."
+    },
+    {
+      "name": "Aaron",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Other",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Priest — no Priest role in the enum. Dated with Moses."
+    },
+    {
+      "name": "Miriam",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Prophet",
+      "region": "Egypt",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Called a prophetess in Exodus 15:20. Dated with Moses."
+    },
+    {
+      "name": "Joshua",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Role is Other, not Judge: he precedes the book of Judges and leads as Moses' successor."
+    },
+    {
+      "name": "Deborah",
+      "category": "BiblicalOldTestament",
+      "era": -12,
+      "role": "Judge",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Gideon",
+      "category": "BiblicalOldTestament",
+      "era": -12,
+      "role": "Judge",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Samson",
+      "category": "BiblicalOldTestament",
+      "era": -12,
+      "role": "Judge",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Ruth",
+      "category": "BiblicalOldTestament",
+      "era": -12,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Set in the era of the judges; Moabite by birth, but the narrative belongs to Bethlehem."
+    },
+    {
+      "name": "Samuel",
+      "category": "BiblicalOldTestament",
+      "era": -11,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Both last judge and prophet; Prophet chosen as the primary role."
+    },
+    {
+      "name": "Saul",
+      "category": "BiblicalOldTestament",
+      "era": -11,
+      "role": "King",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "David",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "King",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Solomon",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "King",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Elijah",
+      "category": "BiblicalOldTestament",
+      "era": -9,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Elisha",
+      "category": "BiblicalOldTestament",
+      "era": -9,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Amos",
+      "category": "BiblicalOldTestament",
+      "era": -8,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Hosea",
+      "category": "BiblicalOldTestament",
+      "era": -8,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Isaiah",
+      "category": "BiblicalOldTestament",
+      "era": -8,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "First Isaiah. If the roster ever distinguishes Deutero-Isaiah, that figure would be -6."
+    },
+    {
+      "name": "Micah",
+      "category": "BiblicalOldTestament",
+      "era": -8,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Jonah",
+      "category": "BiblicalOldTestament",
+      "era": -8,
+      "role": "Prophet",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Region is Nineveh, where the narrative sits, rather than his native Gath-hepher."
+    },
+    {
+      "name": "Jeremiah",
+      "category": "BiblicalOldTestament",
+      "era": -6,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Spans the boundary: called c. 627 (7th c.), but anchored here to the fall of Jerusalem in 586 (6th c.). -7 is equally defensible."
+    },
+    {
+      "name": "Ezekiel",
+      "category": "BiblicalOldTestament",
+      "era": -6,
+      "role": "Prophet",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Region is Babylon, where he prophesies in exile."
+    },
+    {
+      "name": "Daniel",
+      "category": "BiblicalOldTestament",
+      "era": -6,
+      "role": "Prophet",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Narrative setting is the 6th c. exile; critical scholarship dates the book's composition to the 2nd c. BC."
+    },
+    {
+      "name": "Ezra",
+      "category": "BiblicalOldTestament",
+      "era": -5,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Scribe and priest — no Priest or Scribe role in the enum."
+    },
+    {
+      "name": "Nehemiah",
+      "category": "BiblicalOldTestament",
+      "era": -5,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Governor — no Governor role in the enum."
+    },
+    {
+      "name": "Esther",
+      "category": "BiblicalOldTestament",
+      "era": -5,
+      "role": "Other",
+      "region": "Persia",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Queen consort; Role King is male-titled in the enum, so Other."
+    },
+    {
+      "name": "Mary",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "John the Baptist",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Peter",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Andrew",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "James",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "James son of Zebedee. If you later add James the brother of the Lord, the two names will need disambiguating."
+    },
+    {
+      "name": "John",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Apostle and evangelist; Apostle chosen as primary."
+    },
+    {
+      "name": "Matthew",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Apostle and evangelist; Apostle chosen as primary."
+    },
+    {
+      "name": "Thomas",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "The apostle of the East in Syriac tradition. Region is Persia because India is not in the enum."
+    },
+    {
+      "name": "Philip",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Bartholomew",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Paul",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Region is Asia Minor for Tarsus and the missionary journeys."
+    },
+    {
+      "name": "Mark",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Evangelist",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Region follows the tradition that he founded the see of Alexandria."
+    },
+    {
+      "name": "Luke",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Evangelist",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Region follows the tradition of Antiochene origin."
+    },
+    {
+      "name": "Stephen",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Martyr",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Barnabas",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Apostle",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Cypriot; Region is Asia Minor as the nearest enum value to his mission field."
+    },
+    {
+      "name": "Mary Magdalene",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Timothy",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Bishop",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Traditionally first bishop of Ephesus."
+    },
+    {
+      "name": "Bardaisan",
+      "category": "Patristic",
+      "era": 2,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 222; born 154, so spans the 2nd-3rd c. Philosopher and hymnographer of Edessa, later judged heterodox. Pre-Chalcedonian, hence NotApplicable."
+    },
+    {
+      "name": "Aphrahat",
+      "category": "Patristic",
+      "era": 4,
+      "role": "Commentator",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "The Persian Sage; Demonstrations written 337-345. Pre-Chalcedonian."
+    },
+    {
+      "name": "Ephrem the Syrian",
+      "category": "Patristic",
+      "era": 4,
+      "role": "Commentator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 373, Nisibis then Edessa. Pre-Chalcedonian and claimed by both West and East Syriac traditions, so neither can be assigned without anachronism."
+    },
+    {
+      "name": "Mar Awgin",
+      "category": "Patristic",
+      "era": 4,
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Traditional founder of Mesopotamian monasticism; the tradition itself is legendary and the dating is not secure."
+    },
+    {
+      "name": "Febronia",
+      "category": "Patristic",
+      "era": 4,
+      "role": "Martyr",
+      "region": "Mesopotamia",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Martyr of Nisibis under Diocletian. Included partly to keep the roster from being entirely male after the biblical categories."
+    },
+    {
+      "name": "Rabbula of Edessa",
+      "category": "Patristic",
+      "era": 5,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 435, so just pre-Chalcedon (451)."
+    },
+    {
+      "name": "Ibas of Edessa",
+      "category": "Patristic",
+      "era": 5,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 457. Condemned then restored at Chalcedon; his letter was later anathematised in the Three Chapters. Tradition is genuinely contested here."
+    },
+    {
+      "name": "Simeon the Stylite",
+      "category": "Patristic",
+      "era": 5,
+      "role": "Monk",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 459. Venerated across the later divisions, so NotApplicable rather than a side."
+    },
+    {
+      "name": "Narsai",
+      "category": "Patristic",
+      "era": 5,
+      "role": "Commentator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. c. 502; anchored to his School of Nisibis career, which begins in the 5th c."
+    },
+    {
+      "name": "Jacob of Serugh",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 521, bishop of Batnan. Born c. 451, so most of his life is 5th c.; anchored to his death and episcopate."
+    },
+    {
+      "name": "Philoxenus of Mabbug",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Bishop",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 523."
+    },
+    {
+      "name": "Sergius of Reshaina",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Translator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 536. Translator of Galen and Pseudo-Dionysius. His own christological allegiance is disputed."
+    },
+    {
+      "name": "Severus of Antioch",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Patriarch",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 538. The central theological authority of the West Syriac tradition."
+    },
+    {
+      "name": "John of Tella",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Bishop",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 538."
+    },
+    {
+      "name": "Jacob Baradaeus",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Bishop",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 578. His ordinations preserved the miaphysite hierarchy; the name Jacobite derives from him."
+    },
+    {
+      "name": "Simeon of Beth Arsham",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Bishop",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. c. 540."
+    },
+    {
+      "name": "John of Ephesus",
+      "category": "Patristic",
+      "era": 6,
+      "role": "Bishop",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. c. 589. Historian of the miaphysite church."
+    },
+    {
+      "name": "Babai the Great",
+      "category": "Patristic",
+      "era": 7,
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. 628."
+    },
+    {
+      "name": "Isaac of Nineveh",
+      "category": "Patristic",
+      "era": 7,
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Briefly bishop of Nineveh but known as the ascetic writer, hence Monk."
+    },
+    {
+      "name": "Marutha of Tikrit",
+      "category": "Patristic",
+      "era": 7,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 649. First maphrian of Tikrit."
+    },
+    {
+      "name": "Athanasius of Balad",
+      "category": "Patristic",
+      "era": 7,
+      "role": "Patriarch",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 687. Also a translator of Aristotelian logic."
+    },
+    {
+      "name": "Thomas of Harkel",
+      "category": "Patristic",
+      "era": 7,
+      "role": "Translator",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "The Harklean New Testament, 616."
+    },
+    {
+      "name": "Paul of Tella",
+      "category": "Patristic",
+      "era": 7,
+      "role": "Translator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "The Syro-Hexapla, c. 617."
+    },
+    {
+      "name": "Jacob of Edessa",
+      "category": "Patristic",
+      "era": 7,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 708, so his last years are 8th c. Bishop chosen over Translator/Commentator though he was all three."
+    },
+    {
+      "name": "George, Bishop of the Arabs",
+      "category": "Patristic",
+      "era": 8,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 724."
+    },
+    {
+      "name": "Timothy I",
+      "category": "Patristic",
+      "era": 8,
+      "role": "Patriarch",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Catholicos 780-823, so the office spans the 8th-9th c.; anchored to its start. -> 9 if you prefer the bulk of the reign."
+    },
+    {
+      "name": "Dionysius of Tell Mahre",
+      "category": "Patristic",
+      "era": 9,
+      "role": "Patriarch",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 845."
+    },
+    {
+      "name": "John of Dara",
+      "category": "Patristic",
+      "era": 9,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "Floruit first half of the 9th c."
+    },
+    {
+      "name": "Thomas of Marga",
+      "category": "Patristic",
+      "era": 9,
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Author of the Book of Governors, c. 840."
+    },
+    {
+      "name": "Ishodad of Merv",
+      "category": "Patristic",
+      "era": 9,
+      "role": "Commentator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Floruit c. 850."
+    },
+    {
+      "name": "Moshe bar Kepha",
+      "category": "Patristic",
+      "era": 9,
+      "role": "Commentator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 903, so his last years are 10th c. A principal source for bar Salibi."
+    },
+    {
+      "name": "Elias of Nisibis",
+      "category": "Patristic",
+      "era": 11,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. 1046. Chronicler and lexicographer."
+    },
+    {
+      "name": "Dionysius bar Salibi",
+      "category": "Patristic",
+      "era": 12,
+      "role": "Commentator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 1171, Metropolitan of Amid. The subject of Sabro's own translation work."
+    },
+    {
+      "name": "Michael the Syrian",
+      "category": "Patristic",
+      "era": 12,
+      "role": "Patriarch",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 1199. His Chronicle is the major West Syriac history."
+    },
+    {
+      "name": "Bar Hebraeus",
+      "category": "Patristic",
+      "era": 13,
+      "role": "Commentator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 1286. Maphrian, so Bishop is also defensible; Commentator chosen for the Storehouse of Mysteries."
+    },
+    {
+      "name": "Abdisho bar Brikha",
+      "category": "Patristic",
+      "era": 14,
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. 1318. Metropolitan of Nisibis; his catalogue of Syriac writers is a key bibliographic source."
+    }
+  ]
+}
