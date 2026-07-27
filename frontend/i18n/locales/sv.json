@@ -12,7 +12,7 @@
     "titleLine2": "bokstav för bokstav.",
     "nameGloss": "sabro — syriska för ”hopp”",
     "playedToday": "Spelat idag",
-    "lede": "Sabro betyder hopp — och det är precis vad projektet är: ett levande hem för det syriska språket. Lär dig det genom att spela — två gratis dagliga spel, {meltho} och {mno} — och behåll varje ord de lär dig.",
+    "lede": "Sabro betyder hopp — och det är precis vad projektet är: ett levande hem för det syriska språket. Lär dig det genom att spela — tre gratis dagliga spel, {meltho}, {mno} och {shmo} — och behåll varje ord de lär dig.",
     "liveNow": "Live nu",
     "meltho": {
       "heading": "Meltho",
@@ -25,6 +25,12 @@
       "live": "Live",
       "body": "Ett dagligt matematikpussel med syriska siffror — på syriska är bokstäverna också siffrorna. Bygg ekvationen som träffar dagens mål, från Nybörjare till Extrem.",
       "cta": "Spela dagens ekvation"
+    },
+    "shmo": {
+      "heading": "Shmo",
+      "live": "Live",
+      "body": "Gissa dagens historiska person — från bibliska profeter till syriska kyrkofäder. Varje gissning poängsätter kategori, århundrade, roll, region, tradition och kön mot svaret.",
+      "cta": "Spela dagens person"
     },
     "library": {
       "eyebrow": "Ordbibliotek",
@@ -41,7 +47,8 @@
     "library": "Bibliotek",
     "admin": "Backoffice",
     "meltho": "Meltho",
-    "mno": "Mno"
+    "mno": "Mno",
+    "shmo": "Shmo"
   },
   "switcher": {
     "languageLabel": "Språk",
@@ -88,6 +95,7 @@
       "games": "Spel",
       "meltho": "Meltho",
       "mno": "Mno",
+      "shmo": "Shmo",
       "preferences": "Inställningar",
       "leaderboard": "Topplista",
       "username": "Användarnamn",
@@ -179,6 +187,9 @@
       "mnoHeading": "Mno",
       "mnoSubtitle": "Ditt dagliga sifferspel",
       "mnoEmpty": "Du har inte spelat Mno än. Din statistik visas här så snart du gör det.",
+      "shmoHeading": "Shmo",
+      "shmoSubtitle": "Ditt dagliga historiska personspel",
+      "shmoEmpty": "Du har inte spelat Shmo än. Din statistik visas här så snart du gör det.",
       "play": "Spela",
       "empty": "Du har inte spelat Meltho än. Din statistik visas här så snart du gör det.",
       "played": "Spelade",

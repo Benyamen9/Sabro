@@ -95,7 +95,7 @@ try
     var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
     if ((corsOrigins is null || corsOrigins.Length == 0) && builder.Environment.IsDevelopment())
     {
-        corsOrigins = ["http://localhost:3000", "http://localhost:3100"];
+        corsOrigins = ["http://localhost:3000", "http://localhost:3100", "http://localhost:3200", "http://localhost:3300"];
     }
 
     corsOrigins ??= [];

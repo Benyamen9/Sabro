@@ -5,9 +5,10 @@ const config = useRuntimeConfig()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { load: loadProfile } = useProfile()
 
-// The hub surfaces its launched app: a link out to Meltho (its own deployment).
+// The hub surfaces its launched apps: links out to each (its own deployment).
 const melthoUrl = config.public.melthoUrl
 const mnoUrl = config.public.mnoUrl
+const shmoUrl = config.public.shmoUrl
 
 // Resolve admin status once on mount so the backoffice link only appears for
 // editors. The API enforces the admin scope regardless of what we show here.
@@ -105,9 +106,21 @@ function isActive(path: string) {
           {{ t('nav.mno') }}
         </a>
 
-        <span aria-hidden="true" class="order-7 hidden h-5 w-px bg-[var(--color-border)] sm:order-5 sm:block" />
+        <a
+          :href="shmoUrl"
+          class="order-7 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-shmo-faint)] px-3 py-1 font-sans text-xs font-medium text-[var(--color-shmo)] no-underline transition-colors hover:bg-[color-mix(in_oklab,var(--color-shmo-faint)_70%,var(--color-shmo)_14%)] sm:order-5"
+        >
+          <!-- Shmo's badge glyph: ܫ, the shin of ܫܡܐ ("name"). -->
+          <span
+            aria-hidden="true"
+            class="badge-swim flex size-4 items-center justify-center rounded-[5px] bg-[var(--color-shmo)] font-syriac text-[0.66rem] leading-none text-white [--swim-rgb1:230,220,195] [--swim-rgb2:124,132,140] [--swim-a1:0.55] [--swim-a2:0.22]"
+          ><span>ܫ</span></span>
+          {{ t('nav.shmo') }}
+        </a>
 
-        <div class="order-2 ml-auto flex items-center gap-1.5 sm:order-5 sm:ml-0 sm:gap-2">
+        <span aria-hidden="true" class="order-8 hidden h-5 w-px bg-[var(--color-border)] sm:order-6 sm:block" />
+
+        <div class="order-2 ml-auto flex items-center gap-1.5 sm:order-6 sm:ml-0 sm:gap-2">
           <ScriptVariantSwitcher />
           <LanguageSwitcher />
           <ThemeSwitcher />

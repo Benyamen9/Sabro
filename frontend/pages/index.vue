@@ -1,15 +1,16 @@
 <script setup lang="ts">
 const { t, locale } = useI18n()
-const { melthoUrl, mnoUrl } = useRuntimeConfig().public
+const { melthoUrl, mnoUrl, shmoUrl } = useRuntimeConfig().public
 const { listWords } = useMelthoLibrary()
 const preferredMeaning = usePreferredMeaning()
 
 // The daily circuit: which games were finished today (shared cookie written
-// by Meltho and Mno). Played cards swap their LIVE dot for a check, and the
-// hero's lead button follows the next unplayed game.
+// by Meltho, Mno and Shmo). Played cards swap their LIVE dot for a check, and
+// the hero's lead button follows the next unplayed game.
 const { hasPlayed, nextUnplayed } = useDailyCircuit()
 const melthoPlayed = computed(() => hasPlayed('meltho'))
 const mnoPlayed = computed(() => hasPlayed('mno'))
+const shmoPlayed = computed(() => hasPlayed('shmo'))
 const nextGame = computed(() => nextUnplayed())
 
 // The hero word-board: the name ܣܒܪܐ spelled letter by letter, right to left.
@@ -46,9 +47,32 @@ function tileClass(state: 'correct' | 'present') {
 const mnoTiles = [
   { glyph: 'ܝ', hint: '10' },
   { glyph: 'ܒ', hint: '2' },
-  { glyph: '×', hint: '' },
+  { glyph: '+', hint: '' },
   { glyph: 'ܗ', hint: '5' },
 ] as const
+
+// Shmo's hero: three real scored cells from a guess row — a worked example
+// (Jacob of Serugh guessed against the answer Ephrem the Syrian), the same
+// case verified by hand during development. Hit (green), near with a
+// direction arrow (amber), miss (grey) — the same three states a real round
+// scores. Decorative, like Meltho's and Mno's boards; real values (not
+// abstract category names) so it reads as actual gameplay at a glance.
+const shmoTiles = [
+  { value: 'Patristic', state: 'hit', arrow: null },
+  { value: '4th c.', state: 'near', arrow: '↓' },
+  { value: 'Bishop', state: 'miss', arrow: null },
+] as const
+
+// The "near" amber matches Shmo's own app palette (--color-cell-near there) —
+// a generic amber, not Meltho's gold identity colour, kept as a literal hex
+// since this hub preview is the only place outside Shmo's own repo that needs it.
+function shmoTileClass(state: 'hit' | 'near' | 'miss') {
+  const base
+    = 'flex h-12 min-w-[3.25rem] items-center justify-center gap-1 rounded-xl border-2 px-2 text-white sm:h-14'
+  if (state === 'hit') return `${base} border-[color-mix(in_oklab,var(--color-shmo)_70%,black)] bg-[var(--color-shmo)]`
+  if (state === 'near') return `${base} border-[#ab9538] bg-[#c9b043]`
+  return `${base} border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)] !text-[var(--color-text-faint)]`
+}
 
 // The newest past word, shown as the library band's live chip. Best-effort:
 // with the API unreachable the band simply renders without it.
@@ -75,6 +99,7 @@ const primaryButton
 // next unplayed game, or the library once the day is complete.
 const heroAction = computed(() => {
   if (nextGame.value === 'mno') return { href: mnoUrl, label: 'home.mno.cta' }
+  if (nextGame.value === 'shmo') return { href: shmoUrl, label: 'home.shmo.cta' }
   if (nextGame.value === null) return { href: '/library', label: 'home.library.cta' }
   return { href: melthoUrl, label: 'home.meltho.cta' }
 })
@@ -106,6 +131,9 @@ const heroAction = computed(() => {
           </template>
           <template #mno>
             <strong class="font-semibold text-[var(--color-text)]">Mno</strong>
+          </template>
+          <template #shmo>
+            <strong class="font-semibold text-[var(--color-text)]">Shmo</strong>
           </template>
         </i18n-t>
 
@@ -140,7 +168,7 @@ const heroAction = computed(() => {
         </span>
       </div>
 
-      <div class="mt-5 grid gap-5 lg:grid-cols-2">
+      <div class="mt-5 grid gap-5 lg:grid-cols-3">
         <!-- Meltho — the word game, in its teal. -->
         <div
           class="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgb(28_25_23/0.09)] sm:items-start sm:text-left"
@@ -157,16 +185,17 @@ const heroAction = computed(() => {
               {{ t('home.meltho.heading') }}
               <span
                 v-if="melthoPlayed"
-                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
-              >
-                ✓ {{ t('home.playedToday') }}
-              </span>
+                class="inline-flex items-center text-sm font-bold text-green-700 dark:text-green-400"
+                :title="t('home.playedToday')"
+                :aria-label="t('home.playedToday')"
+              >✓</span>
               <span
                 v-else
-                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
+                class="inline-flex items-center"
+                :title="t('home.meltho.live')"
+                :aria-label="t('home.meltho.live')"
               >
                 <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
-                {{ t('home.meltho.live') }}
               </span>
             </h2>
             <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
@@ -203,16 +232,17 @@ const heroAction = computed(() => {
               {{ t('home.mno.heading') }}
               <span
                 v-if="mnoPlayed"
-                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
-              >
-                ✓ {{ t('home.playedToday') }}
-              </span>
+                class="inline-flex items-center text-sm font-bold text-green-700 dark:text-green-400"
+                :title="t('home.playedToday')"
+                :aria-label="t('home.playedToday')"
+              >✓</span>
               <span
                 v-else
-                class="inline-flex items-center gap-1.5 font-sans text-[0.7rem] font-bold uppercase tracking-wider text-green-700 dark:text-green-400"
+                class="inline-flex items-center"
+                :title="t('home.mno.live')"
+                :aria-label="t('home.mno.live')"
               >
                 <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
-                {{ t('home.mno.live') }}
               </span>
             </h2>
             <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
@@ -225,6 +255,49 @@ const heroAction = computed(() => {
             class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-mno)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-mno-dark)] sm:w-auto"
           >
             {{ t('home.mno.cta') }} →
+          </a>
+        </div>
+
+        <!-- Shmo — the historical-figure game, in its verdigris. -->
+        <div
+          class="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgb(28_25_23/0.09)] sm:items-start sm:text-left"
+        >
+          <span class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[var(--color-shmo)] to-transparent" aria-hidden="true" />
+          <div class="flex flex-wrap justify-center gap-1.5 sm:justify-start sm:gap-2" aria-hidden="true">
+            <span v-for="tile in shmoTiles" :key="tile.value" :class="shmoTileClass(tile.state)">
+              <span class="font-sans text-[11px] font-semibold leading-none sm:text-xs">{{ tile.value }}</span>
+              <span v-if="tile.arrow" class="font-sans text-xs font-bold leading-none">{{ tile.arrow }}</span>
+            </span>
+          </div>
+
+          <div class="flex-1">
+            <h2 class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-sans text-2xl sm:justify-start">
+              {{ t('home.shmo.heading') }}
+              <span
+                v-if="shmoPlayed"
+                class="inline-flex items-center text-sm font-bold text-green-700 dark:text-green-400"
+                :title="t('home.playedToday')"
+                :aria-label="t('home.playedToday')"
+              >✓</span>
+              <span
+                v-else
+                class="inline-flex items-center"
+                :title="t('home.shmo.live')"
+                :aria-label="t('home.shmo.live')"
+              >
+                <span class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
+              </span>
+            </h2>
+            <p class="mx-auto mt-2 max-w-md font-serif text-[var(--color-text-muted)] sm:mx-0">
+              {{ t('home.shmo.body') }}
+            </p>
+          </div>
+
+          <a
+            :href="shmoUrl"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--color-shmo)] px-5 py-3 font-sans text-sm font-semibold text-white no-underline shadow-[0_1px_2px_rgb(0_0_0/0.12)] transition-colors hover:bg-[var(--color-shmo-dark)] sm:w-auto"
+          >
+            {{ t('home.shmo.cta') }} →
           </a>
         </div>
       </div>

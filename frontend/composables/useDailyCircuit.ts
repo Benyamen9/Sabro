@@ -6,9 +6,9 @@
  * date is the UTC puzzle date the daily games are keyed by. The games mark
  * themselves when a day's play ends; the home page reads it to badge played
  * doors and point the primary CTA at the next unplayed game. Mirrors the
- * useDailyCircuit composables in Meltho and Mno — keep the shape in sync.
+ * useDailyCircuit composables in Meltho, Mno and Shmo — keep the shape in sync.
  */
-export const CIRCUIT_GAMES = ['meltho', 'mno'] as const
+export const CIRCUIT_GAMES = ['meltho', 'mno', 'shmo'] as const
 export type CircuitGame = (typeof CIRCUIT_GAMES)[number]
 
 interface CircuitState {

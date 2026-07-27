@@ -217,6 +217,25 @@ services:
       NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
     networks: [internal]
 
+  shmo:
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/shmo:${SHMO_IMAGE_TAG:-latest}
+    container_name: sabro-shmo
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NUXT_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_LOGTO_APP_ID: ${SHMO_LOGTO_APP_ID:?SHMO_LOGTO_APP_ID is required}
+      NUXT_LOGTO_APP_SECRET: ${SHMO_LOGTO_APP_SECRET:?SHMO_LOGTO_APP_SECRET is required}
+      NUXT_LOGTO_COOKIE_ENCRYPTION_KEY: ${SHMO_LOGTO_COOKIE_ENCRYPTION_KEY:?SHMO_LOGTO_COOKIE_ENCRYPTION_KEY is required}
+      NUXT_PUBLIC_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_PUBLIC_SABRO_API_RESOURCE: ${SABRO_API_RESOURCE}
+      NUXT_PUBLIC_API_BASE_URL: "https://${SABRO_API_DOMAIN}/api/v1"
+      # Same shared cookie domain as the hub, Meltho and Mno — locale + script
+      # preferences carry across every app in the ecosystem.
+      NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
+    networks: [internal]
+
   # Nightly logical backups of both databases (30 daily + 12 monthly), with
   # optional off-site sync to a Hetzner Storage Box and a weekly automated
   # restore test. Dumps live in the backup-data volume; off-site sync starts

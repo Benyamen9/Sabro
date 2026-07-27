@@ -12,7 +12,7 @@
     "titleLine2": "letter by letter.",
     "nameGloss": "sabro — Syriac for “hope”",
     "playedToday": "Played today",
-    "lede": "Sabro means hope — and that's the project: a living home for the Syriac language. Learn it by playing — two free daily games, {meltho} and {mno} — and keep every word they teach.",
+    "lede": "Sabro means hope — and that's the project: a living home for the Syriac language. Learn it by playing — three free daily games, {meltho}, {mno} and {shmo} — and keep every word they teach.",
     "liveNow": "Live now",
     "meltho": {
       "heading": "Meltho",
@@ -25,6 +25,12 @@
       "live": "Live",
       "body": "A daily math puzzle in Syriac numerals — in Syriac, the letters are also the numbers. Build the equation that hits today's target, from Beginner to Extreme.",
       "cta": "Play today’s equation"
+    },
+    "shmo": {
+      "heading": "Shmo",
+      "live": "Live",
+      "body": "Guess today's historical figure — from biblical prophets to Syriac Church Fathers. Every guess scores category, era, role, region, tradition and gender against the answer.",
+      "cta": "Play today’s figure"
     },
     "library": {
       "eyebrow": "Word library",
@@ -41,7 +47,8 @@
     "library": "Library",
     "admin": "Backoffice",
     "meltho": "Meltho",
-    "mno": "Mno"
+    "mno": "Mno",
+    "shmo": "Shmo"
   },
   "switcher": {
     "languageLabel": "Language",
@@ -88,6 +95,7 @@
       "games": "Games",
       "meltho": "Meltho",
       "mno": "Mno",
+      "shmo": "Shmo",
       "preferences": "Preferences",
       "leaderboard": "Leaderboard",
       "username": "Username",
@@ -179,6 +187,9 @@
       "mnoHeading": "Mno",
       "mnoSubtitle": "Your daily numbers game",
       "mnoEmpty": "You haven't played Mno yet. Your stats will appear here once you do.",
+      "shmoHeading": "Shmo",
+      "shmoSubtitle": "Your daily historical-figure game",
+      "shmoEmpty": "You haven't played Shmo yet. Your stats will appear here once you do.",
       "play": "Play",
       "empty": "You haven't played Meltho yet. Your stats will appear here once you do.",
       "played": "Played",

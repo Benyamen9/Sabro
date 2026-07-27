@@ -133,6 +133,8 @@ export default defineNuxtConfig({
       melthoUrl: 'https://meltho.sabro.be',
       // Mno, the numbers game, same convention (NUXT_PUBLIC_MNO_URL).
       mnoUrl: 'https://mno.sabro.be',
+      // Shmo, the historical-figure game, same convention (NUXT_PUBLIC_SHMO_URL).
+      shmoUrl: 'https://shmo.sabro.be',
     },
   },
 })

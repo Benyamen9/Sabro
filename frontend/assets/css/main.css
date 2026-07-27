@@ -33,10 +33,9 @@
   --color-mno-dark: #855c0f;
   --color-mno-faint: #f5ecdb;
 
-  /* Shmo's verdigris (historical family, game colour taxonomy) — the game
-     itself isn't built yet; today only the home page's coming-soon tease
-     wears it. */
+  /* Shmo's verdigris (historical family, game colour taxonomy). */
   --color-shmo: #587b5a;
+  --color-shmo-dark: #46644a;
   --color-shmo-faint: #eaf0e8;
 
   /* Nahlo's purple (musical family) — same status as Shmo: colour decided,
@@ -72,6 +71,7 @@
     --color-mno-faint: #2c2210;
 
     --color-shmo: #94bc95;
+    --color-shmo-dark: #74996f;
     --color-shmo-faint: #19251c;
 
     --color-nahlo: #a98bd6;
@@ -110,6 +110,7 @@
   --color-mno-faint: #f5ecdb;
 
   --color-shmo: #587b5a;
+  --color-shmo-dark: #46644a;
   --color-shmo-faint: #eaf0e8;
 
   --color-nahlo: #6d4b9e;
@@ -142,6 +143,7 @@
   --color-mno-faint: #2c2210;
 
   --color-shmo: #94bc95;
+  --color-shmo-dark: #74996f;
   --color-shmo-faint: #19251c;
 
   --color-nahlo: #a98bd6;

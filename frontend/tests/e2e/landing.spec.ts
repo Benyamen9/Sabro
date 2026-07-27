@@ -13,7 +13,8 @@ test.describe('landing page', () => {
     // The corrected copy: mission-bearing lede, plain-speech cards.
     await expect(page.getByText('Sabro means hope', { exact: false })).toBeVisible()
     await expect(page.getByText('A Wordle in Syriac', { exact: false })).toBeVisible()
-    await expect(page.getByText('Shmo')).toHaveCount(0)
+    // Shmo shipped as a third live game — no longer a nameless tease.
+    await expect(page.getByRole('heading', { name: 'Shmo', exact: false })).toBeVisible()
 
     // The script + language switchers are custom dropdowns: a trigger button that
     // opens a listbox of options (replacing the native <select> popup).
