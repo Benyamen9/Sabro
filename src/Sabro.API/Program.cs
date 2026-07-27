@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Sabro.API.Configuration;
 using Sabro.API.Logto;
 using Sabro.Biblical.Public;
+using Sabro.Historical.Public;
 using Sabro.Identity.Public;
 using Sabro.Lexicon.Public;
 using Sabro.Play.Public;
@@ -144,6 +145,7 @@ try
         new TranslationsModule(),
         new ReviewsModule(),
         new BiblicalModule(),
+        new HistoricalModule(),
         new IdentityModule(),
         new PlayModule(),
     };
