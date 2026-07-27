@@ -1,14 +1,115 @@
 {
-  "_comment": "Launch roster for Shmo. ~83 figures across the three categories: Biblical Old Testament, Biblical New Testament, and Syriac patristic/ecclesiastical (bar Salibi's own world). Every attribute here is a GAME HINT, so an approximate era is a wrong answer, not a rounding error — the Owner must review each entry before the seed script publishes anything. Era is a signed century (-10 = 10th c. BC, 7 = 7th c. AD); there is no century zero. Entries whose dating is conventional, contested, or spans a century boundary carry a _note; the seeder strips every underscore-prefixed key before POSTing. Patristic death dates are the anchor where a figure's activity spans two centuries.",
+  "_comment": "Launch roster for Shmo. ~93 figures across the three categories: Biblical Old Testament, Biblical New Testament, and Syriac patristic/ecclesiastical (bar Salibi's own world). Every attribute here is a GAME HINT, so an approximate era is a wrong answer, not a rounding error — the Owner must review each entry before the seed script publishes anything. Era is a signed century (-10 = 10th c. BC, 7 = 7th c. AD); there is no century zero. Entries whose dating is conventional, contested, or spans a century boundary carry a _note; the seeder strips every underscore-prefixed key before POSTing. Patristic death dates are the anchor where a figure's activity spans two centuries. The ten primeval figures (Genesis 1-11) are marked PRIMEVAL in their notes and are the least secure data in the file — see the primeval note below.",
   "_modellingNotes": [
     "Role 'Patriarch' is used for the ecclesiastical office only. The biblical patriarchs (Abraham, Isaac, Jacob) are 'Other' — Category already separates them, but if you would rather they read as Patriarch, that is a one-line change here, not a schema change.",
     "Pre-Chalcedonian Syriac fathers (Ephrem, Aphrahat, Rabbula, Simeon the Stylite, Bardaisan, Mar Awgin, Febronia, Ibas) are Tradition 'NotApplicable': the West/East Syriac split postdates them, and assigning either would be an anachronism. If you want that to read as its own hint rather than sharing a bucket with pre-Christian figures, add a 'PreChalcedonian' member to HistoricalFigureTradition.",
     "There is no 'Priest' role, so Aaron and Ezra are 'Other'. Worth adding if you want the Aaronic priesthood to be guessable.",
     "The Region enum has no India, so Thomas — the apostle of the East in Syriac tradition — is 'Persia'.",
     "Single primary role forces a pick where figures hold two: John and Matthew are 'Apostle' rather than 'Evangelist' (Mark and Luke, who were not apostles, carry Evangelist); Jacob of Edessa is 'Bishop' rather than 'Translator'.",
-    "Adam, Eve, and Noah are omitted: any century for them is arbitrary, and traditional (Ussher-style) dating puts Adam at c. 4004 BC = era -41, outside the -40..21 range HistoricalFigure.Normalize accepts. Widen MinEra if you want primeval figures in the roster."
+    "The primeval figures of Genesis 1-11 (Adam through Nimrod) are dated by CHRONOLOGY, NOT HISTORY, and are the weakest hints in the roster. They follow the Masoretic/Ussher reckoning, which puts creation at c. 4004 BC (era -41). A Septuagint-based chronology puts it near 5500 BC (era -55) and would shift all ten by roughly fourteen centuries. Nothing here is a historical date in the sense the patristic entries are; if that bothers you as game data, drop the ten or give them a shared round era. HistoricalFigure.MinEra was widened from -40 to -60 to admit them, which is a real relaxation of a typo guard: a mistyped year like -1500 is now accepted where it used to be rejected.",
+    "Primeval eras are anchored to birth on the Ussher reckoning, so Noah reads as -30 (born c. 2948 BC) rather than -24 (the flood, c. 2348 BC). If you would rather the hint point at the event a player would think of, Noah and Nimrod are the two to revisit."
   ],
   "figures": [
+    {
+      "name": "Adam",
+      "category": "BiblicalOldTestament",
+      "era": -41,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — dated by chronology, not history. Masoretic/Ussher reckoning (creation c. 4004 BC). A Septuagint-based chronology would put him near -55 instead, and every primeval entry below would shift with him. Region follows Genesis 2:14, which names the Tigris and Euphrates among Eden's rivers."
+    },
+    {
+      "name": "Eve",
+      "category": "BiblicalOldTestament",
+      "era": -41,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — dated with Adam; same chronology caveat."
+    },
+    {
+      "name": "Cain",
+      "category": "BiblicalOldTestament",
+      "era": -41,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — first generation after Adam; same chronology caveat."
+    },
+    {
+      "name": "Abel",
+      "category": "BiblicalOldTestament",
+      "era": -41,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — first generation after Adam. Read as the first martyr in Syriac tradition, but Role is Other because Martyr in this enum carries the ecclesiastical sense."
+    },
+    {
+      "name": "Seth",
+      "category": "BiblicalOldTestament",
+      "era": -39,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3874 BC on the Ussher reckoning."
+    },
+    {
+      "name": "Enoch",
+      "category": "BiblicalOldTestament",
+      "era": -34,
+      "role": "Prophet",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3382 BC on the Ussher reckoning. Role is Prophet on the strength of Jude 14 ('Enoch, the seventh from Adam, prophesied'); Other is defensible if you would rather reserve Prophet for the writing prophets."
+    },
+    {
+      "name": "Methuselah",
+      "category": "BiblicalOldTestament",
+      "era": -34,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3317 BC on the Ussher reckoning."
+    },
+    {
+      "name": "Noah",
+      "category": "BiblicalOldTestament",
+      "era": -30,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 2948 BC on the Ussher reckoning; the flood falls c. 2348 BC (-24). Anchored to birth, like the other primeval entries. Region is his Mesopotamian setting, not Ararat."
+    },
+    {
+      "name": "Shem",
+      "category": "BiblicalOldTestament",
+      "era": -25,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 2446 BC on the Ussher reckoning. The Semitic line runs through him to Abraham."
+    },
+    {
+      "name": "Nimrod",
+      "category": "BiblicalOldTestament",
+      "era": -23,
+      "role": "King",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — post-flood; Babel falls c. 2242 BC on the Ussher reckoning. Genesis 10:10 makes Babel the beginning of his kingdom, so King rather than Other."
+    },
     {
       "name": "Abraham",
       "category": "BiblicalOldTestament",

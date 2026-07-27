@@ -18,7 +18,14 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
     /// into a century field). Signed: negative is BC, positive is AD, and there is
     /// no century zero.
     /// </summary>
-    private const int MinEra = -40;
+    /// <remarks>
+    /// The lower bound reaches back far enough for the primeval figures of Genesis
+    /// 1–11, whose dating is chronology-dependent rather than historical: the
+    /// Masoretic/Ussher reckoning places Adam around 4004 BC (era -41), while
+    /// Septuagint-based chronologies push creation to roughly 5500 BC (era -55).
+    /// -60 accommodates either without leaving the field effectively unbounded.
+    /// </remarks>
+    private const int MinEra = -60;
     private const int MaxEra = 21;
 
     private HistoricalFigure(NormalizedFields fields)

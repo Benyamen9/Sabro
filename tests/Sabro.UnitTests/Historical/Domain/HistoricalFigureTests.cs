@@ -88,7 +88,7 @@ public class HistoricalFigureTests
     }
 
     [Theory]
-    [InlineData(-41)]
+    [InlineData(-61)]
     [InlineData(22)]
     [InlineData(1971)]
     public void Create_WithOutOfRangeEra_ReturnsValidationFailure(int era)
@@ -107,6 +107,25 @@ public class HistoricalFigureTests
     public void Create_WithSignedCenturyEra_IsAccepted(int era)
     {
         var result = NewDraft(era: era);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Era.Should().Be(era);
+    }
+
+    [Theory]
+    [InlineData(-41)] // Adam under the Masoretic/Ussher reckoning (c. 4004 BC).
+    [InlineData(-55)] // Creation under a Septuagint-based chronology (c. 5500 BC).
+    [InlineData(-60)] // The bound itself.
+    public void Create_WithPrimevalEra_IsAccepted(int era)
+    {
+        // Genesis 1-11 figures are dated by chronology rather than history, so the
+        // lower bound has to clear the earliest reckoning the roster might use.
+        var result = NewDraft(
+            category: HistoricalFigureCategory.BiblicalOldTestament,
+            era: era,
+            role: HistoricalFigureRole.Other,
+            region: HistoricalFigureRegion.Mesopotamia,
+            tradition: HistoricalFigureTradition.NotApplicable);
 
         result.IsSuccess.Should().BeTrue();
         result.Value!.Era.Should().Be(era);

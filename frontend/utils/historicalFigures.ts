@@ -58,9 +58,11 @@ export const HISTORICAL_FIGURE_STATUSES: readonly HistoricalFigureStatus[] = ['D
 
 /**
  * Widest centuries the API accepts — mirrors HistoricalFigure.MinEra/MaxEra.
- * Signed: negative is BC, positive is AD, and there is no century zero.
+ * Signed: negative is BC, positive is AD, and there is no century zero. The
+ * lower bound reaches back to the primeval genealogies of Genesis 1–11, whose
+ * dating depends on which traditional chronology you follow.
  */
-export const MIN_ERA = -40
+export const MIN_ERA = -60
 export const MAX_ERA = 21
 
 /**

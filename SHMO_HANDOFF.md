@@ -103,11 +103,17 @@ sent in chat, or re-apply the commits, then push as usual.
 
 ## Content review — the part only you can do
 
-`scripts/shmo-figures.json` holds 83 figures. **Every attribute is a game hint**,
-so an approximate era is a wrong answer, not a rounding error. 64 entries carry
+`scripts/shmo-figures.json` holds 93 figures. **Every attribute is a game hint**,
+so an approximate era is a wrong answer, not a rounding error. 74 entries carry
 a `_note` recording what is conventional, contested, or spans a century
 boundary. Read those before publishing anything:
 
+- **The ten primeval figures** (Adam, Eve, Cain, Abel, Seth, Enoch, Methuselah,
+  Noah, Shem, Nimrod) — marked `PRIMEVAL` in their notes. Chronology-dependent
+  rather than historical; see point 6 below. Anchored to birth, so Noah reads as
+  -30 (born c. 2948 BC) rather than -24 (the flood). If you would rather the
+  hint point at the event a player thinks of, Noah and Nimrod are the two to
+  revisit.
 - **Jeremiah** — called c. 627 (7th c.), anchored here to 586 (6th c.). Either
   is defensible; pick one.
 - **Moses** — follows the late-date Exodus (13th c.). Early-date would be -15.
@@ -138,9 +144,19 @@ or a small enum change.
 4. **No India in `Region`** — Thomas, the apostle of the East, is `Persia`.
 5. **Single primary role forces picks** — John and Matthew are `Apostle` rather
    than `Evangelist`; Jacob of Edessa is `Bishop` rather than `Translator`.
-6. **`MinEra` is -40, which excludes primeval figures.** Ussher-style dating puts
-   Adam at c. 4004 BC = era -41, so Adam, Eve, and Noah are omitted entirely.
-   Widen `HistoricalFigure.MinEra` if you want them in the roster.
+6. **~~`MinEra` excludes primeval figures~~ — resolved, but read this.** `MinEra`
+   was widened from -40 to **-60** and ten primeval figures (Adam through
+   Nimrod) added. Two consequences worth your sign-off:
+   - Their eras are **chronology, not history**. They follow the
+     Masoretic/Ussher reckoning (creation c. 4004 BC). A Septuagint-based
+     chronology puts creation near 5500 BC and would move all ten by roughly
+     fourteen centuries. These are the weakest hints in the roster.
+   - Widening the bound **relaxes a typo guard**. A mistyped year like -1500 in
+     the era field used to be rejected and now passes. That was the bound's
+     original purpose.
+
+   If either bothers you, the cheapest fix is to drop the ten primeval entries
+   from `shmo-figures.json` and set `MinEra` back to -40.
 
 ## Two judgment calls made without you
 

@@ -41,8 +41,9 @@ const REGIONS = ['IsraelJudah', 'Mesopotamia', 'Syria', 'Persia', 'Egypt', 'Asia
 const TRADITIONS = ['WestSyriac', 'EastSyriac', 'ByzantineChalcedonian', 'NotApplicable'];
 const GENDERS = ['Male', 'Female'];
 
-// Matches HistoricalFigure.MinEra/MaxEra. Signed century, no century zero.
-const MIN_ERA = -40;
+// Matches HistoricalFigure.MinEra/MaxEra. Signed century, no century zero. The
+// lower bound reaches back to the primeval genealogies (see the dataset notes).
+const MIN_ERA = -60;
 const MAX_ERA = 21;
 
 function parseArgs(argv) {
