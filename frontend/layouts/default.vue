@@ -27,6 +27,7 @@ const navItems = computed(() => {
   ]
   if (isAdmin.value) {
     items.push({ to: '/admin/lexicon', labelKey: 'nav.admin' })
+    items.push({ to: '/admin/historical-figures', labelKey: 'nav.adminFigures' })
   }
   return items
 })

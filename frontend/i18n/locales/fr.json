@@ -46,6 +46,7 @@
     "translations": "Traductions",
     "library": "Bibliothèque",
     "admin": "Back-office",
+    "adminFigures": "Figures",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -483,6 +484,125 @@
         "Numeral": "Numéral",
         "Interjection": "Interjection",
         "Other": "Autre"
+      }
+    },
+    "historicalFigures": {
+      "title": "Figures historiques",
+      "subtitle": "Le répertoire de Shmo : figures bibliques et patristiques syriaques que les joueurs devinent par leurs attributs.",
+      "newFigure": "Nouvelle figure",
+      "empty": "Aucune figure pour l’instant. Ajoutez la première pour commencer le répertoire.",
+      "loadFailed": "Le répertoire n’a pas pu être chargé.",
+      "loadFigureFailed": "Cette figure n’a pas pu être chargée.",
+      "notFound": "Cette figure n’existe pas.",
+      "saveFailed": "La figure n’a pas pu être enregistrée.",
+      "deleteFailed": "La figure n’a pas pu être supprimée.",
+      "actionFailed": "Cette action n’a pas pu être effectuée.",
+      "backToList": "Retour au répertoire",
+      "deleteConfirm": "Supprimer cette figure ? Cette action est irréversible.",
+      "eraBc": "{century}e s. av. J.-C.",
+      "eraAd": "{century}e s. apr. J.-C.",
+      "columns": {
+        "name": "Nom",
+        "category": "Catégorie",
+        "era": "Époque",
+        "role": "Rôle",
+        "region": "Région",
+        "status": "Statut",
+        "playable": "Pool Shmo"
+      },
+      "status": {
+        "Draft": "Brouillon",
+        "Published": "Publiée"
+      },
+      "filters": {
+        "searchPlaceholder": "Rechercher par nom…",
+        "searchClear": "Effacer la recherche",
+        "statusLabel": "Statut",
+        "statusAll": "Tous les statuts",
+        "categoryLabel": "Catégorie",
+        "categoryAll": "Toutes les catégories",
+        "roleLabel": "Rôle",
+        "roleAll": "Tous les rôles",
+        "regionLabel": "Région",
+        "regionAll": "Toutes les régions",
+        "playableLabel": "Pool Shmo",
+        "playableAll": "Tout état du pool",
+        "playableYes": "Dans le pool",
+        "playableNo": "Hors du pool",
+        "clear": "Effacer les filtres",
+        "noResults": "Aucune figure ne correspond à ces filtres.",
+        "pageSizeLabel": "Lignes par page"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "create": "Créer la figure",
+        "publish": "Publier",
+        "unpublish": "Dépublier",
+        "addToPool": "Ajouter au pool",
+        "removeFromPool": "Retirer du pool"
+      },
+      "lifecycle": {
+        "heading": "Cycle de vie",
+        "publishHint": "Seules les figures publiées peuvent rejoindre le pool Shmo.",
+        "traditionRequired": "Définissez une tradition avant de publier. Utilisez « Sans objet » pour les figures antérieures à la division Ouest/Est.",
+        "poolHeading": "Pool Shmo",
+        "poolHint": "Le pool est la source de l’énigme quotidienne. Figures publiées uniquement.",
+        "inPool": "Dans le pool Shmo",
+        "notInPool": "Hors du pool Shmo"
+      },
+      "form": {
+        "createTitle": "Nouvelle figure",
+        "editTitle": "Modifier la figure",
+        "name": "Nom",
+        "nameHint": "Le nom canonique affiché — c’est la réponse que les joueurs saisissent.",
+        "category": "Catégorie",
+        "era": "Époque (siècle)",
+        "eraHint": "Siècle signé : -10 correspond au 10e s. av. J.-C., 7 au 7e s. apr. J.-C. Il n’y a pas de siècle zéro.",
+        "role": "Rôle",
+        "roleHint": "Un rôle principal. « Patriarche » désigne la charge ecclésiastique.",
+        "region": "Région",
+        "tradition": "Tradition",
+        "traditionUnset": "Non définie",
+        "traditionHint": "Requise pour publier. « Sans objet » est une vraie réponse pour les figures antérieures à la division.",
+        "gender": "Genre"
+      },
+      "category": {
+        "BiblicalOldTestament": "Ancien Testament",
+        "BiblicalNewTestament": "Nouveau Testament",
+        "Patristic": "Patristique"
+      },
+      "role": {
+        "Prophet": "Prophète",
+        "King": "Roi",
+        "Judge": "Juge",
+        "Apostle": "Apôtre",
+        "Evangelist": "Évangéliste",
+        "Patriarch": "Patriarche",
+        "Bishop": "Évêque",
+        "Translator": "Traducteur",
+        "Commentator": "Commentateur",
+        "Monk": "Moine",
+        "Martyr": "Martyr",
+        "Other": "Autre"
+      },
+      "region": {
+        "IsraelJudah": "Israël / Juda",
+        "Mesopotamia": "Mésopotamie",
+        "Syria": "Syrie",
+        "Persia": "Perse",
+        "Egypt": "Égypte",
+        "AsiaMinor": "Asie Mineure",
+        "Other": "Autre"
+      },
+      "tradition": {
+        "WestSyriac": "Syriaque occidental",
+        "EastSyriac": "Syriaque oriental",
+        "ByzantineChalcedonian": "Byzantine / chalcédonienne",
+        "NotApplicable": "Sans objet"
+      },
+      "gender": {
+        "Male": "Masculin",
+        "Female": "Féminin"
       }
     }
   },

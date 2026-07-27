@@ -46,6 +46,7 @@
     "translations": "Übersetzungen",
     "library": "Bibliothek",
     "admin": "Backoffice",
+    "adminFigures": "Gestalten",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -514,6 +515,125 @@
         "Numeral": "Numerale",
         "Interjection": "Interjektion",
         "Other": "Sonstige"
+      }
+    },
+    "historicalFigures": {
+      "title": "Historische Gestalten",
+      "subtitle": "Das Shmo-Verzeichnis: biblische und syrisch-patristische Gestalten, die Spieler anhand ihrer Merkmale erraten.",
+      "newFigure": "Neue Gestalt",
+      "empty": "Noch keine Gestalten. Fügen Sie die erste hinzu, um das Verzeichnis zu beginnen.",
+      "loadFailed": "Das Verzeichnis konnte nicht geladen werden.",
+      "loadFigureFailed": "Diese Gestalt konnte nicht geladen werden.",
+      "notFound": "Diese Gestalt existiert nicht.",
+      "saveFailed": "Die Gestalt konnte nicht gespeichert werden.",
+      "deleteFailed": "Die Gestalt konnte nicht gelöscht werden.",
+      "actionFailed": "Diese Aktion konnte nicht ausgeführt werden.",
+      "backToList": "Zurück zum Verzeichnis",
+      "deleteConfirm": "Diese Gestalt löschen? Das lässt sich nicht rückgängig machen.",
+      "eraBc": "{century}. Jh. v. Chr.",
+      "eraAd": "{century}. Jh. n. Chr.",
+      "columns": {
+        "name": "Name",
+        "category": "Kategorie",
+        "era": "Epoche",
+        "role": "Rolle",
+        "region": "Region",
+        "status": "Status",
+        "playable": "Shmo-Pool"
+      },
+      "status": {
+        "Draft": "Entwurf",
+        "Published": "Veröffentlicht"
+      },
+      "filters": {
+        "searchPlaceholder": "Nach Namen suchen…",
+        "searchClear": "Suche löschen",
+        "statusLabel": "Status",
+        "statusAll": "Alle Status",
+        "categoryLabel": "Kategorie",
+        "categoryAll": "Alle Kategorien",
+        "roleLabel": "Rolle",
+        "roleAll": "Alle Rollen",
+        "regionLabel": "Region",
+        "regionAll": "Alle Regionen",
+        "playableLabel": "Shmo-Pool",
+        "playableAll": "Jeder Pool-Status",
+        "playableYes": "Im Pool",
+        "playableNo": "Nicht im Pool",
+        "clear": "Filter zurücksetzen",
+        "noResults": "Keine Gestalten entsprechen diesen Filtern.",
+        "pageSizeLabel": "Zeilen pro Seite"
+      },
+      "actions": {
+        "edit": "Bearbeiten",
+        "create": "Gestalt anlegen",
+        "publish": "Veröffentlichen",
+        "unpublish": "Zurückziehen",
+        "addToPool": "Zum Pool hinzufügen",
+        "removeFromPool": "Aus dem Pool entfernen"
+      },
+      "lifecycle": {
+        "heading": "Lebenszyklus",
+        "publishHint": "Nur veröffentlichte Gestalten können in den Shmo-Pool.",
+        "traditionRequired": "Legen Sie vor dem Veröffentlichen eine Tradition fest. „Nicht zutreffend“ gilt für Gestalten vor der West/Ost-Teilung.",
+        "poolHeading": "Shmo-Pool",
+        "poolHint": "Aus dem Pool zieht das Tagesrätsel. Nur veröffentlichte Gestalten.",
+        "inPool": "Im Shmo-Pool",
+        "notInPool": "Nicht im Shmo-Pool"
+      },
+      "form": {
+        "createTitle": "Neue Gestalt",
+        "editTitle": "Gestalt bearbeiten",
+        "name": "Name",
+        "nameHint": "Der kanonische Anzeigename — das ist die Antwort, die Spieler eingeben.",
+        "category": "Kategorie",
+        "era": "Epoche (Jahrhundert)",
+        "eraHint": "Vorzeichenbehaftetes Jahrhundert: -10 ist das 10. Jh. v. Chr., 7 das 7. Jh. n. Chr. Ein Jahrhundert null gibt es nicht.",
+        "role": "Rolle",
+        "roleHint": "Eine Hauptrolle. „Patriarch“ meint das kirchliche Amt.",
+        "region": "Region",
+        "tradition": "Tradition",
+        "traditionUnset": "Nicht festgelegt",
+        "traditionHint": "Zum Veröffentlichen erforderlich. „Nicht zutreffend“ ist eine echte Antwort für Gestalten vor der Teilung.",
+        "gender": "Geschlecht"
+      },
+      "category": {
+        "BiblicalOldTestament": "Altes Testament",
+        "BiblicalNewTestament": "Neues Testament",
+        "Patristic": "Patristisch"
+      },
+      "role": {
+        "Prophet": "Prophet",
+        "King": "König",
+        "Judge": "Richter",
+        "Apostle": "Apostel",
+        "Evangelist": "Evangelist",
+        "Patriarch": "Patriarch",
+        "Bishop": "Bischof",
+        "Translator": "Übersetzer",
+        "Commentator": "Kommentator",
+        "Monk": "Mönch",
+        "Martyr": "Märtyrer",
+        "Other": "Sonstige"
+      },
+      "region": {
+        "IsraelJudah": "Israel / Juda",
+        "Mesopotamia": "Mesopotamien",
+        "Syria": "Syrien",
+        "Persia": "Persien",
+        "Egypt": "Ägypten",
+        "AsiaMinor": "Kleinasien",
+        "Other": "Sonstige"
+      },
+      "tradition": {
+        "WestSyriac": "Westsyrisch",
+        "EastSyriac": "Ostsyrisch",
+        "ByzantineChalcedonian": "Byzantinisch / chalcedonisch",
+        "NotApplicable": "Nicht zutreffend"
+      },
+      "gender": {
+        "Male": "Männlich",
+        "Female": "Weiblich"
       }
     }
   },

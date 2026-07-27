@@ -46,6 +46,7 @@
     "translations": "Översättningar",
     "library": "Bibliotek",
     "admin": "Backoffice",
+    "adminFigures": "Gestalter",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -514,6 +515,125 @@
         "Numeral": "Räkneord",
         "Interjection": "Interjektion",
         "Other": "Övrigt"
+      }
+    },
+    "historicalFigures": {
+      "title": "Historiska gestalter",
+      "subtitle": "Shmo-registret: bibliska och syrisk-patristiska gestalter som spelarna gissar utifrån deras egenskaper.",
+      "newFigure": "Ny gestalt",
+      "empty": "Inga gestalter ännu. Lägg till den första för att börja registret.",
+      "loadFailed": "Registret kunde inte laddas.",
+      "loadFigureFailed": "Den här gestalten kunde inte laddas.",
+      "notFound": "Den här gestalten finns inte.",
+      "saveFailed": "Gestalten kunde inte sparas.",
+      "deleteFailed": "Gestalten kunde inte tas bort.",
+      "actionFailed": "Åtgärden kunde inte slutföras.",
+      "backToList": "Tillbaka till registret",
+      "deleteConfirm": "Ta bort den här gestalten? Detta går inte att ångra.",
+      "eraBc": "{century}:e årh. f.Kr.",
+      "eraAd": "{century}:e årh. e.Kr.",
+      "columns": {
+        "name": "Namn",
+        "category": "Kategori",
+        "era": "Epok",
+        "role": "Roll",
+        "region": "Region",
+        "status": "Status",
+        "playable": "Shmo-pool"
+      },
+      "status": {
+        "Draft": "Utkast",
+        "Published": "Publicerad"
+      },
+      "filters": {
+        "searchPlaceholder": "Sök på namn…",
+        "searchClear": "Rensa sökning",
+        "statusLabel": "Status",
+        "statusAll": "Alla statusar",
+        "categoryLabel": "Kategori",
+        "categoryAll": "Alla kategorier",
+        "roleLabel": "Roll",
+        "roleAll": "Alla roller",
+        "regionLabel": "Region",
+        "regionAll": "Alla regioner",
+        "playableLabel": "Shmo-pool",
+        "playableAll": "Valfritt poolläge",
+        "playableYes": "I poolen",
+        "playableNo": "Inte i poolen",
+        "clear": "Rensa filter",
+        "noResults": "Inga gestalter matchar dessa filter.",
+        "pageSizeLabel": "Rader per sida"
+      },
+      "actions": {
+        "edit": "Redigera",
+        "create": "Skapa gestalt",
+        "publish": "Publicera",
+        "unpublish": "Avpublicera",
+        "addToPool": "Lägg till i poolen",
+        "removeFromPool": "Ta bort från poolen"
+      },
+      "lifecycle": {
+        "heading": "Livscykel",
+        "publishHint": "Endast publicerade gestalter kan ingå i Shmo-poolen.",
+        "traditionRequired": "Ange en tradition före publicering. Använd ”Ej tillämpligt” för gestalter före uppdelningen väst/öst.",
+        "poolHeading": "Shmo-pool",
+        "poolHint": "Poolen är det dagliga pusslets källa. Endast publicerade gestalter.",
+        "inPool": "I Shmo-poolen",
+        "notInPool": "Inte i Shmo-poolen"
+      },
+      "form": {
+        "createTitle": "Ny gestalt",
+        "editTitle": "Redigera gestalt",
+        "name": "Namn",
+        "nameHint": "Det kanoniska visningsnamnet — det är svaret spelarna skriver.",
+        "category": "Kategori",
+        "era": "Epok (århundrade)",
+        "eraHint": "Tecknat århundrade: -10 är 900-talet f.Kr., 7 är 600-talet e.Kr. Det finns inget århundrade noll.",
+        "role": "Roll",
+        "roleHint": "En huvudroll. ”Patriark” avser det kyrkliga ämbetet.",
+        "region": "Region",
+        "tradition": "Tradition",
+        "traditionUnset": "Ej angiven",
+        "traditionHint": "Krävs för publicering. ”Ej tillämpligt” är ett verkligt svar för gestalter före uppdelningen.",
+        "gender": "Kön"
+      },
+      "category": {
+        "BiblicalOldTestament": "Gamla testamentet",
+        "BiblicalNewTestament": "Nya testamentet",
+        "Patristic": "Patristisk"
+      },
+      "role": {
+        "Prophet": "Profet",
+        "King": "Kung",
+        "Judge": "Domare",
+        "Apostle": "Apostel",
+        "Evangelist": "Evangelist",
+        "Patriarch": "Patriark",
+        "Bishop": "Biskop",
+        "Translator": "Översättare",
+        "Commentator": "Kommentator",
+        "Monk": "Munk",
+        "Martyr": "Martyr",
+        "Other": "Övrig"
+      },
+      "region": {
+        "IsraelJudah": "Israel / Juda",
+        "Mesopotamia": "Mesopotamien",
+        "Syria": "Syrien",
+        "Persia": "Persien",
+        "Egypt": "Egypten",
+        "AsiaMinor": "Mindre Asien",
+        "Other": "Övrig"
+      },
+      "tradition": {
+        "WestSyriac": "Västsyrisk",
+        "EastSyriac": "Östsyrisk",
+        "ByzantineChalcedonian": "Bysantinsk / kalcedonsk",
+        "NotApplicable": "Ej tillämpligt"
+      },
+      "gender": {
+        "Male": "Man",
+        "Female": "Kvinna"
       }
     }
   },
