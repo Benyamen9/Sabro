@@ -1,5 +1,5 @@
 {
-  "_comment": "Launch roster for Shmo. ~93 figures across the three categories: Biblical Old Testament, Biblical New Testament, and Syriac patristic/ecclesiastical (bar Salibi's own world). Every attribute here is a GAME HINT, so an approximate era is a wrong answer, not a rounding error — the Owner must review each entry before the seed script publishes anything. Era is a signed century (-10 = 10th c. BC, 7 = 7th c. AD); there is no century zero. Entries whose dating is conventional, contested, or spans a century boundary carry a _note; the seeder strips every underscore-prefixed key before POSTing. Patristic death dates are the anchor where a figure's activity spans two centuries. The ten primeval figures (Genesis 1-11) are marked PRIMEVAL in their notes and are the least secure data in the file — see the primeval note below.",
+  "_comment": "Launch roster for Shmo. ~150 figures across the three categories: Biblical Old Testament, Biblical New Testament, and Syriac patristic/ecclesiastical (bar Salibi's own world). Every attribute here is a GAME HINT, so an approximate era is a wrong answer, not a rounding error — the Owner must review each entry before the seed script publishes anything. Era is a signed century (-10 = 10th c. BC, 7 = 7th c. AD); there is no century zero. Entries whose dating is conventional, contested, or spans a century boundary carry a _note; the seeder strips every underscore-prefixed key before POSTing. Patristic death dates are the anchor where a figure's activity spans two centuries. Relatives and close associates are dated with the figure they attach to, so a whole household shares one century — see the kinship note below. The primeval figures (Genesis 1-11) are marked PRIMEVAL and are the least secure data in the file.",
   "_modellingNotes": [
     "Role 'Patriarch' is used for the ecclesiastical office only. The biblical patriarchs (Abraham, Isaac, Jacob) are 'Other' — Category already separates them, but if you would rather they read as Patriarch, that is a one-line change here, not a schema change.",
     "Pre-Chalcedonian Syriac fathers (Ephrem, Aphrahat, Rabbula, Simeon the Stylite, Bardaisan, Mar Awgin, Febronia, Ibas) are Tradition 'NotApplicable': the West/East Syriac split postdates them, and assigning either would be an anachronism. If you want that to read as its own hint rather than sharing a bucket with pre-Christian figures, add a 'PreChalcedonian' member to HistoricalFigureTradition.",
@@ -7,7 +7,12 @@
     "The Region enum has no India, so Thomas — the apostle of the East in Syriac tradition — is 'Persia'.",
     "Single primary role forces a pick where figures hold two: John and Matthew are 'Apostle' rather than 'Evangelist' (Mark and Luke, who were not apostles, carry Evangelist); Jacob of Edessa is 'Bishop' rather than 'Translator'.",
     "The primeval figures of Genesis 1-11 (Adam through Nimrod) are dated by CHRONOLOGY, NOT HISTORY, and are the weakest hints in the roster. They follow the Masoretic/Ussher reckoning, which puts creation at c. 4004 BC (era -41). A Septuagint-based chronology puts it near 5500 BC (era -55) and would shift all ten by roughly fourteen centuries. Nothing here is a historical date in the sense the patristic entries are; if that bothers you as game data, drop the ten or give them a shared round era. HistoricalFigure.MinEra was widened from -40 to -60 to admit them, which is a real relaxation of a typo guard: a mistyped year like -1500 is now accepted where it used to be rejected.",
-    "Primeval eras are anchored to birth on the Ussher reckoning, so Noah reads as -30 (born c. 2948 BC) rather than -24 (the flood, c. 2348 BC). If you would rather the hint point at the event a player would think of, Noah and Nimrod are the two to revisit."
+    "Primeval eras are anchored to birth on the Ussher reckoning, so Noah reads as -30 (born c. 2948 BC) rather than -24 (the flood, c. 2348 BC). If you would rather the hint point at the event a player would think of, Noah and Nimrod are the two to revisit.",
+    "KINSHIP DATING: relatives and associates are dated with the figure they attach to, not independently — Rachel, Leah, Esau and Laban all read -18 with Jacob; the whole Bethany household reads 1. That is honest for a game hint (they are contemporaries) but it means the era hint cannot separate members of one household, and a player who has narrowed to the right century still faces a dozen names. Expect era to be a coarse filter in the biblical categories and a sharp one in the patristic.",
+    "NAME AMBIGUITY: the name is the answer in Shmo, so it has to be unique and unambiguous. Adding relatives forced six renames. Three were outright duplicates: Joseph became 'Joseph son of Jacob' (against Joseph of Nazareth), James became 'James son of Zebedee' (against James the Brother of the Lord), Mary became 'Mary the Mother of Jesus' (against Mary of Bethany and Mary Magdalene). Three more were judgement calls where a bare name sat too close to a qualified one: John became 'John the Apostle' (against John the Baptist), Simeon became 'Simeon the Righteous' (against Simeon the Stylite), Timothy became 'Timothy of Ephesus' (against the catholicos Timothy I).",
+    "Left deliberately bare, because the unqualified name conventionally means the biblical figure and the patristic namesakes all carry a place: Abraham's son Isaac (vs Isaac of Nineveh), the patriarch Jacob (vs Jacob of Serugh, Baradaeus, of Edessa), the apostle Thomas (vs Thomas of Harkel, of Marga), the apostle Paul (vs Paul of Tella). Revisit if playtesting shows people hesitating over them.",
+    "Scripture reuses names heavily, so the ambiguity problem will recur on every addition: a second Lamech (Cain's line), a second Zechariah (the minor prophet), a second Simeon (son of Jacob), a second Nathan (David's son) and Matthew's alternate name Levi were all left out of the roster rather than disambiguated. Add them only with a qualifier attached.",
+    "The Cainite line (Jabal, Jubal, Tubal-cain, Naamah of Genesis 4) is omitted deliberately. Ussher's chronology dates the Sethite genealogy only, so those four have no anchor at all — not even a chronology-derived one — and any era for them would be invention rather than convention."
   ],
   "figures": [
     {
@@ -61,6 +66,46 @@
       "_note": "PRIMEVAL — born c. 3874 BC on the Ussher reckoning."
     },
     {
+      "name": "Enosh",
+      "category": "BiblicalOldTestament",
+      "era": -38,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3769 BC on the Ussher reckoning. Son of Seth; Genesis 4:26 dates the calling on the name of the Lord to his lifetime."
+    },
+    {
+      "name": "Kenan",
+      "category": "BiblicalOldTestament",
+      "era": -37,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3679 BC on the Ussher reckoning."
+    },
+    {
+      "name": "Mahalalel",
+      "category": "BiblicalOldTestament",
+      "era": -37,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3609 BC on the Ussher reckoning."
+    },
+    {
+      "name": "Jared",
+      "category": "BiblicalOldTestament",
+      "era": -36,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3544 BC on the Ussher reckoning. Father of Enoch."
+    },
+    {
       "name": "Enoch",
       "category": "BiblicalOldTestament",
       "era": -34,
@@ -81,6 +126,16 @@
       "_note": "PRIMEVAL — born c. 3317 BC on the Ussher reckoning."
     },
     {
+      "name": "Lamech",
+      "category": "BiblicalOldTestament",
+      "era": -32,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — born c. 3130 BC on the Ussher reckoning. Son of Methuselah and father of Noah. NOTE: Genesis 4:18 names a second Lamech in the line of Cain; only the Sethite one is in the roster, because two figures cannot share an answer name."
+    },
+    {
       "name": "Noah",
       "category": "BiblicalOldTestament",
       "era": -30,
@@ -99,6 +154,26 @@
       "gender": "Male",
       "tradition": "NotApplicable",
       "_note": "PRIMEVAL — born c. 2446 BC on the Ussher reckoning. The Semitic line runs through him to Abraham."
+    },
+    {
+      "name": "Ham",
+      "category": "BiblicalOldTestament",
+      "era": -25,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — son of Noah, dated with Shem."
+    },
+    {
+      "name": "Japheth",
+      "category": "BiblicalOldTestament",
+      "era": -25,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "PRIMEVAL — son of Noah, dated with Shem."
     },
     {
       "name": "Nimrod",
@@ -131,6 +206,36 @@
       "_note": "Dated with Abraham; same caveat."
     },
     {
+      "name": "Lot",
+      "category": "BiblicalOldTestament",
+      "era": -19,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Abraham's nephew; dated with him. Region is Sodom, in the Jordan plain."
+    },
+    {
+      "name": "Hagar",
+      "category": "BiblicalOldTestament",
+      "era": -19,
+      "role": "Other",
+      "region": "Egypt",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Sarah's Egyptian handmaid and Ishmael's mother; Region reflects her origin."
+    },
+    {
+      "name": "Ishmael",
+      "category": "BiblicalOldTestament",
+      "era": -19,
+      "role": "Other",
+      "region": "Other",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Genesis 21:21 settles him in the wilderness of Paran; Region is Other because Arabia is not in the enum."
+    },
+    {
       "name": "Isaac",
       "category": "BiblicalOldTestament",
       "era": -18,
@@ -139,6 +244,16 @@
       "gender": "Male",
       "tradition": "NotApplicable",
       "_note": "Conventional; one generation after Abraham."
+    },
+    {
+      "name": "Rebecca",
+      "category": "BiblicalOldTestament",
+      "era": -18,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Born in Paddan-aram (Mesopotamia) but Region follows the Canaan narrative, as for Rachel and Leah."
     },
     {
       "name": "Jacob",
@@ -151,14 +266,100 @@
       "_note": "Conventional; same generation-count basis as Isaac."
     },
     {
-      "name": "Joseph",
+      "name": "Esau",
+      "category": "BiblicalOldTestament",
+      "era": -18,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Ancestor of Edom; Region is IsraelJudah because Edom is not in the enum."
+    },
+    {
+      "name": "Rachel",
+      "category": "BiblicalOldTestament",
+      "era": -18,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Leah",
+      "category": "BiblicalOldTestament",
+      "era": -18,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Laban",
+      "category": "BiblicalOldTestament",
+      "era": -18,
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Stays in Paddan-aram, so Region is Mesopotamia unlike his daughters."
+    },
+    {
+      "name": "Joseph son of Jacob",
       "category": "BiblicalOldTestament",
       "era": -17,
       "role": "Other",
       "region": "Egypt",
       "gender": "Male",
       "tradition": "NotApplicable",
-      "_note": "Conventional. Region is Egypt for the vizier narrative, not his Canaanite birth."
+      "_note": "Conventional. Region is Egypt for the vizier narrative, not his Canaanite birth. Renamed from the bare \"Joseph\" once a namesake joined the roster — the name is the answer in Shmo, so it has to be unambiguous."
+    },
+    {
+      "name": "Judah",
+      "category": "BiblicalOldTestament",
+      "era": -17,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Son of Jacob and ancestor of the royal line."
+    },
+    {
+      "name": "Levi",
+      "category": "BiblicalOldTestament",
+      "era": -17,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Son of Jacob and ancestor of the priestly line. NOTE: the evangelist Matthew is also called Levi in Mark 2:14; the roster keeps him under Matthew."
+    },
+    {
+      "name": "Benjamin",
+      "category": "BiblicalOldTestament",
+      "era": -17,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Dinah",
+      "category": "BiblicalOldTestament",
+      "era": -17,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Tamar",
+      "category": "BiblicalOldTestament",
+      "era": -17,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Judah's daughter-in-law (Genesis 38); one of the four women named in Matthew's genealogy."
     },
     {
       "name": "Moses",
@@ -189,6 +390,56 @@
       "gender": "Female",
       "tradition": "NotApplicable",
       "_note": "Called a prophetess in Exodus 15:20. Dated with Moses."
+    },
+    {
+      "name": "Jethro",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Other",
+      "region": "Other",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Priest of Midian and Moses' father-in-law. Role is Other because there is no Priest role; Region is Other because Midian is not in the enum."
+    },
+    {
+      "name": "Zipporah",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Other",
+      "region": "Other",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Moses' Midianite wife; same Region caveat as Jethro."
+    },
+    {
+      "name": "Caleb",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "One of the two faithful spies; dated with the conquest generation."
+    },
+    {
+      "name": "Eleazar",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Aaron's son and successor as high priest. Role is Other — no Priest role."
+    },
+    {
+      "name": "Phinehas",
+      "category": "BiblicalOldTestament",
+      "era": -13,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Aaron's grandson; same Role caveat."
     },
     {
       "name": "Joshua",
@@ -238,6 +489,26 @@
       "_note": "Set in the era of the judges; Moabite by birth, but the narrative belongs to Bethlehem."
     },
     {
+      "name": "Naomi",
+      "category": "BiblicalOldTestament",
+      "era": -12,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Ruth's mother-in-law."
+    },
+    {
+      "name": "Boaz",
+      "category": "BiblicalOldTestament",
+      "era": -12,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Ruth's husband and David's great-grandfather."
+    },
+    {
       "name": "Samuel",
       "category": "BiblicalOldTestament",
       "era": -11,
@@ -246,6 +517,16 @@
       "gender": "Male",
       "tradition": "NotApplicable",
       "_note": "Both last judge and prophet; Prophet chosen as the primary role."
+    },
+    {
+      "name": "Hannah",
+      "category": "BiblicalOldTestament",
+      "era": -11,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Samuel's mother; her song prefigures the Magnificat."
     },
     {
       "name": "Saul",
@@ -257,6 +538,26 @@
       "tradition": "NotApplicable"
     },
     {
+      "name": "Jonathan",
+      "category": "BiblicalOldTestament",
+      "era": -11,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Saul's son and David's friend."
+    },
+    {
+      "name": "Jesse",
+      "category": "BiblicalOldTestament",
+      "era": -11,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "David's father; the root of Jesse in Isaiah 11:1."
+    },
+    {
       "name": "David",
       "category": "BiblicalOldTestament",
       "era": -10,
@@ -264,6 +565,65 @@
       "region": "IsraelJudah",
       "gender": "Male",
       "tradition": "NotApplicable"
+    },
+    {
+      "name": "Michal",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Saul's daughter and David's first wife."
+    },
+    {
+      "name": "Bathsheba",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Solomon's mother."
+    },
+    {
+      "name": "Absalom",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "David's rebel son."
+    },
+    {
+      "name": "Abigail",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Nathan",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "The prophet who confronts David. NOTE: David also has a son named Nathan (2 Samuel 5:14), not in the roster."
+    },
+    {
+      "name": "Joab",
+      "category": "BiblicalOldTestament",
+      "era": -10,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "David's army commander."
     },
     {
       "name": "Solomon",
@@ -330,6 +690,16 @@
       "tradition": "NotApplicable"
     },
     {
+      "name": "Hezekiah",
+      "category": "BiblicalOldTestament",
+      "era": -8,
+      "role": "King",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Reigned c. 715-686 BC; Isaiah's royal contemporary. Anchored to the start of the reign, so the 8th c."
+    },
+    {
       "name": "Jonah",
       "category": "BiblicalOldTestament",
       "era": -8,
@@ -340,6 +710,16 @@
       "_note": "Region is Nineveh, where the narrative sits, rather than his native Gath-hepher."
     },
     {
+      "name": "Josiah",
+      "category": "BiblicalOldTestament",
+      "era": -7,
+      "role": "King",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Reigned 640-609 BC; the reforming king whose era Jeremiah is called into."
+    },
+    {
       "name": "Jeremiah",
       "category": "BiblicalOldTestament",
       "era": -6,
@@ -348,6 +728,16 @@
       "gender": "Male",
       "tradition": "NotApplicable",
       "_note": "Spans the boundary: called c. 627 (7th c.), but anchored here to the fall of Jerusalem in 586 (6th c.). -7 is equally defensible."
+    },
+    {
+      "name": "Baruch",
+      "category": "BiblicalOldTestament",
+      "era": -6,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Jeremiah's scribe. Role is Other — no Scribe role."
     },
     {
       "name": "Ezekiel",
@@ -400,13 +790,34 @@
       "_note": "Queen consort; Role King is male-titled in the enum, so Other."
     },
     {
-      "name": "Mary",
+      "name": "Mordecai",
+      "category": "BiblicalOldTestament",
+      "era": -5,
+      "role": "Other",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Esther's cousin; dated with her."
+    },
+    {
+      "name": "Mary the Mother of Jesus",
       "category": "BiblicalNewTestament",
       "era": 1,
       "role": "Other",
       "region": "IsraelJudah",
       "gender": "Female",
-      "tradition": "NotApplicable"
+      "tradition": "NotApplicable",
+      "_note": "Renamed from the bare \"Mary\" once a namesake joined the roster — the name is the answer in Shmo, so it has to be unambiguous."
+    },
+    {
+      "name": "Joseph of Nazareth",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Disambiguated from Joseph son of Jacob, who holds the bare name in the Old Testament."
     },
     {
       "name": "John the Baptist",
@@ -416,6 +827,46 @@
       "region": "IsraelJudah",
       "gender": "Male",
       "tradition": "NotApplicable"
+    },
+    {
+      "name": "Elizabeth",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "John the Baptist's mother and Mary's kinswoman."
+    },
+    {
+      "name": "Zechariah",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "John the Baptist's father, a priest of the division of Abijah. Role is Other — no Priest role. NOTE: distinct from the minor prophet Zechariah, who is not in the roster."
+    },
+    {
+      "name": "Simeon the Righteous",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "The righteous man of Luke 2 whose canticle is the Nunc Dimittis. NOTE: distinct from Simeon son of Jacob, not in the roster. Renamed from the bare \"Simeon\": Distinguished from Simeon the Stylite and Simeon of Beth Arsham; the title follows Luke 2:25."
+    },
+    {
+      "name": "Anna",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Luke 2:36 calls her a prophetess outright, so Prophet rather than Other."
     },
     {
       "name": "Peter",
@@ -436,24 +887,34 @@
       "tradition": "NotApplicable"
     },
     {
-      "name": "James",
+      "name": "James son of Zebedee",
       "category": "BiblicalNewTestament",
       "era": 1,
       "role": "Apostle",
       "region": "IsraelJudah",
       "gender": "Male",
       "tradition": "NotApplicable",
-      "_note": "James son of Zebedee. If you later add James the brother of the Lord, the two names will need disambiguating."
+      "_note": "James son of Zebedee. If you later add James the brother of the Lord, the two names will need disambiguating. Renamed from the bare \"James\" once a namesake joined the roster — the name is the answer in Shmo, so it has to be unambiguous."
     },
     {
-      "name": "John",
+      "name": "James the Brother of the Lord",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Bishop",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Leader of the Jerusalem church, traditionally its first bishop — hence Bishop rather than Apostle, though Galatians 1:19 calls him one."
+    },
+    {
+      "name": "John the Apostle",
       "category": "BiblicalNewTestament",
       "era": 1,
       "role": "Apostle",
       "region": "IsraelJudah",
       "gender": "Male",
       "tradition": "NotApplicable",
-      "_note": "Apostle and evangelist; Apostle chosen as primary."
+      "_note": "Apostle and evangelist; Apostle chosen as primary. Renamed from the bare \"John\": John the Baptist already holds the qualified form, so the bare name was genuinely ambiguous between the two."
     },
     {
       "name": "Matthew",
@@ -552,14 +1013,121 @@
       "tradition": "NotApplicable"
     },
     {
-      "name": "Timothy",
+      "name": "Martha",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Sister of Mary of Bethany and Lazarus."
+    },
+    {
+      "name": "Mary of Bethany",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Kept distinct from Mary Magdalene and Mary the Mother of Jesus; the three are conflated in some Western traditions but not in the Syriac."
+    },
+    {
+      "name": "Lazarus",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Salome",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "One of the women at the tomb (Mark 16:1)."
+    },
+    {
+      "name": "Joseph of Arimathea",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Nicodemus",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable"
+    },
+    {
+      "name": "Timothy of Ephesus",
       "category": "BiblicalNewTestament",
       "era": 1,
       "role": "Bishop",
       "region": "AsiaMinor",
       "gender": "Male",
       "tradition": "NotApplicable",
-      "_note": "Traditionally first bishop of Ephesus."
+      "_note": "Traditionally first bishop of Ephesus. Renamed from the bare \"Timothy\": Distinguished from the East Syriac catholicos Timothy I, whose regnal name is only one character away."
+    },
+    {
+      "name": "Titus",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Bishop",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Traditionally first bishop of Crete; Region is the nearest enum value."
+    },
+    {
+      "name": "Silas",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Prophet",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Acts 15:32 calls him a prophet; Paul's companion on the second journey."
+    },
+    {
+      "name": "Priscilla",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "AsiaMinor",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Tentmaker and teacher; with Aquila she instructs Apollos."
+    },
+    {
+      "name": "Aquila",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Priscilla's husband, a Jew of Pontus."
+    },
+    {
+      "name": "Lydia",
+      "category": "BiblicalNewTestament",
+      "era": 1,
+      "role": "Other",
+      "region": "AsiaMinor",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "The seller of purple from Thyatira; first named European convert."
     },
     {
       "name": "Bardaisan",

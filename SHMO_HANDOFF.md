@@ -103,10 +103,23 @@ sent in chat, or re-apply the commits, then push as usual.
 
 ## Content review — the part only you can do
 
-`scripts/shmo-figures.json` holds 93 figures. **Every attribute is a game hint**,
-so an approximate era is a wrong answer, not a rounding error. 74 entries carry
+`scripts/shmo-figures.json` holds 150 figures. **Every attribute is a game hint**,
+so an approximate era is a wrong answer, not a rounding error. 124 entries carry
 a `_note` recording what is conventional, contested, or spans a century
 boundary. Read those before publishing anything:
+
+- **Six figures were renamed** so the answer name stays unambiguous — the name
+  *is* the answer in Shmo. `Joseph` → `Joseph son of Jacob`, `James` →
+  `James son of Zebedee`, `Mary` → `Mary the Mother of Jesus` (true duplicates,
+  forced), and `John` → `John the Apostle`, `Simeon` → `Simeon the Righteous`,
+  `Timothy` → `Timothy of Ephesus` (judgement calls, too close to a qualified
+  namesake). `Isaac`, `Jacob`, `Thomas` and `Paul` were left bare on the view
+  that the unqualified name conventionally means the biblical figure. Worth a
+  playtest.
+- **Relatives are dated with the figure they attach to**, so a household shares
+  a century — Rachel, Leah, Esau and Laban all read -18 with Jacob. Honest (they
+  are contemporaries) but it means era is a coarse filter in the biblical
+  categories and a sharp one in the patristic.
 
 - **The ten primeval figures** (Adam, Eve, Cain, Abel, Seth, Enoch, Methuselah,
   Noah, Shem, Nimrod) — marked `PRIMEVAL` in their notes. Chronology-dependent
