@@ -69,84 +69,19 @@ export type UpdateLexiconEntryRequest = Schemas['UpdateLexiconEntryRequest']
 export type SetPlayableLexiconEntryRequest = Schemas['SetPlayableLexiconEntryRequest']
 export type LexiconAdminSort = Schemas['LexiconAdminSort']
 
-/*
- * Historical figures (the Shmo roster).
- *
- * TEMPORARILY HAND-WRITTEN. These belong in `api.generated.ts` like everything
- * else here, but the backend that defines them has not been built since it was
- * added, so the checked-in OpenAPI spec does not carry their schemas yet.
- *
- * To retire this block: build the API (which re-emits
- * `frontend/openapi/Sabro.API.json`), run `npm run generate:api-types`, then
- * replace each interface below with a `Schemas['...']` re-export. Consumers
- * import from `~/types/api`, so the swap is local to this file.
- *
- * Keep these in sync with src/Modules/Sabro.Historical/Domain and
- * Application/Figures until then.
- */
-export type HistoricalFigureCategory = 'BiblicalOldTestament' | 'BiblicalNewTestament' | 'Patristic'
-export type HistoricalFigureRole =
-  | 'Prophet' | 'King' | 'Judge' | 'Apostle' | 'Evangelist' | 'Patriarch'
-  | 'Bishop' | 'Translator' | 'Commentator' | 'Monk' | 'Martyr' | 'Other'
-export type HistoricalFigureRegion =
-  | 'IsraelJudah' | 'Mesopotamia' | 'Syria' | 'Persia' | 'Arabia' | 'Egypt' | 'Ethiopia'
-  | 'AsiaMinor' | 'Greece' | 'Italy' | 'Armenia' | 'India' | 'Other'
-export type HistoricalFigureTradition =
-  | 'PreChalcedonian' | 'WestSyriac' | 'EastSyriac' | 'Coptic' | 'Armenian' | 'Ethiopian'
-  | 'Malankara' | 'ByzantineChalcedonian' | 'Latin' | 'NotApplicable'
-export type HistoricalFigureGender = 'Male' | 'Female'
-export type HistoricalPeriod =
-  | 'Primeval' | 'Patriarchal' | 'ExodusAndConquest' | 'Judges' | 'UnitedMonarchy'
-  | 'DividedMonarchy' | 'ExileAndReturn' | 'SecondTemple' | 'Apostolic'
-  | 'AnteNicene' | 'NiceneEra' | 'PostChalcedonian' | 'IslamicEra' | 'SyriacRenaissance'
-  | 'LateMedieval' | 'ModernEra'
-export type HistoricalFigureStatus = 'Draft' | 'Published'
-
-export interface HistoricalFigureDto {
-  id: string
-  name: string
-  category: HistoricalFigureCategory
-  era: number
-  period: HistoricalPeriod
-  role: HistoricalFigureRole
-  region: HistoricalFigureRegion
-  tradition: HistoricalFigureTradition | null
-  gender: HistoricalFigureGender
-  status: HistoricalFigureStatus
-  playableInShmo: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-/** Public roster projection — no editorial state, no playable flag. */
-export interface HistoricalFigureListItem {
-  id: string
-  name: string
-  category: HistoricalFigureCategory
-  era: number
-  period: HistoricalPeriod
-  role: HistoricalFigureRole
-  region: HistoricalFigureRegion
-  tradition: HistoricalFigureTradition | null
-  gender: HistoricalFigureGender
-}
-
-export interface CreateHistoricalFigureRequest {
-  name: string
-  category: HistoricalFigureCategory
-  era: number
-  period: HistoricalPeriod
-  role: HistoricalFigureRole
-  region: HistoricalFigureRegion
-  gender: HistoricalFigureGender
-  tradition?: HistoricalFigureTradition | null
-}
-
-export type UpdateHistoricalFigureRequest = CreateHistoricalFigureRequest
-
-export interface SetPlayableHistoricalFigureRequest {
-  playable: boolean
-}
+// Historical figures (the Shmo roster).
+export type HistoricalFigureCategory = Schemas['HistoricalFigureCategory']
+export type HistoricalFigureRole = Schemas['HistoricalFigureRole']
+export type HistoricalFigureRegion = Schemas['HistoricalFigureRegion']
+export type HistoricalFigureTradition = Schemas['HistoricalFigureTradition']
+export type HistoricalFigureGender = Schemas['HistoricalFigureGender']
+export type HistoricalPeriod = Schemas['HistoricalPeriod']
+export type HistoricalFigureStatus = Schemas['HistoricalFigureStatus']
+export type HistoricalFigureDto = Schemas['HistoricalFigureDto']
+export type HistoricalFigureListItem = Schemas['HistoricalFigureListItem']
+export type CreateHistoricalFigureRequest = Schemas['CreateHistoricalFigureRequest']
+export type UpdateHistoricalFigureRequest = Schemas['UpdateHistoricalFigureRequest']
+export type SetPlayableHistoricalFigureRequest = Schemas['SetPlayableHistoricalFigureRequest']
 
 // Play results.
 export type GameResultDto = Schemas['GameResultDto']
