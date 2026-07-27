@@ -290,6 +290,7 @@ services:
       LOGTO_ADMIN_DOMAIN: ${LOGTO_ADMIN_DOMAIN}
       MELTHO_DOMAIN: ${MELTHO_DOMAIN}
       MNO_DOMAIN: ${MNO_DOMAIN}
+      SHMO_DOMAIN: ${SHMO_DOMAIN}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
