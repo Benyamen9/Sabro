@@ -1,8 +1,11 @@
 import type { GameResultDto, PagedResult } from '~/types/api'
 
-// Both daily games give six tries; results carry attempts 1..6 on a win and
-// attempts == max on a loss (solved=false). The guess distribution buckets the
-// wins by attempt count — the familiar Wordle histogram.
+// Meltho and Mno give six tries; results carry attempts 1..6 on a win and
+// attempts == max on a loss (solved=false). Shmo has no attempt cap (unlimited
+// guesses, "give up" instead of losing) — its wins can carry any attempt
+// count, so the histogram's last bucket becomes an explicit overflow ("6+")
+// rather than silently implying "exactly 6". The guess distribution buckets
+// the wins by attempt count — the familiar Wordle histogram.
 const MAX_ATTEMPTS = 6
 const MAX_PAGE_SIZE = 200
 
@@ -18,6 +21,9 @@ export interface GameStats {
   maxBucket: number // largest distribution value, for histogram scaling
   lastPlayed: string | null // ISO date (yyyy-mm-dd) of the most recent game
   maxAttempts: number
+  /** True when the last distribution bucket is an overflow ("6+") rather than
+   *  an exact count — only possible for unlimited-guess games like Shmo. */
+  overflowLastBucket: boolean
 }
 
 function emptyStats(): GameStats {
@@ -33,6 +39,7 @@ function emptyStats(): GameStats {
     maxBucket: 0,
     lastPlayed: null,
     maxAttempts: MAX_ATTEMPTS,
+    overflowLastBucket: false,
   }
 }
 
@@ -43,8 +50,18 @@ function dayGap(a: string, b: string): number {
   return Math.round(ms / 86_400_000)
 }
 
-/** Derive one game's stats from a player's raw results (no server aggregate). */
-export function computeGameStats(results: GameResultDto[], gameId: string): GameStats {
+/**
+ * Derive one game's stats from a player's raw results (no server aggregate).
+ * `unlimitedGuesses` (Shmo only) marks that attempts have no hard cap: wins
+ * past MAX_ATTEMPTS still land in the last bucket, but `overflowLastBucket`
+ * tells the UI to label it "6+" instead of implying every one of those wins
+ * took exactly 6 guesses.
+ */
+export function computeGameStats(
+  results: GameResultDto[],
+  gameId: string,
+  options: { unlimitedGuesses?: boolean } = {},
+): GameStats {
   const games = results
     .filter(r => r.gameId === gameId)
     .sort((a, b) => a.playedOn.localeCompare(b.playedOn)) // oldest → newest
@@ -61,7 +78,10 @@ export function computeGameStats(results: GameResultDto[], gameId: string): Game
       const bucket = Math.min(Math.max(Number(g.attempts), 1), MAX_ATTEMPTS)
       const idx = bucket - 1
       stats.distribution[idx] = (stats.distribution[idx] ?? 0) + 1
-      winningGuessTotal += bucket
+      winningGuessTotal += Number(g.attempts)
+      if (options.unlimitedGuesses && Number(g.attempts) > MAX_ATTEMPTS) {
+        stats.overflowLastBucket = true
+      }
     }
     else {
       stats.losses += 1
@@ -71,6 +91,7 @@ export function computeGameStats(results: GameResultDto[], gameId: string): Game
   stats.winRate = Math.round((stats.wins / stats.played) * 100)
   stats.averageGuesses = stats.wins > 0 ? winningGuessTotal / stats.wins : 0
   stats.maxBucket = Math.max(...stats.distribution)
+  if (options.unlimitedGuesses) stats.maxAttempts = Infinity
   stats.lastPlayed = games[games.length - 1]!.playedOn
 
   // Longest run of consecutive calendar days that were all solved.
@@ -127,6 +148,9 @@ export function usePlayStats() {
 
   const melthoStats = computed(() => (results.value ? computeGameStats(results.value, 'meltho') : null))
   const mnoStats = computed(() => (results.value ? computeGameStats(results.value, 'mno') : null))
+  const shmoStats = computed(() => (
+    results.value ? computeGameStats(results.value, 'shmo', { unlimitedGuesses: true }) : null
+  ))
 
   async function load() {
     if (!isConfigured.value || !isSignedIn.value || loaded.value) return
@@ -154,5 +178,5 @@ export function usePlayStats() {
     }
   }
 
-  return { melthoStats, mnoStats, loading, loaded, load }
+  return { melthoStats, mnoStats, shmoStats, loading, loaded, load }
 }

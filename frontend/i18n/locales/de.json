@@ -12,7 +12,7 @@
     "titleLine2": "Buchstabe für Buchstabe.",
     "nameGloss": "sabro — syrisch für „Hoffnung“",
     "playedToday": "Heute gespielt",
-    "lede": "Sabro bedeutet Hoffnung — und genau das ist das Projekt: ein lebendiges Zuhause für die syrische Sprache. Lernen Sie sie spielerisch — zwei kostenlose tägliche Spiele, {meltho} und {mno} — und behalten Sie jedes Wort, das sie vermitteln.",
+    "lede": "Sabro bedeutet Hoffnung — und genau das ist das Projekt: ein lebendiges Zuhause für die syrische Sprache. Lernen Sie sie spielerisch — drei kostenlose tägliche Spiele, {meltho}, {mno} und {shmo} — und behalten Sie jedes Wort, das sie vermitteln.",
     "liveNow": "Jetzt live",
     "meltho": {
       "heading": "Meltho",
@@ -25,6 +25,12 @@
       "live": "Live",
       "body": "Ein tägliches Zahlenrätsel mit syrischen Ziffern — im Syrischen sind die Buchstaben auch die Zahlen. Bilden Sie die Gleichung, die das heutige Ziel trifft, von Anfänger bis Extrem.",
       "cta": "Heutige Gleichung spielen"
+    },
+    "shmo": {
+      "heading": "Shmo",
+      "live": "Live",
+      "body": "Errate die historische Person des Tages — von biblischen Propheten bis zu syrischen Kirchenvätern. Jeder Versuch vergleicht Kategorie, Jahrhundert, Rolle, Region, Tradition und Geschlecht mit der Antwort.",
+      "cta": "Heutige Person spielen"
     },
     "library": {
       "eyebrow": "Wortbibliothek",
@@ -41,7 +47,8 @@
     "library": "Bibliothek",
     "admin": "Backoffice",
     "meltho": "Meltho",
-    "mno": "Mno"
+    "mno": "Mno",
+    "shmo": "Shmo"
   },
   "switcher": {
     "languageLabel": "Sprache",
@@ -88,6 +95,7 @@
       "games": "Spiele",
       "meltho": "Meltho",
       "mno": "Mno",
+      "shmo": "Shmo",
       "preferences": "Einstellungen",
       "leaderboard": "Bestenliste",
       "username": "Benutzername",
@@ -179,6 +187,9 @@
       "mnoHeading": "Mno",
       "mnoSubtitle": "Ihr tägliches Zahlenspiel",
       "mnoEmpty": "Sie haben Mno noch nicht gespielt. Ihre Statistiken erscheinen hier, sobald Sie spielen.",
+      "shmoHeading": "Shmo",
+      "shmoSubtitle": "Ihr tägliches Spiel mit historischen Personen",
+      "shmoEmpty": "Sie haben Shmo noch nicht gespielt. Ihre Statistiken erscheinen hier, sobald Sie spielen.",
       "play": "Spielen",
       "empty": "Sie haben Meltho noch nicht gespielt. Ihre Statistiken erscheinen hier, sobald Sie spielen.",
       "played": "Gespielt",

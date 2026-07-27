@@ -44,6 +44,13 @@
 	reverse_proxy mno:3000
 }
 
+# Shmo — historical-figure guessing game (own repo, own container), sharing
+# Sabro's API + database behind this same Caddy on its own hostname.
+{$SHMO_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy shmo:3000
+}
+
 # --- Future ecosystem clients register their own block here -------------------
 # Additional clients add one reverse_proxy block per hostname, each pointing at
 # their own compose service on the internal network.

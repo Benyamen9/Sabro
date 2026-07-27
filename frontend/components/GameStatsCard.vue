@@ -15,7 +15,7 @@ const props = defineProps<{
   subtitle: string
   empty: string
   playUrl: string
-  palette: 'meltho' | 'mno'
+  palette: 'meltho' | 'mno' | 'shmo'
 }>()
 
 const { t, n } = useI18n()
@@ -36,7 +36,7 @@ const tiles = computed(() => {
   ]
 })
 
-const paletteClasses: Record<'meltho' | 'mno', Record<string, string>> = {
+const paletteClasses: Record<'meltho' | 'mno' | 'shmo', Record<string, string>> = {
   meltho: {
     hero: 'border-[color-mix(in_oklab,var(--color-meltho)_35%,var(--color-border))] bg-[var(--color-meltho-faint)] [&>dd]:text-[var(--color-meltho)]',
     accent: 'border-[var(--color-border)] bg-[var(--color-bg)] [&>dd]:text-[var(--color-meltho-gold)]',
@@ -50,6 +50,13 @@ const paletteClasses: Record<'meltho' | 'mno', Record<string, string>> = {
     plain: 'border-[var(--color-border)] bg-[var(--color-bg)]',
     bar: 'bg-[var(--color-mno)]',
     dot: 'bg-[var(--color-mno)]',
+  },
+  shmo: {
+    hero: 'border-[color-mix(in_oklab,var(--color-shmo)_35%,var(--color-border))] bg-[var(--color-shmo-faint)] [&>dd]:text-[var(--color-shmo)]',
+    accent: 'border-[var(--color-border)] bg-[var(--color-bg)] [&>dd]:text-[var(--color-shmo-dark)]',
+    plain: 'border-[var(--color-border)] bg-[var(--color-bg)]',
+    bar: 'bg-[var(--color-shmo)]',
+    dot: 'bg-[var(--color-shmo)]',
   },
 }
 
@@ -154,7 +161,7 @@ function barWidth(value: number): string {
             :key="i"
             class="flex items-center gap-2.5"
           >
-            <span class="w-3 shrink-0 text-right font-sans text-xs tabular-nums text-[var(--color-text-muted)]">{{ i + 1 }}</span>
+            <span class="w-4 shrink-0 text-right font-sans text-xs tabular-nums text-[var(--color-text-muted)]">{{ i + 1 }}{{ stats.overflowLastBucket && i === stats.distribution.length - 1 ? '+' : '' }}</span>
             <div class="flex-1">
               <div
                 class="flex h-5 items-center justify-end rounded-sm px-1.5 font-sans text-xs font-medium tabular-nums text-white transition-all"

@@ -73,8 +73,8 @@ const themeSwatches: Record<Theme, ThemeSwatch> = {
 const { profile, load, persist, saveAccount, exportData, deleteAccount } = useProfile()
 const { load: loadLeaderboard } = useLeaderboard()
 const { hasPassword, load: loadCapabilities } = useAccountCapabilities()
-const { melthoStats, mnoStats, loading: statsLoading, loaded: statsLoaded, load: loadStats } = usePlayStats()
-const { melthoUrl, mnoUrl } = useRuntimeConfig().public
+const { melthoStats, mnoStats, shmoStats, loading: statsLoading, loaded: statsLoaded, load: loadStats } = usePlayStats()
+const { melthoUrl, mnoUrl, shmoUrl } = useRuntimeConfig().public
 
 // The app titleTemplate appends "— Sabro"; personal pages stay out of search.
 useHead({ title: () => t('account.title') })
@@ -236,6 +236,7 @@ const navGroups = computed(() => [
     items: [
       { id: 'meltho', label: t('account.nav.meltho') },
       { id: 'mno', label: t('account.nav.mno') },
+      { id: 'shmo', label: t('account.nav.shmo') },
       { id: 'leaderboard', label: t('account.nav.leaderboard') },
     ],
   },
@@ -667,6 +668,19 @@ onBeforeUnmount(() => {
               :empty="t('account.stats.mnoEmpty')"
               :play-url="mnoUrl"
               palette="mno"
+            />
+          </div>
+
+          <div id="shmo" class="scroll-mt-24">
+            <GameStatsCard
+              :stats="shmoStats"
+              :loading="statsLoading"
+              :loaded="statsLoaded"
+              :heading="t('account.stats.shmoHeading')"
+              :subtitle="t('account.stats.shmoSubtitle')"
+              :empty="t('account.stats.shmoEmpty')"
+              :play-url="shmoUrl"
+              palette="shmo"
             />
           </div>
 
