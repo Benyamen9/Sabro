@@ -536,6 +536,7 @@
         "name": "Name",
         "category": "Kategorie",
         "era": "Epoche",
+        "period": "Epoche",
         "role": "Rolle",
         "region": "Region",
         "status": "Status",
@@ -552,6 +553,8 @@
         "statusAll": "Alle Status",
         "categoryLabel": "Kategorie",
         "categoryAll": "Alle Kategorien",
+        "periodLabel": "Epoche",
+        "periodAll": "Alle Epochen",
         "roleLabel": "Rolle",
         "roleAll": "Alle Rollen",
         "regionLabel": "Region",
@@ -589,6 +592,8 @@
         "category": "Kategorie",
         "era": "Epoche (Jahrhundert)",
         "eraHint": "Vorzeichenbehaftetes Jahrhundert: -10 ist das 10. Jh. v. Chr., 7 das 7. Jh. n. Chr. Ein Jahrhundert null gibt es nicht.",
+        "period": "Epoche",
+        "periodHint": "Die benannte Epoche. Steht neben dem Jahrhundert als Exakt-Treffer-Hinweis.",
         "role": "Rolle",
         "roleHint": "Eine Hauptrolle. „Patriarch“ meint das kirchliche Amt.",
         "region": "Region",
@@ -601,6 +606,38 @@
         "BiblicalOldTestament": "Altes Testament",
         "BiblicalNewTestament": "Neues Testament",
         "Patristic": "Patristisch"
+      },
+
+      "period": {
+
+        "Primeval": "Urgeschichte",
+
+        "Patriarchal": "Erzväter",
+
+        "ExodusAndConquest": "Exodus und Landnahme",
+
+        "Judges": "Richterzeit",
+
+        "UnitedMonarchy": "Vereinigte Monarchie",
+
+        "DividedMonarchy": "Geteilte Monarchie",
+
+        "ExileAndReturn": "Exil und Rückkehr",
+
+        "SecondTemple": "Zweiter Tempel",
+
+        "Apostolic": "Apostolisch",
+
+        "AnteNicene": "Vornizänisch",
+
+        "NiceneEra": "Nizänische Zeit",
+
+        "PostChalcedonian": "Nachchalcedonisch",
+
+        "IslamicEra": "Islamische Zeit",
+
+        "SyriacRenaissance": "Syrische Renaissance"
+
       },
       "role": {
         "Prophet": "Prophet",

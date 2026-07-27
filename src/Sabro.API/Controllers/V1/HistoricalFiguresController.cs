@@ -35,13 +35,14 @@ public sealed class HistoricalFiguresController : ApiControllerBase
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PagedResult<HistoricalFigureListItem>>> List(
         [FromQuery] HistoricalFigureCategory? category = null,
+        [FromQuery] HistoricalPeriod? period = null,
         [FromQuery] HistoricalFigureRole? role = null,
         [FromQuery] HistoricalFigureRegion? region = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = PageRequest.DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
-        var result = await figureService.ListPublishedAsync(category, role, region, page, pageSize, cancellationToken);
+        var result = await figureService.ListPublishedAsync(category, period, role, region, page, pageSize, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

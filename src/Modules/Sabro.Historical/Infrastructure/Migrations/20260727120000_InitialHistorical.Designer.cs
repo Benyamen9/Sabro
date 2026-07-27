@@ -59,6 +59,12 @@ namespace Sabro.Historical.Infrastructure.Migrations
                         .HasColumnType("character varying(256)")
                         .HasColumnName("name");
 
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("period");
+
                     b.Property<bool>("PlayableInShmo")
                         .HasColumnType("boolean")
                         .HasColumnName("playable_in_shmo");

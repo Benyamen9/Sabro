@@ -506,6 +506,7 @@
         "name": "Naam",
         "category": "Categorie",
         "era": "Periode",
+        "period": "Periode",
         "role": "Rol",
         "region": "Regio",
         "status": "Status",
@@ -522,6 +523,8 @@
         "statusAll": "Alle statussen",
         "categoryLabel": "Categorie",
         "categoryAll": "Alle categorieën",
+        "periodLabel": "Periode",
+        "periodAll": "Alle periodes",
         "roleLabel": "Rol",
         "roleAll": "Alle rollen",
         "regionLabel": "Regio",
@@ -559,6 +562,8 @@
         "category": "Categorie",
         "era": "Periode (eeuw)",
         "eraHint": "Getekende eeuw: -10 is de 10e eeuw v.Chr., 7 is de 7e eeuw n.Chr. Er is geen eeuw nul.",
+        "period": "Periode",
+        "periodHint": "Het benoemde tijdvak. Staat naast de eeuw als exacte-match-hint.",
         "role": "Rol",
         "roleHint": "Eén hoofdrol. “Patriarch” betekent het kerkelijke ambt.",
         "region": "Regio",
@@ -571,6 +576,38 @@
         "BiblicalOldTestament": "Oude Testament",
         "BiblicalNewTestament": "Nieuwe Testament",
         "Patristic": "Patristisch"
+      },
+
+      "period": {
+
+        "Primeval": "Oertijd",
+
+        "Patriarchal": "Aartsvaders",
+
+        "ExodusAndConquest": "Uittocht en verovering",
+
+        "Judges": "Richteren",
+
+        "UnitedMonarchy": "Verenigde monarchie",
+
+        "DividedMonarchy": "Verdeelde monarchie",
+
+        "ExileAndReturn": "Ballingschap en terugkeer",
+
+        "SecondTemple": "Tweede Tempel",
+
+        "Apostolic": "Apostolisch",
+
+        "AnteNicene": "Voor-Niceens",
+
+        "NiceneEra": "Niceens tijdperk",
+
+        "PostChalcedonian": "Na Chalcedon",
+
+        "IslamicEra": "Islamitisch tijdperk",
+
+        "SyriacRenaissance": "Syrische renaissance"
+
       },
       "role": {
         "Prophet": "Profeet",

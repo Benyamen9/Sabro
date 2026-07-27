@@ -5,6 +5,7 @@ import type {
   HistoricalFigureRole,
   HistoricalFigureStatus,
   HistoricalFigureTradition,
+  HistoricalPeriod,
 } from '~/types/api'
 
 /**
@@ -18,6 +19,27 @@ export const HISTORICAL_FIGURE_CATEGORIES: readonly HistoricalFigureCategory[] =
   'BiblicalOldTestament',
   'BiblicalNewTestament',
   'Patristic',
+] as const
+
+/**
+ * Chronological, not alphabetical: the dropdown reads as a timeline, which is
+ * how an editor placing a figure actually thinks.
+ */
+export const HISTORICAL_PERIODS: readonly HistoricalPeriod[] = [
+  'Primeval',
+  'Patriarchal',
+  'ExodusAndConquest',
+  'Judges',
+  'UnitedMonarchy',
+  'DividedMonarchy',
+  'ExileAndReturn',
+  'SecondTemple',
+  'Apostolic',
+  'AnteNicene',
+  'NiceneEra',
+  'PostChalcedonian',
+  'IslamicEra',
+  'SyriacRenaissance',
 ] as const
 
 export const HISTORICAL_FIGURE_ROLES: readonly HistoricalFigureRole[] = [

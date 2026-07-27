@@ -151,7 +151,7 @@ const actionButtonClass
         {{ figure.name }}
       </h1>
       <p class="mb-6 font-sans text-sm text-[var(--color-text-muted)]">
-        {{ formatEra(Number(figure.era), t) }} · {{ t(`admin.historicalFigures.category.${figure.category}`) }}
+        {{ formatEra(Number(figure.era), t) }} · {{ t(`admin.historicalFigures.period.${figure.period}`) }} · {{ t(`admin.historicalFigures.category.${figure.category}`) }}
       </p>
 
       <p

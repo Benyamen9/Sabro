@@ -505,6 +505,7 @@
         "name": "Nom",
         "category": "Catégorie",
         "era": "Époque",
+        "period": "Période",
         "role": "Rôle",
         "region": "Région",
         "status": "Statut",
@@ -521,6 +522,8 @@
         "statusAll": "Tous les statuts",
         "categoryLabel": "Catégorie",
         "categoryAll": "Toutes les catégories",
+        "periodLabel": "Période",
+        "periodAll": "Toutes les périodes",
         "roleLabel": "Rôle",
         "roleAll": "Tous les rôles",
         "regionLabel": "Région",
@@ -558,6 +561,8 @@
         "category": "Catégorie",
         "era": "Époque (siècle)",
         "eraHint": "Siècle signé : -10 correspond au 10e s. av. J.-C., 7 au 7e s. apr. J.-C. Il n’y a pas de siècle zéro.",
+        "period": "Période",
+        "periodHint": "L’époque nommée. S’ajoute au siècle comme indice à correspondance exacte.",
         "role": "Rôle",
         "roleHint": "Un rôle principal. « Patriarche » désigne la charge ecclésiastique.",
         "region": "Région",
@@ -570,6 +575,38 @@
         "BiblicalOldTestament": "Ancien Testament",
         "BiblicalNewTestament": "Nouveau Testament",
         "Patristic": "Patristique"
+      },
+
+      "period": {
+
+        "Primeval": "Origines",
+
+        "Patriarchal": "Patriarches",
+
+        "ExodusAndConquest": "Exode et conquête",
+
+        "Judges": "Juges",
+
+        "UnitedMonarchy": "Monarchie unifiée",
+
+        "DividedMonarchy": "Monarchie divisée",
+
+        "ExileAndReturn": "Exil et retour",
+
+        "SecondTemple": "Second Temple",
+
+        "Apostolic": "Apostolique",
+
+        "AnteNicene": "Anténicéenne",
+
+        "NiceneEra": "Époque nicéenne",
+
+        "PostChalcedonian": "Post-chalcédonienne",
+
+        "IslamicEra": "Époque islamique",
+
+        "SyriacRenaissance": "Renaissance syriaque"
+
       },
       "role": {
         "Prophet": "Prophète",

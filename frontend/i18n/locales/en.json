@@ -505,6 +505,7 @@
         "name": "Name",
         "category": "Category",
         "era": "Era",
+        "period": "Period",
         "role": "Role",
         "region": "Region",
         "status": "Status",
@@ -521,6 +522,8 @@
         "statusAll": "All statuses",
         "categoryLabel": "Category",
         "categoryAll": "All categories",
+        "periodLabel": "Period",
+        "periodAll": "All periods",
         "roleLabel": "Role",
         "roleAll": "All roles",
         "regionLabel": "Region",
@@ -558,6 +561,8 @@
         "category": "Category",
         "era": "Era (century)",
         "eraHint": "Signed century: -10 is the 10th c. BC, 7 is the 7th c. AD. There is no century zero.",
+        "period": "Period",
+        "periodHint": "The named era. Sits beside the century as an exact-match hint.",
         "role": "Role",
         "roleHint": "One primary role. “Patriarch” means the ecclesiastical office.",
         "region": "Region",
@@ -570,6 +575,38 @@
         "BiblicalOldTestament": "Old Testament",
         "BiblicalNewTestament": "New Testament",
         "Patristic": "Patristic"
+      },
+
+      "period": {
+
+        "Primeval": "Primeval",
+
+        "Patriarchal": "Patriarchal",
+
+        "ExodusAndConquest": "Exodus & Conquest",
+
+        "Judges": "Judges",
+
+        "UnitedMonarchy": "United Monarchy",
+
+        "DividedMonarchy": "Divided Monarchy",
+
+        "ExileAndReturn": "Exile & Return",
+
+        "SecondTemple": "Second Temple",
+
+        "Apostolic": "Apostolic",
+
+        "AnteNicene": "Ante-Nicene",
+
+        "NiceneEra": "Nicene era",
+
+        "PostChalcedonian": "Post-Chalcedonian",
+
+        "IslamicEra": "Islamic era",
+
+        "SyriacRenaissance": "Syriac Renaissance"
+
       },
       "role": {
         "Prophet": "Prophet",

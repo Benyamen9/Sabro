@@ -60,6 +60,7 @@ public class AdminHistoricalFiguresControllerTests : IDisposable
             "name": "Ephrem the Syrian",
             "category": "Patristic",
             "era": 4,
+            "period": "NiceneEra",
             "role": "Commentator",
             "region": "Mesopotamia",
             "gender": "Male",
@@ -192,6 +193,7 @@ public class AdminHistoricalFiguresControllerTests : IDisposable
                 Name: "Ephrem the Syrian",
                 Category: HistoricalFigureCategory.Patristic,
                 Era: 4,
+                Period: HistoricalPeriod.NiceneEra,
                 Role: HistoricalFigureRole.Commentator,
                 Region: HistoricalFigureRegion.Mesopotamia,
                 Gender: HistoricalFigureGender.Male,
@@ -265,11 +267,12 @@ public class AdminHistoricalFiguresControllerTests : IDisposable
         string name = JacobOfEdessa,
         HistoricalFigureCategory category = HistoricalFigureCategory.Patristic,
         int era = 7,
+        HistoricalPeriod period = HistoricalPeriod.PostChalcedonian,
         HistoricalFigureRole role = HistoricalFigureRole.Bishop,
         HistoricalFigureRegion region = HistoricalFigureRegion.Syria,
         HistoricalFigureGender gender = HistoricalFigureGender.Male,
         HistoricalFigureTradition? tradition = HistoricalFigureTradition.WestSyriac) =>
-        new(name, category, era, role, region, gender, tradition);
+        new(name, category, era, period, role, region, gender, tradition);
 
     private async Task<HistoricalFigureDto> CreateAsync(CreateHistoricalFigureRequest request, CancellationToken ct)
     {

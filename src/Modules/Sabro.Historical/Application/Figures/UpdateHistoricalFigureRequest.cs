@@ -11,6 +11,7 @@ public sealed record UpdateHistoricalFigureRequest(
     string Name,
     HistoricalFigureCategory Category,
     int Era,
+    HistoricalPeriod Period,
     HistoricalFigureRole Role,
     HistoricalFigureRegion Region,
     HistoricalFigureGender Gender,

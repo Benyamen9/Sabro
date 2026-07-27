@@ -18,6 +18,7 @@ internal sealed class HistoricalFigureConfiguration : IEntityTypeConfiguration<H
         // String-converted enums (house rule): adding values is an ordinary
         // migration; renaming existing ones is a breaking /api/v1/ change.
         builder.Property(e => e.Category).HasConversion<string>().HasMaxLength(32).IsRequired();
+        builder.Property(e => e.Period).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(e => e.Role).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(e => e.Region).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(e => e.Tradition).HasConversion<string>().HasMaxLength(32);

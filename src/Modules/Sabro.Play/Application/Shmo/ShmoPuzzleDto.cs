@@ -14,6 +14,7 @@ public sealed record ShmoPuzzleDto(
     string Name,
     HistoricalFigureCategory Category,
     int Era,
+    HistoricalPeriod Period,
     HistoricalFigureRole Role,
     HistoricalFigureRegion Region,
     HistoricalFigureTradition? Tradition,

@@ -33,6 +33,7 @@ public interface IHistoricalFigureService
         string? search,
         HistoricalFigureStatus? status,
         HistoricalFigureCategory? category,
+        HistoricalPeriod? period,
         HistoricalFigureRole? role,
         HistoricalFigureRegion? region,
         bool? playableInShmo,
@@ -46,6 +47,7 @@ public interface IHistoricalFigureService
     /// </summary>
     Task<Result<PagedResult<HistoricalFigureListItem>>> ListPublishedAsync(
         HistoricalFigureCategory? category,
+        HistoricalPeriod? period,
         HistoricalFigureRole? role,
         HistoricalFigureRegion? region,
         int page,

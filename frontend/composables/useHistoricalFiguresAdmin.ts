@@ -5,6 +5,7 @@ import type {
   HistoricalFigureRegion,
   HistoricalFigureRole,
   HistoricalFigureStatus,
+  HistoricalPeriod,
   PagedResult,
   UpdateHistoricalFigureRequest,
 } from '~/types/api'
@@ -15,6 +16,7 @@ export interface HistoricalFigureListParams {
   search?: string
   status?: HistoricalFigureStatus
   category?: HistoricalFigureCategory
+  period?: HistoricalPeriod
   role?: HistoricalFigureRole
   region?: HistoricalFigureRegion
   playableInShmo?: boolean
@@ -43,6 +45,7 @@ export function useHistoricalFiguresAdmin() {
         search: params.search || undefined,
         status: params.status,
         category: params.category,
+        period: params.period,
         role: params.role,
         region: params.region,
         playableInShmo: params.playableInShmo,

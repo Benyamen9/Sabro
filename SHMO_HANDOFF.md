@@ -1,6 +1,6 @@
 # Shmo — what's done, and what needs your machine
 
-Branch: `feature/shmo-historical-module` (7 commits on top of `main`).
+Branch: `feature/shmo-historical-module` (8 commits on top of `main`).
 
 This file is a handoff note, not permanent documentation — delete it once the
 checklist below is done.
@@ -20,7 +20,7 @@ the table.
 | EF migrations (both) | **Hand-written, never generated or applied** |
 | Frontend backoffice | eslint + `nuxt typecheck` + vitest all pass |
 | Seed dataset + seeder script | `--dry-run` passes; validator negative-tested |
-| i18n | 95 keys × 5 locales, key sets verified identical |
+| i18n | 114 keys × 5 locales, key sets verified identical |
 
 ## Checklist for you
 
@@ -35,6 +35,11 @@ Expect compiler errors to be the likeliest problem — roughly 3,250 lines of C#
 went in without a compiler ever seeing them.
 
 ### 2. Verify the hand-written migrations (do not skip)
+
+Note: `Period` was folded into the existing `InitialHistorical` migration rather
+than added as a second one, because `Sabro.Historical` has never been deployed —
+the table does not exist anywhere yet, so amending its create-table statement is
+safe and avoids a second unverifiable migration.
 
 These were written by copying the exact generated format from
 `AddMnoDailyPuzzle` and `InitialLexiconSchema`, including the `.Designer.cs`
@@ -115,10 +120,16 @@ boundary. Read those before publishing anything:
   `Nebuchadnezzar`, `Caiaphas` and twelve others stand alone. **The seeder now
   enforces this** — it rejects any bare name sharing a given name with another
   figure — so the convention survives future additions instead of decaying.
+- **Every figure now carries a named `Period` as well as a century.** Era drives
+  the higher/lower arrow; Period is an exact-match hint, added because
+  higher/lower across -41..14 is weak on its own. It is stored, not derived: the
+  5th c. holds both `NiceneEra` and `PostChalcedonian` figures, and Herod the
+  Great is era -1 but period `Apostolic`. Assignment is rule-based with two
+  overrides (Jeroboam, Narsai) — worth a skim, but the rule is auditable.
 - **Relatives and adversaries are dated with the figure they attach to**, so a
   household or a confrontation shares a century — Rachel, Leah, Esau and Laban
-  all read -18 with Jacob. Honest (they are contemporaries) but era is a coarse
-  filter in the biblical categories and a sharp one in the patristic.
+  all read -18 with Jacob. Honest (they are contemporaries), and `Period` now
+  compensates for era being a coarse filter in the biblical categories.
 - **Herod the Great is era -1**, not 1 — he died in 4 BC. Correct rather than a
   typo, and the only place in the New Testament block where era separates
   contemporaries.

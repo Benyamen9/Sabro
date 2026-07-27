@@ -5,11 +5,13 @@ import type {
   HistoricalFigureRegion,
   HistoricalFigureRole,
   HistoricalFigureStatus,
+  HistoricalPeriod,
 } from '~/types/api'
 import {
   HISTORICAL_FIGURE_CATEGORIES,
   HISTORICAL_FIGURE_REGIONS,
   HISTORICAL_FIGURE_ROLES,
+  HISTORICAL_PERIODS,
   formatEra,
 } from '~/utils/historicalFigures'
 
@@ -45,6 +47,7 @@ const search = ref(initialSearch.trim())
 
 const status = ref<HistoricalFigureStatus | ''>(queryString('status') as HistoricalFigureStatus | '')
 const category = ref<HistoricalFigureCategory | ''>(queryString('category') as HistoricalFigureCategory | '')
+const period = ref<HistoricalPeriod | ''>(queryString('period') as HistoricalPeriod | '')
 const role = ref<HistoricalFigureRole | ''>(queryString('role') as HistoricalFigureRole | '')
 const region = ref<HistoricalFigureRegion | ''>(queryString('region') as HistoricalFigureRegion | '')
 const playableInShmo = ref<'' | 'true' | 'false'>(
@@ -59,12 +62,13 @@ const { data, pending, error, refresh } = await useAsyncData(
     search: search.value || undefined,
     status: status.value || undefined,
     category: category.value || undefined,
+    period: period.value || undefined,
     role: role.value || undefined,
     region: region.value || undefined,
     playableInShmo: playableInShmo.value === '' ? undefined : playableInShmo.value === 'true',
   }),
   {
-    watch: [page, pageSize, search, status, category, role, region, playableInShmo],
+    watch: [page, pageSize, search, status, category, period, role, region, playableInShmo],
     lazy: true,
     default: () => null,
     immediate: isAdmin.value === true,
@@ -72,7 +76,7 @@ const { data, pending, error, refresh } = await useAsyncData(
 )
 
 const hasActiveFilters = computed(() =>
-  Boolean(search.value || status.value || category.value || role.value || region.value || playableInShmo.value),
+  Boolean(search.value || status.value || category.value || period.value || role.value || region.value || playableInShmo.value),
 )
 
 const totalPages = computed(() => {
@@ -100,6 +104,7 @@ function syncQueryString() {
   if (search.value) query.q = search.value
   if (status.value) query.status = status.value
   if (category.value) query.category = category.value
+  if (period.value) query.period = period.value
   if (role.value) query.role = role.value
   if (region.value) query.region = region.value
   if (playableInShmo.value) query.playable = playableInShmo.value
@@ -142,6 +147,7 @@ function clearFilters() {
   clearSearch()
   status.value = ''
   category.value = ''
+  period.value = ''
   role.value = ''
   region.value = ''
   playableInShmo.value = ''
@@ -234,6 +240,16 @@ const selectClass
         </div>
 
         <div>
+          <label for="filter-period" class="sr-only">{{ t('admin.historicalFigures.filters.periodLabel') }}</label>
+          <select id="filter-period" v-model="period" :class="selectClass" @change="onFilterChange">
+            <option value="">{{ t('admin.historicalFigures.filters.periodAll') }}</option>
+            <option v-for="value in HISTORICAL_PERIODS" :key="value" :value="value">
+              {{ t(`admin.historicalFigures.period.${value}`) }}
+            </option>
+          </select>
+        </div>
+
+        <div>
           <label for="filter-role" class="sr-only">{{ t('admin.historicalFigures.filters.roleLabel') }}</label>
           <select id="filter-role" v-model="role" :class="selectClass" @change="onFilterChange">
             <option value="">{{ t('admin.historicalFigures.filters.roleAll') }}</option>
@@ -290,6 +306,7 @@ const selectClass
                 <th class="px-4 py-3 font-medium">{{ t('admin.historicalFigures.columns.name') }}</th>
                 <th class="px-4 py-3 font-medium">{{ t('admin.historicalFigures.columns.category') }}</th>
                 <th class="px-4 py-3 font-medium">{{ t('admin.historicalFigures.columns.era') }}</th>
+                <th class="px-4 py-3 font-medium">{{ t('admin.historicalFigures.columns.period') }}</th>
                 <th class="px-4 py-3 font-medium">{{ t('admin.historicalFigures.columns.role') }}</th>
                 <th class="px-4 py-3 font-medium">{{ t('admin.historicalFigures.columns.region') }}</th>
                 <th class="px-4 py-3 font-medium">{{ t('admin.historicalFigures.columns.status') }}</th>
@@ -311,6 +328,9 @@ const selectClass
                 </td>
                 <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ formatEra(Number(figure.era), t) }}
+                </td>
+                <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
+                  {{ t(`admin.historicalFigures.period.${figure.period}`) }}
                 </td>
                 <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ t(`admin.historicalFigures.role.${figure.role}`) }}

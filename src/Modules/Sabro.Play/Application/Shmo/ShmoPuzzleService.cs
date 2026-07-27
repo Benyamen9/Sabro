@@ -132,6 +132,7 @@ internal sealed class ShmoPuzzleService : IShmoPuzzleService
             figure.Name,
             figure.Category,
             figure.Era,
+            figure.Period,
             figure.Role,
             figure.Region,
             figure.Tradition,

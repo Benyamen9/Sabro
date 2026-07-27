@@ -45,6 +45,7 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
             request.Name,
             request.Category,
             request.Era,
+            request.Period,
             request.Role,
             request.Region,
             request.Gender,
@@ -97,6 +98,7 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
             request.Name,
             request.Category,
             request.Era,
+            request.Period,
             request.Role,
             request.Region,
             request.Gender,
@@ -183,6 +185,7 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         string? search,
         HistoricalFigureStatus? status,
         HistoricalFigureCategory? category,
+        HistoricalPeriod? period,
         HistoricalFigureRole? role,
         HistoricalFigureRegion? region,
         bool? playableInShmo,
@@ -214,6 +217,11 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
             query = query.Where(e => e.Category == category.Value);
         }
 
+        if (period is not null)
+        {
+            query = query.Where(e => e.Period == period.Value);
+        }
+
         if (role is not null)
         {
             query = query.Where(e => e.Role == role.Value);
@@ -243,6 +251,7 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
 
     public async Task<Result<PagedResult<HistoricalFigureListItem>>> ListPublishedAsync(
         HistoricalFigureCategory? category,
+        HistoricalPeriod? period,
         HistoricalFigureRole? role,
         HistoricalFigureRegion? region,
         int page,
@@ -262,6 +271,11 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         if (category is not null)
         {
             query = query.Where(e => e.Category == category.Value);
+        }
+
+        if (period is not null)
+        {
+            query = query.Where(e => e.Period == period.Value);
         }
 
         if (role is not null)
@@ -291,6 +305,7 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         figure.Name,
         figure.Category,
         figure.Era,
+        figure.Period,
         figure.Role,
         figure.Region,
         figure.Tradition,
@@ -305,6 +320,7 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         figure.Name,
         figure.Category,
         figure.Era,
+        figure.Period,
         figure.Role,
         figure.Region,
         figure.Tradition,

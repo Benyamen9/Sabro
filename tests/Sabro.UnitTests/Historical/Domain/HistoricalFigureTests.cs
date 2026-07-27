@@ -14,6 +14,7 @@ public class HistoricalFigureTests
             name: JacobOfEdessa,
             category: HistoricalFigureCategory.Patristic,
             era: 7,
+            period: HistoricalPeriod.PostChalcedonian,
             role: HistoricalFigureRole.Bishop,
             region: HistoricalFigureRegion.Syria,
             gender: HistoricalFigureGender.Male);
@@ -38,6 +39,7 @@ public class HistoricalFigureTests
             name: JacobOfEdessa,
             category: HistoricalFigureCategory.Patristic,
             era: 7,
+            period: HistoricalPeriod.PostChalcedonian,
             role: HistoricalFigureRole.Bishop,
             region: HistoricalFigureRegion.Syria,
             gender: HistoricalFigureGender.Male,
@@ -123,6 +125,7 @@ public class HistoricalFigureTests
         var result = NewDraft(
             category: HistoricalFigureCategory.BiblicalOldTestament,
             era: era,
+            period: HistoricalPeriod.Primeval,
             role: HistoricalFigureRole.Other,
             region: HistoricalFigureRegion.Mesopotamia,
             tradition: HistoricalFigureTradition.NotApplicable);
@@ -201,6 +204,7 @@ public class HistoricalFigureTests
         var figure = NewDraft(
             category: HistoricalFigureCategory.BiblicalOldTestament,
             era: -10,
+            period: HistoricalPeriod.UnitedMonarchy,
             role: HistoricalFigureRole.King,
             region: HistoricalFigureRegion.IsraelJudah,
             tradition: HistoricalFigureTradition.NotApplicable).Value!;
@@ -280,6 +284,7 @@ public class HistoricalFigureTests
             name: "Ephrem the Syrian",
             category: HistoricalFigureCategory.Patristic,
             era: 4,
+            period: HistoricalPeriod.NiceneEra,
             role: HistoricalFigureRole.Commentator,
             region: HistoricalFigureRegion.Mesopotamia,
             gender: HistoricalFigureGender.Male,
@@ -302,6 +307,7 @@ public class HistoricalFigureTests
             name: JacobOfEdessa,
             category: HistoricalFigureCategory.Patristic,
             era: 7,
+            period: HistoricalPeriod.PostChalcedonian,
             role: HistoricalFigureRole.Bishop,
             region: HistoricalFigureRegion.Syria,
             gender: HistoricalFigureGender.Male,
@@ -321,6 +327,7 @@ public class HistoricalFigureTests
             name: JacobOfEdessa,
             category: HistoricalFigureCategory.Patristic,
             era: 7,
+            period: HistoricalPeriod.PostChalcedonian,
             role: HistoricalFigureRole.Bishop,
             region: HistoricalFigureRegion.Syria,
             gender: HistoricalFigureGender.Male,
@@ -341,6 +348,7 @@ public class HistoricalFigureTests
             name: JacobOfEdessa,
             category: HistoricalFigureCategory.Patristic,
             era: 0,
+            period: HistoricalPeriod.PostChalcedonian,
             role: HistoricalFigureRole.Bishop,
             region: HistoricalFigureRegion.Syria,
             gender: HistoricalFigureGender.Male,
@@ -362,6 +370,7 @@ public class HistoricalFigureTests
             name: "Ephrem the Syrian",
             category: HistoricalFigureCategory.Patristic,
             era: 4,
+            period: HistoricalPeriod.NiceneEra,
             role: HistoricalFigureRole.Commentator,
             region: HistoricalFigureRegion.Mesopotamia,
             gender: HistoricalFigureGender.Male,
@@ -382,6 +391,7 @@ public class HistoricalFigureTests
             name: JacobOfEdessa,
             category: HistoricalFigureCategory.Patristic,
             era: 7,
+            period: HistoricalPeriod.PostChalcedonian,
             role: HistoricalFigureRole.Bishop,
             region: HistoricalFigureRegion.Syria,
             gender: HistoricalFigureGender.Male,
@@ -395,11 +405,12 @@ public class HistoricalFigureTests
         string name = JacobOfEdessa,
         HistoricalFigureCategory category = HistoricalFigureCategory.Patristic,
         int era = 7,
+        HistoricalPeriod period = HistoricalPeriod.PostChalcedonian,
         HistoricalFigureRole role = HistoricalFigureRole.Bishop,
         HistoricalFigureRegion region = HistoricalFigureRegion.Syria,
         HistoricalFigureGender gender = HistoricalFigureGender.Male,
         HistoricalFigureTradition? tradition = null) =>
-        HistoricalFigure.Create(name, category, era, role, region, gender, tradition);
+        HistoricalFigure.Create(name, category, era, period, role, region, gender, tradition);
 
     private static HistoricalFigure PublishableDraft() =>
         NewDraft(tradition: HistoricalFigureTradition.WestSyriac).Value!;

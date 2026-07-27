@@ -95,6 +95,7 @@ public class HistoricalFiguresControllerTests : IDisposable
                 Name: name,
                 Category: HistoricalFigureCategory.Patristic,
                 Era: 7,
+                Period: HistoricalPeriod.PostChalcedonian,
                 Role: HistoricalFigureRole.Bishop,
                 Region: HistoricalFigureRegion.Syria,
                 Gender: HistoricalFigureGender.Male,

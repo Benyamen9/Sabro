@@ -7,6 +7,7 @@ import type {
   HistoricalFigureRegion,
   HistoricalFigureRole,
   HistoricalFigureTradition,
+  HistoricalPeriod,
 } from '~/types/api'
 import {
   HISTORICAL_FIGURE_CATEGORIES,
@@ -14,6 +15,7 @@ import {
   HISTORICAL_FIGURE_REGIONS,
   HISTORICAL_FIGURE_ROLES,
   HISTORICAL_FIGURE_TRADITIONS,
+  HISTORICAL_PERIODS,
   MAX_ERA,
   MIN_ERA,
   formatEra,
@@ -37,6 +39,7 @@ const { t } = useI18n()
 
 const name = ref(props.figure?.name ?? '')
 const category = ref<HistoricalFigureCategory>(props.figure?.category ?? 'Patristic')
+const period = ref<HistoricalPeriod>(props.figure?.period ?? 'PostChalcedonian')
 const role = ref<HistoricalFigureRole>(props.figure?.role ?? 'Other')
 const region = ref<HistoricalFigureRegion>(props.figure?.region ?? 'Mesopotamia')
 const gender = ref<HistoricalFigureGender>(props.figure?.gender ?? 'Male')
@@ -68,6 +71,7 @@ function onSubmit() {
     name: name.value.trim(),
     category: category.value,
     era: eraNumber.value!,
+    period: period.value,
     role: role.value,
     region: region.value,
     gender: gender.value,
@@ -131,6 +135,15 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
 
     <!-- Classification -->
     <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <label for="figure-period" :class="labelClass">{{ t('admin.historicalFigures.form.period') }}</label>
+        <select id="figure-period" v-model="period" :class="[fieldClass, 'mt-1']">
+          <option v-for="value in HISTORICAL_PERIODS" :key="value" :value="value">
+            {{ t(`admin.historicalFigures.period.${value}`) }}
+          </option>
+        </select>
+        <p :class="hintClass">{{ t('admin.historicalFigures.form.periodHint') }}</p>
+      </div>
       <div>
         <label for="figure-role" :class="labelClass">{{ t('admin.historicalFigures.form.role') }}</label>
         <select id="figure-role" v-model="role" :class="[fieldClass, 'mt-1']">

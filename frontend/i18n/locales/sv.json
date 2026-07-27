@@ -536,6 +536,7 @@
         "name": "Namn",
         "category": "Kategori",
         "era": "Epok",
+        "period": "Epok",
         "role": "Roll",
         "region": "Region",
         "status": "Status",
@@ -552,6 +553,8 @@
         "statusAll": "Alla statusar",
         "categoryLabel": "Kategori",
         "categoryAll": "Alla kategorier",
+        "periodLabel": "Epok",
+        "periodAll": "Alla epoker",
         "roleLabel": "Roll",
         "roleAll": "Alla roller",
         "regionLabel": "Region",
@@ -589,6 +592,8 @@
         "category": "Kategori",
         "era": "Epok (århundrade)",
         "eraHint": "Tecknat århundrade: -10 är 900-talet f.Kr., 7 är 600-talet e.Kr. Det finns inget århundrade noll.",
+        "period": "Epok",
+        "periodHint": "Den namngivna epoken. Står vid sidan av århundradet som exakt träff.",
         "role": "Roll",
         "roleHint": "En huvudroll. ”Patriark” avser det kyrkliga ämbetet.",
         "region": "Region",
@@ -601,6 +606,38 @@
         "BiblicalOldTestament": "Gamla testamentet",
         "BiblicalNewTestament": "Nya testamentet",
         "Patristic": "Patristisk"
+      },
+
+      "period": {
+
+        "Primeval": "Urtiden",
+
+        "Patriarchal": "Patriarkerna",
+
+        "ExodusAndConquest": "Uttåget och erövringen",
+
+        "Judges": "Domartiden",
+
+        "UnitedMonarchy": "Enade kungadömet",
+
+        "DividedMonarchy": "Delade kungadömet",
+
+        "ExileAndReturn": "Exil och återkomst",
+
+        "SecondTemple": "Andra templet",
+
+        "Apostolic": "Apostolisk",
+
+        "AnteNicene": "Förnicensk",
+
+        "NiceneEra": "Nicenska tiden",
+
+        "PostChalcedonian": "Efter Chalcedon",
+
+        "IslamicEra": "Islamiska tiden",
+
+        "SyriacRenaissance": "Syrisk renässans"
+
       },
       "role": {
         "Prophet": "Profet",

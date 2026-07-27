@@ -23,6 +23,7 @@ namespace Sabro.Historical.Infrastructure.Migrations
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     category = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     era = table.Column<int>(type: "integer", nullable: false),
+                    period = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     role = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     region = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     tradition = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),

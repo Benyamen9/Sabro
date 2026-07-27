@@ -11,6 +11,7 @@ public sealed class UpdateHistoricalFigureRequestValidator : AbstractValidator<U
             .MaximumLength(256);
 
         RuleFor(x => x.Category).IsInEnum();
+        RuleFor(x => x.Period).IsInEnum();
         RuleFor(x => x.Role).IsInEnum();
         RuleFor(x => x.Region).IsInEnum();
         RuleFor(x => x.Gender).IsInEnum();

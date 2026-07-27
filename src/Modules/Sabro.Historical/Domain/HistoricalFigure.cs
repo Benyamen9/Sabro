@@ -54,6 +54,13 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
     /// </summary>
     public int Era { get; private set; }
 
+    /// <summary>
+    /// The named era this figure belongs to — an exact-match hint beside
+    /// <see cref="Era"/>'s higher/lower one. Stored rather than derived: a
+    /// century does not determine a period on its own.
+    /// </summary>
+    public HistoricalPeriod Period { get; private set; }
+
     public HistoricalFigureRole Role { get; private set; }
 
     public HistoricalFigureRegion Region { get; private set; }
@@ -76,12 +83,13 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         string name,
         HistoricalFigureCategory category,
         int era,
+        HistoricalPeriod period,
         HistoricalFigureRole role,
         HistoricalFigureRegion region,
         HistoricalFigureGender gender,
         HistoricalFigureTradition? tradition = null)
     {
-        var normalized = Normalize(name, category, era, role, region, gender, tradition);
+        var normalized = Normalize(name, category, era, period, role, region, gender, tradition);
         if (!normalized.IsSuccess)
         {
             return Result<HistoricalFigure>.Failure(normalized.Error!);
@@ -99,12 +107,13 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         string name,
         HistoricalFigureCategory category,
         int era,
+        HistoricalPeriod period,
         HistoricalFigureRole role,
         HistoricalFigureRegion region,
         HistoricalFigureGender gender,
         HistoricalFigureTradition? tradition = null)
     {
-        var normalized = Normalize(name, category, era, role, region, gender, tradition);
+        var normalized = Normalize(name, category, era, period, role, region, gender, tradition);
         if (!normalized.IsSuccess)
         {
             return normalized.Error;
@@ -174,6 +183,7 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         string name,
         HistoricalFigureCategory category,
         int era,
+        HistoricalPeriod period,
         HistoricalFigureRole role,
         HistoricalFigureRegion region,
         HistoricalFigureGender gender,
@@ -193,6 +203,11 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         if (!Enum.IsDefined(category))
         {
             return Result<NormalizedFields>.Failure(Error.Validation("Category is not a defined value."));
+        }
+
+        if (!Enum.IsDefined(period))
+        {
+            return Result<NormalizedFields>.Failure(Error.Validation("Period is not a defined value."));
         }
 
         if (!Enum.IsDefined(role))
@@ -227,7 +242,7 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         }
 
         return Result<NormalizedFields>.Success(
-            new NormalizedFields(trimmedName, category, era, role, region, gender, tradition));
+            new NormalizedFields(trimmedName, category, era, period, role, region, gender, tradition));
     }
 
     private void Apply(NormalizedFields fields)
@@ -235,6 +250,7 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         Name = fields.Name;
         Category = fields.Category;
         Era = fields.Era;
+        Period = fields.Period;
         Role = fields.Role;
         Region = fields.Region;
         Gender = fields.Gender;
@@ -247,6 +263,7 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         string Name,
         HistoricalFigureCategory Category,
         int Era,
+        HistoricalPeriod Period,
         HistoricalFigureRole Role,
         HistoricalFigureRegion Region,
         HistoricalFigureGender Gender,

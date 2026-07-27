@@ -37,6 +37,7 @@ internal sealed class HistoricalFigurePlayablePool : IHistoricalFigurePlayablePo
             figure.Name,
             figure.Category,
             figure.Era,
+            figure.Period,
             figure.Role,
             figure.Region,
             figure.Tradition,

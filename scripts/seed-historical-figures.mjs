@@ -37,6 +37,11 @@ const ROLES = [
   'Prophet', 'King', 'Judge', 'Apostle', 'Evangelist', 'Patriarch',
   'Bishop', 'Translator', 'Commentator', 'Monk', 'Martyr', 'Other',
 ];
+const PERIODS = [
+  'Primeval', 'Patriarchal', 'ExodusAndConquest', 'Judges', 'UnitedMonarchy',
+  'DividedMonarchy', 'ExileAndReturn', 'SecondTemple', 'Apostolic',
+  'AnteNicene', 'NiceneEra', 'PostChalcedonian', 'IslamicEra', 'SyriacRenaissance',
+];
 const REGIONS = ['IsraelJudah', 'Mesopotamia', 'Syria', 'Persia', 'Egypt', 'AsiaMinor', 'Other'];
 const TRADITIONS = ['WestSyriac', 'EastSyriac', 'ByzantineChalcedonian', 'NotApplicable'];
 const GENDERS = ['Male', 'Female'];
@@ -114,6 +119,7 @@ function validate(figures) {
     seen.add(name);
 
     if (!CATEGORIES.includes(f.category)) problems.push(`"${label}": category "${f.category}" is not one of ${CATEGORIES.join(', ')}`);
+    if (!PERIODS.includes(f.period)) problems.push(`"${label}": period "${f.period}" is not one of ${PERIODS.join(', ')}`);
     if (!ROLES.includes(f.role)) problems.push(`"${label}": role "${f.role}" is not one of ${ROLES.join(', ')}`);
     if (!REGIONS.includes(f.region)) problems.push(`"${label}": region "${f.region}" is not one of ${REGIONS.join(', ')}`);
     if (!GENDERS.includes(f.gender)) problems.push(`"${label}": gender "${f.gender}" is not one of ${GENDERS.join(', ')}`);
@@ -178,7 +184,7 @@ function printBreakdown(figures) {
     return [...counts.entries()].sort((a, b) => b[1] - a[1]);
   };
 
-  for (const key of ['category', 'tradition', 'region', 'role', 'gender']) {
+  for (const key of ['category', 'period', 'tradition', 'region', 'role', 'gender']) {
     const line = tally(key).map(([value, n]) => `${value}=${n}`).join('  ');
     console.log(`  ${key.padEnd(9)} ${line}`);
   }

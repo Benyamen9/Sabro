@@ -162,6 +162,7 @@ public class ShmoPuzzleServiceTests
         result.Value!.Name.Should().Be("Jacob of Edessa");
         result.Value.Category.Should().Be(HistoricalFigureCategory.Patristic);
         result.Value.Era.Should().Be(7);
+        result.Value.Period.Should().Be(HistoricalPeriod.PostChalcedonian);
         result.Value.Role.Should().Be(HistoricalFigureRole.Bishop);
         result.Value.Region.Should().Be(HistoricalFigureRegion.Syria);
         result.Value.Tradition.Should().Be(HistoricalFigureTradition.WestSyriac);
@@ -187,6 +188,7 @@ public class ShmoPuzzleServiceTests
                 "Jacob of Edessa",
                 HistoricalFigureCategory.Patristic,
                 7,
+                HistoricalPeriod.PostChalcedonian,
                 HistoricalFigureRole.Bishop,
                 HistoricalFigureRegion.Syria,
                 HistoricalFigureTradition.WestSyriac,

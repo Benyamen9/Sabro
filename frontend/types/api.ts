@@ -93,6 +93,10 @@ export type HistoricalFigureRegion =
 export type HistoricalFigureTradition =
   'WestSyriac' | 'EastSyriac' | 'ByzantineChalcedonian' | 'NotApplicable'
 export type HistoricalFigureGender = 'Male' | 'Female'
+export type HistoricalPeriod =
+  | 'Primeval' | 'Patriarchal' | 'ExodusAndConquest' | 'Judges' | 'UnitedMonarchy'
+  | 'DividedMonarchy' | 'ExileAndReturn' | 'SecondTemple' | 'Apostolic'
+  | 'AnteNicene' | 'NiceneEra' | 'PostChalcedonian' | 'IslamicEra' | 'SyriacRenaissance'
 export type HistoricalFigureStatus = 'Draft' | 'Published'
 
 export interface HistoricalFigureDto {
@@ -100,6 +104,7 @@ export interface HistoricalFigureDto {
   name: string
   category: HistoricalFigureCategory
   era: number
+  period: HistoricalPeriod
   role: HistoricalFigureRole
   region: HistoricalFigureRegion
   tradition: HistoricalFigureTradition | null
@@ -116,6 +121,7 @@ export interface HistoricalFigureListItem {
   name: string
   category: HistoricalFigureCategory
   era: number
+  period: HistoricalPeriod
   role: HistoricalFigureRole
   region: HistoricalFigureRegion
   tradition: HistoricalFigureTradition | null
@@ -126,6 +132,7 @@ export interface CreateHistoricalFigureRequest {
   name: string
   category: HistoricalFigureCategory
   era: number
+  period: HistoricalPeriod
   role: HistoricalFigureRole
   region: HistoricalFigureRegion
   gender: HistoricalFigureGender
