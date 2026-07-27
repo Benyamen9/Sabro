@@ -23,27 +23,18 @@ const wordBoard = [
   { glyph: 'ܐ', code: 'Alaph', sound: '—' },
 ] as const
 
-// The feature card's hero: Meltho's letters as a tile board — teal "correct"
-// tiles with the lomad (ܠ) and olaf (ܐ) as gold "present" tiles, with those two
-// swapped in position. Decorative, so it's aria-hidden; the heading carries the
-// name for assistive tech.
-const melthoTiles = [
-  { letter: 'ܡ', state: 'correct' },
-  { letter: 'ܐ', state: 'present' },
-  { letter: 'ܬ', state: 'correct' },
-  { letter: 'ܠ', state: 'present' },
-] as const
+// The feature card's hero: Meltho's letters as a tile board — a uniform
+// Wordle-green, standing apart from Meltho's own teal brand colour on
+// purpose (this preview reads as "correct guess," not "this is Meltho").
+// Decorative, so it's aria-hidden; the heading carries the name for
+// assistive tech.
+const melthoTiles = ['ܡ', 'ܐ', 'ܬ', 'ܠ'] as const
 
-function tileClass(state: 'correct' | 'present') {
-  const base
-    = 'flex size-12 items-center justify-center rounded-xl border-2 text-2xl text-white sm:size-14 sm:text-3xl'
-  return state === 'present'
-    ? `${base} border-[var(--color-meltho-gold-dark)] bg-[var(--color-meltho-gold)]`
-    : `${base} border-[var(--color-meltho-dark)] bg-[var(--color-meltho)]`
-}
+const tileClass = 'flex size-12 items-center justify-center rounded-xl border-2 text-2xl text-white sm:size-14 sm:text-3xl border-[#15803d] bg-[#16a34a]'
 
-// Mno's hero: the opening of an equation in Syriac numerals — amber tiles
-// with the game's signature value hints. Decorative, like Meltho's board.
+// Mno's hero: the opening of an equation in Syriac numerals — a uniform
+// Wordle-yellow, standing apart from Mno's own honey-amber brand colour on
+// purpose (see melthoTiles above). Decorative, like Meltho's board.
 const mnoTiles = [
   { glyph: 'ܝ', hint: '10' },
   { glyph: 'ܒ', hint: '2' },
@@ -169,14 +160,15 @@ const heroAction = computed(() => {
       </div>
 
       <div class="mt-5 grid gap-5 lg:grid-cols-3">
-        <!-- Meltho — the word game, in its teal. -->
+        <!-- Meltho — the word game. Card accent is Meltho's teal; the tile
+             board itself is Wordle-green (see melthoTiles above). -->
         <div
           class="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgb(28_25_23/0.09)] sm:items-start sm:text-left"
         >
           <span class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[var(--color-meltho)] to-transparent" aria-hidden="true" />
           <div class="flex gap-1.5 sm:gap-2" dir="rtl" aria-hidden="true">
-            <span v-for="tile in melthoTiles" :key="tile.letter" :class="tileClass(tile.state)">
-              <SyriacText :text="tile.letter" class="leading-none" />
+            <span v-for="letter in melthoTiles" :key="letter" :class="tileClass">
+              <SyriacText :text="letter" class="leading-none" />
             </span>
           </div>
 
@@ -211,7 +203,8 @@ const heroAction = computed(() => {
           </a>
         </div>
 
-        <!-- Mno — the numbers game, in its honey amber, value hints showing. -->
+        <!-- Mno — the numbers game. Card accent is Mno's honey amber; the tile
+             board itself is Wordle-yellow (see mnoTiles above), value hints showing. -->
         <div
           class="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgb(28_25_23/0.09)] sm:items-start sm:text-left"
         >
@@ -220,7 +213,7 @@ const heroAction = computed(() => {
             <span
               v-for="(tile, index) in mnoTiles"
               :key="index"
-              class="flex size-12 flex-col items-center justify-center rounded-xl border-2 border-[var(--color-mno-dark)] bg-[var(--color-mno)] text-white sm:size-14"
+              class="flex size-12 flex-col items-center justify-center rounded-xl border-2 border-[#ab9538] bg-[#c9b043] text-white sm:size-14"
             >
               <SyriacText :text="tile.glyph" class="text-2xl leading-none sm:text-3xl" />
               <span v-if="tile.hint" class="mt-0.5 font-sans text-[10px] leading-none opacity-80" dir="ltr">{{ tile.hint }}</span>
