@@ -24,6 +24,13 @@ public class HistoricalFiguresControllerTests : IDisposable
         client = factory.CreateClient();
     }
 
+    public void Dispose()
+    {
+        client.Dispose();
+        factory.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
     [Fact]
     public async Task Get_ListsOnlyPublishedFigures()
     {
@@ -103,12 +110,5 @@ public class HistoricalFiguresControllerTests : IDisposable
             ct);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         return (await response.Content.ReadFromJsonAsync<HistoricalFigureDto>(SabroApiFactory.JsonOptions, ct))!;
-    }
-
-    public void Dispose()
-    {
-        client.Dispose();
-        factory.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

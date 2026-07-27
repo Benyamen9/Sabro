@@ -29,6 +29,13 @@ public class AdminHistoricalFiguresControllerTests : IDisposable
         client = factory.CreateClient();
     }
 
+    public void Dispose()
+    {
+        client.Dispose();
+        factory.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
     [Fact]
     public async Task Post_WithMinimalPayload_Returns201()
     {
@@ -279,12 +286,5 @@ public class AdminHistoricalFiguresControllerTests : IDisposable
         var response = await client.PostAsJsonAsync("/api/v1/admin/historical-figures", request, ct);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         return (await response.Content.ReadFromJsonAsync<HistoricalFigureDto>(SabroApiFactory.JsonOptions, ct))!;
-    }
-
-    public void Dispose()
-    {
-        client.Dispose();
-        factory.Dispose();
-        GC.SuppressFinalize(this);
     }
 }
