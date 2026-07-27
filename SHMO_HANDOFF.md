@@ -1,6 +1,6 @@
 # Shmo — what's done, and what needs your machine
 
-Branch: `feature/shmo-historical-module` (8 commits on top of `main`).
+Branch: `feature/shmo-historical-module` (9 commits on top of `main`).
 
 This file is a handoff note, not permanent documentation — delete it once the
 checklist below is done.
@@ -108,8 +108,8 @@ sent in chat, or re-apply the commits, then push as usual.
 
 ## Content review — the part only you can do
 
-`scripts/shmo-figures.json` holds 180 figures. **Every attribute is a game hint**,
-so an approximate era is a wrong answer, not a rounding error. 154 entries carry
+`scripts/shmo-figures.json` holds 236 figures. **Every attribute is a game hint**,
+so an approximate era is a wrong answer, not a rounding error. 210 entries carry
 a `_note` recording what is conventional, contested, or spans a century
 boundary. Read those before publishing anything:
 
@@ -136,6 +136,11 @@ boundary. Read those before publishing anything:
 - **Adversaries carry no alignment marker.** The roster models office, not
   allegiance, so Judas Iscariot keeps Role `Apostle` and Herod reads like any
   other king. Deliberate: an alignment hint would make many rounds trivial.
+- **Four figures are marked `LEGENDARY`** — Abgar V, Addai, Mari, Aggai. The
+  Abgar correspondence with Christ is not historical, but the legend is
+  foundational to how Syriac Christianity tells its own origin. Included as
+  tradition, not as fact. If the roster should hold only attested figures, these
+  four are the ones to drop.
 - **Nestorius is included as a historical figure.** "Nestorian" as a label for
   the Church of the East is contested and rejected by that church; nothing in
   the roster endorses it, and the East Syriac figures carry `EastSyriac` on
@@ -160,7 +165,7 @@ boundary. Read those before publishing anything:
 `--drafts-only` exists so you can create everything and publish selectively
 after review.
 
-## Six model/domain mismatches worth a decision
+## Model/domain mismatches worth a decision
 
 Populating the roster surfaced these. None block anything; each is a data choice
 or a small enum change.
@@ -177,7 +182,13 @@ or a small enum change.
 4. **No India in `Region`** — Thomas, the apostle of the East, is `Persia`.
 5. **Single primary role forces picks** — John and Matthew are `Apostle` rather
    than `Evangelist`; Jacob of Edessa is `Bishop` rather than `Translator`.
-6. **~~`MinEra` excludes primeval figures~~ — resolved, but read this.** `MinEra`
+6. **`Tradition` has no slot for non-Syriac miaphysites.** Dioscorus of
+   Alexandria and Timothy Aelurus are miaphysite but Alexandrian: `WestSyriac`
+   is wrong, `ByzantineChalcedonian` is the opposite of right, so they sit in
+   `NotApplicable` beside pre-Christian figures. An `OrientalNonSyriac` member
+   would fix it, and the same gap will bite for any Armenian or Ethiopian figure
+   added later.
+7. **~~`MinEra` excludes primeval figures~~ — resolved, but read this.** `MinEra`
    was widened from -40 to **-60** and ten primeval figures (Adam through
    Nimrod) added. Two consequences worth your sign-off:
    - Their eras are **chronology, not history**. They follow the

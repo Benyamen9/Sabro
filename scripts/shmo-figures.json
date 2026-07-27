@@ -1,5 +1,5 @@
 {
-  "_comment": "Launch roster for Shmo. ~180 figures across the three categories: Biblical Old Testament, Biblical New Testament, and Syriac patristic/ecclesiastical (bar Salibi's own world), including the adversaries on each side. Every attribute here is a GAME HINT, so an approximate era is a wrong answer, not a rounding error — the Owner must review each entry before the seed script publishes anything. Era is a signed century (-10 = 10th c. BC, 7 = 7th c. AD); there is no century zero. Period is the named epoch beside it — see the period note below. Entries whose dating is conventional, contested, or spans a century boundary carry a _note; the seeder strips every underscore-prefixed key before POSTing. Names follow the full-form convention described below. Relatives and adversaries are dated with the figure they attach to, so a household or a confrontation shares one century. The primeval figures (Genesis 1-11) are marked PRIMEVAL and are the least secure data in the file; adversaries are marked ADVERSARY.",
+  "_comment": "Launch roster for Shmo. ~236 figures across the three categories: Biblical Old Testament, Biblical New Testament, and Syriac patristic/ecclesiastical (bar Salibi's own world), including the adversaries on each side, and the clergy — patriarchs, catholicoi, bishops, monastics, martyrs and saints — who make up the bulk of the patristic category. Every attribute here is a GAME HINT, so an approximate era is a wrong answer, not a rounding error — the Owner must review each entry before the seed script publishes anything. Era is a signed century (-10 = 10th c. BC, 7 = 7th c. AD); there is no century zero. Period is the named epoch beside it — see the period note below. Entries whose dating is conventional, contested, or spans a century boundary carry a _note; the seeder strips every underscore-prefixed key before POSTing. Names follow the full-form convention described below. Relatives and adversaries are dated with the figure they attach to, so a household or a confrontation shares one century. The primeval figures (Genesis 1-11) are marked PRIMEVAL and are the least secure data in the file; adversaries are marked ADVERSARY.",
   "_modellingNotes": [
     "PERIOD vs ERA: every figure carries both. Era is a signed century driving Shmo's higher/lower arrow; Period is a named epoch giving an exact-match hint, because higher/lower across -41..14 is a weak signal on its own. Period is NOT derivable from era plus category, which is why it is stored: the 5th century holds both NiceneEra and PostChalcedonian figures, the 10th century BC holds both UnitedMonarchy and DividedMonarchy ones, and Herod the Great is era -1 but period Apostolic. Assignment here is rule-based (see scripts, add-periods) with exactly two overrides — Jeroboam son of Nebat, whose secession splits the 10th c., and Narsai of Nisibis, who outlives Chalcedon by half a century.",
     "Role 'Patriarch' is used for the ecclesiastical office only. The biblical patriarchs (Abraham, Isaac, Jacob) are 'Other' — Category already separates them, but if you would rather they read as Patriarch, that is a one-line change here, not a schema change.",
@@ -16,7 +16,11 @@
     "ADVERSARIES: the roster models office, not allegiance — there is no alignment attribute, so Herod, Pilate, Jezebel and Arius are indistinguishable from anyone else by their hints, and Judas Iscariot keeps Role 'Apostle' because that is the office he held. That is deliberate: an alignment hint would make many rounds trivially easy. If you ever want it, it is a new enum plus a migration, not a data change.",
     "Herod the Great is era -1 while the rest of the nativity cast is 1: he died in 4 BC. That is correct, not a typo, and it is the only place in the New Testament block where the era hint separates contemporaries.",
     "Nestorius is included as a historical figure. 'Nestorian' as a label for the Church of the East is contested and rejected by that church; nothing in this roster endorses it, and the East Syriac figures (Narsai, Babai, Isaac of Nineveh, Timothy I, Ishodad) carry Tradition 'EastSyriac' on their own terms.",
-    "SecondTemple is the one period with no figures in it. It is defined so Maccabean and intertestamental figures have somewhere to go; the gap between Mordecai son of Jair and the nativity is real, not an oversight."
+    "SecondTemple is the one period with no figures in it. It is defined so Maccabean and intertestamental figures have somewhere to go; the gap between Mordecai son of Jair and the nativity is real, not an oversight.",
+    "TRADITION ENUM GAP: Dioscorus of Alexandria and Timothy Aelurus are miaphysite but Alexandrian, not Syriac. The enum offers WestSyriac, EastSyriac, ByzantineChalcedonian and NotApplicable, none of which fits, so they carry NotApplicable alongside pre-Christian figures — the least wrong option, not a right one. An 'OrientalNonSyriac' or 'Alexandrian' member would fix it. The same gap will bite for any Armenian or Ethiopian figure added later.",
+    "ByzantineChalcedonian was unused until this pass and now covers five figures: Leo the Great, Theodoret of Cyrrhus, Daniel the Stylite, Simeon the Stylite the Younger and John of Damascus. Worth knowing that a value which looks well-populated in the enum can be empty in the data — check the seeder's breakdown before assuming a hint discriminates.",
+    "LEGENDARY vs HISTORICAL: Abgar V, Addai, Mari and Aggai are marked LEGENDARY. The Abgar correspondence is not historical, but the legend is foundational to how Syriac Christianity narrates its own origin, so they are included as tradition rather than as fact. If the roster should hold only historically attested figures, these four are the ones to drop.",
+    "The name-qualifier rule keys on the first whitespace-delimited token, which treats the honorific 'Mar' as a given name (Mar Awgin, Mar Aba I). Both are qualified so the rule passes, but the grouping is an artefact rather than a real collision."
   ],
   "figures": [
     {
@@ -1501,6 +1505,50 @@
       "_note": "The seller of purple from Thyatira; first named European convert."
     },
     {
+      "name": "Abgar V of Edessa",
+      "category": "Patristic",
+      "era": 1,
+      "period": "AnteNicene",
+      "role": "King",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "LEGENDARY — the Doctrine of Addai has him corresponding with Christ. Historically Abgar V reigned in Edessa in the 1st c., but the correspondence is not historical. Included because the legend is foundational to Syriac self-understanding, not because the events are."
+    },
+    {
+      "name": "Addai",
+      "category": "Patristic",
+      "era": 1,
+      "period": "AnteNicene",
+      "role": "Apostle",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "LEGENDARY — apostle of Edessa, traditionally one of the seventy. The Church of the East's eucharistic liturgy bears his name."
+    },
+    {
+      "name": "Mari",
+      "category": "Patristic",
+      "era": 1,
+      "period": "AnteNicene",
+      "role": "Apostle",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "LEGENDARY — Addai's disciple; co-name of the Anaphora of Addai and Mari."
+    },
+    {
+      "name": "Thecla of Iconium",
+      "category": "Patristic",
+      "era": 1,
+      "period": "AnteNicene",
+      "role": "Martyr",
+      "region": "AsiaMinor",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "From the apocryphal Acts of Paul and Thecla, not the canonical New Testament — hence Patristic rather than BiblicalNewTestament. Widely venerated in the Syriac calendar."
+    },
+    {
       "name": "Bardaisan of Edessa",
       "category": "Patristic",
       "era": 2,
@@ -1521,6 +1569,61 @@
       "gender": "Male",
       "tradition": "NotApplicable",
       "_note": "ADVERSARY — the roster has no alignment attribute, so nothing in the data marks this figure as an opponent; Category, era, role and region read exactly as they do for anyone else. Floruit c. 144. One of the three heresiarchs Ephrem writes against by name."
+    },
+    {
+      "name": "Aggai",
+      "category": "Patristic",
+      "era": 2,
+      "period": "AnteNicene",
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "LEGENDARY — Addai's successor at Edessa."
+    },
+    {
+      "name": "Ignatius of Antioch",
+      "category": "Patristic",
+      "era": 2,
+      "period": "AnteNicene",
+      "role": "Bishop",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. c. 108. Role is Bishop, the office, though he is venerated as a martyr; Syriac Orthodox patriarchs take Ignatius as a regnal name after him."
+    },
+    {
+      "name": "Tatian",
+      "category": "Patristic",
+      "era": 2,
+      "period": "AnteNicene",
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Compiler of the Diatessaron, the gospel harmony that WAS the gospel text in Syriac use for centuries. Later judged heterodox, which is why Role is Other."
+    },
+    {
+      "name": "Sharbel of Edessa",
+      "category": "Patristic",
+      "era": 2,
+      "period": "AnteNicene",
+      "role": "Martyr",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Edessene martyr acts; the traditional dating is not secure."
+    },
+    {
+      "name": "Barsamya of Edessa",
+      "category": "Patristic",
+      "era": 2,
+      "period": "AnteNicene",
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Paired with Sharbel in the Edessene acts; same dating caveat."
     },
     {
       "name": "Mani",
@@ -1611,6 +1714,193 @@
       "_note": "Martyr of Nisibis under Diocletian. Included partly to keep the roster from being entirely male after the biblical categories."
     },
     {
+      "name": "Papa bar Aggai",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Patriarch",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "First bishop of Seleucia-Ctesiphon to claim primacy over the Persian church — the seed of the East Syriac catholicate. Pre-division, so Tradition is NotApplicable."
+    },
+    {
+      "name": "Jacob of Nisibis",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 338, a signatory at Nicaea; tradition makes him Ephrem's teacher."
+    },
+    {
+      "name": "Simeon bar Sabbae",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Patriarch",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Catholicos, martyred c. 341 in the Great Persecution under Shapur II — who is also in the roster. Role is Patriarch (the office) rather than Martyr (the death)."
+    },
+    {
+      "name": "Pusai",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Martyr",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Persian martyr under Shapur II."
+    },
+    {
+      "name": "Martha daughter of Pusai",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Martyr",
+      "region": "Persia",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "Persian martyr, daughter of Pusai. Qualified to keep her clear of Martha of Bethany."
+    },
+    {
+      "name": "Shmona of Edessa",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Martyr",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "One of the Edessene confessors Shmona and Gurya; split into two entries because the roster answers one name at a time."
+    },
+    {
+      "name": "Gurya of Edessa",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Martyr",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "See Shmona of Edessa."
+    },
+    {
+      "name": "Habib the Deacon",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Martyr",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Third of the Edessene martyrs commemorated with Shmona and Gurya."
+    },
+    {
+      "name": "Julian Saba",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Early Mesopotamian ascetic; Ephrem wrote hymns in his honour."
+    },
+    {
+      "name": "Athanasius of Alexandria",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Patriarch",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 373. Pre-Chalcedon, so Tradition is NotApplicable despite Alexandria's later miaphysite alignment."
+    },
+    {
+      "name": "Basil of Caesarea",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Bishop",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 379."
+    },
+    {
+      "name": "Gregory of Nazianzus",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Bishop",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 390."
+    },
+    {
+      "name": "Gregory of Nyssa",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Bishop",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. c. 395."
+    },
+    {
+      "name": "Eusebius of Caesarea",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Bishop",
+      "region": "IsraelJudah",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. c. 339; the Ecclesiastical History."
+    },
+    {
+      "name": "Diodore of Tarsus",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Bishop",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. c. 390. Founder of the Antiochene exegetical school the East Syriac tradition inherits."
+    },
+    {
+      "name": "John Chrysostom",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Patriarch",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Archbishop of Constantinople 398-404, d. 407. Anchored to the 4th c., where most of his life and Antiochene preaching sit."
+    },
+    {
+      "name": "Theodore of Mopsuestia",
+      "category": "Patristic",
+      "era": 4,
+      "period": "NiceneEra",
+      "role": "Commentator",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "Bishop from 392, d. 428 — spans the boundary; anchored to the episcopate. \"The Interpreter\" of the East Syriac tradition, though he is a Greek Antiochene and pre-Chalcedonian, hence NotApplicable."
+    },
+    {
       "name": "Rabbula of Edessa",
       "category": "Patristic",
       "era": 5,
@@ -1655,7 +1945,7 @@
       "_note": "d. 457. Condemned then restored at Chalcedon; his letter was later anathematised in the Three Chapters. Tradition is genuinely contested here."
     },
     {
-      "name": "Simeon the Stylite",
+      "name": "Simeon the Stylite the Elder",
       "category": "Patristic",
       "era": 5,
       "period": "NiceneEra",
@@ -1675,6 +1965,94 @@
       "gender": "Male",
       "tradition": "EastSyriac",
       "_note": "d. c. 502; anchored to his School of Nisibis career, which begins in the 5th c."
+    },
+    {
+      "name": "Cyril of Alexandria",
+      "category": "Patristic",
+      "era": 5,
+      "period": "NiceneEra",
+      "role": "Patriarch",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 444. His christology is the foundation the miaphysite tradition builds on, but he predates Chalcedon."
+    },
+    {
+      "name": "Leo the Great",
+      "category": "Patristic",
+      "era": 5,
+      "period": "NiceneEra",
+      "role": "Patriarch",
+      "region": "Other",
+      "gender": "Male",
+      "tradition": "ByzantineChalcedonian",
+      "_note": "d. 461. The Tome of Leo defines the Chalcedonian position the Syriac Orthodox reject. Region is Other because Rome is not in the enum."
+    },
+    {
+      "name": "Dioscorus of Alexandria",
+      "category": "Patristic",
+      "era": 5,
+      "period": "NiceneEra",
+      "role": "Patriarch",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 454, deposed at Chalcedon. Miaphysite but Alexandrian, not Syriac — the Tradition enum has no Oriental-non-Syriac value, so NotApplicable is the least wrong. See the modelling notes."
+    },
+    {
+      "name": "Timothy Aelurus",
+      "category": "Patristic",
+      "era": 5,
+      "period": "PostChalcedonian",
+      "role": "Patriarch",
+      "region": "Egypt",
+      "gender": "Male",
+      "tradition": "NotApplicable",
+      "_note": "d. 477, anti-Chalcedonian patriarch of Alexandria. Same enum gap as Dioscorus."
+    },
+    {
+      "name": "Theodoret of Cyrrhus",
+      "category": "Patristic",
+      "era": 5,
+      "period": "NiceneEra",
+      "role": "Bishop",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "ByzantineChalcedonian",
+      "_note": "d. c. 460. Accepted Chalcedon; his writings were later condemned in the Three Chapters."
+    },
+    {
+      "name": "Barsauma of Nisibis",
+      "category": "Patristic",
+      "era": 5,
+      "period": "PostChalcedonian",
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. c. 491. Consolidated the School of Nisibis and the Persian church's independence."
+    },
+    {
+      "name": "Daniel the Stylite",
+      "category": "Patristic",
+      "era": 5,
+      "period": "PostChalcedonian",
+      "role": "Monk",
+      "region": "AsiaMinor",
+      "gender": "Male",
+      "tradition": "ByzantineChalcedonian",
+      "_note": "d. 493."
+    },
+    {
+      "name": "Pelagia of Antioch",
+      "category": "Patristic",
+      "era": 5,
+      "period": "NiceneEra",
+      "role": "Monk",
+      "region": "Syria",
+      "gender": "Female",
+      "tradition": "NotApplicable",
+      "_note": "The penitent of Antioch who lived as a recluse; Role is Monk for the ascetic life. A staple of Syriac hagiography."
     },
     {
       "name": "Jacob of Serugh",
@@ -1765,6 +2143,61 @@
       "_note": "d. c. 589. Historian of the miaphysite church."
     },
     {
+      "name": "Mar Aba I",
+      "category": "Patristic",
+      "era": 6,
+      "period": "PostChalcedonian",
+      "role": "Patriarch",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Catholicos 540-552; a Zoroastrian convert who reorganised the Church of the East."
+    },
+    {
+      "name": "Abraham of Kashkar",
+      "category": "Patristic",
+      "era": 6,
+      "period": "PostChalcedonian",
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. 588. Reformer of East Syriac monasticism; the Great Monastery on Mount Izla is his."
+    },
+    {
+      "name": "Peter of Callinicum",
+      "category": "Patristic",
+      "era": 6,
+      "period": "PostChalcedonian",
+      "role": "Patriarch",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "Syriac Orthodox patriarch of Antioch 581-591."
+    },
+    {
+      "name": "Simeon the Stylite the Younger",
+      "category": "Patristic",
+      "era": 6,
+      "period": "PostChalcedonian",
+      "role": "Monk",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "ByzantineChalcedonian",
+      "_note": "d. 592. Distinct from the 5th-c. elder, who is renamed in this pass for the same reason."
+    },
+    {
+      "name": "Zacharias Rhetor",
+      "category": "Patristic",
+      "era": 6,
+      "period": "PostChalcedonian",
+      "role": "Bishop",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "Bishop of Mytilene; his chronicle survives in Syriac."
+    },
+    {
       "name": "Babai the Great",
       "category": "Patristic",
       "era": 7,
@@ -1842,6 +2275,72 @@
       "_note": "d. 708, so his last years are 8th c. Bishop chosen over Translator/Commentator though he was all three."
     },
     {
+      "name": "Ishoyahb III",
+      "category": "Patristic",
+      "era": 7,
+      "period": "PostChalcedonian",
+      "role": "Patriarch",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Catholicos 649-659; his letters are a primary source for the early Islamic conquest."
+    },
+    {
+      "name": "Athanasius Gammolo",
+      "category": "Patristic",
+      "era": 7,
+      "period": "PostChalcedonian",
+      "role": "Patriarch",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "Syriac Orthodox patriarch d. 631."
+    },
+    {
+      "name": "John of Sedre",
+      "category": "Patristic",
+      "era": 7,
+      "period": "PostChalcedonian",
+      "role": "Patriarch",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "Patriarch 631-648; remembered for a recorded disputation with a Muslim emir."
+    },
+    {
+      "name": "Sahdona",
+      "category": "Patristic",
+      "era": 7,
+      "period": "PostChalcedonian",
+      "role": "Bishop",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Also called Martyrius. Deposed for christological dissent; his Book of Perfection survives."
+    },
+    {
+      "name": "Dadisho Qatraya",
+      "category": "Patristic",
+      "era": 7,
+      "period": "PostChalcedonian",
+      "role": "Monk",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Ascetic writer from Beth Qatraye on the Gulf."
+    },
+    {
+      "name": "Rabban Hormizd",
+      "category": "Patristic",
+      "era": 7,
+      "period": "PostChalcedonian",
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Founder of the monastery above Alqosh that bears his name."
+    },
+    {
       "name": "George, Bishop of the Arabs",
       "category": "Patristic",
       "era": 8,
@@ -1862,6 +2361,50 @@
       "gender": "Male",
       "tradition": "EastSyriac",
       "_note": "Catholicos 780-823, so the office spans the 8th-9th c.; anchored to its start. -> 9 if you prefer the bulk of the reign."
+    },
+    {
+      "name": "John of Damascus",
+      "category": "Patristic",
+      "era": 8,
+      "period": "IslamicEra",
+      "role": "Monk",
+      "region": "Syria",
+      "gender": "Male",
+      "tradition": "ByzantineChalcedonian",
+      "_note": "d. c. 749. Wrote under Umayyad rule from the monastery of Mar Saba — the roster's clearest Chalcedonian voice."
+    },
+    {
+      "name": "John of Dalyatha",
+      "category": "Patristic",
+      "era": 8,
+      "period": "IslamicEra",
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Mystical writer, later contested within his own church."
+    },
+    {
+      "name": "Joseph Hazzaya",
+      "category": "Patristic",
+      "era": 8,
+      "period": "IslamicEra",
+      "role": "Monk",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "\"Joseph the Seer\"; a convert from Zoroastrianism and a major East Syriac mystic."
+    },
+    {
+      "name": "Theophilus of Edessa",
+      "category": "Patristic",
+      "era": 8,
+      "period": "IslamicEra",
+      "role": "Translator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "d. 785. Astrologer to the caliph al-Mahdi; translated Homer into Syriac."
     },
     {
       "name": "Dionysius of Tell Mahre",
@@ -1919,6 +2462,50 @@
       "_note": "d. 903, so his last years are 10th c. A principal source for bar Salibi."
     },
     {
+      "name": "Cyriacus of Tagrit",
+      "category": "Patristic",
+      "era": 9,
+      "period": "IslamicEra",
+      "role": "Patriarch",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "Syriac Orthodox patriarch 793-817."
+    },
+    {
+      "name": "Hunayn ibn Ishaq",
+      "category": "Patristic",
+      "era": 9,
+      "period": "IslamicEra",
+      "role": "Translator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. 873. The central figure of the Greek-into-Syriac-and-Arabic translation movement in Baghdad."
+    },
+    {
+      "name": "Job of Edessa",
+      "category": "Patristic",
+      "era": 9,
+      "period": "IslamicEra",
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Physician and natural philosopher; the Book of Treasures is his."
+    },
+    {
+      "name": "Nonnus of Nisibis",
+      "category": "Patristic",
+      "era": 9,
+      "period": "IslamicEra",
+      "role": "Other",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "WestSyriac",
+      "_note": "Apologist who debated both Chalcedonians and Muslims."
+    },
+    {
       "name": "Elias of Nisibis",
       "category": "Patristic",
       "era": 11,
@@ -1928,6 +2515,17 @@
       "gender": "Male",
       "tradition": "EastSyriac",
       "_note": "d. 1046. Chronicler and lexicographer."
+    },
+    {
+      "name": "Ibn al-Tayyib",
+      "category": "Patristic",
+      "era": 11,
+      "period": "SyriacRenaissance",
+      "role": "Commentator",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. 1043. Wrote his biblical commentaries in Arabic, a shift the period is known for."
     },
     {
       "name": "Dionysius bar Salibi",
@@ -1961,6 +2559,28 @@
       "gender": "Male",
       "tradition": "WestSyriac",
       "_note": "d. 1286. Maphrian, so Bishop is also defensible; Commentator chosen for the Storehouse of Mysteries."
+    },
+    {
+      "name": "Rabban Bar Sauma",
+      "category": "Patristic",
+      "era": 13,
+      "period": "SyriacRenaissance",
+      "role": "Monk",
+      "region": "Persia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "d. 1294. Travelled from Khanbaliq to Rome, Paris and Bordeaux as a Mongol envoy — the roster's furthest traveller."
+    },
+    {
+      "name": "Yahballaha III",
+      "category": "Patristic",
+      "era": 13,
+      "period": "SyriacRenaissance",
+      "role": "Patriarch",
+      "region": "Mesopotamia",
+      "gender": "Male",
+      "tradition": "EastSyriac",
+      "_note": "Catholicos from 1281, d. 1317. An Öngüd Turk from northern China elected head of the Church of the East; anchored to his election."
     },
     {
       "name": "Abdisho bar Brikha",
