@@ -1,6 +1,6 @@
 # Shmo — what's done, and what needs your machine
 
-Branch: `feature/shmo-historical-module` (9 commits on top of `main`).
+Branch: `feature/shmo-historical-module` (10 commits on top of `main`).
 
 This file is a handoff note, not permanent documentation — delete it once the
 checklist below is done.
@@ -20,7 +20,7 @@ the table.
 | EF migrations (both) | **Hand-written, never generated or applied** |
 | Frontend backoffice | eslint + `nuxt typecheck` + vitest all pass |
 | Seed dataset + seeder script | `--dry-run` passes; validator negative-tested |
-| i18n | 114 keys × 5 locales, key sets verified identical |
+| i18n | 128 keys × 5 locales, key sets verified identical |
 
 ## Checklist for you
 
@@ -108,8 +108,8 @@ sent in chat, or re-apply the commits, then push as usual.
 
 ## Content review — the part only you can do
 
-`scripts/shmo-figures.json` holds 236 figures. **Every attribute is a game hint**,
-so an approximate era is a wrong answer, not a rounding error. 210 entries carry
+`scripts/shmo-figures.json` holds 289 figures. **Every attribute is a game hint**,
+so an approximate era is a wrong answer, not a rounding error. 263 entries carry
 a `_note` recording what is conventional, contested, or spans a century
 boundary. Read those before publishing anything:
 
@@ -182,12 +182,15 @@ or a small enum change.
 4. **No India in `Region`** — Thomas, the apostle of the East, is `Persia`.
 5. **Single primary role forces picks** — John and Matthew are `Apostle` rather
    than `Evangelist`; Jacob of Edessa is `Bishop` rather than `Translator`.
-6. **`Tradition` has no slot for non-Syriac miaphysites.** Dioscorus of
-   Alexandria and Timothy Aelurus are miaphysite but Alexandrian: `WestSyriac`
-   is wrong, `ByzantineChalcedonian` is the opposite of right, so they sit in
-   `NotApplicable` beside pre-Christian figures. An `OrientalNonSyriac` member
-   would fix it, and the same gap will bite for any Armenian or Ethiopian figure
-   added later.
+6. **~~`Tradition` has no slot for non-Syriac miaphysites~~ — resolved.** The
+   enum gained `PreChalcedonian`, `Coptic`, `Armenian`, `Ethiopian`,
+   `Malankara` and `Latin`; `Region` gained `Arabia`, `Ethiopia`, `Greece`,
+   `Italy`, `Armenia` and `India`; `Period` gained `LateMedieval` and
+   `ModernEra`. **None of this needed a migration** — string-converted enums in
+   a `varchar(32)`, which is exactly what the house rule is for. Still open:
+   `Region` has nothing for North Africa beyond Egypt, Gaul, or Sinai, so
+   Tertullian, Cyprian, Augustine, Irenaeus, Hilary and John of Sinai sit in
+   `Other`.
 7. **~~`MinEra` excludes primeval figures~~ — resolved, but read this.** `MinEra`
    was widened from -40 to **-60** and ten primeval figures (Adam through
    Nimrod) added. Two consequences worth your sign-off:

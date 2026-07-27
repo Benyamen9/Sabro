@@ -63,4 +63,10 @@ public enum HistoricalPeriod
 
     /// <summary>The Syriac Renaissance of the 11th–13th centuries — bar Salibi, Michael the Syrian, Bar Hebraeus.</summary>
     SyriacRenaissance,
+
+    /// <summary>The 14th–15th centuries, after the Renaissance and through the Mongol and Timurid disruptions.</summary>
+    LateMedieval,
+
+    /// <summary>The 16th century onward — Ottoman rule, and the Malankara church's own line of bishops.</summary>
+    ModernEra,
 }

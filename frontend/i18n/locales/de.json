@@ -636,7 +636,11 @@
 
         "IslamicEra": "Islamische Zeit",
 
-        "SyriacRenaissance": "Syrische Renaissance"
+        "SyriacRenaissance": "Syrische Renaissance",
+
+        "LateMedieval": "Spätmittelalter",
+
+        "ModernEra": "Neuzeit"
 
       },
       "role": {
@@ -660,13 +664,25 @@
         "Persia": "Persien",
         "Egypt": "Ägypten",
         "AsiaMinor": "Kleinasien",
-        "Other": "Sonstige"
+        "Other": "Sonstige",
+        "Arabia": "Arabien",
+        "Ethiopia": "Äthiopien",
+        "Greece": "Griechenland",
+        "Italy": "Italien",
+        "Armenia": "Armenien",
+        "India": "Indien"
       },
       "tradition": {
         "WestSyriac": "Westsyrisch",
         "EastSyriac": "Ostsyrisch",
         "ByzantineChalcedonian": "Byzantinisch / chalcedonisch",
-        "NotApplicable": "Nicht zutreffend"
+        "NotApplicable": "Nicht zutreffend",
+        "PreChalcedonian": "Vorchalcedonisch",
+        "Coptic": "Koptisch",
+        "Armenian": "Armenisch",
+        "Ethiopian": "Äthiopisch",
+        "Malankara": "Malankarisch",
+        "Latin": "Lateinisch"
       },
       "gender": {
         "Male": "Männlich",

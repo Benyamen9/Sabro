@@ -41,9 +41,16 @@ const PERIODS = [
   'Primeval', 'Patriarchal', 'ExodusAndConquest', 'Judges', 'UnitedMonarchy',
   'DividedMonarchy', 'ExileAndReturn', 'SecondTemple', 'Apostolic',
   'AnteNicene', 'NiceneEra', 'PostChalcedonian', 'IslamicEra', 'SyriacRenaissance',
+  'LateMedieval', 'ModernEra',
 ];
-const REGIONS = ['IsraelJudah', 'Mesopotamia', 'Syria', 'Persia', 'Egypt', 'AsiaMinor', 'Other'];
-const TRADITIONS = ['WestSyriac', 'EastSyriac', 'ByzantineChalcedonian', 'NotApplicable'];
+const REGIONS = [
+  'IsraelJudah', 'Mesopotamia', 'Syria', 'Persia', 'Arabia', 'Egypt', 'Ethiopia',
+  'AsiaMinor', 'Greece', 'Italy', 'Armenia', 'India', 'Other',
+];
+const TRADITIONS = [
+  'PreChalcedonian', 'WestSyriac', 'EastSyriac', 'Coptic', 'Armenian', 'Ethiopian',
+  'Malankara', 'ByzantineChalcedonian', 'Latin', 'NotApplicable',
+];
 const GENDERS = ['Male', 'Female'];
 
 // Matches HistoricalFigure.MinEra/MaxEra. Signed century, no century zero. The

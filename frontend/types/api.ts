@@ -89,14 +89,17 @@ export type HistoricalFigureRole =
   | 'Prophet' | 'King' | 'Judge' | 'Apostle' | 'Evangelist' | 'Patriarch'
   | 'Bishop' | 'Translator' | 'Commentator' | 'Monk' | 'Martyr' | 'Other'
 export type HistoricalFigureRegion =
-  'IsraelJudah' | 'Mesopotamia' | 'Syria' | 'Persia' | 'Egypt' | 'AsiaMinor' | 'Other'
+  | 'IsraelJudah' | 'Mesopotamia' | 'Syria' | 'Persia' | 'Arabia' | 'Egypt' | 'Ethiopia'
+  | 'AsiaMinor' | 'Greece' | 'Italy' | 'Armenia' | 'India' | 'Other'
 export type HistoricalFigureTradition =
-  'WestSyriac' | 'EastSyriac' | 'ByzantineChalcedonian' | 'NotApplicable'
+  | 'PreChalcedonian' | 'WestSyriac' | 'EastSyriac' | 'Coptic' | 'Armenian' | 'Ethiopian'
+  | 'Malankara' | 'ByzantineChalcedonian' | 'Latin' | 'NotApplicable'
 export type HistoricalFigureGender = 'Male' | 'Female'
 export type HistoricalPeriod =
   | 'Primeval' | 'Patriarchal' | 'ExodusAndConquest' | 'Judges' | 'UnitedMonarchy'
   | 'DividedMonarchy' | 'ExileAndReturn' | 'SecondTemple' | 'Apostolic'
   | 'AnteNicene' | 'NiceneEra' | 'PostChalcedonian' | 'IslamicEra' | 'SyriacRenaissance'
+  | 'LateMedieval' | 'ModernEra'
 export type HistoricalFigureStatus = 'Draft' | 'Published'
 
 export interface HistoricalFigureDto {

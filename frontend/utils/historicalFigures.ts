@@ -40,6 +40,8 @@ export const HISTORICAL_PERIODS: readonly HistoricalPeriod[] = [
   'PostChalcedonian',
   'IslamicEra',
   'SyriacRenaissance',
+  'LateMedieval',
+  'ModernEra',
 ] as const
 
 export const HISTORICAL_FIGURE_ROLES: readonly HistoricalFigureRole[] = [
@@ -57,20 +59,35 @@ export const HISTORICAL_FIGURE_ROLES: readonly HistoricalFigureRole[] = [
   'Other',
 ] as const
 
+// Ordered outward from the Syriac heartland rather than alphabetically.
 export const HISTORICAL_FIGURE_REGIONS: readonly HistoricalFigureRegion[] = [
   'IsraelJudah',
   'Mesopotamia',
   'Syria',
   'Persia',
+  'Arabia',
   'Egypt',
+  'Ethiopia',
   'AsiaMinor',
+  'Greece',
+  'Italy',
+  'Armenia',
+  'India',
   'Other',
 ] as const
 
+// Undivided church first, then the Syriac traditions, then the sister churches
+// of the Oriental Orthodox communion, then the rest.
 export const HISTORICAL_FIGURE_TRADITIONS: readonly HistoricalFigureTradition[] = [
+  'PreChalcedonian',
   'WestSyriac',
   'EastSyriac',
+  'Coptic',
+  'Armenian',
+  'Ethiopian',
+  'Malankara',
   'ByzantineChalcedonian',
+  'Latin',
   'NotApplicable',
 ] as const
 
