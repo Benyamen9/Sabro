@@ -1,6 +1,6 @@
 # Shmo — what's done, and what needs your machine
 
-Branch: `feature/shmo-historical-module` (3 commits on top of `main`).
+Branch: `feature/shmo-historical-module` (7 commits on top of `main`).
 
 This file is a handoff note, not permanent documentation — delete it once the
 checklist below is done.
@@ -103,30 +103,39 @@ sent in chat, or re-apply the commits, then push as usual.
 
 ## Content review — the part only you can do
 
-`scripts/shmo-figures.json` holds 150 figures. **Every attribute is a game hint**,
-so an approximate era is a wrong answer, not a rounding error. 124 entries carry
+`scripts/shmo-figures.json` holds 180 figures. **Every attribute is a game hint**,
+so an approximate era is a wrong answer, not a rounding error. 154 entries carry
 a `_note` recording what is conventional, contested, or spans a century
 boundary. Read those before publishing anything:
 
-- **Six figures were renamed** so the answer name stays unambiguous — the name
-  *is* the answer in Shmo. `Joseph` → `Joseph son of Jacob`, `James` →
-  `James son of Zebedee`, `Mary` → `Mary the Mother of Jesus` (true duplicates,
-  forced), and `John` → `John the Apostle`, `Simeon` → `Simeon the Righteous`,
-  `Timothy` → `Timothy of Ephesus` (judgement calls, too close to a qualified
-  namesake). `Isaac`, `Jacob`, `Thomas` and `Paul` were left bare on the view
-  that the unqualified name conventionally means the biblical figure. Worth a
-  playtest.
-- **Relatives are dated with the figure they attach to**, so a household shares
-  a century — Rachel, Leah, Esau and Laban all read -18 with Jacob. Honest (they
-  are contemporaries) but it means era is a coarse filter in the biblical
-  categories and a sharp one in the patristic.
+- **Names now follow a full-form convention** — patronymic (`Joshua son of Nun`),
+  see or birthplace (`Amos of Tekoa`, `Paul of Tarsus`), or epithet (`Elijah the
+  Tishbite`). 104 figures were renamed in one pass. Nothing is invented: a figure
+  with no attested qualifier keeps the bare name, which is why `Adam`, `Delilah`,
+  `Nebuchadnezzar`, `Caiaphas` and twelve others stand alone. **The seeder now
+  enforces this** — it rejects any bare name sharing a given name with another
+  figure — so the convention survives future additions instead of decaying.
+- **Relatives and adversaries are dated with the figure they attach to**, so a
+  household or a confrontation shares a century — Rachel, Leah, Esau and Laban
+  all read -18 with Jacob. Honest (they are contemporaries) but era is a coarse
+  filter in the biblical categories and a sharp one in the patristic.
+- **Herod the Great is era -1**, not 1 — he died in 4 BC. Correct rather than a
+  typo, and the only place in the New Testament block where era separates
+  contemporaries.
+- **Adversaries carry no alignment marker.** The roster models office, not
+  allegiance, so Judas Iscariot keeps Role `Apostle` and Herod reads like any
+  other king. Deliberate: an alignment hint would make many rounds trivial.
+- **Nestorius is included as a historical figure.** "Nestorian" as a label for
+  the Church of the East is contested and rejected by that church; nothing in
+  the roster endorses it, and the East Syriac figures carry `EastSyriac` on
+  their own terms. Flagged because it is the one entry where a data choice
+  touches live ecclesial sensitivity — your call, not mine.
 
-- **The ten primeval figures** (Adam, Eve, Cain, Abel, Seth, Enoch, Methuselah,
-  Noah, Shem, Nimrod) — marked `PRIMEVAL` in their notes. Chronology-dependent
-  rather than historical; see point 6 below. Anchored to birth, so Noah reads as
-  -30 (born c. 2948 BC) rather than -24 (the flood). If you would rather the
-  hint point at the event a player thinks of, Noah and Nimrod are the two to
-  revisit.
+- **The primeval figures** (Adam and Eve through Nimrod son of Cush) — marked
+  `PRIMEVAL` in their notes. Chronology-dependent rather than historical; see
+  point 6 below. Anchored to birth, so Noah reads as -30 (born c. 2948 BC)
+  rather than -24 (the flood). If you would rather the hint point at the event a
+  player thinks of, Noah and Nimrod are the two to revisit.
 - **Jeremiah** — called c. 627 (7th c.), anchored here to 586 (6th c.). Either
   is defensible; pick one.
 - **Moses** — follows the late-date Exodus (13th c.). Early-date would be -15.

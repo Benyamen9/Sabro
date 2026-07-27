@@ -131,6 +131,43 @@ function validate(figures) {
     else if (f.era < MIN_ERA || f.era > MAX_ERA) problems.push(`"${label}": era ${f.era} is outside [${MIN_ERA}, ${MAX_ERA}]`);
   }
 
+  problems.push(...checkNameQualifiers(figures));
+
+  return problems;
+}
+
+/**
+ * Scripture reuses given names heavily, so uniqueness alone is not enough: a
+ * bare "Jacob" next to "Jacob of Serugh" is unique as a string but ambiguous as
+ * an answer. The convention is that whenever figures share a given name, every
+ * one of them carries a qualifier — a patronymic ("son of Isaac"), a see or
+ * birthplace ("of Serugh"), or an epithet ("the Tishbite").
+ *
+ * Enforced here rather than left to review, because the failure mode is a
+ * confusing puzzle rather than a crash: it would ship silently.
+ */
+function checkNameQualifiers(figures) {
+  const byGivenName = new Map();
+  for (const f of figures) {
+    const given = (f.name ?? '').trim().split(/\s+/)[0];
+    if (!given) continue;
+    if (!byGivenName.has(given)) byGivenName.set(given, []);
+    byGivenName.get(given).push(f.name);
+  }
+
+  const problems = [];
+  for (const [given, names] of byGivenName) {
+    if (names.length < 2) continue;
+    const unqualified = names.filter(n => !n.trim().includes(' '));
+    for (const name of unqualified) {
+      problems.push(
+        `"${name}": shares the given name "${given}" with ${names.length - 1} other figure(s) `
+        + `(${names.filter(n => n !== name).join(', ')}) but carries no qualifier. `
+        + `Add a patronymic, see, or epithet — the name is the answer, so it must be unambiguous.`,
+      );
+    }
+  }
+
   return problems;
 }
 
