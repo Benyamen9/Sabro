@@ -326,12 +326,28 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
 
 ### Monitoring
 - ASP.NET Core health check endpoint at `/health` — **live**
-- **UptimeRobot — NOT SET UP YET.** The intent is a 5-minute ping on `/health` with
-  email alerts on downtime. It is still a follow-up in `DEPLOY.md`, so **there is
-  currently no automated downtime alerting**: an outage is noticed only when
-  someone loads the site. This was confirmed empirically on 2026-07-28 (the API
-  had served exactly two `/health` requests in an hour — CD's own post-deploy
-  check and a manual probe — where a 5-minute ping would have produced ~13).
+- **UptimeRobot — live since 2026-07-28.** Five HTTP(s) monitors on a 5-minute
+  interval, emailing on downtime:
+
+  | Monitor | URL |
+  |---|---|
+  | Sabro API | `https://api.sabro.be/health` |
+  | Sabro hub | `https://sabro.be` |
+  | Meltho | `https://meltho.sabro.be` |
+  | Mno | `https://mno.sabro.be` |
+  | Shmo | `https://shmo.sabro.be` |
+
+  Alerts go to the **Owner's personal mailbox directly**, deliberately *not* via
+  `contact@sabro.be` — that address forwards to Hotmail and Microsoft drops the
+  forwarded mail silently, which would give detection with no delivery.
+
+  Verified end to end at setup: the API monitor's pings are visible server-side
+  (`HTTP HEAD /health` every 5 min in `docker logs sabro-api`), all five URLs
+  answer `HEAD` with 200, and a deliberately-failing throwaway monitor confirmed
+  an alert email actually **arrives**.
+
+  > UptimeRobot probes with **HEAD**, not GET. Grepping logs for `GET /health`
+  > will show zero hits and look like the monitor is dead.
 
 > **`/health` is not a freshness check.** It answers "is the site up", not "is the
 > site serving the code we shipped". A stale container passes it happily — on

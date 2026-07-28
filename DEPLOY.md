@@ -372,6 +372,49 @@ snapshot and leave production running.
 
 ---
 
+## Monitoring
+
+**UptimeRobot** — live since 2026-07-28. Five HTTP(s) monitors, 5-minute
+interval, email on downtime:
+
+| Monitor | URL |
+|---|---|
+| Sabro API | `https://api.sabro.be/health` |
+| Sabro hub | `https://sabro.be` |
+| Meltho | `https://meltho.sabro.be` |
+| Mno | `https://mno.sabro.be` |
+| Shmo | `https://shmo.sabro.be` |
+
+Alerts go to the **Owner's personal mailbox directly**, deliberately *not* via
+`contact@sabro.be` — that address forwards to Hotmail and Microsoft drops the
+forwarded mail silently, so routing alerts through it would give detection with
+no delivery.
+
+Two things worth knowing when checking whether it works:
+
+- **UptimeRobot probes with `HEAD`, not `GET`.** Grepping for `GET /health` shows
+  zero hits and looks like the monitor is dead. Use:
+
+  ```bash
+  docker logs sabro-api | grep "HEAD /health"   # expect one every ~5 min
+  ```
+
+- **Only the API logs requests.** The Nuxt containers (frontend, meltho, mno,
+  shmo) log nothing per-request, so their monitors cannot be confirmed from the
+  server side — UptimeRobot's own status is the check there.
+
+**`/health` proves liveness, not freshness.** A stale container answers it
+happily; on 2026-07-28 prod served a two-week-old image with `/health` green the
+whole time. `/version` on `api.sabro.be` and `sabro.be` is what proves prod
+matches `main`, and CD asserts it after every deploy.
+
+To re-test alert delivery, add a throwaway monitor on a guaranteed-dead URL
+(e.g. `https://sabro.be:9999`), wait for the email, then delete it. Worth
+repeating if the alert address ever changes — a monitor that detects downtime
+but cannot deliver the mail is no better than no monitor.
+
+---
+
 ## Common pitfalls
 
 - **No GHCR login on the VPS** → `docker compose pull` fails on private images.
@@ -392,7 +435,6 @@ snapshot and leave production running.
   stay as the safety net; pgBackRest adds PITR between them.
 - **`wwwroot/media/`** off-site sync once bibliography images actually ship
   (currently repo-versioned; nothing user-uploaded lives there yet).
-- **UptimeRobot** pinging `/health` every 5 min.
 - **Meltho**: point it at the live API and add its hostname to the API CORS
   origins (`MELTHO_DOMAIN` in `.env`).
 - **Logto split** (when redeploys start disrupting other apps): move Logto to
