@@ -727,5 +727,21 @@
       "title": "Kontakt",
       "b1": "Für Fragen oder Anfragen zu Ihren Daten schreiben Sie an contact{'@'}sabro.be."
     }
+  },
+  "error": {
+    "notFound": {
+      "title": "Diese Seite gibt es nicht",
+      "body": "Die Adresse ist vielleicht vertippt, oder die Seite wurde verschoben.",
+      "butThisWord": "Dieses Wort schon.",
+      "fromLibrary": "Aus der Bibliothek"
+    },
+    "generic": {
+      "title": "Etwas ist schiefgelaufen",
+      "body": "Versuchen Sie es gleich noch einmal. Wenn es weiterhin auftritt, schreiben Sie uns gern."
+    },
+    "actions": {
+      "library": "Bibliothek durchsuchen",
+      "home": "Zurück zur Übersicht"
+    }
   }
 }

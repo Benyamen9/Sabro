@@ -727,5 +727,21 @@
       "title": "Kontakt",
       "b1": "För frågor eller önskemål om dina uppgifter, skriv till contact{'@'}sabro.be."
     }
+  },
+  "error": {
+    "notFound": {
+      "title": "Den här sidan finns inte",
+      "body": "Adressen kan vara felstavad, eller så har sidan flyttats.",
+      "butThisWord": "Men det gör det här ordet.",
+      "fromLibrary": "Ur biblioteket"
+    },
+    "generic": {
+      "title": "Något gick fel",
+      "body": "Försök igen om en stund. Om det fortsätter, hör gärna av dig."
+    },
+    "actions": {
+      "library": "Bläddra i biblioteket",
+      "home": "Tillbaka till navet"
+    }
   }
 }

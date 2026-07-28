@@ -727,5 +727,21 @@
       "title": "Contact",
       "b1": "For any question or request about your data, write to contact{'@'}sabro.be."
     }
+  },
+  "error": {
+    "notFound": {
+      "title": "This page doesn't exist",
+      "body": "The address may be mistyped, or the page may have moved.",
+      "butThisWord": "But this word does.",
+      "fromLibrary": "From the library"
+    },
+    "generic": {
+      "title": "Something went wrong",
+      "body": "Try again in a moment. If it keeps happening, do get in touch."
+    },
+    "actions": {
+      "library": "Browse the library",
+      "home": "Back to the hub"
+    }
   }
 }

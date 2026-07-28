@@ -727,5 +727,21 @@
       "title": "Contact",
       "b1": "Voor vragen of verzoeken over uw gegevens schrijft u naar contact{'@'}sabro.be."
     }
+  },
+  "error": {
+    "notFound": {
+      "title": "Deze pagina bestaat niet",
+      "body": "Het adres is mogelijk verkeerd getypt, of de pagina is verplaatst.",
+      "butThisWord": "Dit woord wel.",
+      "fromLibrary": "Uit de bibliotheek"
+    },
+    "generic": {
+      "title": "Er is iets misgegaan",
+      "body": "Probeer het zo meteen opnieuw. Blijft dit gebeuren, laat het ons dan weten."
+    },
+    "actions": {
+      "library": "Bekijk de bibliotheek",
+      "home": "Terug naar de hub"
+    }
   }
 }
