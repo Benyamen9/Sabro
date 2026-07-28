@@ -51,6 +51,15 @@
 	reverse_proxy shmo:3000
 }
 
+# Umami — self-hosted, cookieless analytics. Its own hostname so the tracker
+# script and the collect endpoint are first-party to the ecosystem rather than a
+# third party, which is the whole point of self-hosting it. The dashboard behind
+# this hostname is password-protected by Umami itself.
+{$ANALYTICS_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy umami:3000
+}
+
 # --- Future ecosystem clients register their own block here -------------------
 # Additional clients add one reverse_proxy block per hostname, each pointing at
 # their own compose service on the internal network.

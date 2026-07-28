@@ -59,6 +59,37 @@ services:
       retries: 5
     networks: [internal]
 
+  # Self-hosted, cookieless web analytics. Chosen over Google Analytics so the
+  # privacy policy's "no advertising, never sold" stance stays true and no
+  # consent banner is needed: Umami sets no cookies and stores no personal data,
+  # and everything lives on this box rather than a third party's.
+  #
+  # Shares the main Postgres instance but in its OWN database (`umami`), the
+  # same way Logto keeps a store separate from ecosystem application data.
+  # That database is deliberately NOT in the backup set — analytics is derived,
+  # expendable, and not worth the restore surface.
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    container_name: sabro-umami
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-sabro}:${POSTGRES_PASSWORD}@postgres:5432/umami"
+      DATABASE_TYPE: postgresql
+      # Signs Umami's own session tokens for the admin dashboard. Unrelated to
+      # anything the tracker collects from visitors.
+      #
+      # Deliberately NOT `:?required`. A required variable fails compose at parse
+      # time, so a deploy reaching a VPS whose .env lacks it would bring down the
+      # entire stack rather than just this container — the same failure mode as
+      # the 2026-07-28 outage. Unset, only Umami fails to start; the site serves.
+      APP_SECRET: ${UMAMI_APP_SECRET:-}
+      # No telemetry back to the Umami project.
+      DISABLE_TELEMETRY: "1"
+    networks: [internal]
+
   seq:
     image: datalust/seq:latest
     container_name: sabro-seq
@@ -188,6 +219,12 @@ services:
       # the ecosystem (sabro.be + meltho.sabro.be + future apps). Must match the
       # value baked into the image at build time (CD build-arg).
       NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
+      # Cookieless analytics. BOTH must be set for the tracker to be injected;
+      # the website id is issued by Umami's dashboard once the site is added
+      # there, so it stays empty until that one-time step is done — which means
+      # deploying this change tracks nothing until you opt in.
+      NUXT_PUBLIC_UMAMI_URL: "${ANALYTICS_DOMAIN:+https://${ANALYTICS_DOMAIN}}"
+      NUXT_PUBLIC_UMAMI_WEBSITE_ID: "${UMAMI_WEBSITE_ID:-}"
     networks: [internal]
 
   # Meltho — Syriac word game. Lives in its own repo (Hito/Meltho) and is built
@@ -312,6 +349,7 @@ services:
       MELTHO_DOMAIN: ${MELTHO_DOMAIN}
       MNO_DOMAIN: ${MNO_DOMAIN}
       SHMO_DOMAIN: ${SHMO_DOMAIN}
+      ANALYTICS_DOMAIN: ${ANALYTICS_DOMAIN}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

@@ -12,7 +12,7 @@ useSeoMeta({
 // section is a title + a list of body paragraphs (b1..bN present per section).
 const sections = [
   { key: 'who', items: ['b1'] },
-  { key: 'data', items: ['b1', 'b2', 'b3', 'b4', 'b5'] },
+  { key: 'data', items: ['b1', 'b2', 'b3', 'b4', 'b5', 'b6'] },
   { key: 'cookies', items: ['b1'] },
   { key: 'third', items: ['b1', 'b2'] },
   { key: 'storage', items: ['b1'] },

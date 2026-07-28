@@ -17,12 +17,29 @@ const siteUrl = config.public.siteUrl.replace(/\/$/, '')
 // the path (queries like ?page= are near-duplicates and stay uncanonical).
 const canonical = computed(() => `${siteUrl}${route.path}`)
 
+// Self-hosted, cookieless analytics. Injected here rather than from
+// nuxt.config's static head so the endpoint stays a runtime value — the same
+// image can run tracked in production and untracked anywhere else. Omitted
+// entirely unless both values are configured, so there is never a dangling
+// request to a nonexistent host.
+const umami = computed(() => {
+  const { umamiUrl, umamiWebsiteId } = config.public
+  if (!umamiUrl || !umamiWebsiteId) return []
+  return [{
+    key: 'umami',
+    src: `${umamiUrl.replace(/\/$/, '')}/script.js`,
+    'defer': true,
+    'data-website-id': umamiWebsiteId,
+  }]
+})
+
 useHead({
   htmlAttrs: { lang: locale, 'data-theme': themeAttr },
   titleTemplate: (title?: string | null) =>
     title ? `${title} — ${t('site.title')}` : t('seo.home.title'),
   link: [{ rel: 'canonical', href: canonical }],
   script: [
+    ...umami.value,
     {
       // Sitewide WebSite entity; the SearchAction points crawlers at the
       // library's typo-tolerant dictionary search.

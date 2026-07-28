@@ -372,6 +372,65 @@ snapshot and leave production running.
 
 ---
 
+## Analytics (Umami, self-hosted)
+
+Cookieless, self-hosted page analytics. Chosen over Google Analytics deliberately:
+GA4 sets cookies, which under EU ePrivacy needs prior consent — meaning a consent
+banner on every page and rewriting the privacy policy's "no analytics" stance.
+Umami sets no cookies and stores no personal data, so none of that applies, and
+the data never leaves this server.
+
+It shares the main Postgres instance but uses its **own database** (`umami`), the
+way Logto keeps a store separate from ecosystem application data. That database
+is **not** in the backup set — analytics is derived and expendable.
+
+### One-time setup
+
+1. **DNS first.** Add an A record for `analytics.<domain>` → the VPS IP and wait
+   for it to resolve. Caddy requests a certificate for that hostname as soon as
+   `ANALYTICS_DOMAIN` is set, and ACME fails if DNS is not yet live.
+2. **Create the database.** The Postgres container only runs init scripts on a
+   fresh volume, so this is a one-off:
+
+   ```bash
+   docker exec sabro-postgres psql -U sabro -c 'CREATE DATABASE umami;'
+   ```
+
+3. **Fill `.env`** on the VPS:
+
+   ```bash
+   ANALYTICS_DOMAIN=analytics.<domain>
+   UMAMI_APP_SECRET=<openssl rand -hex 32>   # signs dashboard sessions only
+   ```
+
+   `UMAMI_APP_SECRET` is deliberately **not** a required compose variable: a
+   required one fails compose at parse time and would take the whole stack down
+   on a VPS whose `.env` lacks it (the 2026-07-28 failure mode). Unset, only
+   Umami fails to start and the site serves normally.
+
+4. **Deploy**, then open `https://analytics.<domain>` and create the admin
+   account. Umami ships a default `admin` / `umami` login — change it
+   immediately, the dashboard is publicly reachable.
+5. **Add the website** in the dashboard, copy the website ID it issues, set
+   `UMAMI_WEBSITE_ID=<id>` in `.env`, and recreate the frontend.
+
+Until step 5 **no tracker is injected and nothing is collected**: `app.vue` adds
+the script only when both `NUXT_PUBLIC_UMAMI_URL` and
+`NUXT_PUBLIC_UMAMI_WEBSITE_ID` are non-empty. That is also how dev and preview
+builds stay untracked without a code change.
+
+### Verifying
+
+```bash
+curl -s https://<domain>/ | grep -o 'data-website-id="[^"]*"'   # tracker present
+docker logs sabro-umami --tail 20                               # container healthy
+```
+
+The privacy policy (`privacy.data.b6`, all five locales) describes this
+truthfully. Keep the two in step if the setup ever changes.
+
+---
+
 ## Monitoring
 
 **UptimeRobot** — live since 2026-07-28. Five HTTP(s) monitors, 5-minute
