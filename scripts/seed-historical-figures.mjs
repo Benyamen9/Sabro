@@ -82,7 +82,19 @@ const toPayload = (figure) =>
 
 const eraLabel = (era) => (era < 0 ? `${Math.abs(era)}th c. BC` : `${era}th c. AD`);
 
-async function apiFetch(api, token, method, path, body) {
+// The limiter uses a fixed one-minute window, so waiting slightly over a minute
+// guarantees a fresh window rather than landing in the tail of the current one.
+const RATE_LIMIT_WAIT_MS = 65_000;
+const MAX_RATE_LIMIT_RETRIES = 10;
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// The API rate-limits to 100 requests per minute per identity with QueueLimit=0,
+// so excess requests are rejected outright rather than queued. Seeding the full
+// roster is roughly three calls per figure — comfortably over the limit — so a
+// 429 is an expected part of a large run, not an error. Wait out the window and
+// retry rather than failing the figure and leaving the roster half-seeded.
+async function apiFetch(api, token, method, path, body, attempt = 1) {
   const res = await fetch(`${api}${path}`, {
     method,
     headers: {
@@ -91,6 +103,17 @@ async function apiFetch(api, token, method, path, body) {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
+
+  if (res.status === 429 && attempt <= MAX_RATE_LIMIT_RETRIES) {
+    const retryAfter = Number(res.headers.get('retry-after'));
+    const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
+      ? retryAfter * 1000
+      : RATE_LIMIT_WAIT_MS;
+    console.log(`  … rate limited, waiting ${Math.round(waitMs / 1000)}s (attempt ${attempt})`);
+    await sleep(waitMs);
+    return apiFetch(api, token, method, path, body, attempt + 1);
+  }
+
   const text = await res.text();
   let json;
   try { json = text ? JSON.parse(text) : undefined; } catch { json = undefined; }
