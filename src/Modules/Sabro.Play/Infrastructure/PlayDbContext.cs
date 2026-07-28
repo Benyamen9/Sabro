@@ -19,6 +19,8 @@ public sealed class PlayDbContext : DbContext
 
     public DbSet<MnoDailyPuzzle> MnoDailyPuzzles => Set<MnoDailyPuzzle>();
 
+    public DbSet<ShmoDailyPuzzle> ShmoDailyPuzzles => Set<ShmoDailyPuzzle>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);

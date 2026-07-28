@@ -17,15 +17,19 @@ fi
 
 cd /src
 
-# Active-module DbContexts only — Lexicon, Identity, Play. The deferred modules
-# (Translations, Reviews, Biblical) have migrations in the tree but are NOT part
-# of the launch and must not create their schema in production; add them here
-# when those modules are un-deferred.
+# Active-module DbContexts only — Lexicon, Identity, Historical, Play. The
+# deferred modules (Translations, Reviews, Biblical) have migrations in the tree
+# but are NOT part of the launch and must not create their schema in production;
+# add them here when those modules are un-deferred.
+#
+# Historical precedes Play: Play's Shmo daily puzzle points at a historical
+# figure, so the roster's schema must exist before Play's does.
 #
 # "ContextName:project path" — keep in sync with the active module DbContexts.
 contexts=(
   "LexiconDbContext:src/Modules/Sabro.Lexicon"
   "IdentityDbContext:src/Modules/Sabro.Identity"
+  "HistoricalDbContext:src/Modules/Sabro.Historical"
   "PlayDbContext:src/Modules/Sabro.Play"
 )
 

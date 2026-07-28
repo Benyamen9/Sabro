@@ -6,6 +6,7 @@
   </Folder>
   <Folder Name="/src/Modules/">
     <Project Path="src/Modules/Sabro.Biblical/Sabro.Biblical.csproj" />
+    <Project Path="src/Modules/Sabro.Historical/Sabro.Historical.csproj" />
     <Project Path="src/Modules/Sabro.Identity/Sabro.Identity.csproj" />
     <Project Path="src/Modules/Sabro.Lexicon/Sabro.Lexicon.csproj" />
     <Project Path="src/Modules/Sabro.Play/Sabro.Play.csproj" />

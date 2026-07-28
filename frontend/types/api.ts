@@ -69,6 +69,20 @@ export type UpdateLexiconEntryRequest = Schemas['UpdateLexiconEntryRequest']
 export type SetPlayableLexiconEntryRequest = Schemas['SetPlayableLexiconEntryRequest']
 export type LexiconAdminSort = Schemas['LexiconAdminSort']
 
+// Historical figures (the Shmo roster).
+export type HistoricalFigureCategory = Schemas['HistoricalFigureCategory']
+export type HistoricalFigureRole = Schemas['HistoricalFigureRole']
+export type HistoricalFigureRegion = Schemas['HistoricalFigureRegion']
+export type HistoricalFigureTradition = Schemas['HistoricalFigureTradition']
+export type HistoricalFigureGender = Schemas['HistoricalFigureGender']
+export type HistoricalPeriod = Schemas['HistoricalPeriod']
+export type HistoricalFigureStatus = Schemas['HistoricalFigureStatus']
+export type HistoricalFigureDto = Schemas['HistoricalFigureDto']
+export type HistoricalFigureListItem = Schemas['HistoricalFigureListItem']
+export type CreateHistoricalFigureRequest = Schemas['CreateHistoricalFigureRequest']
+export type UpdateHistoricalFigureRequest = Schemas['UpdateHistoricalFigureRequest']
+export type SetPlayableHistoricalFigureRequest = Schemas['SetPlayableHistoricalFigureRequest']
+
 // Play results.
 export type GameResultDto = Schemas['GameResultDto']
 
