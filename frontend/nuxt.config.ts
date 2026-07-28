@@ -34,6 +34,28 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Noto+Sans+Syriac:wght@400;500;700&family=Noto+Sans+Syriac+Eastern:wght@400;500;700&family=Noto+Sans+Syriac+Western:wght@400;500;700&display=swap',
         },
       ],
+      // Google Tag Manager (container GTM-T72SSM3D). Loaded on every SSR'd
+      // page via app.head rather than per-page useHead, since GTM must be
+      // present sitewide. The noscript fallback is pinned to bodyOpen so it
+      // lands immediately after <body>, matching Google's install snippet.
+      script: [
+        {
+          key: 'gtm-script',
+          innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T72SSM3D');`,
+        },
+      ],
+      noscript: [
+        {
+          key: 'gtm-noscript',
+          tagPosition: 'bodyOpen',
+          innerHTML:
+            '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T72SSM3D" height="0" width="0" style="display:none;visibility:hidden"></iframe>',
+        },
+      ],
     },
   },
   typescript: {
