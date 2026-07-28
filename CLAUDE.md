@@ -36,7 +36,7 @@ Sabro deployed (Lexicon + Identity/Profile + Play + API + Logto) → backoffice 
 | Markdown | Markdig |
 | i18n | @nuxtjs/i18n (EN at MVP, FR + NL prepared) |
 | Logging | Serilog + Seq |
-| Monitoring | Health check endpoint + UptimeRobot |
+| Monitoring | Health check endpoint (live) + UptimeRobot (**not set up yet**) |
 | Backups | pgBackRest (point-in-time recovery) |
 
 **Development environment:** Windows + Visual Studio
@@ -325,8 +325,19 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
 **Log levels:** Debug (dev only) / Information (normal operations) / Warning (non-blocking anomalies) / Error (recoverable errors) / Fatal (app crash imminent).
 
 ### Monitoring
-- ASP.NET Core health check endpoint at `/health`
-- UptimeRobot pings the endpoint every 5 minutes; alerts on downtime via email
+- ASP.NET Core health check endpoint at `/health` — **live**
+- **UptimeRobot — NOT SET UP YET.** The intent is a 5-minute ping on `/health` with
+  email alerts on downtime. It is still a follow-up in `DEPLOY.md`, so **there is
+  currently no automated downtime alerting**: an outage is noticed only when
+  someone loads the site. This was confirmed empirically on 2026-07-28 (the API
+  had served exactly two `/health` requests in an hour — CD's own post-deploy
+  check and a manual probe — where a 5-minute ping would have produced ~13).
+
+> **`/health` is not a freshness check.** It answers "is the site up", not "is the
+> site serving the code we shipped". A stale container passes it happily — on
+> 2026-07-28 production silently served a two-week-old image with `/health` green
+> throughout. Use `/version` on both `api.sabro.be` and `sabro.be` to prove prod
+> matches `main`; CD asserts this after every deploy.
 
 Stack Prometheus/Grafana deferred — current solution is sufficient for the project's scale.
 
