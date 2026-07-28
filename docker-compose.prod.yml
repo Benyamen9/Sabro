@@ -128,8 +128,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      # service_started, not service_healthy: SearchIndexInitializerHostedService
+      # already treats Meilisearch as best-effort (catches and logs, never
+      # crashes) since the API stays usable against Postgres alone. Gating on
+      # health here defeats that — a Meilisearch outage (e.g. an engine
+      # refusing an old data directory after a version bump) would otherwise
+      # block `docker compose up -d` entirely and take api+frontend down with
+      # it, as happened 2026-07-28.
       meilisearch:
-        condition: service_healthy
+        condition: service_started
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__Sabro: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-sabro};Username=${POSTGRES_USER:-sabro};Password=${POSTGRES_PASSWORD}"
