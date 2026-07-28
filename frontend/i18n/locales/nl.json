@@ -335,15 +335,38 @@
       "pause": "Pauzeren"
     },
     "letters": {
-      "Alaph": "Olaf", "Beth": "Beth", "Gamal": "Gomal", "Dalath": "Dolath",
-      "He": "He", "Waw": "Waw", "Zayn": "Zay", "Heth": "Ḥeth", "Teth": "Ṭeth",
-      "Yudh": "Yudh", "Kaph": "Kof", "Lamadh": "Lomadh", "Mim": "Mim", "Nun": "Nun",
-      "Semkath": "Semkath", "Ayn": "ʿE", "Pe": "Pe", "Sadhe": "Ṣodhe", "Qaph": "Qof",
-      "Rish": "Rish", "Shin": "Shin", "Taw": "Taw", "Unknown": "—"
+      "Alaph": "Olaf",
+      "Beth": "Beth",
+      "Gamal": "Gomal",
+      "Dalath": "Dolath",
+      "He": "He",
+      "Waw": "Waw",
+      "Zayn": "Zay",
+      "Heth": "Ḥeth",
+      "Teth": "Ṭeth",
+      "Yudh": "Yudh",
+      "Kaph": "Kof",
+      "Lamadh": "Lomadh",
+      "Mim": "Mim",
+      "Nun": "Nun",
+      "Semkath": "Semkath",
+      "Ayn": "ʿE",
+      "Pe": "Pe",
+      "Sadhe": "Ṣodhe",
+      "Qaph": "Qof",
+      "Rish": "Rish",
+      "Shin": "Shin",
+      "Taw": "Taw",
+      "Unknown": "—"
     },
     "vowels": {
-      "Pthaha": "Ptoḥo (a)", "Zqapha": "Zqofo (o)", "Rbasa": "Rboṣo (e)",
-      "Zlama": "Zlomo (e)", "Hbasa": "Ḥboṣo (i)", "Esasa": "ʿṣoṣo (u)", "Rwaha": "Rwoḥo"
+      "Pthaha": "Ptoḥo (a)",
+      "Zqapha": "Zqofo (o)",
+      "Rbasa": "Rboṣo (e)",
+      "Zlama": "Zlomo (e)",
+      "Hbasa": "Ḥboṣo (i)",
+      "Esasa": "ʿṣoṣo (u)",
+      "Rwaha": "Rwoḥo"
     },
     "hardening": {
       "Qushoyo": "Qushoyo — hard",
@@ -360,10 +383,17 @@
     }
   },
   "categories": {
-    "Noun": "Zelfstandig naamwoord", "Verb": "Werkwoord", "Adjective": "Bijvoeglijk naamwoord",
-    "Adverb": "Bijwoord", "Pronoun": "Voornaamwoord", "Preposition": "Voorzetsel",
-    "Conjunction": "Voegwoord", "Particle": "Partikel", "Numeral": "Telwoord",
-    "Interjection": "Tussenwerpsel", "Other": "Overig"
+    "Noun": "Zelfstandig naamwoord",
+    "Verb": "Werkwoord",
+    "Adjective": "Bijvoeglijk naamwoord",
+    "Adverb": "Bijwoord",
+    "Pronoun": "Voornaamwoord",
+    "Preposition": "Voorzetsel",
+    "Conjunction": "Voegwoord",
+    "Particle": "Partikel",
+    "Numeral": "Telwoord",
+    "Interjection": "Tussenwerpsel",
+    "Other": "Overig"
   },
   "admin": {
     "adminRequired": "Beheerderstoegang vereist.",
@@ -577,41 +607,23 @@
         "BiblicalNewTestament": "Nieuwe Testament",
         "Patristic": "Patristisch"
       },
-
       "period": {
-
         "Primeval": "Oertijd",
-
         "Patriarchal": "Aartsvaders",
-
         "ExodusAndConquest": "Uittocht en verovering",
-
         "Judges": "Richteren",
-
         "UnitedMonarchy": "Verenigde monarchie",
-
         "DividedMonarchy": "Verdeelde monarchie",
-
         "ExileAndReturn": "Ballingschap en terugkeer",
-
         "SecondTemple": "Tweede Tempel",
-
         "Apostolic": "Apostolisch",
-
         "AnteNicene": "Voor-Niceens",
-
         "NiceneEra": "Niceens tijdperk",
-
         "PostChalcedonian": "Na Chalcedon",
-
         "IslamicEra": "Islamitisch tijdperk",
-
         "SyriacRenaissance": "Syrische renaissance",
-
         "LateMedieval": "Late middeleeuwen",
-
         "ModernEra": "Moderne tijd"
-
       },
       "role": {
         "Prophet": "Profeet",
@@ -677,7 +689,7 @@
   "privacy": {
     "title": "Privacybeleid",
     "metaDescription": "Hoe het Sabro-ecosysteem met uw gegevens omgaat: wat we bewaren, cookies, uw rechten en hoe u ons bereikt.",
-    "updated": "Laatst bijgewerkt: 6 juli 2026",
+    "updated": "Laatst bijgewerkt: 28 juli 2026",
     "intro": "Sabro is een persoonlijk, niet-commercieel academisch project gewijd aan de Syrische taal. Dit beleid legt uit welke gegevens het Sabro-ecosysteem (sabro.be en meltho.sabro.be) over u bewaart, en waarom.",
     "who": {
       "title": "Wie is verantwoordelijk",
@@ -689,11 +701,12 @@
       "b2": "Uw profiel bevat wat u instelt op de profielpagina: een weergavenaam, uw voorkeurstaal en uw favoriete Syrische schrift.",
       "b3": "Wanneer u aangemeld speelt, bewaren we één resultaat per spel en per dag: de datum, of u het woord vond, en in hoeveel beurten. Spelen zonder account bewaart niets op de server.",
       "b4": "Onze servers houden technische logboeken bij (waaronder IP-adressen en, voor aangemelde verzoeken, uw gebruikers-ID) voor probleemoplossing en misbruikpreventie. Ze worden niet gebruikt voor profilering en slechts zo lang als nodig bewaard.",
-      "b5": "Er is geen reclame, geen analyse- of trackingdienst, en uw gegevens worden nooit verkocht of gedeeld voor marketing."
+      "b5": "Er is geen advertising, en uw gegevens worden nooit verkocht of gedeeld voor marketing.",
+      "b6": "We tellen paginabezoeken met Umami, een analysetool die we zelf op dezelfde server draaien. Het plaatst geen cookies, volgt u niet tussen websites en legt geen persoonsgegevens vast — alleen anonieme, geaggregeerde cijfers zoals welke pagina's gelezen worden en uit welk land een bezoek komt. Er gaat niets naar een derde partij, en daarom is er geen cookiebanner nodig."
     },
     "cookies": {
       "title": "Cookies",
-      "b1": "We gebruiken enkel een klein aantal functionele cookies: uw taal- en schriftvoorkeuren (gedeeld tussen sabro.be en zijn subdomeinen zodat de apps consistent blijven) en een sessiecookie die u aangemeld houdt. Er zijn geen reclame- of analysecookies."
+      "b1": "We gebruiken alleen een kleine set functionele cookies: uw taal- en Syrische-schriftvoorkeuren (gedeeld tussen sabro.be en zijn subdomeinen zodat de apps consistent blijven) en een sessiecookie die u ingelogd houdt. Er zijn geen advertentie- of analysecookies — onze statistieken werken zonder."
     },
     "third": {
       "title": "Diensten van derden",

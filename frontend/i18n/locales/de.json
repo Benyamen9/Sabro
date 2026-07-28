@@ -607,41 +607,23 @@
         "BiblicalNewTestament": "Neues Testament",
         "Patristic": "Patristisch"
       },
-
       "period": {
-
         "Primeval": "Urgeschichte",
-
         "Patriarchal": "Erzväter",
-
         "ExodusAndConquest": "Exodus und Landnahme",
-
         "Judges": "Richterzeit",
-
         "UnitedMonarchy": "Vereinigte Monarchie",
-
         "DividedMonarchy": "Geteilte Monarchie",
-
         "ExileAndReturn": "Exil und Rückkehr",
-
         "SecondTemple": "Zweiter Tempel",
-
         "Apostolic": "Apostolisch",
-
         "AnteNicene": "Vornizänisch",
-
         "NiceneEra": "Nizänische Zeit",
-
         "PostChalcedonian": "Nachchalcedonisch",
-
         "IslamicEra": "Islamische Zeit",
-
         "SyriacRenaissance": "Syrische Renaissance",
-
         "LateMedieval": "Spätmittelalter",
-
         "ModernEra": "Neuzeit"
-
       },
       "role": {
         "Prophet": "Prophet",
@@ -707,7 +689,7 @@
   "privacy": {
     "title": "Datenschutzerklärung",
     "metaDescription": "Wie das Sabro-Ökosystem mit Ihren Daten umgeht: was wir speichern, Cookies, Ihre Rechte und wie Sie uns kontaktieren können.",
-    "updated": "Zuletzt aktualisiert: 6. Juli 2026",
+    "updated": "Zuletzt aktualisiert: 28. Juli 2026",
     "intro": "Sabro ist ein persönliches, nicht-kommerzielles akademisches Projekt, das der syrischen Sprache gewidmet ist. Diese Richtlinie erklärt, welche Daten das Sabro-Ökosystem (sabro.be und meltho.sabro.be) über Sie speichert und warum.",
     "who": {
       "title": "Wer verantwortlich ist",
@@ -719,11 +701,12 @@
       "b2": "Ihr Profil enthält das, was Sie auf der Profilseite festlegen: einen Anzeigenamen, Ihre bevorzugte Sprache und Ihre bevorzugte syrische Schrift.",
       "b3": "Wenn Sie ein Spiel angemeldet spielen, speichern wir ein Ergebnis pro Spiel und Tag: das Datum, ob Sie es gelöst haben, und in wie vielen Versuchen. Spielen ohne Konto speichert nichts auf dem Server.",
       "b4": "Unsere Server führen technische Protokolle (einschließlich IP-Adressen und, bei angemeldeten Anfragen, Ihrer Benutzer-ID) zur Fehlerbehebung und Missbrauchsprävention. Sie werden nicht zur Profilbildung verwendet und nur so lange aufbewahrt, wie nötig.",
-      "b5": "Es gibt keine Werbung, keinen Analyse- oder Tracking-Dienst, und Ihre Daten werden niemals verkauft oder für Marketingzwecke weitergegeben."
+      "b5": "Es gibt keine Werbung, und Ihre Daten werden niemals verkauft oder für Marketing weitergegeben.",
+      "b6": "Wir zählen Seitenaufrufe mit Umami, einem Analysewerkzeug, das wir selbst auf demselben Server betreiben. Es setzt keine Cookies, verfolgt Sie nicht über Websites hinweg und speichert keine personenbezogenen Daten — nur anonyme, aggregierte Zahlen wie gelesene Seiten und das Herkunftsland eines Besuchs. Nichts geht an Dritte, weshalb kein Cookie-Banner nötig ist."
     },
     "cookies": {
       "title": "Cookies",
-      "b1": "Wir verwenden nur eine kleine Anzahl funktionaler Cookies: Ihre Sprach- und Syrisch-Schrift-Einstellungen (geteilt zwischen sabro.be und seinen Subdomains, damit die Apps konsistent bleiben) sowie ein Sitzungscookie, das Sie angemeldet hält. Es gibt keine Werbe- oder Analyse-Cookies."
+      "b1": "Wir verwenden nur wenige funktionale Cookies: Ihre Sprach- und Syrisch-Schrifteinstellungen (geteilt zwischen sabro.be und seinen Subdomains, damit die Apps konsistent bleiben) und ein Sitzungs-Cookie, das Sie angemeldet hält. Es gibt keine Werbe- oder Analyse-Cookies — unsere Statistik kommt ohne aus."
     },
     "third": {
       "title": "Dienste Dritter",

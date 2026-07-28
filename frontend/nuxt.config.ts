@@ -34,28 +34,11 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Noto+Sans+Syriac:wght@400;500;700&family=Noto+Sans+Syriac+Eastern:wght@400;500;700&family=Noto+Sans+Syriac+Western:wght@400;500;700&display=swap',
         },
       ],
-      // Google Tag Manager (container GTM-T72SSM3D). Loaded on every SSR'd
-      // page via app.head rather than per-page useHead, since GTM must be
-      // present sitewide. The noscript fallback is pinned to bodyOpen so it
-      // lands immediately after <body>, matching Google's install snippet.
-      script: [
-        {
-          key: 'gtm-script',
-          innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-T72SSM3D');`,
-        },
-      ],
-      noscript: [
-        {
-          key: 'gtm-noscript',
-          tagPosition: 'bodyOpen',
-          innerHTML:
-            '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T72SSM3D" height="0" width="0" style="display:none;visibility:hidden"></iframe>',
-        },
-      ],
+      // Analytics is NOT declared here. Google Tag Manager briefly was, which
+      // put a third-party request on every page load and contradicted the
+      // privacy policy's "no analytics or tracking service". It is replaced by
+      // self-hosted, cookieless Umami, injected from app.vue so its URL stays a
+      // runtime value rather than one baked into the image at build time.
     },
   },
   typescript: {
@@ -157,6 +140,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       mnoUrl: 'https://mno.sabro.be',
       // Shmo, the historical-figure game, same convention (NUXT_PUBLIC_SHMO_URL).
       shmoUrl: 'https://shmo.sabro.be',
+      // Self-hosted Umami analytics. Cookieless and storing no personal data,
+      // so it needs no consent banner — which is the reason it was chosen over
+      // GA4. Both values empty (the default) disables analytics entirely: no
+      // script is injected, so dev and preview builds stay untracked without a
+      // code change. Set at runtime via NUXT_PUBLIC_UMAMI_* in compose.
+      umamiUrl: '',
+      umamiWebsiteId: '',
     },
   },
 })

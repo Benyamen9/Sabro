@@ -607,41 +607,23 @@
         "BiblicalNewTestament": "Nya testamentet",
         "Patristic": "Patristisk"
       },
-
       "period": {
-
         "Primeval": "Urtiden",
-
         "Patriarchal": "Patriarkerna",
-
         "ExodusAndConquest": "Uttåget och erövringen",
-
         "Judges": "Domartiden",
-
         "UnitedMonarchy": "Enade kungadömet",
-
         "DividedMonarchy": "Delade kungadömet",
-
         "ExileAndReturn": "Exil och återkomst",
-
         "SecondTemple": "Andra templet",
-
         "Apostolic": "Apostolisk",
-
         "AnteNicene": "Förnicensk",
-
         "NiceneEra": "Nicenska tiden",
-
         "PostChalcedonian": "Efter Chalcedon",
-
         "IslamicEra": "Islamiska tiden",
-
         "SyriacRenaissance": "Syrisk renässans",
-
         "LateMedieval": "Senmedeltid",
-
         "ModernEra": "Modern tid"
-
       },
       "role": {
         "Prophet": "Profet",
@@ -707,7 +689,7 @@
   "privacy": {
     "title": "Integritetspolicy",
     "metaDescription": "Hur Sabro-ekosystemet hanterar dina uppgifter: vad vi lagrar, cookies, dina rättigheter och hur du kontaktar oss.",
-    "updated": "Senast uppdaterad: 6 juli 2026",
+    "updated": "Senast uppdaterad: 28 juli 2026",
     "intro": "Sabro är ett personligt, icke-kommersiellt akademiskt projekt tillägnat det syriska språket. Denna policy förklarar vilka uppgifter Sabro-ekosystemet (sabro.be och meltho.sabro.be) lagrar om dig, och varför.",
     "who": {
       "title": "Vem som är ansvarig",
@@ -719,11 +701,12 @@
       "b2": "Din profil innehåller det du anger på profilsidan: ett visningsnamn, ditt föredragna språk och din föredragna syriska skrift.",
       "b3": "När du spelar ett spel medan du är inloggad lagrar vi ett resultat per spel och dag: datumet, om du löste det och i hur många försök. Att spela utan konto lagrar ingenting på servern.",
       "b4": "Våra servrar för tekniska loggar (inklusive IP-adresser och, för inloggade förfrågningar, ditt användar-ID) för felsökning och missbruksförebyggande. De används inte för profilering och sparas endast så länge det behövs.",
-      "b5": "Det finns ingen reklam, ingen analys- eller spårningstjänst, och dina uppgifter säljs eller delas aldrig för marknadsföring."
+      "b5": "Det finns ingen reklam, och dina uppgifter säljs eller delas aldrig för marknadsföring.",
+      "b6": "Vi räknar sidbesök med Umami, ett analysverktyg som vi själva driver på samma server. Det sätter inga kakor, följer dig inte mellan webbplatser och lagrar inga personuppgifter — endast anonym, aggregerad statistik som vilka sidor som läses och vilket land ett besök kommer från. Ingenting skickas till tredje part, och därför behövs ingen kakbanner."
     },
     "cookies": {
       "title": "Cookies",
-      "b1": "Vi använder endast en liten uppsättning funktionella cookies: dina språk- och syrisk skrift-inställningar (delade mellan sabro.be och dess underdomäner så att apparna förblir konsekventa) och en sessionscookie som håller dig inloggad. Det finns inga reklam- eller analyscookies."
+      "b1": "Vi använder bara ett fåtal funktionella kakor: dina språk- och syriska skriftinställningar (delade mellan sabro.be och dess underdomäner så att apparna förblir konsekventa) och en sessionskaka som håller dig inloggad. Det finns inga reklam- eller analyskakor — vår statistik fungerar utan dem."
     },
     "third": {
       "title": "Tredjepartstjänster",

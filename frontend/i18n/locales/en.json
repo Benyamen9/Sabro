@@ -335,15 +335,38 @@
       "pause": "Pause"
     },
     "letters": {
-      "Alaph": "Olaf", "Beth": "Beth", "Gamal": "Gomal", "Dalath": "Dolath",
-      "He": "He", "Waw": "Waw", "Zayn": "Zay", "Heth": "Ḥeth", "Teth": "Ṭeth",
-      "Yudh": "Yudh", "Kaph": "Kof", "Lamadh": "Lomadh", "Mim": "Mim", "Nun": "Nun",
-      "Semkath": "Semkath", "Ayn": "ʿE", "Pe": "Pe", "Sadhe": "Ṣodhe", "Qaph": "Qof",
-      "Rish": "Rish", "Shin": "Shin", "Taw": "Taw", "Unknown": "—"
+      "Alaph": "Olaf",
+      "Beth": "Beth",
+      "Gamal": "Gomal",
+      "Dalath": "Dolath",
+      "He": "He",
+      "Waw": "Waw",
+      "Zayn": "Zay",
+      "Heth": "Ḥeth",
+      "Teth": "Ṭeth",
+      "Yudh": "Yudh",
+      "Kaph": "Kof",
+      "Lamadh": "Lomadh",
+      "Mim": "Mim",
+      "Nun": "Nun",
+      "Semkath": "Semkath",
+      "Ayn": "ʿE",
+      "Pe": "Pe",
+      "Sadhe": "Ṣodhe",
+      "Qaph": "Qof",
+      "Rish": "Rish",
+      "Shin": "Shin",
+      "Taw": "Taw",
+      "Unknown": "—"
     },
     "vowels": {
-      "Pthaha": "Ptoḥo (a)", "Zqapha": "Zqofo (o)", "Rbasa": "Rboṣo (e)",
-      "Zlama": "Zlomo (e)", "Hbasa": "Ḥboṣo (i)", "Esasa": "ʿṣoṣo (u)", "Rwaha": "Rwoḥo"
+      "Pthaha": "Ptoḥo (a)",
+      "Zqapha": "Zqofo (o)",
+      "Rbasa": "Rboṣo (e)",
+      "Zlama": "Zlomo (e)",
+      "Hbasa": "Ḥboṣo (i)",
+      "Esasa": "ʿṣoṣo (u)",
+      "Rwaha": "Rwoḥo"
     },
     "hardening": {
       "Qushoyo": "Qushoyo — hard",
@@ -360,9 +383,17 @@
     }
   },
   "categories": {
-    "Noun": "Noun", "Verb": "Verb", "Adjective": "Adjective", "Adverb": "Adverb",
-    "Pronoun": "Pronoun", "Preposition": "Preposition", "Conjunction": "Conjunction",
-    "Particle": "Particle", "Numeral": "Numeral", "Interjection": "Interjection", "Other": "Other"
+    "Noun": "Noun",
+    "Verb": "Verb",
+    "Adjective": "Adjective",
+    "Adverb": "Adverb",
+    "Pronoun": "Pronoun",
+    "Preposition": "Preposition",
+    "Conjunction": "Conjunction",
+    "Particle": "Particle",
+    "Numeral": "Numeral",
+    "Interjection": "Interjection",
+    "Other": "Other"
   },
   "admin": {
     "adminRequired": "Admin access required.",
@@ -576,41 +607,23 @@
         "BiblicalNewTestament": "New Testament",
         "Patristic": "Patristic"
       },
-
       "period": {
-
         "Primeval": "Primeval",
-
         "Patriarchal": "Patriarchal",
-
         "ExodusAndConquest": "Exodus & Conquest",
-
         "Judges": "Judges",
-
         "UnitedMonarchy": "United Monarchy",
-
         "DividedMonarchy": "Divided Monarchy",
-
         "ExileAndReturn": "Exile & Return",
-
         "SecondTemple": "Second Temple",
-
         "Apostolic": "Apostolic",
-
         "AnteNicene": "Ante-Nicene",
-
         "NiceneEra": "Nicene era",
-
         "PostChalcedonian": "Post-Chalcedonian",
-
         "IslamicEra": "Islamic era",
-
         "SyriacRenaissance": "Syriac Renaissance",
-
         "LateMedieval": "Late medieval",
-
         "ModernEra": "Modern era"
-
       },
       "role": {
         "Prophet": "Prophet",
@@ -676,7 +689,7 @@
   "privacy": {
     "title": "Privacy Policy",
     "metaDescription": "How the Sabro ecosystem handles your data: what we store, cookies, your rights, and how to contact us.",
-    "updated": "Last updated: 6 July 2026",
+    "updated": "Last updated: 28 July 2026",
     "intro": "Sabro is a personal, non-commercial academic project dedicated to the Syriac language. This policy explains what data the Sabro ecosystem (sabro.be and meltho.sabro.be) stores about you, and why.",
     "who": {
       "title": "Who is responsible",
@@ -688,11 +701,12 @@
       "b2": "Your profile holds what you set on the profile page: a display name, your preferred language, and your preferred Syriac script.",
       "b3": "When you play a game while signed in, we store one result per game and day: the date, whether you solved it, and in how many attempts. Playing without an account stores nothing on the server.",
       "b4": "Our servers keep technical logs (including IP addresses and, for signed-in requests, your user ID) for troubleshooting and abuse prevention. They are not used for profiling and are kept only as long as needed.",
-      "b5": "There is no advertising, no analytics or tracking service, and your data is never sold or shared for marketing."
+      "b5": "There is no advertising, and your data is never sold or shared for marketing.",
+      "b6": "We count page visits with Umami, an analytics tool we host ourselves on the same server. It sets no cookies, does not track you between sites, and records no personal data — only anonymous, aggregated figures such as which pages are read and which country a visit came from. Nothing is sent to a third party, which is why no cookie banner is needed."
     },
     "cookies": {
       "title": "Cookies",
-      "b1": "We use a small set of functional cookies only: your language and Syriac-script preferences (shared across sabro.be and its subdomains so the apps stay consistent) and a session cookie that keeps you signed in. There are no advertising or analytics cookies."
+      "b1": "We use a small set of functional cookies only: your language and Syriac-script preferences (shared across sabro.be and its subdomains so the apps stay consistent) and a session cookie that keeps you signed in. There are no advertising or analytics cookies — our analytics works without them."
     },
     "third": {
       "title": "Third-party services",
