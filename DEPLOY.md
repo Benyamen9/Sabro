@@ -291,6 +291,26 @@ a scratch cluster and checks the data is actually there. Everything logs to
 Until step 3, backups are **local-only** (they survive a bad migration or a
 fat-fingered delete, but not the VPS disk dying).
 
+### Which restore do I need?
+
+Reach for the narrowest tool that fixes the symptom. Restoring the whole server
+is almost never the right first move — it is the only option here that throws
+away data that was fine.
+
+| Symptom | Use | What it costs you |
+|---|---|---|
+| Bad app deploy (broken image, bad code live) | [Rollback](#rollback) — re-pin the previous SHA | Nothing |
+| Search empty, stale, or wrong | [Rebuild Meilisearch](#meilisearch) from Postgres | Nothing — derived data |
+| A container won't start / infra state is wrong | Fix forward (compose + `up -d`) | Nothing |
+| Data lost or corrupted, box otherwise healthy | [DB restore runbook](#restore-runbook) below | Only the DB rolls back |
+| Box unrecoverable, or you need it exactly as it was | [Server restore](#server-restore-hetzner) | **Everything**, including Postgres |
+| VPS destroyed / disk gone | Re-provision (Phases 1–4) + DB restore from the Storage Box | Since last nightly dump |
+
+The 2026-07-28 outage is the worked example: Meilisearch went unhealthy and took
+api/frontend down with it, but **Postgres was never unhealthy**. The fix was one
+compose line and a volume wipe. Restoring the server would have "worked" and
+silently discarded a day of game results and sign-ups for no reason.
+
 ### Restore runbook
 
 Dumps are plain `pg_dump -Fc` archives — restore with stock tooling. To restore
@@ -313,6 +333,42 @@ service instead of `api`). If the VPS itself is gone: provision a new one
 (Phases 1–4), `sftp -P 23` the dumps back from the Storage Box, and restore
 before first bring-up. Afterwards rebuild the Meilisearch indexes (see above) —
 they are derived data and not part of the backups.
+
+### Server restore (Hetzner)
+
+Distinct from the dumps above, and solving a different problem. The Storage Box
+holds **database** dumps; Hetzner's server backups hold an image of the **whole
+disk** — containers, volumes, `/opt/sabro`, and the Postgres data directory
+together. Use it when the machine's state is wrong, not when the data is.
+
+Two flavours, both under the server in the Hetzner Cloud Console:
+
+- **Backups** (enabled on `Sabro-prod`) — automatic, **7 rolling daily** images,
+  ~20% of the server price. Cadence is daily, so a restore can cost up to 24h.
+- **Snapshots** — manual, kept until you delete them, billed per GB-month. Take
+  one immediately before a risky infra change to get a rollback point that is
+  minutes old instead of hours.
+
+  > Since the `deploy-safety` CI job now catches data-volume incompatibilities
+  > (e.g. a Meilisearch engine refusing the existing on-disk format) *before*
+  > merge, this is belt-and-braces rather than essential.
+
+**Restoring** (Console → `Sabro-prod` → Backups/Snapshots → pick an image →
+Restore): the server powers off and its disk is overwritten. Read this first:
+
+- **It rolls back Postgres too.** Every game result, sign-up, profile edit, and
+  lexicon change written since that image is gone. If the database is healthy,
+  restore the database instead — never the server.
+- **The IP is preserved**, so DNS and Caddy certificates are unaffected.
+- **You land on an old app image.** Re-run the latest `sabro-cd` (or re-pin per
+  [Rollback](#rollback)) so prod matches `main` again, then confirm with
+  `/version` on both `api.sabro.be` and `sabro.be` — a 200 does **not** prove
+  prod is current.
+- **Rebuild Meilisearch afterwards** (see above); a restored index can lag the
+  restored database.
+
+If the goal is forensics rather than recovery, build a *new* server from the
+snapshot and leave production running.
 
 ---
 
