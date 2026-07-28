@@ -132,3 +132,125 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 7
+
+  deploy-safety:
+    name: Deploy safety (compose + data upgrade)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Dummy values for every `${VAR:?...}` in the prod compose. These assert
+      # the file *parses*; they are not secrets and never reach a real service.
+      - name: Write dummy env
+        run: |
+          cat > .env.ci <<'ENV'
+          CADDY_ACME_EMAIL=ci@example.com
+          POSTGRES_PASSWORD=x
+          MEILI_MASTER_KEY=x
+          LOGTO_DB_PASSWORD=x
+          SABRO_API_RESOURCE=x
+          NUXT_LOGTO_APP_ID=x
+          NUXT_LOGTO_APP_SECRET=x
+          NUXT_LOGTO_COOKIE_ENCRYPTION_KEY=x
+          MELTHO_LOGTO_APP_ID=x
+          MELTHO_LOGTO_APP_SECRET=x
+          MELTHO_LOGTO_COOKIE_ENCRYPTION_KEY=x
+          MNO_LOGTO_APP_ID=x
+          MNO_LOGTO_APP_SECRET=x
+          MNO_LOGTO_COOKIE_ENCRYPTION_KEY=x
+          SHMO_LOGTO_APP_ID=x
+          SHMO_LOGTO_APP_SECRET=x
+          SHMO_LOGTO_COOKIE_ENCRYPTION_KEY=x
+          ENV
+
+      - name: Prod compose parses with a pinned image tag
+        run: |
+          set -euo pipefail
+          SABRO_IMAGE_TAG=ci-parse-check \
+            docker compose --env-file .env.ci -f docker-compose.prod.yml config >/dev/null
+          echo "OK: docker-compose.prod.yml parses."
+
+      # Locks in the fix from the 2026-07-28 incident: a hand-run `up -d` that
+      # forgot --env-file resolved ${SABRO_IMAGE_TAG:-latest} to a stale cached
+      # image and silently rolled production back two weeks, with every health
+      # check still green. A missing tag must fail, not fall back.
+      - name: Image tag must not silently fall back
+        run: |
+          set -euo pipefail
+          if err=$(docker compose --env-file .env.ci -f docker-compose.prod.yml config 2>&1); then
+            echo "::error::docker-compose.prod.yml resolved with no SABRO_IMAGE_TAG set. Restore the ':?' guard — a fallback lets a deploy serve a stale image (2026-07-28 incident)."
+            exit 1
+          fi
+          case "$err" in
+            *SABRO_IMAGE_TAG*) echo "OK: a missing SABRO_IMAGE_TAG fails the compose file." ;;
+            *) echo "::error::compose failed, but not on SABRO_IMAGE_TAG:"; echo "$err"; exit 1 ;;
+          esac
+
+      # The gate that would have caught PR #132. A data-bearing engine bump can
+      # pass every build/test and still refuse the on-disk format already sitting
+      # on the production volume. Booting the stack fresh proves nothing, so this
+      # boots the OLD version, writes data, then starts the NEW version on that
+      # SAME volume — exactly what happens on deploy.
+      - name: Meilisearch upgrade test (only when the tag changes)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
+
+          extract() { sed -n 's|.*image: getmeili/meilisearch:\([^[:space:]]*\).*|\1|p' | head -1; }
+          old=$(git show "origin/$BASE_REF:docker-compose.prod.yml" 2>/dev/null | extract || true)
+          new=$(extract < docker-compose.prod.yml)
+
+          if [ -z "$old" ] || [ "$old" = "$new" ]; then
+            echo "Meilisearch tag unchanged ($new) — skipping upgrade test."
+            exit 0
+          fi
+
+          echo "Meilisearch $old -> $new: testing the new engine against an $old data directory."
+
+          # Throwaway, but MEILI_ENV=production rejects a master key under 16
+          # bytes — a short one makes the *baseline* fail and the gate go red
+          # for the wrong reason. Keep this at 32 characters.
+          KEY=ci-test-master-key-32-bytes-long
+
+          docker volume create meili-upgrade-test >/dev/null
+
+          wait_healthy() {
+            for _ in $(seq 1 30); do
+              if docker exec "$1" wget -q --spider http://127.0.0.1:7700/health 2>/dev/null; then
+                return 0
+              fi
+              sleep 2
+            done
+            return 1
+          }
+
+          docker run -d --name meili-old -v meili-upgrade-test:/meili_data \
+            -e MEILI_MASTER_KEY="$KEY" -e MEILI_ENV=production \
+            "getmeili/meilisearch:$old" >/dev/null
+          wait_healthy meili-old || { echo "::error::Baseline meilisearch:$old never became healthy."; docker logs meili-old | tail -20; exit 1; }
+
+          # Populate it so the volume carries a real, versioned on-disk format.
+          docker exec meili-old wget -qO- \
+            --header="Authorization: Bearer $KEY" \
+            --header="Content-Type: application/json" \
+            --post-data='{"uid":"lexicon","primaryKey":"id"}' \
+            http://127.0.0.1:7700/indexes >/dev/null
+          sleep 3
+          docker stop meili-old >/dev/null
+
+          docker run -d --name meili-new -v meili-upgrade-test:/meili_data \
+            -e MEILI_MASTER_KEY="$KEY" -e MEILI_ENV=production \
+            "getmeili/meilisearch:$new" >/dev/null
+          if wait_healthy meili-new; then
+            echo "OK: meilisearch:$new starts cleanly on a :$old data directory."
+            exit 0
+          fi
+
+          echo "::error::meilisearch:$new refuses the :$old data directory, so this bump will take production down on deploy (the api/frontend swap aborts on the unhealthy dependency). Plan the rollout: wipe the meilisearch volume during the deploy window and rebuild indexes from Postgres via /api/v1/admin/search/rebuild/lexicon, which is the documented ritual. See the 2026-07-28 incident."
+          docker logs meili-new 2>&1 | tail -20
+          exit 1

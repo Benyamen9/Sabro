@@ -8,9 +8,17 @@ name: sabro-prod
 # Deploy order enforced by depends_on:
 #   postgres (healthy) -> migrator (runs to completion) -> api -> caddy
 #
-# Bring up:  docker compose -f docker-compose.prod.yml up -d
+# Bring up:  docker compose --env-file .env --env-file .env.deploy \
+#              -f docker-compose.prod.yml up -d
 # Migrate:   handled automatically by the `migrator` one-shot before `api` starts
 #            (CD also runs it explicitly before swapping app containers).
+#
+# SABRO_IMAGE_TAG is REQUIRED, deliberately with no `:-latest` fallback. CD pins
+# it to the deployed commit in `.env.deploy`. With a fallback, a hand-run
+# `up -d` that forgot the env files silently resolved to whatever `:latest`
+# happened to be cached locally — on 2026-07-28 that quietly rolled prod back to
+# a two-week-old image while every health check stayed green. Failing loudly on
+# a missing tag is strictly better than serving stale code.
 
 services:
   postgres:
@@ -115,7 +123,7 @@ services:
   # explicitly before swapping app containers:
   #   docker compose -f docker-compose.prod.yml --profile migrate run --rm migrator
   migrator:
-    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-migrator:${SABRO_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-migrator:${SABRO_IMAGE_TAG:?SABRO_IMAGE_TAG is required. CD writes it to .env.deploy; run compose with --env-file .env --env-file .env.deploy}
     container_name: sabro-migrator
     profiles: ["migrate"]
     restart: "no"
@@ -127,7 +135,7 @@ services:
     networks: [internal]
 
   api:
-    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-api:${SABRO_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-api:${SABRO_IMAGE_TAG:?SABRO_IMAGE_TAG is required. CD writes it to .env.deploy; run compose with --env-file .env --env-file .env.deploy}
     container_name: sabro-api
     restart: unless-stopped
     depends_on:
@@ -163,7 +171,7 @@ services:
     networks: [internal]
 
   frontend:
-    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-frontend:${SABRO_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-frontend:${SABRO_IMAGE_TAG:?SABRO_IMAGE_TAG is required. CD writes it to .env.deploy; run compose with --env-file .env --env-file .env.deploy}
     container_name: sabro-frontend
     restart: unless-stopped
     depends_on:
@@ -256,7 +264,7 @@ services:
   # Run on demand:  docker compose exec backup backup.sh
   # Restore runbook: see DEPLOY.md § Backups.
   backup:
-    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-backup:${SABRO_IMAGE_TAG:-latest}
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-backup:${SABRO_IMAGE_TAG:?SABRO_IMAGE_TAG is required. CD writes it to .env.deploy; run compose with --env-file .env --env-file .env.deploy}
     container_name: sabro-backup
     restart: unless-stopped
     depends_on:
