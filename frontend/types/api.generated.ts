@@ -4,6 +4,411 @@
  */
 
 export interface paths {
+    "/api/v1/admin/historical-figures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    search?: string;
+                    status?: components["schemas"]["HistoricalFigureStatus"];
+                    category?: components["schemas"]["HistoricalFigureCategory"];
+                    period?: components["schemas"]["HistoricalPeriod"];
+                    role?: components["schemas"]["HistoricalFigureRole"];
+                    region?: components["schemas"]["HistoricalFigureRegion"];
+                    playableInShmo?: boolean;
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfHistoricalFigureDto"];
+                        "application/json": components["schemas"]["PagedResultOfHistoricalFigureDto"];
+                        "text/json": components["schemas"]["PagedResultOfHistoricalFigureDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateHistoricalFigureRequest"];
+                    "text/json": components["schemas"]["CreateHistoricalFigureRequest"];
+                    "application/*+json": components["schemas"]["CreateHistoricalFigureRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["HistoricalFigureDto"];
+                        "application/json": components["schemas"]["HistoricalFigureDto"];
+                        "text/json": components["schemas"]["HistoricalFigureDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/historical-figures/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["HistoricalFigureDto"];
+                        "application/json": components["schemas"]["HistoricalFigureDto"];
+                        "text/json": components["schemas"]["HistoricalFigureDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateHistoricalFigureRequest"];
+                    "text/json": components["schemas"]["UpdateHistoricalFigureRequest"];
+                    "application/*+json": components["schemas"]["UpdateHistoricalFigureRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["HistoricalFigureDto"];
+                        "application/json": components["schemas"]["HistoricalFigureDto"];
+                        "text/json": components["schemas"]["HistoricalFigureDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/historical-figures/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["HistoricalFigureDto"];
+                        "application/json": components["schemas"]["HistoricalFigureDto"];
+                        "text/json": components["schemas"]["HistoricalFigureDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/historical-figures/{id}/unpublish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["HistoricalFigureDto"];
+                        "application/json": components["schemas"]["HistoricalFigureDto"];
+                        "text/json": components["schemas"]["HistoricalFigureDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/historical-figures/{id}/playable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SetPlayableHistoricalFigureRequest"];
+                    "text/json": components["schemas"]["SetPlayableHistoricalFigureRequest"];
+                    "application/*+json": components["schemas"]["SetPlayableHistoricalFigureRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["HistoricalFigureDto"];
+                        "application/json": components["schemas"]["HistoricalFigureDto"];
+                        "text/json": components["schemas"]["HistoricalFigureDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/lexicon": {
         parameters: {
             query?: never;
@@ -1822,6 +2227,111 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/historical-figures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    category?: components["schemas"]["HistoricalFigureCategory"];
+                    period?: components["schemas"]["HistoricalPeriod"];
+                    role?: components["schemas"]["HistoricalFigureRole"];
+                    region?: components["schemas"]["HistoricalFigureRegion"];
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PagedResultOfHistoricalFigureListItem"];
+                        "application/json": components["schemas"]["PagedResultOfHistoricalFigureListItem"];
+                        "text/json": components["schemas"]["PagedResultOfHistoricalFigureListItem"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/historical-figures/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["HistoricalFigureListItem"];
+                        "application/json": components["schemas"]["HistoricalFigureListItem"];
+                        "text/json": components["schemas"]["HistoricalFigureListItem"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/lexicon-entries/{id}": {
         parameters: {
             query?: never;
@@ -2290,6 +2800,54 @@ export interface paths {
                         "text/plain": components["schemas"]["ValidationProblemDetails"];
                         "application/json": components["schemas"]["ValidationProblemDetails"];
                         "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/play/shmo/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ShmoPuzzleDto"];
+                        "application/json": components["schemas"]["ShmoPuzzleDto"];
+                        "text/json": components["schemas"]["ShmoPuzzleDto"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
                     };
                 };
             };
@@ -3651,6 +4209,17 @@ export interface components {
             order: number | string;
             syriacName?: null | string;
         };
+        CreateHistoricalFigureRequest: {
+            name: string;
+            category: components["schemas"]["HistoricalFigureCategory"];
+            /** Format: int32 */
+            era: number | string;
+            period: components["schemas"]["HistoricalPeriod"];
+            role: components["schemas"]["HistoricalFigureRole"];
+            region: components["schemas"]["HistoricalFigureRegion"];
+            gender: components["schemas"]["HistoricalFigureGender"];
+            tradition?: null | components["schemas"]["HistoricalFigureTradition"];
+        };
         CreateLexiconEntryRequest: {
             syriacUnvocalized: string;
             sblTransliteration: null | string;
@@ -3769,6 +4338,52 @@ export interface components {
         GrammaticalCategory: "Noun" | "Verb" | "Adjective" | "Adverb" | "Pronoun" | "Preposition" | "Conjunction" | "Particle" | "Numeral" | "Interjection" | "Other";
         /** @enum {string} */
         HardeningSource: "None" | "Marked" | "Computed";
+        /** @enum {string} */
+        HistoricalFigureCategory: "BiblicalOldTestament" | "BiblicalNewTestament" | "Patristic";
+        HistoricalFigureDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            category: components["schemas"]["HistoricalFigureCategory"];
+            /** Format: int32 */
+            era: number | string;
+            period: components["schemas"]["HistoricalPeriod"];
+            role: components["schemas"]["HistoricalFigureRole"];
+            region: components["schemas"]["HistoricalFigureRegion"];
+            tradition: null | components["schemas"]["HistoricalFigureTradition"];
+            gender: components["schemas"]["HistoricalFigureGender"];
+            status: components["schemas"]["HistoricalFigureStatus"];
+            playableInShmo: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        /** @enum {string} */
+        HistoricalFigureGender: "Male" | "Female";
+        HistoricalFigureListItem: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            category: components["schemas"]["HistoricalFigureCategory"];
+            /** Format: int32 */
+            era: number | string;
+            period: components["schemas"]["HistoricalPeriod"];
+            role: components["schemas"]["HistoricalFigureRole"];
+            region: components["schemas"]["HistoricalFigureRegion"];
+            tradition: null | components["schemas"]["HistoricalFigureTradition"];
+            gender: components["schemas"]["HistoricalFigureGender"];
+        };
+        /** @enum {string} */
+        HistoricalFigureRegion: "IsraelJudah" | "Mesopotamia" | "Syria" | "Persia" | "Arabia" | "Egypt" | "Ethiopia" | "AsiaMinor" | "Greece" | "Italy" | "Armenia" | "India" | "Other";
+        /** @enum {string} */
+        HistoricalFigureRole: "Prophet" | "King" | "Judge" | "Apostle" | "Evangelist" | "Patriarch" | "Bishop" | "Translator" | "Commentator" | "Monk" | "Martyr" | "Other";
+        /** @enum {string} */
+        HistoricalFigureStatus: "Draft" | "Published";
+        /** @enum {string} */
+        HistoricalFigureTradition: "PreChalcedonian" | "WestSyriac" | "EastSyriac" | "Coptic" | "Armenian" | "Ethiopian" | "Malankara" | "ByzantineChalcedonian" | "Latin" | "NotApplicable";
+        /** @enum {string} */
+        HistoricalPeriod: "Primeval" | "Patriarchal" | "ExodusAndConquest" | "Judges" | "UnitedMonarchy" | "DividedMonarchy" | "ExileAndReturn" | "SecondTemple" | "Apostolic" | "AnteNicene" | "NiceneEra" | "PostChalcedonian" | "IslamicEra" | "SyriacRenaissance" | "LateMedieval" | "ModernEra";
         /** Format: binary */
         IFormFile: string;
         /** @enum {string} */
@@ -4005,6 +4620,24 @@ export interface components {
             /** Format: int32 */
             pageSize: number | string;
         };
+        PagedResultOfHistoricalFigureDto: {
+            items: components["schemas"]["HistoricalFigureDto"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+        };
+        PagedResultOfHistoricalFigureListItem: {
+            items: components["schemas"]["HistoricalFigureListItem"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            page: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+        };
         PagedResultOfLexiconEntryDto: {
             items: components["schemas"]["LexiconEntryDto"][];
             /** Format: int32 */
@@ -4156,8 +4789,26 @@ export interface components {
             /** Format: int32 */
             version: number | string;
         };
+        SetPlayableHistoricalFigureRequest: {
+            playable: boolean;
+        };
         SetPlayableLexiconEntryRequest: {
             playable: boolean;
+        };
+        ShmoPuzzleDto: {
+            /** Format: date */
+            date: string;
+            /** Format: uuid */
+            historicalFigureId: string;
+            name: string;
+            category: components["schemas"]["HistoricalFigureCategory"];
+            /** Format: int32 */
+            era: number | string;
+            period: components["schemas"]["HistoricalPeriod"];
+            role: components["schemas"]["HistoricalFigureRole"];
+            region: components["schemas"]["HistoricalFigureRegion"];
+            tradition: null | components["schemas"]["HistoricalFigureTradition"];
+            gender: components["schemas"]["HistoricalFigureGender"];
         };
         /** @enum {string} */
         SortDirection: "Ascending" | "Descending";
@@ -4227,6 +4878,17 @@ export interface components {
             lastPlayedOn: null | string;
             /** Format: int32 */
             timesPlayed: null | number | string;
+        };
+        UpdateHistoricalFigureRequest: {
+            name: string;
+            category: components["schemas"]["HistoricalFigureCategory"];
+            /** Format: int32 */
+            era: number | string;
+            period: components["schemas"]["HistoricalPeriod"];
+            role: components["schemas"]["HistoricalFigureRole"];
+            region: components["schemas"]["HistoricalFigureRegion"];
+            gender: components["schemas"]["HistoricalFigureGender"];
+            tradition?: null | components["schemas"]["HistoricalFigureTradition"];
         };
         UpdateLexiconEntryRequest: {
             syriacUnvocalized: string;

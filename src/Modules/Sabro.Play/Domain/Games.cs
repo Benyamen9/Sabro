@@ -12,4 +12,6 @@ public static class Games
     public const string Meltho = "meltho";
 
     public const string Mno = "mno";
+
+    public const string Shmo = "shmo";
 }

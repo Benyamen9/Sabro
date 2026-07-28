@@ -5,6 +5,7 @@ using Sabro.API.Configuration;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Application.Meltho;
 using Sabro.Play.Application.Mno;
+using Sabro.Play.Application.Shmo;
 using Sabro.Play.Domain;
 using Sabro.Shared.Pagination;
 
@@ -24,19 +25,22 @@ public sealed class PlayController : ApiControllerBase
     private readonly IGameResultService gameResultService;
     private readonly IMelthoLeaderboardService melthoLeaderboardService;
     private readonly IMnoPuzzleService mnoPuzzleService;
+    private readonly IShmoPuzzleService shmoPuzzleService;
 
     public PlayController(
         IMelthoPuzzleService melthoPuzzleService,
         IMelthoLibraryService melthoLibraryService,
         IGameResultService gameResultService,
         IMelthoLeaderboardService melthoLeaderboardService,
-        IMnoPuzzleService mnoPuzzleService)
+        IMnoPuzzleService mnoPuzzleService,
+        IShmoPuzzleService shmoPuzzleService)
     {
         this.melthoPuzzleService = melthoPuzzleService;
         this.melthoLibraryService = melthoLibraryService;
         this.gameResultService = gameResultService;
         this.melthoLeaderboardService = melthoLeaderboardService;
         this.mnoPuzzleService = mnoPuzzleService;
+        this.shmoPuzzleService = shmoPuzzleService;
     }
 
     /// <summary>
@@ -80,6 +84,29 @@ public sealed class PlayController : ApiControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await mnoPuzzleService.GetTodaysPuzzleAsync(difficulty, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Returns today's Shmo puzzle (get-or-create per date; identical for all
+    /// players; respects the anti-repetition window). The answer figure and every
+    /// scored attribute ship with the puzzle: like Meltho's word and Mno's
+    /// equation, guess evaluation is client logic and per-attribute feedback needs
+    /// the answer. Public: anyone can play without an account — login is only
+    /// needed to persist a result. Rate-limited as a public endpoint.
+    /// </summary>
+    [HttpGet("shmo/today")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ShmoPuzzleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ShmoPuzzleDto>> GetTodaysShmoPuzzle(CancellationToken cancellationToken)
+    {
+        var result = await shmoPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

@@ -177,6 +177,48 @@ namespace Sabro.Play.Infrastructure.Migrations
 
                     b.ToTable("mno_daily_puzzles", "play");
                 });
+
+            modelBuilder.Entity("Sabro.Play.Domain.ShmoDailyPuzzle", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<string>("GameId")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("game_id");
+
+                    b.Property<Guid>("HistoricalFigureId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("historical_figure_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_shmo_daily_puzzles");
+
+                    b.HasIndex("GameId", "Date")
+                        .IsUnique()
+                        .HasDatabaseName("ix_shmo_daily_puzzles_game_id_date");
+
+                    b.HasIndex("GameId", "HistoricalFigureId")
+                        .HasDatabaseName("ix_shmo_daily_puzzles_game_id_historical_figure_id");
+
+                    b.ToTable("shmo_daily_puzzles", "play");
+                });
 #pragma warning restore 612, 618
         }
     }

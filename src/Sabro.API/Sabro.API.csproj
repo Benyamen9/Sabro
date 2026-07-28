@@ -33,6 +33,7 @@
     <ProjectReference Include="..\Modules\Sabro.Translations\Sabro.Translations.csproj" />
     <ProjectReference Include="..\Modules\Sabro.Reviews\Sabro.Reviews.csproj" />
     <ProjectReference Include="..\Modules\Sabro.Biblical\Sabro.Biblical.csproj" />
+    <ProjectReference Include="..\Modules\Sabro.Historical\Sabro.Historical.csproj" />
     <ProjectReference Include="..\Modules\Sabro.Identity\Sabro.Identity.csproj" />
   </ItemGroup>
 
