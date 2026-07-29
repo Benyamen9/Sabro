@@ -172,6 +172,29 @@ jobs:
             docker compose --env-file .env.ci -f docker-compose.prod.yml config >/dev/null
           echo "OK: docker-compose.prod.yml parses."
 
+      # A Caddyfile typo takes down every hostname in the ecosystem at once, and
+      # unlike the compose file the Caddyfile is NOT shipped by CD — it is copied
+      # to the VPS by hand, so nothing else stands between an edit and the live
+      # reverse proxy. Validate it with the same Caddy image the stack runs.
+      - name: Caddyfile is valid
+        run: |
+          set -euo pipefail
+          image=$(sed -n 's|.*image: \(caddy:[^[:space:]]*\).*|\1|p' docker-compose.prod.yml | head -1)
+          echo "Validating the Caddyfile against $image"
+          docker run --rm \
+            -e CADDY_ACME_EMAIL=ci@example.com \
+            -e SABRO_DOMAIN=sabro.test \
+            -e SABRO_API_DOMAIN=api.sabro.test \
+            -e LOGTO_DOMAIN=auth.sabro.test \
+            -e LOGTO_ADMIN_DOMAIN=admin.sabro.test \
+            -e MELTHO_DOMAIN=meltho.sabro.test \
+            -e MNO_DOMAIN=mno.sabro.test \
+            -e SHMO_DOMAIN=shmo.sabro.test \
+            -e ANALYTICS_DOMAIN=analytics.sabro.test \
+            -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" \
+            "$image" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          echo "OK: Caddyfile is valid."
+
       # Locks in the fix from the 2026-07-28 incident: a hand-run `up -d` that
       # forgot --env-file resolved ${SABRO_IMAGE_TAG:-latest} to a stale cached
       # image and silently rolled production back two weeks, with every health

@@ -355,6 +355,15 @@ services:
       - caddy-data:/data
       - caddy-config:/config
     networks: [internal]
+    # Caddy now writes an access log line per request to stdout (see the
+    # `accesslog` snippet in the Caddyfile). The json-file driver does not rotate
+    # by default, so cap it here — otherwise every request in the ecosystem's
+    # history accumulates on a 160 GB disk with nothing to trim it.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 networks:
   internal:
