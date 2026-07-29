@@ -2,6 +2,12 @@
 # automatically (Let's Encrypt). Hostnames come from the .env next to
 # docker-compose.prod.yml. One reverse_proxy block per public hostname; every
 # upstream is a compose service name on the internal network.
+#
+# Shipped by CD like the compose file: sabro-cd.yml scp's this file to the VPS
+# and runs `caddy reload` every deploy, so the live config always matches this
+# file. CI's deploy-safety gate runs `caddy validate` first, and `caddy reload`
+# keeps the running config if a new one is invalid — a broken edit fails the
+# deploy loudly without dropping the proxy. No manual copy step.
 
 {
 	email {$CADDY_ACME_EMAIL}
