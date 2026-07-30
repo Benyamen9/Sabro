@@ -123,16 +123,20 @@ jobs:
         with:
           ref: ${{ env.SHA }}
 
-      # Ship the compose file with every deploy so the VPS copy can never
-      # drift from the repo. (Caddyfile changes stay manual: the container
-      # mounts it but only re-reads it on a caddy reload/restart.)
-      - name: Ship docker-compose.prod.yml to VPS
+      # Ship the compose file AND the Caddyfile with every deploy so the VPS
+      # copies can never drift from the repo. The SSH step reloads Caddy in
+      # place afterward so a shipped Caddyfile change takes effect — the
+      # container mounts it but only re-reads it on a caddy reload. CI's
+      # deploy-safety gate has already run `caddy validate` on this file, and
+      # `caddy reload` validates again and keeps the running config if the new
+      # one is bad, so a broken Caddyfile fails loudly without dropping the proxy.
+      - name: Ship compose file and Caddyfile to VPS
         uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: docker-compose.prod.yml
+          source: "docker-compose.prod.yml,Caddyfile"
           target: ${{ secrets.APP_DIR }}
 
       - name: SSH deploy
@@ -160,6 +164,13 @@ jobs:
             $COMPOSE up -d --force-recreate --no-deps api frontend
             # Record exactly which image the api service ended up on (deploy observability).
             $COMPOSE images api
+            # Reload Caddy so a just-shipped Caddyfile takes effect. A bind-mounted
+            # file changing on disk does NOT make Caddy re-read it — only a reload
+            # does. `caddy reload` validates the new config and, if it is invalid,
+            # fails here while leaving the running config untouched, so the proxy
+            # never drops. Runs every deploy (cheap, idempotent when unchanged) so
+            # the live config always matches the shipped Caddyfile.
+            $COMPOSE exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
             # Post-deploy health check through Caddy from the host (the API
             # container exposes no host port and ships no wget/curl).
             set -a; . ./.env; set +a

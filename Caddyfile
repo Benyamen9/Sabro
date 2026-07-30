@@ -2,37 +2,110 @@
 # automatically (Let's Encrypt). Hostnames come from the .env next to
 # docker-compose.prod.yml. One reverse_proxy block per public hostname; every
 # upstream is a compose service name on the internal network.
+#
+# Shipped by CD like the compose file: sabro-cd.yml scp's this file to the VPS
+# and runs `caddy reload` every deploy, so the live config always matches this
+# file. CI's deploy-safety gate runs `caddy validate` first, and `caddy reload`
+# keeps the running config if a new one is invalid — a broken edit fails the
+# deploy loudly without dropping the proxy. No manual copy step.
 
 {
 	email {$CADDY_ACME_EMAIL}
 }
 
+# Access logging. Caddy logs errors by default but writes NO access log unless a
+# site asks for one, which left request-level debugging on the box impossible.
+# Every site block imports this snippet.
+#
+# Output is the container's stdout, so `docker logs sabro-caddy` is the one place
+# to look — the same reflex as `docker logs sabro-api`. Size is bounded by the
+# json-file rotation set on the caddy service in docker-compose.prod.yml; without
+# that rotation this would grow until it filled the disk.
+#
+# CLAUDE.md forbids logging full JWTs, cookies or PII. Caddy redacts the
+# sensitive headers by default, but the deletes below are stated explicitly so
+# the guarantee survives a Caddy default changing under us. Client IPs are still
+# logged — that is disclosed in the privacy policy (technical logs, kept only as
+# long as needed) and is what the rotation above bounds.
+(accesslog) {
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>headers>Authorization delete
+				request>headers>Proxy-Authorization delete
+				request>headers>Cookie delete
+				resp_headers>Set-Cookie delete
+			}
+		}
+	}
+}
+
+# Security response headers. Caddy terminates TLS but adds none of these, and
+# neither Kestrel nor Nuxt sets them, so every first-party surface shipped
+# without them until now. Imported by the app/API/analytics blocks below.
+#
+# `defer` applies these AFTER the proxied response is written, so our values win
+# over anything upstream sends and the two tech-disclosure headers are stripped
+# from the final response rather than racing it.
+#
+# Deliberately NOT imported into the two Logto blocks: Logto sets its own tuned
+# CSP (including the frame-ancestors the admin console needs) plus HSTS/nosniff/
+# referrer, and overwriting those would break framing of the admin console.
+#
+# HSTS is one year with includeSubDomains but no `preload` — preload is a
+# hard-to-reverse commitment that also requires submitting the domain to the
+# browser preload list, out of scope for a header change. A full Content-Security-
+# Policy on the Nuxt apps is deferred (their inline scripts/styles need per-app
+# hashing or nonces); X-Frame-Options covers the clickjacking case meanwhile.
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		-Server
+		-X-Powered-By
+		defer
+	}
+}
+
 # Sabro hub frontend (Nuxt SSR).
 {$SABRO_DOMAIN} {
+	import accesslog
+	import security_headers
 	encode zstd gzip
 	reverse_proxy frontend:3000
 }
 
 # Sabro API — clients call /api/v1 here directly.
 {$SABRO_API_DOMAIN} {
+	import accesslog
+	import security_headers
 	encode zstd gzip
 	reverse_proxy api:8080
 }
 
 # Logto — central IDP (OIDC endpoint). Must stay reachable for every app in the
-# ecosystem; it is the planned first service to move to its own VM.
+# ecosystem; it is the planned first service to move to its own VM. Sets its own
+# security headers (see the security_headers snippet note above).
 {$LOGTO_DOMAIN} {
+	import accesslog
 	reverse_proxy logto:3001
 }
 
 # Logto admin console.
 {$LOGTO_ADMIN_DOMAIN} {
+	import accesslog
 	reverse_proxy logto:3002
 }
 
 # Meltho — Syriac word game (own repo, own container), sharing Sabro's API +
 # database behind this same Caddy on its own hostname.
 {$MELTHO_DOMAIN} {
+	import accesslog
+	import security_headers
 	encode zstd gzip
 	reverse_proxy meltho:3000
 }
@@ -40,6 +113,8 @@
 # Mno — Syriac numbers game (own repo, own container), sharing Sabro's API +
 # database behind this same Caddy on its own hostname.
 {$MNO_DOMAIN} {
+	import accesslog
+	import security_headers
 	encode zstd gzip
 	reverse_proxy mno:3000
 }
@@ -47,6 +122,8 @@
 # Shmo — historical-figure guessing game (own repo, own container), sharing
 # Sabro's API + database behind this same Caddy on its own hostname.
 {$SHMO_DOMAIN} {
+	import accesslog
+	import security_headers
 	encode zstd gzip
 	reverse_proxy shmo:3000
 }
@@ -56,10 +133,15 @@
 # third party, which is the whole point of self-hosting it. The dashboard behind
 # this hostname is password-protected by Umami itself.
 {$ANALYTICS_DOMAIN} {
+	import accesslog
+	import security_headers
 	encode zstd gzip
 	reverse_proxy umami:3000
 }
 
 # --- Future ecosystem clients register their own block here -------------------
 # Additional clients add one reverse_proxy block per hostname, each pointing at
-# their own compose service on the internal network.
+# their own compose service on the internal network. Start the block with
+# `import accesslog` — access logging is per-site in Caddy, so a block that omits
+# it is silently invisible in the logs — and `import security_headers` unless the
+# upstream sets its own (as Logto does).
