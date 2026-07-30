@@ -42,14 +42,29 @@ function tileClass(state: 'correct' | 'present') {
     : `${base} border-[var(--color-meltho-dark)] bg-[var(--color-meltho)]`
 }
 
-// Mno's hero: the opening of an equation in Syriac numerals — amber tiles
-// with the game's signature value hints. Decorative, like Meltho's board.
+// Mno's hero: the game's own name, ܡܢܐ, read as an equation — its letters ARE
+// numbers (40 + 50 × 1). Scored like a real board in Mno's own feedback colours
+// (green correct, its gold for wrong place), matching the game's tiles: the +
+// scores green with the values, the × is neutral notation. Decorative, like
+// Meltho's board.
 const mnoTiles = [
-  { glyph: 'ܝ', hint: '10' },
-  { glyph: 'ܒ', hint: '2' },
-  { glyph: '+', hint: '' },
-  { glyph: 'ܗ', hint: '5' },
+  { glyph: 'ܡ', hint: '40', state: 'correct' },
+  { glyph: '+', hint: '', state: 'operatorHit' },
+  { glyph: 'ܢ', hint: '50', state: 'present' },
+  { glyph: '×', hint: '', state: 'operator' },
+  { glyph: 'ܐ', hint: '1', state: 'correct' },
 ] as const
+
+// Mno's feedback palette on the hub: green correct + its own gold for wrong
+// place, matching the game's own tiles. The green is a literal hex — like Shmo's
+// near colour below, this hub preview is the only place outside Mno's repo that
+// needs it; the gold is already the shared --color-mno.
+function mnoTileClass(state: 'correct' | 'present' | 'operatorHit' | 'operator') {
+  const base = 'flex size-12 flex-col items-center justify-center rounded-xl border-2 sm:size-14'
+  if (state === 'present') return `${base} border-[var(--color-mno-dark)] bg-[var(--color-mno)] text-white`
+  if (state === 'operator') return `${base} border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)] text-[var(--color-text-muted)]`
+  return `${base} border-[#3d7e44] bg-[#4e9c56] text-white`
+}
 
 // Shmo's hero: three real scored cells from a guess row — a worked example
 // (Jacob of Serugh guessed against the answer Ephrem the Syrian), the same
@@ -211,7 +226,8 @@ const heroAction = computed(() => {
           </a>
         </div>
 
-        <!-- Mno — the numbers game, in its honey amber, value hints showing. -->
+        <!-- Mno — the numbers game. Card accent is Mno's honey amber; the tile
+             board is the name ܡܢܐ scored in the game's own green/gold feedback. -->
         <div
           class="relative flex flex-col items-center gap-5 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-7 text-center shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgb(28_25_23/0.09)] sm:items-start sm:text-left"
         >
@@ -220,9 +236,13 @@ const heroAction = computed(() => {
             <span
               v-for="(tile, index) in mnoTiles"
               :key="index"
-              class="flex size-12 flex-col items-center justify-center rounded-xl border-2 border-[var(--color-mno-dark)] bg-[var(--color-mno)] text-white sm:size-14"
+              :class="mnoTileClass(tile.state)"
             >
-              <SyriacText :text="tile.glyph" class="text-2xl leading-none sm:text-3xl" />
+              <span
+                v-if="tile.state === 'operator' || tile.state === 'operatorHit'"
+                class="font-sans text-2xl font-semibold leading-none sm:text-3xl"
+              >{{ tile.glyph }}</span>
+              <SyriacText v-else :text="tile.glyph" class="text-2xl leading-none sm:text-3xl" />
               <span v-if="tile.hint" class="mt-0.5 font-sans text-[10px] leading-none opacity-80" dir="ltr">{{ tile.hint }}</span>
             </span>
           </div>
