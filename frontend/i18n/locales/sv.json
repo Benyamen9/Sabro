@@ -46,7 +46,6 @@
     "translations": "Översättningar",
     "library": "Bibliotek",
     "admin": "Backoffice",
-    "adminFigures": "Gestalter",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -396,8 +395,24 @@
     "Other": "Övrigt"
   },
   "admin": {
+    "hub": {
+      "title": "Redaktion",
+      "subtitle": "Allt du sköter, på ett ställe."
+    },
+    "sections": {
+      "navLabel": "Redaktionens avdelningar",
+      "hub": "Redaktion",
+      "lexicon": {
+        "label": "Lexikon",
+        "blurb": "Syriska ord, betydelser och inspelningar."
+      },
+      "figures": {
+        "label": "Gestalter",
+        "blurb": "Shmos register och dess egenskaper."
+      }
+    },
     "adminRequired": "Administratörsbehörighet krävs.",
-    "adminRequiredHint": "Logga in med ett redaktörskonto för att hantera lexikonet.",
+    "adminRequiredHint": "Logga in med ett redaktörskonto för att hantera detta innehåll.",
     "lexicon": {
       "title": "Lexikon-backoffice",
       "subtitle": "Hantera den syriska lexikondatabasen och Meltho-ordpoolen.",

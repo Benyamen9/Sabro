@@ -32,6 +32,8 @@ async function onSubmit(payload: CreateLexiconEntryRequest) {
 
 <template>
   <section class="mx-auto max-w-3xl">
+    <AdminSectionNav />
+
     <NuxtLink
       to="/admin/lexicon"
       class="font-sans text-sm text-[var(--color-text-muted)] no-underline hover:text-[var(--color-text)]"
