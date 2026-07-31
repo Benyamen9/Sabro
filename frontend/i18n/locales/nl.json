@@ -721,7 +721,8 @@
         "LexiconEditor": "Lexicon — kan bewerken",
         "Owner": "Alles",
         "ExpertReviewer": "Vertalingen — kan beoordelen"
-      }
+      },
+      "noOwnerYet": "Er is nog niemand als eigenaar ingesteld, dus niets is beperkt. Stel uzelf in als eigenaar om te bepalen wie wat mag bewerken."
     }
   },
   "seo": {

@@ -721,7 +721,8 @@
         "LexiconEditor": "Lexique — peut modifier",
         "Owner": "Tout",
         "ExpertReviewer": "Traductions — peut réviser"
-      }
+      },
+      "noOwnerYet": "Personne n'est encore défini comme propriétaire, donc rien n'est restreint. Définissez-vous comme propriétaire pour contrôler qui peut modifier quoi."
     }
   },
   "seo": {
