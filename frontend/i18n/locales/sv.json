@@ -721,7 +721,8 @@
         "LexiconEditor": "Lexikon — kan redigera",
         "Owner": "Allt",
         "ExpertReviewer": "Översättningar — kan granska"
-      }
+      },
+      "noOwnerYet": "Ingen är ännu satt som ägare, så inget är begränsat. Sätt dig själv som ägare för att styra vem som får redigera vad."
     }
   },
   "seo": {
