@@ -90,6 +90,99 @@ internal sealed class LogtoManagementClient : ILogtoManagementClient
         }
     }
 
+    public async Task<IReadOnlyDictionary<string, LogtoUserIdentity>> GetUserIdentitiesAsync(
+        IReadOnlyCollection<string> logtoUserIds,
+        CancellationToken cancellationToken)
+    {
+        var resolved = new Dictionary<string, LogtoUserIdentity>(StringComparer.Ordinal);
+        if (logtoUserIds.Count == 0)
+        {
+            return resolved;
+        }
+
+        if (string.IsNullOrWhiteSpace(options.ClientId) || string.IsNullOrWhiteSpace(options.ClientSecret))
+        {
+            // Expected in development, where no Management credentials are set. The
+            // People page falls back to display names and ids; roles still work.
+            logger.LogDebug("Logto Management API is not configured; People page will show ids rather than names.");
+            return resolved;
+        }
+
+        string? accessToken;
+        try
+        {
+            accessToken = await GetManagementTokenAsync(cancellationToken);
+        }
+        catch (HttpRequestException ex)
+        {
+            logger.LogWarning(ex, "Could not obtain a Logto management token; People page will show ids rather than names.");
+            return resolved;
+        }
+
+        if (accessToken is null)
+        {
+            return resolved;
+        }
+
+        foreach (var logtoUserId in logtoUserIds.Distinct(StringComparer.Ordinal))
+        {
+            var identity = await TryGetUserAsync(logtoUserId, accessToken, cancellationToken);
+            if (identity is not null)
+            {
+                resolved[logtoUserId] = identity;
+            }
+        }
+
+        return resolved;
+    }
+
+    private static string? ReadString(JsonElement element, string property) =>
+        element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString()
+            : null;
+
+    /// <summary>
+    /// One user, or null if anything at all goes wrong. Deliberately swallowing:
+    /// a single unresolvable identity must not cost the whole page.
+    /// </summary>
+    private async Task<LogtoUserIdentity?> TryGetUserAsync(
+        string logtoUserId,
+        string accessToken,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"{managementBaseUrl}/users/{Uri.EscapeDataString(logtoUserId)}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+            using var response = await httpClient.SendAsync(request, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                // 404 is ordinary: a profile can outlive the identity it points at.
+                logger.LogDebug("Logto user lookup returned {StatusCode}.", (int)response.StatusCode);
+                return null;
+            }
+
+            var payload = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var document = JsonDocument.Parse(payload);
+            var root = document.RootElement;
+
+            return new LogtoUserIdentity(
+                logtoUserId,
+                ReadString(root, "name") ?? ReadString(root, "username"),
+                ReadString(root, "primaryEmail"));
+        }
+        catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException)
+        {
+            // Never logged with the value itself — the identity is personal data and
+            // the logging rules keep it out of Seq.
+            logger.LogWarning(ex, "Logto user lookup failed; falling back to the profile id.");
+            return null;
+        }
+    }
+
     private async Task<string?> GetManagementTokenAsync(CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, tokenEndpoint);

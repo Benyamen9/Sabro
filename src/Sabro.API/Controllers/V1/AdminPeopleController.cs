@@ -3,6 +3,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
+using Sabro.API.Logto;
 using Sabro.Identity.Application.UserProfiles;
 using Sabro.Identity.Domain;
 using Sabro.Shared.Results;
@@ -32,17 +33,28 @@ namespace Sabro.API.Controllers.V1;
 public sealed class AdminPeopleController : ApiControllerBase
 {
     private readonly IUserRoleService userRoles;
+    private readonly ILogtoManagementClient logtoManagement;
 
-    public AdminPeopleController(IUserRoleService userRoles)
+    public AdminPeopleController(IUserRoleService userRoles, ILogtoManagementClient logtoManagement)
     {
         this.userRoles = userRoles;
+        this.logtoManagement = logtoManagement;
     }
 
-    /// <summary>Everyone who has signed in, newest first.</summary>
+    /// <summary>
+    /// Everyone who has signed in, newest first, with names resolved from Logto
+    /// where possible.
+    /// </summary>
+    /// <remarks>
+    /// Sabro stores no name or email, so a bare profile list is a column of opaque
+    /// ids — unusable for deciding who to trust with what. Identities are read from
+    /// Logto per request, shown, and discarded. If that lookup yields nothing the
+    /// list still renders and roles are still grantable.
+    /// </remarks>
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyList<UserProfileDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IReadOnlyList<PersonDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<IReadOnlyList<UserProfileDto>>> List(CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<PersonDto>>> List(CancellationToken cancellationToken)
     {
         var logtoUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(logtoUserId))
@@ -51,7 +63,32 @@ public sealed class AdminPeopleController : ApiControllerBase
         }
 
         var result = await userRoles.ListAsync(logtoUserId, cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        var profiles = result.Value!;
+        var identities = await logtoManagement.GetUserIdentitiesAsync(
+            profiles.Select(p => p.LogtoUserId).ToArray(),
+            cancellationToken);
+
+        var people = profiles
+            .Select(profile =>
+            {
+                identities.TryGetValue(profile.LogtoUserId, out var identity);
+                return new PersonDto(
+                    profile.Id,
+                    profile.Role,
+                    profile.DisplayName,
+                    identity?.Name,
+                    identity?.Email,
+                    profile.CreatedAt,
+                    string.Equals(profile.LogtoUserId, logtoUserId, StringComparison.Ordinal));
+            })
+            .ToArray();
+
+        return Ok(people);
     }
 
     /// <summary>Grants a role to one person.</summary>

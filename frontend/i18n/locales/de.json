@@ -409,6 +409,10 @@
       "figures": {
         "label": "Gestalten",
         "blurb": "Das Shmo-Verzeichnis und seine Merkmale."
+      },
+      "people": {
+        "label": "Personen",
+        "blurb": "Wer was bearbeiten darf."
       }
     },
     "adminRequired": "Administratorzugriff erforderlich.",
@@ -693,6 +697,30 @@
         "nl": "Niederländisch",
         "de": "Deutsch",
         "sv": "Schwedisch"
+      }
+    },
+    "people": {
+      "title": "Personen",
+      "subtitle": "Wer was bearbeiten darf. Nur Sie können eine Rolle ändern.",
+      "person": "Person",
+      "mayEdit": "Darf bearbeiten",
+      "since": "Angemeldet am",
+      "you": "(Sie)",
+      "unnamed": "Name nicht verfügbar",
+      "cannotChangeOwn": "Sie können Ihre eigene Rolle nicht ändern.",
+      "ownerRequired": "Eigentümerzugriff erforderlich.",
+      "ownerRequiredHint": "Nur der Eigentümer kann Rollen sehen und ändern.",
+      "loadFailed": "Die Personenliste konnte nicht geladen werden.",
+      "saveFailed": "Diese Rolle konnte nicht gespeichert werden.",
+      "identityNote": "Namen und E-Mail-Adressen werden beim Laden dieser Seite vom Anmeldedienst gelesen. Sabro speichert sie nie.",
+      "role": {
+        "Reader": "Nichts — kann nur spielen",
+        "ShmoReviewer": "Gestalten — kann prüfen",
+        "ShmoEditor": "Gestalten — kann bearbeiten",
+        "LexiconReviewer": "Lexikon — kann prüfen",
+        "LexiconEditor": "Lexikon — kann bearbeiten",
+        "Owner": "Alles",
+        "ExpertReviewer": "Übersetzungen — kann prüfen"
       }
     }
   },

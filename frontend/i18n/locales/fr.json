@@ -409,6 +409,10 @@
       "figures": {
         "label": "Figures",
         "blurb": "Le répertoire de Shmo et ses attributs."
+      },
+      "people": {
+        "label": "Personnes",
+        "blurb": "Qui peut modifier quoi."
       }
     },
     "adminRequired": "Accès administrateur requis.",
@@ -693,6 +697,30 @@
         "nl": "Néerlandais",
         "de": "Allemand",
         "sv": "Suédois"
+      }
+    },
+    "people": {
+      "title": "Personnes",
+      "subtitle": "Qui peut modifier quoi. Vous seul pouvez changer un rôle.",
+      "person": "Personne",
+      "mayEdit": "Peut modifier",
+      "since": "Inscrit le",
+      "you": "(vous)",
+      "unnamed": "Nom indisponible",
+      "cannotChangeOwn": "Vous ne pouvez pas changer votre propre rôle.",
+      "ownerRequired": "Accès propriétaire requis.",
+      "ownerRequiredHint": "Seul le propriétaire peut voir et modifier les rôles.",
+      "loadFailed": "La liste des personnes n'a pas pu être chargée.",
+      "saveFailed": "Ce rôle n'a pas pu être enregistré.",
+      "identityNote": "Les noms et adresses e-mail sont lus depuis le service de connexion au chargement de cette page. Sabro ne les conserve jamais.",
+      "role": {
+        "Reader": "Rien — peut seulement jouer",
+        "ShmoReviewer": "Figures — peut réviser",
+        "ShmoEditor": "Figures — peut modifier",
+        "LexiconReviewer": "Lexique — peut réviser",
+        "LexiconEditor": "Lexique — peut modifier",
+        "Owner": "Tout",
+        "ExpertReviewer": "Traductions — peut réviser"
       }
     }
   },

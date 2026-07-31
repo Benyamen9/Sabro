@@ -409,6 +409,10 @@
       "figures": {
         "label": "Gestalter",
         "blurb": "Shmos register och dess egenskaper."
+      },
+      "people": {
+        "label": "Personer",
+        "blurb": "Vem som får redigera vad."
       }
     },
     "adminRequired": "Administratörsbehörighet krävs.",
@@ -693,6 +697,30 @@
         "nl": "Nederländska",
         "de": "Tyska",
         "sv": "Svenska"
+      }
+    },
+    "people": {
+      "title": "Personer",
+      "subtitle": "Vem som får redigera vad. Endast du kan ändra en roll.",
+      "person": "Person",
+      "mayEdit": "Får redigera",
+      "since": "Registrerad",
+      "you": "(du)",
+      "unnamed": "Namn ej tillgängligt",
+      "cannotChangeOwn": "Du kan inte ändra din egen roll.",
+      "ownerRequired": "Ägarbehörighet krävs.",
+      "ownerRequiredHint": "Endast ägaren kan se och ändra roller.",
+      "loadFailed": "Listan över personer kunde inte laddas.",
+      "saveFailed": "Rollen kunde inte sparas.",
+      "identityNote": "Namn och e-postadresser hämtas från inloggningstjänsten när sidan laddas. Sabro sparar dem aldrig.",
+      "role": {
+        "Reader": "Inget — kan bara spela",
+        "ShmoReviewer": "Gestalter — kan granska",
+        "ShmoEditor": "Gestalter — kan redigera",
+        "LexiconReviewer": "Lexikon — kan granska",
+        "LexiconEditor": "Lexikon — kan redigera",
+        "Owner": "Allt",
+        "ExpertReviewer": "Översättningar — kan granska"
       }
     }
   },

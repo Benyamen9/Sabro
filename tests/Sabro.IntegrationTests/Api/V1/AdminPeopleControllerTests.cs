@@ -126,6 +126,46 @@ public class AdminPeopleControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Get_WithNoLogtoManagementConfigured_StillListsPeople()
+    {
+        // The integration environment has no Management API credentials, which is
+        // exactly the degraded case: names come back null, but the list renders and
+        // the role — the only thing authorisation depends on — is present.
+        var ct = TestContext.Current.CancellationToken;
+        await ClearProfilesAsync(ct);
+        using var owner = ClientFor("degraded-owner");
+        await EnsureProfileAsync(owner, ct);
+        await SetRoleAsync("degraded-owner", Role.Owner, ct);
+        await CreateProfileAsync("someone-else", ct);
+
+        var response = await owner.GetAsync("/api/v1/admin/people", ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var people = await response.Content.ReadFromJsonAsync<List<PersonDto>>(SabroApiFactory.JsonOptions, ct);
+        people.Should().HaveCount(2);
+        people!.Should().OnlyContain(p => p.Name == null && p.Email == null);
+        people.Should().ContainSingle(p => p.Role == Role.Owner);
+        people.Should().ContainSingle(p => p.IsYou);
+    }
+
+    [Fact]
+    public async Task Get_DoesNotLeakTheLogtoUserId()
+    {
+        // The opaque Logto id is Sabro's join key, not something the browser needs.
+        var ct = TestContext.Current.CancellationToken;
+        await ClearProfilesAsync(ct);
+        using var owner = ClientFor("privacy-owner");
+        await EnsureProfileAsync(owner, ct);
+        await SetRoleAsync("privacy-owner", Role.Owner, ct);
+
+        var response = await owner.GetAsync("/api/v1/admin/people", ct);
+        var body = await response.Content.ReadAsStringAsync(ct);
+
+        body.Should().NotContain("privacy-owner");
+        body.Should().NotContain("logtoUserId");
+    }
+
+    [Fact]
     public async Task Put_ForAnUnknownProfile_Returns404()
     {
         var ct = TestContext.Current.CancellationToken;

@@ -31,6 +31,11 @@ export type Testament = Schemas['Testament']
 export type ApprovalStatus = Schemas['ApprovalStatus']
 export type ApprovalTargetType = Schemas['ApprovalTargetType']
 export type Role = Schemas['Role']
+
+// Backoffice people surface: a profile plus whatever Logto could tell us about
+// who they are (never stored by Sabro).
+export type PersonDto = Schemas['PersonDto']
+export type AssignRoleRequest = Schemas['AssignRoleRequest']
 export type ScriptVariant = Schemas['ScriptVariant']
 export type SuggestedEditStatus = Schemas['SuggestedEditStatus']
 export type SuggestedEditTargetType = Schemas['SuggestedEditTargetType']
