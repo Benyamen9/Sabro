@@ -1435,7 +1435,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserProfileDto"
+                    "$ref": "#/components/schemas/PersonDto"
                   }
                 }
               },
@@ -1443,7 +1443,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserProfileDto"
+                    "$ref": "#/components/schemas/PersonDto"
                   }
                 }
               },
@@ -1451,7 +1451,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserProfileDto"
+                    "$ref": "#/components/schemas/PersonDto"
                   }
                 }
               }
@@ -9294,6 +9294,52 @@
               "string"
             ],
             "format": "int32"
+          }
+        }
+      },
+      "PersonDto": {
+        "required": [
+          "id",
+          "role",
+          "displayName",
+          "name",
+          "email",
+          "createdAt",
+          "isYou"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "displayName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isYou": {
+            "type": "boolean"
           }
         }
       },

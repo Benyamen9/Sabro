@@ -243,5 +243,12 @@ public class ProfileControllerTests : IDisposable
             DeletedUserIds.Add(logtoUserId);
             return Task.FromResult(result);
         }
+
+        /// <summary>Not exercised by these tests; the People page covers it.</summary>
+        public Task<IReadOnlyDictionary<string, LogtoUserIdentity>> GetUserIdentitiesAsync(
+            IReadOnlyCollection<string> logtoUserIds,
+            CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyDictionary<string, LogtoUserIdentity>>(
+                new Dictionary<string, LogtoUserIdentity>());
     }
 }

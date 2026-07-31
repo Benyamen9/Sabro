@@ -34,6 +34,12 @@ export const adminSections: AdminSection[] = [
     blurbKey: 'admin.sections.figures.blurb',
     accent: '--color-shmo',
   },
+  {
+    to: '/admin/people',
+    labelKey: 'admin.sections.people.label',
+    blurbKey: 'admin.sections.people.blurb',
+    accent: '--color-accent',
+  },
 ]
 
 export function useAdminSections() {

@@ -409,6 +409,10 @@
       "figures": {
         "label": "Figuren",
         "blurb": "Het Shmo-register en zijn kenmerken."
+      },
+      "people": {
+        "label": "Personen",
+        "blurb": "Wie wat mag bewerken."
       }
     },
     "adminRequired": "Beheerderstoegang vereist.",
@@ -693,6 +697,30 @@
         "nl": "Nederlands",
         "de": "Duits",
         "sv": "Zweeds"
+      }
+    },
+    "people": {
+      "title": "Personen",
+      "subtitle": "Wie wat mag bewerken. Alleen u kunt een rol wijzigen.",
+      "person": "Persoon",
+      "mayEdit": "Mag bewerken",
+      "since": "Aangemeld op",
+      "you": "(u)",
+      "unnamed": "Naam niet beschikbaar",
+      "cannotChangeOwn": "U kunt uw eigen rol niet wijzigen.",
+      "ownerRequired": "Eigenaarstoegang vereist.",
+      "ownerRequiredHint": "Alleen de eigenaar kan rollen zien en wijzigen.",
+      "loadFailed": "De lijst met personen kon niet worden geladen.",
+      "saveFailed": "Die rol kon niet worden opgeslagen.",
+      "identityNote": "Namen en e-mailadressen worden bij het laden van deze pagina opgehaald bij de aanmelddienst. Sabro bewaart ze nooit.",
+      "role": {
+        "Reader": "Niets — kan alleen spelen",
+        "ShmoReviewer": "Figuren — kan beoordelen",
+        "ShmoEditor": "Figuren — kan bewerken",
+        "LexiconReviewer": "Lexicon — kan beoordelen",
+        "LexiconEditor": "Lexicon — kan bewerken",
+        "Owner": "Alles",
+        "ExpertReviewer": "Vertalingen — kan beoordelen"
       }
     }
   },

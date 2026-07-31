@@ -937,9 +937,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["UserProfileDto"][];
-                        "application/json": components["schemas"]["UserProfileDto"][];
-                        "text/json": components["schemas"]["UserProfileDto"][];
+                        "text/plain": components["schemas"]["PersonDto"][];
+                        "application/json": components["schemas"]["PersonDto"][];
+                        "text/json": components["schemas"]["PersonDto"][];
                     };
                 };
                 /** @description Forbidden */
@@ -4857,6 +4857,17 @@ export interface components {
             page: number | string;
             /** Format: int32 */
             pageSize: number | string;
+        };
+        PersonDto: {
+            /** Format: uuid */
+            id: string;
+            role: components["schemas"]["Role"];
+            displayName: null | string;
+            name: null | string;
+            email: null | string;
+            /** Format: date-time */
+            createdAt: string;
+            isYou: boolean;
         };
         ProblemDetails: {
             type?: null | string;

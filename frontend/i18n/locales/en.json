@@ -409,6 +409,10 @@
       "figures": {
         "label": "Figures",
         "blurb": "The Shmo roster and its attributes."
+      },
+      "people": {
+        "label": "People",
+        "blurb": "Who may edit what."
       }
     },
     "adminRequired": "Admin access required.",
@@ -693,6 +697,30 @@
         "nl": "Dutch",
         "de": "German",
         "sv": "Swedish"
+      }
+    },
+    "people": {
+      "title": "People",
+      "subtitle": "Who may edit what. Only you can change a role.",
+      "person": "Person",
+      "mayEdit": "May edit",
+      "since": "Signed up",
+      "you": "(you)",
+      "unnamed": "Name unavailable",
+      "cannotChangeOwn": "You cannot change your own role.",
+      "ownerRequired": "Owner access required.",
+      "ownerRequiredHint": "Only the Owner can see and change roles.",
+      "loadFailed": "The list of people could not be loaded.",
+      "saveFailed": "That role could not be saved.",
+      "identityNote": "Names and email addresses are read from the sign-in service when this page loads. Sabro never stores them.",
+      "role": {
+        "Reader": "Nothing — can only play",
+        "ShmoReviewer": "Figures — can review",
+        "ShmoEditor": "Figures — can edit",
+        "LexiconReviewer": "Lexicon — can review",
+        "LexiconEditor": "Lexicon — can edit",
+        "Owner": "Everything",
+        "ExpertReviewer": "Translations — can review"
       }
     }
   },
