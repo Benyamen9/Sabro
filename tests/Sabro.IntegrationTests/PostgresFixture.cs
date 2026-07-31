@@ -65,39 +65,6 @@ public sealed class PostgresFixture : IAsyncLifetime
 
         await using var reviews = CreateReviewsContext();
         await reviews.Database.MigrateAsync(ct);
-
-        await EnsureDefaultUserIsOwnerAsync(ct);
-    }
-
-    /// <summary>
-    /// Gives the default test caller the Owner role.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// The admin endpoints check a Sabro role as well as the Logto scope, and the
-    /// test auth handler can only supply the scope — the role lives in the database.
-    /// Without this every admin test authenticates as a role-less user and is
-    /// correctly refused, which says nothing about the behaviour under test.
-    /// </para>
-    /// <para>
-    /// Re-callable: any test that clears the profiles table must call this again so
-    /// the classes running after it are not left with a role-less caller.
-    /// </para>
-    /// </remarks>
-    public async Task EnsureDefaultUserIsOwnerAsync(CancellationToken cancellationToken)
-    {
-        await using var identity = CreateIdentityContext();
-
-        var profile = await identity.UserProfiles
-            .FirstOrDefaultAsync(p => p.LogtoUserId == DefaultTestUser, cancellationToken);
-        if (profile is null)
-        {
-            profile = UserProfile.Create(DefaultTestUser).Value!;
-            identity.UserProfiles.Add(profile);
-        }
-
-        profile.AssignRole(Role.Owner);
-        await identity.SaveChangesAsync(cancellationToken);
     }
 
     public async ValueTask DisposeAsync()
