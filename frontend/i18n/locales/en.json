@@ -721,7 +721,8 @@
         "LexiconEditor": "Lexicon — can edit",
         "Owner": "Everything",
         "ExpertReviewer": "Translations — can review"
-      }
+      },
+      "noOwnerYet": "No one is set as Owner yet, so nothing is restricted. Set yourself as Owner to take control of who may edit what."
     }
   },
   "seo": {

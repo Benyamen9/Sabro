@@ -58,10 +58,30 @@ internal sealed class UserRoleService : IUserRoleService
         // sole Owner demoting themselves leaves nobody able to grant roles, and the
         // only way back is editing the database by hand — the very thing this
         // endpoint exists to replace.
+        //
+        // Except during bootstrap. That reasoning presupposes an Owner exists; when
+        // none does, refusing self-assignment blocks the one action the bootstrap
+        // clause was written to allow — appointing the first Owner — and leaves the
+        // installation exactly as stuck as before. The first shipped build hit this
+        // in production: every profile read "can only play", and the sole person who
+        // could fix it was the one person the rule forbade from doing so.
         if (string.Equals(target.LogtoUserId, caller.Value!.LogtoUserId, StringComparison.Ordinal))
         {
-            return Result<UserProfileDto>.Failure(
-                Error.Validation("You cannot change your own role."));
+            var ownerExists = await dbContext.UserProfiles
+                .AnyAsync(p => p.Role == Role.Owner, cancellationToken);
+            if (ownerExists)
+            {
+                return Result<UserProfileDto>.Failure(
+                    Error.Validation("You cannot change your own role."));
+            }
+
+            if (role != Role.Owner)
+            {
+                // Bootstrap exists to create an Owner, not as a general licence to
+                // edit your own permissions while none exists.
+                return Result<UserProfileDto>.Failure(
+                    Error.Validation("With no Owner set, you may only appoint yourself Owner."));
+            }
         }
 
         var error = target.AssignRole(role);

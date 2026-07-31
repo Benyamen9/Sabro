@@ -31,6 +31,16 @@ const assignableRoles: Role[] = [
 const people = ref<PersonDto[]>([])
 const viewState = ref<'loading' | 'ready' | 'unauthorized' | 'failed'>('loading')
 const savingId = ref<string | null>(null)
+
+// Nobody is Owner yet — the state a fresh installation starts in. The server
+// lets an admin appoint the first Owner, including themselves, so the page must
+// not disable the only row that can end it.
+const needsFirstOwner = computed(() => people.value.length > 0 && !people.value.some(p => p.role === 'Owner'))
+
+/** Your own row is locked once an Owner exists; during bootstrap it is the way out. */
+function isLocked(person: PersonDto) {
+  return person.isYou && !needsFirstOwner.value
+}
 const errorMessage = ref<string | null>(null)
 
 async function load() {
@@ -111,6 +121,11 @@ const cellClass = 'px-3 py-3 align-middle'
 
     <div v-else>
       <p
+        v-if="needsFirstOwner"
+        class="mb-4 rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)] px-4 py-3 font-sans text-sm text-[var(--color-text)]"
+      >{{ t('admin.people.noOwnerYet') }}</p>
+
+      <p
         v-if="errorMessage"
         class="mb-4 rounded-md border border-[var(--color-accent)] bg-[var(--color-accent-faint)] px-4 py-3 font-sans text-sm text-[var(--color-accent)]"
         role="alert"
@@ -156,7 +171,7 @@ const cellClass = 'px-3 py-3 align-middle'
               <td :class="cellClass">
                 <select
                   :value="person.role"
-                  :disabled="person.isYou || savingId === person.id"
+                  :disabled="isLocked(person) || savingId === person.id"
                   :aria-label="t('admin.people.mayEdit')"
                   class="w-full max-w-[14rem] rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-2 py-1.5 font-sans text-sm text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
                   @change="onRoleChange(person, ($event.target as HTMLSelectElement).value as Role)"
@@ -171,7 +186,7 @@ const cellClass = 'px-3 py-3 align-middle'
                     {{ t(`admin.people.role.${role}`) }}
                   </option>
                 </select>
-                <span v-if="person.isYou" class="mt-1 block text-xs text-[var(--color-text-faint)]">
+                <span v-if="isLocked(person)" class="mt-1 block text-xs text-[var(--color-text-faint)]">
                   {{ t('admin.people.cannotChangeOwn') }}
                 </span>
               </td>

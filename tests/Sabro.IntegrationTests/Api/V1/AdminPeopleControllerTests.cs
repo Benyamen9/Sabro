@@ -166,6 +166,41 @@ public class AdminPeopleControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Put_OnYourOwnProfile_WithNoOwnerAnywhere_AppointsYouOwner()
+    {
+        // Found in production on the first shipped build: every profile read
+        // "can only play", and the no-self-assignment rule forbade the one person
+        // who could fix it from doing so. Bootstrap has to include yourself.
+        var ct = TestContext.Current.CancellationToken;
+        await ClearProfilesAsync(ct);
+        using var caller = ClientFor("stranded-admin");
+        await EnsureProfileAsync(caller, ct);
+        var ownId = await ProfileIdOfAsync("stranded-admin", ct);
+
+        var response = await AssignAsync(caller, ownId, Role.Owner, ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        (await RoleOfAsync(ownId, ct)).Should().Be(Role.Owner);
+    }
+
+    [Fact]
+    public async Task Put_OnYourOwnProfile_WithNoOwner_RefusesAnythingButOwner()
+    {
+        // Bootstrap exists to create an Owner, not to let anyone edit their own
+        // permissions freely while none exists.
+        var ct = TestContext.Current.CancellationToken;
+        await ClearProfilesAsync(ct);
+        using var caller = ClientFor("opportunist");
+        await EnsureProfileAsync(caller, ct);
+        var ownId = await ProfileIdOfAsync("opportunist", ct);
+
+        var response = await AssignAsync(caller, ownId, Role.LexiconEditor, ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await RoleOfAsync(ownId, ct)).Should().Be(Role.Reader);
+    }
+
+    [Fact]
     public async Task Put_ForAnUnknownProfile_Returns404()
     {
         var ct = TestContext.Current.CancellationToken;
