@@ -27,6 +27,7 @@ public sealed class IdentityModule : IModuleRegistration
         });
 
         services.AddScoped<IUserProfileService, UserProfileService>();
+        services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<ILeaderboardDirectory, LeaderboardDirectory>();
     }
 }
