@@ -33,6 +33,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         this.searchService = searchService;
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpPost]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -53,6 +54,7 @@ public sealed class AdminLexiconController : ApiControllerBase
     /// search uses (kept in sync on every write), just without its hardcoded Published filter,
     /// so this scales past the SEDRA-import row count without in-memory sorting.
     /// </summary>
+    [Authorize(Policy = AuthPolicies.LexiconView)]
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<LexiconEntryDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -87,6 +89,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconView)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -101,6 +104,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -116,6 +120,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -130,6 +135,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return NoContent();
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpPost("{id:guid}/publish")]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -145,6 +151,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpPost("{id:guid}/unpublish")]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -159,6 +166,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpPut("{id:guid}/playable")]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -174,6 +182,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpPost("{id:guid}/pronunciation")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
@@ -208,6 +217,7 @@ public sealed class AdminLexiconController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.LexiconEdit)]
     [HttpDelete("{id:guid}/pronunciation")]
     [ProducesResponseType(typeof(LexiconEntryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

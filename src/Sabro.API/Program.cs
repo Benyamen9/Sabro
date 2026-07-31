@@ -2,11 +2,13 @@ using System.Threading.RateLimiting;
 using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Sabro.API.Configuration;
 using Sabro.API.Logto;
 using Sabro.API.Media;
 using Sabro.Biblical.Public;
 using Sabro.Historical.Public;
+using Sabro.Identity.Domain;
 using Sabro.Identity.Public;
 using Sabro.Lexicon.Public;
 using Sabro.Play.Public;
@@ -86,7 +88,21 @@ try
         options.AddPolicy(AuthPolicies.Read, policy => policy.RequireAssertion(c => AuthPolicies.HasScope(c, AuthPolicies.Read)));
         options.AddPolicy(AuthPolicies.Write, policy => policy.RequireAssertion(c => AuthPolicies.HasScope(c, AuthPolicies.Write)));
         options.AddPolicy(AuthPolicies.Admin, policy => policy.RequireAssertion(c => AuthPolicies.HasScope(c, AuthPolicies.Admin)));
+
+        // Area policies: role only. The admin scope is already required by the
+        // class-level policy on every admin controller, and ASP.NET demands that
+        // every applicable policy succeed, so these narrow rather than replace it.
+        options.AddPolicy(AuthPolicies.LexiconView, policy => policy.Requirements.Add(
+            new RolePermissionRequirement(RolePermissions.CanViewLexiconBackoffice, "view the Lexicon backoffice")));
+        options.AddPolicy(AuthPolicies.LexiconEdit, policy => policy.Requirements.Add(
+            new RolePermissionRequirement(RolePermissions.CanEditLexicon, "edit the Lexicon")));
+        options.AddPolicy(AuthPolicies.FiguresView, policy => policy.Requirements.Add(
+            new RolePermissionRequirement(RolePermissions.CanViewFiguresBackoffice, "view the figures backoffice")));
+        options.AddPolicy(AuthPolicies.FiguresEdit, policy => policy.Requirements.Add(
+            new RolePermissionRequirement(RolePermissions.CanEditFigures, "edit the figures roster")));
     });
+
+    builder.Services.AddScoped<IAuthorizationHandler, RolePermissionHandler>();
 
     // CORS so browser clients (the Sabro hub frontend, Meltho, future apps) on
     // other origins can call the API directly — the ecosystem's intended shape

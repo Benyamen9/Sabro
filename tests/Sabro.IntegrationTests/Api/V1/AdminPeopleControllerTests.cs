@@ -264,6 +264,10 @@ public class AdminPeopleControllerTests : IDisposable
 
     public void Dispose()
     {
+        // These tests clear every profile to exercise the no-Owner bootstrap. Leave
+        // the shared database as it was found, or the next class in the collection
+        // authenticates as a role-less caller and is refused everywhere.
+        postgres.EnsureDefaultUserIsOwnerAsync(CancellationToken.None).GetAwaiter().GetResult();
         factory.Dispose();
         GC.SuppressFinalize(this);
     }
