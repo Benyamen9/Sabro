@@ -615,7 +615,9 @@
         "tradition": "Tradition",
         "traditionUnset": "Nicht festgelegt",
         "traditionHint": "Zum Veröffentlichen erforderlich. „Nicht zutreffend“ ist eine echte Antwort für Gestalten vor der Teilung.",
-        "gender": "Geschlecht"
+        "gender": "Geschlecht",
+        "descriptions": "Beschreibungen",
+        "descriptionsHint": "Optional. Ein bis zwei Sätze, die bei der Auflösung einer Runde erscheinen — nie währenddessen, da sie die Antwort verraten würden. Jede Sprache darf leer bleiben."
       },
       "category": {
         "BiblicalOldTestament": "Altes Testament",
@@ -684,6 +686,13 @@
       "gender": {
         "Male": "Männlich",
         "Female": "Weiblich"
+      },
+      "description": {
+        "en": "Englisch",
+        "fr": "Französisch",
+        "nl": "Niederländisch",
+        "de": "Deutsch",
+        "sv": "Schwedisch"
       }
     }
   },

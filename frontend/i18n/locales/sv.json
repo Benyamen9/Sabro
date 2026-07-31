@@ -615,7 +615,9 @@
         "tradition": "Tradition",
         "traditionUnset": "Ej angiven",
         "traditionHint": "Krävs för publicering. ”Ej tillämpligt” är ett verkligt svar för gestalter före uppdelningen.",
-        "gender": "Kön"
+        "gender": "Kön",
+        "descriptions": "Beskrivningar",
+        "descriptionsHint": "Valfritt. En eller två meningar som visas när en omgång avslöjas — aldrig under spelets gång, eftersom det skulle avslöja svaret. Varje språk får lämnas tomt."
       },
       "category": {
         "BiblicalOldTestament": "Gamla testamentet",
@@ -684,6 +686,13 @@
       "gender": {
         "Male": "Man",
         "Female": "Kvinna"
+      },
+      "description": {
+        "en": "Engelska",
+        "fr": "Franska",
+        "nl": "Nederländska",
+        "de": "Tyska",
+        "sv": "Svenska"
       }
     }
   },

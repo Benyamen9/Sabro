@@ -4219,6 +4219,7 @@ export interface components {
             region: components["schemas"]["HistoricalFigureRegion"];
             gender: components["schemas"]["HistoricalFigureGender"];
             tradition?: null | components["schemas"]["HistoricalFigureTradition"];
+            descriptions?: null | components["schemas"]["HistoricalFigureDescriptionRequest"][];
         };
         CreateLexiconEntryRequest: {
             syriacUnvocalized: string;
@@ -4340,6 +4341,14 @@ export interface components {
         HardeningSource: "None" | "Marked" | "Computed";
         /** @enum {string} */
         HistoricalFigureCategory: "BiblicalOldTestament" | "BiblicalNewTestament" | "Patristic";
+        HistoricalFigureDescriptionDto: {
+            language: string;
+            text: string;
+        };
+        HistoricalFigureDescriptionRequest: {
+            language: string;
+            text: string;
+        };
         HistoricalFigureDto: {
             /** Format: uuid */
             id: string;
@@ -4354,6 +4363,7 @@ export interface components {
             gender: components["schemas"]["HistoricalFigureGender"];
             status: components["schemas"]["HistoricalFigureStatus"];
             playableInShmo: boolean;
+            descriptions: components["schemas"]["HistoricalFigureDescriptionDto"][];
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -4889,6 +4899,7 @@ export interface components {
             region: components["schemas"]["HistoricalFigureRegion"];
             gender: components["schemas"]["HistoricalFigureGender"];
             tradition?: null | components["schemas"]["HistoricalFigureTradition"];
+            descriptions?: null | components["schemas"]["HistoricalFigureDescriptionRequest"][];
         };
         UpdateLexiconEntryRequest: {
             syriacUnvocalized: string;

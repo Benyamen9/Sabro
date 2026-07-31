@@ -14,5 +14,6 @@ public sealed record HistoricalFigureDto(
     HistoricalFigureGender Gender,
     HistoricalFigureStatus Status,
     bool PlayableInShmo,
+    IReadOnlyList<HistoricalFigureDescriptionDto> Descriptions,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);

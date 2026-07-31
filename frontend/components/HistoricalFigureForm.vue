@@ -50,6 +50,27 @@ const tradition = ref<HistoricalFigureTradition | ''>(props.figure?.tradition ??
 // than a year. Kept as a string ref because an empty input is not 0.
 const era = ref(props.figure?.era != null ? String(props.figure.era) : '')
 
+// The five languages the ecosystem serves. Descriptions are optional enrichment
+// and never gate publication — the roster was published long before this field
+// existed, so requiring them would invalidate all 289 figures at once.
+const descriptionLanguages = ['en', 'fr', 'nl', 'de', 'sv'] as const
+
+function descriptionFor(language: string) {
+  return props.figure?.descriptions?.find(d => d.language === language)?.text ?? ''
+}
+
+const descriptions = reactive<Record<string, string>>({
+  en: descriptionFor('en'),
+  fr: descriptionFor('fr'),
+  nl: descriptionFor('nl'),
+  de: descriptionFor('de'),
+  sv: descriptionFor('sv'),
+})
+
+// Longest description still in the box, so the counter warns before the server
+// does. Matches HistoricalFigureDescription.MaxTextLength on the backend.
+const descriptionMaxLength = 500
+
 const eraNumber = computed(() => {
   const parsed = Number.parseInt(era.value, 10)
   return Number.isFinite(parsed) ? parsed : null
@@ -76,6 +97,11 @@ function onSubmit() {
     region: region.value,
     gender: gender.value,
     tradition: tradition.value === '' ? null : tradition.value,
+    // Empty boxes are omitted rather than sent as blank strings: the domain
+    // rejects an empty description, and a language left alone simply has none.
+    descriptions: descriptionLanguages
+      .map(language => ({ language, text: (descriptions[language] ?? '').trim() }))
+      .filter(d => d.text.length > 0),
   })
 }
 
@@ -183,6 +209,30 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
         </select>
       </div>
     </div>
+
+    <!-- Descriptions: shown when a Shmo round is revealed, never during it. -->
+    <fieldset class="flex flex-col gap-4">
+      <legend :class="labelClass">{{ t('admin.historicalFigures.form.descriptions') }}</legend>
+      <p :class="[hintClass, 'mt-0']">{{ t('admin.historicalFigures.form.descriptionsHint') }}</p>
+      <div v-for="language in descriptionLanguages" :key="language" class="flex flex-col gap-1">
+        <label
+          :for="`description-${language}`"
+          class="font-sans text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]"
+        >
+          {{ t(`admin.historicalFigures.description.${language}`) }}
+        </label>
+        <textarea
+          :id="`description-${language}`"
+          v-model="descriptions[language]"
+          rows="2"
+          :maxlength="descriptionMaxLength"
+          :class="[fieldClass, 'resize-y']"
+        />
+        <p :class="hintClass">
+          {{ (descriptions[language] ?? '').length }} / {{ descriptionMaxLength }}
+        </p>
+      </div>
+    </fieldset>
 
     <!-- Actions -->
     <div class="flex items-center gap-3 border-t border-[var(--color-border)] pt-5">

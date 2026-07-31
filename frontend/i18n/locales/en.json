@@ -615,7 +615,9 @@
         "tradition": "Tradition",
         "traditionUnset": "Not set",
         "traditionHint": "Required to publish. “Not applicable” is a real answer for figures who predate the division.",
-        "gender": "Gender"
+        "gender": "Gender",
+        "descriptions": "Descriptions",
+        "descriptionsHint": "Optional. A sentence or two shown when a round is revealed — never during play, since it would give the answer away. Any language may be left blank."
       },
       "category": {
         "BiblicalOldTestament": "Old Testament",
@@ -684,6 +686,13 @@
       "gender": {
         "Male": "Male",
         "Female": "Female"
+      },
+      "description": {
+        "en": "English",
+        "fr": "French",
+        "nl": "Dutch",
+        "de": "German",
+        "sv": "Swedish"
       }
     }
   },
