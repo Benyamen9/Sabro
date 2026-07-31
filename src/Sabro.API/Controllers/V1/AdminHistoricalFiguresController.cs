@@ -25,6 +25,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
         this.figureService = figureService;
     }
 
+    [Authorize(Policy = AuthPolicies.FiguresEdit)]
     [HttpPost]
     [ProducesResponseType(typeof(HistoricalFigureDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -44,6 +45,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
     /// public roster. Backed by a direct relational query: the roster is a few hundred
     /// rows at most, so a dedicated search index would be plumbing without payoff.
     /// </summary>
+    [Authorize(Policy = AuthPolicies.FiguresView)]
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<HistoricalFigureDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -78,6 +80,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.FiguresView)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(HistoricalFigureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -92,6 +95,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.FiguresEdit)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(HistoricalFigureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -107,6 +111,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.FiguresEdit)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -121,6 +126,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
         return NoContent();
     }
 
+    [Authorize(Policy = AuthPolicies.FiguresEdit)]
     [HttpPost("{id:guid}/publish")]
     [ProducesResponseType(typeof(HistoricalFigureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -136,6 +142,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.FiguresEdit)]
     [HttpPost("{id:guid}/unpublish")]
     [ProducesResponseType(typeof(HistoricalFigureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -150,6 +157,7 @@ public sealed class AdminHistoricalFiguresController : ApiControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize(Policy = AuthPolicies.FiguresEdit)]
     [HttpPut("{id:guid}/playable")]
     [ProducesResponseType(typeof(HistoricalFigureDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

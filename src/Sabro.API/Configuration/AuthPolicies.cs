@@ -10,6 +10,17 @@ public static class AuthPolicies
 
     public const string Admin = "api:v1:admin";
 
+    // Area policies. These carry a role requirement rather than a scope, and are
+    // applied per action alongside the class-level Admin policy — the scope opens
+    // the door, the role decides the room.
+    public const string LexiconView = "lexicon:view";
+
+    public const string LexiconEdit = "lexicon:edit";
+
+    public const string FiguresView = "figures:view";
+
+    public const string FiguresEdit = "figures:edit";
+
     /// <summary>
     /// True when the caller's token grants <paramref name="scope"/>. OIDC issues
     /// the granted scopes as a single space-delimited <c>scope</c> claim

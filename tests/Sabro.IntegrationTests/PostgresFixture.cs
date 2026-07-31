@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Sabro.Biblical.Infrastructure;
 using Sabro.Historical.Infrastructure;
+using Sabro.Identity.Domain;
 using Sabro.Identity.Infrastructure;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Play.Infrastructure;
@@ -12,6 +13,12 @@ namespace Sabro.IntegrationTests;
 
 public sealed class PostgresFixture : IAsyncLifetime
 {
+    /// <summary>
+    /// The <c>sub</c> the test auth handler issues when a test does not override it.
+    /// Kept in step with <c>TestAuthHandler</c>.
+    /// </summary>
+    public const string DefaultTestUser = "integration-test-user";
+
     private readonly PostgreSqlContainer container = new PostgreSqlBuilder()
         .WithImage("postgres:16-alpine")
         .WithDatabase("sabro_test")
