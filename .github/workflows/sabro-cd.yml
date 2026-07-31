@@ -66,6 +66,49 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Guards the media-volume contract the api service depends on: a named
+      # volume mounted at /app/wwwroot/media must be writable by the image's
+      # non-root user and must keep its contents across container recreation.
+      # Two failure modes, both invisible in production until an owner uploads a
+      # pronunciation and it either 500s or silently disappears on the next
+      # deploy:
+      #   1. the mount point does not exist in the image, so Docker creates the
+      #      volume root-owned and the uid-1001 runtime user cannot write to it;
+      #   2. the directory stops shipping (e.g. the tracked .gitkeep is removed,
+      #      or the publish output no longer carries wwwroot), which is the same
+      #      thing by another route.
+      # Runs against the exact image about to be deployed, and gates `deploy`.
+      - name: Verify media volume is writable and persists
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ steps.ns.outputs.value }}/sabro-api:${{ env.SHA }}"
+          docker pull "$IMAGE"
+          docker volume create sabro-media-probe
+
+          # Fresh volume. No --user override: this is exactly the user the api
+          # container runs as in production.
+          docker run --rm -v sabro-media-probe:/app/wwwroot/media --entrypoint sh "$IMAGE" -c '
+            echo "runtime uid: $(id -u)"
+            if [ ! -d /app/wwwroot/media/pronunciations ]; then
+              echo "FAIL: pronunciations directory is not in the image, so the named volume is created root-owned and uploads cannot be written"
+              exit 1
+            fi
+            if ! echo probe > /app/wwwroot/media/pronunciations/ci.probe; then
+              echo "FAIL: the runtime user cannot write into the mounted media volume"
+              exit 1
+            fi
+          '
+
+          # A second container over the same volume is what a redeploy does.
+          docker run --rm -v sabro-media-probe:/app/wwwroot/media --entrypoint sh "$IMAGE" -c '
+            if [ ! -f /app/wwwroot/media/pronunciations/ci.probe ]; then
+              echo "FAIL: media written by the previous container did not survive recreation"
+              exit 1
+            fi
+            echo "media volume OK: writable by uid $(id -u) and persistent across container recreation"
+          '
+
+          docker volume rm sabro-media-probe
+
       # Migrator image — same Dockerfile, migrator target.
       - name: Build + push migrator
         uses: docker/build-push-action@v7
