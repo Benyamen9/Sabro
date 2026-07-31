@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
+using Sabro.API.Media;
 using Sabro.Lexicon.Application.Entries;
 using Sabro.Lexicon.Application.Search;
 using Sabro.Lexicon.Domain;
@@ -22,18 +23,6 @@ public sealed class AdminLexiconController : ApiControllerBase
 {
     // A single short recording per word, not a podcast — 5 MB comfortably covers minutes of audio.
     private const long MaxPronunciationAudioBytes = 5 * 1024 * 1024;
-
-    private static readonly Dictionary<string, string> PronunciationAudioExtensionsByContentType = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["audio/mpeg"] = ".mp3",
-        ["audio/mp3"] = ".mp3",
-        ["audio/wav"] = ".wav",
-        ["audio/x-wav"] = ".wav",
-        ["audio/ogg"] = ".ogg",
-        ["audio/webm"] = ".webm",
-        ["audio/mp4"] = ".m4a",
-        ["audio/x-m4a"] = ".m4a",
-    };
 
     private readonly ILexiconEntryService entryService;
     private readonly IAdminLexiconSearchService searchService;
@@ -203,7 +192,7 @@ public sealed class AdminLexiconController : ApiControllerBase
             return FromError(Error.Validation("The recording must be 5 MB or smaller."));
         }
 
-        if (!PronunciationAudioExtensionsByContentType.TryGetValue(file.ContentType, out var extension))
+        if (!PronunciationAudioFormats.ExtensionsByUploadContentType.TryGetValue(file.ContentType, out var extension))
         {
             return FromError(Error.Validation(
                 $"Unsupported audio type '{file.ContentType}'. Use MP3, WAV, OGG, WebM, or M4A."));

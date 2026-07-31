@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Sabro.API.Configuration;
 using Sabro.API.Logto;
+using Sabro.API.Media;
 using Sabro.Biblical.Public;
 using Sabro.Historical.Public;
 using Sabro.Identity.Public;
@@ -171,7 +172,12 @@ try
 
     // Serves wwwroot/media (bibliography images, pronunciation recordings) — no auth,
     // matching "clients read content through validated URLs" for static assets.
-    app.UseStaticFiles();
+    // The custom provider corrects the framework's IIS-derived defaults, which label
+    // .ogg and .webm as video/* — an <audio> element may refuse those.
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        ContentTypeProvider = PronunciationAudioFormats.CreateContentTypeProvider(),
+    });
     app.UseCors("frontend");
     app.UseRateLimiter();
     app.UseAuthentication();
