@@ -994,9 +994,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "text/plain": components["schemas"]["UserProfileDto"];
-                        "application/json": components["schemas"]["UserProfileDto"];
-                        "text/json": components["schemas"]["UserProfileDto"];
+                        "text/plain": components["schemas"]["PersonDto"];
+                        "application/json": components["schemas"]["PersonDto"];
+                        "text/json": components["schemas"]["PersonDto"];
                     };
                 };
                 /** @description Bad Request */
