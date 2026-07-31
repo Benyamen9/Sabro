@@ -31,9 +31,11 @@ test.describe('landing page', () => {
     await expect(page.getByRole('option', { name: 'Maherboyo' })).toBeVisible()
     await page.keyboard.press('Escape')
 
-    // With no Logto config set in the test env, the UserMenu degrades to a
-    // "Auth not configured" notice rather than rendering a broken sign-in
-    // button.
+    // The UserMenu degrades to an "Auth not configured" notice rather than
+    // rendering a broken sign-in button. The unconfigured state is pinned by
+    // playwright.config's webServer.env, not inherited from whatever .env the
+    // machine happens to have — this assertion used to pass only on machines
+    // without one.
     await expect(page.getByText('Auth not configured')).toBeVisible()
 
     const syriac = page.locator('span[lang="syc"]').first()
