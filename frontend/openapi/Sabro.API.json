@@ -6866,6 +6866,15 @@
                 "$ref": "#/components/schemas/HistoricalFigureTradition"
               }
             ]
+          },
+          "descriptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/HistoricalFigureDescriptionRequest"
+            }
           }
         }
       },
@@ -7392,6 +7401,36 @@
         ],
         "type": "string"
       },
+      "HistoricalFigureDescriptionDto": {
+        "required": [
+          "language",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "HistoricalFigureDescriptionRequest": {
+        "required": [
+          "language",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
       "HistoricalFigureDto": {
         "required": [
           "id",
@@ -7405,6 +7444,7 @@
           "gender",
           "status",
           "playableInShmo",
+          "descriptions",
           "createdAt",
           "updatedAt"
         ],
@@ -7455,6 +7495,12 @@
           },
           "playableInShmo": {
             "type": "boolean"
+          },
+          "descriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoricalFigureDescriptionDto"
+            }
           },
           "createdAt": {
             "type": "string",
@@ -9766,6 +9812,15 @@
                 "$ref": "#/components/schemas/HistoricalFigureTradition"
               }
             ]
+          },
+          "descriptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/HistoricalFigureDescriptionRequest"
+            }
           }
         }
       },

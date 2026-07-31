@@ -28,6 +28,8 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
     private const int MinEra = -60;
     private const int MaxEra = 21;
 
+    private readonly List<HistoricalFigureDescription> descriptions = new();
+
     private HistoricalFigure(NormalizedFields fields)
     {
         Id = Guid.NewGuid();
@@ -78,6 +80,14 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
 
     /// <summary>Editorial opt-in to the Shmo rotation. Only a published figure may carry it.</summary>
     public bool PlayableInShmo { get; private set; }
+
+    /// <summary>
+    /// Short per-language descriptions shown when a round is revealed. At most one
+    /// per language, in no guaranteed order. Optional enrichment: unlike the
+    /// Lexicon's meanings these never gate publication, because the roster was
+    /// published before the field existed.
+    /// </summary>
+    public IReadOnlyList<HistoricalFigureDescription> Descriptions => descriptions;
 
     public static Result<HistoricalFigure> Create(
         string name,
@@ -159,6 +169,33 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         Status = HistoricalFigureStatus.Draft;
         PlayableInShmo = false;
         Touch();
+    }
+
+    /// <summary>
+    /// Replaces every description with the supplied set. Passing an empty set clears
+    /// them, which is how a description is removed — there is no separate delete.
+    /// </summary>
+    /// <remarks>
+    /// Rejects two descriptions for the same language rather than silently keeping
+    /// one: the reveal card picks by language, so a duplicate is not a preference
+    /// between two texts, it is a coin toss over which one a player sees.
+    /// </remarks>
+    public Error? ReplaceDescriptions(IEnumerable<HistoricalFigureDescription>? incoming)
+    {
+        var incomingList = (incoming ?? Enumerable.Empty<HistoricalFigureDescription>()).ToArray();
+
+        var duplicate = incomingList
+            .GroupBy(d => d.Language, StringComparer.Ordinal)
+            .FirstOrDefault(g => g.Count() > 1);
+        if (duplicate is not null)
+        {
+            return Error.Validation($"Only one description per language is allowed (got several for '{duplicate.Key}').");
+        }
+
+        descriptions.Clear();
+        descriptions.AddRange(incomingList);
+        Touch();
+        return null;
     }
 
     /// <summary>Sets the editorial playable flag. Marking playable requires the figure to be published.</summary>

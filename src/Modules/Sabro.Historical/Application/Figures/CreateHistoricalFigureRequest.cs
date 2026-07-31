@@ -10,4 +10,5 @@ public sealed record CreateHistoricalFigureRequest(
     HistoricalFigureRole Role,
     HistoricalFigureRegion Region,
     HistoricalFigureGender Gender,
-    HistoricalFigureTradition? Tradition = null);
+    HistoricalFigureTradition? Tradition = null,
+    IReadOnlyList<HistoricalFigureDescriptionRequest>? Descriptions = null);

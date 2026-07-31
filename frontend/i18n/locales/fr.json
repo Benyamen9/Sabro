@@ -615,7 +615,9 @@
         "tradition": "Tradition",
         "traditionUnset": "Non définie",
         "traditionHint": "Requise pour publier. « Sans objet » est une vraie réponse pour les figures antérieures à la division.",
-        "gender": "Genre"
+        "gender": "Genre",
+        "descriptions": "Descriptions",
+        "descriptionsHint": "Facultatif. Une ou deux phrases affichées à la révélation d'une partie — jamais pendant, car cela donnerait la réponse. Chaque langue peut rester vide."
       },
       "category": {
         "BiblicalOldTestament": "Ancien Testament",
@@ -684,6 +686,13 @@
       "gender": {
         "Male": "Masculin",
         "Female": "Féminin"
+      },
+      "description": {
+        "en": "Anglais",
+        "fr": "Français",
+        "nl": "Néerlandais",
+        "de": "Allemand",
+        "sv": "Suédois"
       }
     }
   },

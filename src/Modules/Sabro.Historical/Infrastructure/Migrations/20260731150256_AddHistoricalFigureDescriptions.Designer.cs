@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sabro.Historical.Infrastructure;
@@ -11,9 +12,11 @@ using Sabro.Historical.Infrastructure;
 namespace Sabro.Historical.Infrastructure.Migrations
 {
     [DbContext(typeof(HistoricalDbContext))]
-    partial class HistoricalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260731150256_AddHistoricalFigureDescriptions")]
+    partial class AddHistoricalFigureDescriptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

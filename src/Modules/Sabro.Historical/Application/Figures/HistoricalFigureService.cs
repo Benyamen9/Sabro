@@ -61,6 +61,23 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         }
 
         var figure = domainResult.Value!;
+
+        var descriptionsResult = ToDescriptions(request.Descriptions);
+        if (!descriptionsResult.IsSuccess)
+        {
+            logger.LogWarning(
+                "HistoricalFigure creation rejected by description invariant. Message={ErrorMessage}",
+                descriptionsResult.Error!.Message);
+
+            return Result<HistoricalFigureDto>.Failure(descriptionsResult.Error!);
+        }
+
+        var descriptionsError = figure.ReplaceDescriptions(descriptionsResult.Value);
+        if (descriptionsError is not null)
+        {
+            return Result<HistoricalFigureDto>.Failure(descriptionsError);
+        }
+
         dbContext.Figures.Add(figure);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -112,6 +129,25 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
                 error.Message);
 
             return Result<HistoricalFigureDto>.Failure(error);
+        }
+
+        // Descriptions are replaced wholesale, like every other field on this
+        // request: what arrives is what the figure ends up with.
+        var descriptionsResult = ToDescriptions(request.Descriptions);
+        if (!descriptionsResult.IsSuccess)
+        {
+            logger.LogWarning(
+                "HistoricalFigure update rejected by description invariant. Id={FigureId} Message={ErrorMessage}",
+                id,
+                descriptionsResult.Error!.Message);
+
+            return Result<HistoricalFigureDto>.Failure(descriptionsResult.Error!);
+        }
+
+        var descriptionsError = figure.ReplaceDescriptions(descriptionsResult.Value);
+        if (descriptionsError is not null)
+        {
+            return Result<HistoricalFigureDto>.Failure(descriptionsError);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -300,6 +336,34 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
             new PagedResult<HistoricalFigureListItem>(items.Select(MapListItem).ToArray(), total, page, pageSize));
     }
 
+    /// <summary>
+    /// Turns request descriptions into domain ones, failing on the first invalid
+    /// entry. The domain owns the rules (code shape, length, non-empty); repeating
+    /// them here is how the two drift apart.
+    /// </summary>
+    private static Result<IReadOnlyList<HistoricalFigureDescription>> ToDescriptions(
+        IReadOnlyList<HistoricalFigureDescriptionRequest>? requested)
+    {
+        if (requested is null || requested.Count == 0)
+        {
+            return Result<IReadOnlyList<HistoricalFigureDescription>>.Success(Array.Empty<HistoricalFigureDescription>());
+        }
+
+        var built = new List<HistoricalFigureDescription>(requested.Count);
+        foreach (var item in requested)
+        {
+            var result = HistoricalFigureDescription.Create(item.Language, item.Text);
+            if (!result.IsSuccess)
+            {
+                return Result<IReadOnlyList<HistoricalFigureDescription>>.Failure(result.Error!);
+            }
+
+            built.Add(result.Value!);
+        }
+
+        return Result<IReadOnlyList<HistoricalFigureDescription>>.Success(built);
+    }
+
     private static HistoricalFigureDto Map(HistoricalFigure figure) => new(
         figure.Id,
         figure.Name,
@@ -312,6 +376,10 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         figure.Gender,
         figure.Status,
         figure.PlayableInShmo,
+        figure.Descriptions
+            .OrderBy(d => d.Language, StringComparer.Ordinal)
+            .Select(d => new HistoricalFigureDescriptionDto(d.Language, d.Text))
+            .ToArray(),
         figure.CreatedAt,
         figure.UpdatedAt);
 

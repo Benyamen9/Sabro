@@ -615,7 +615,9 @@
         "tradition": "Traditie",
         "traditionUnset": "Niet ingesteld",
         "traditionHint": "Vereist om te publiceren. “Niet van toepassing” is een echt antwoord voor figuren van vóór de splitsing.",
-        "gender": "Geslacht"
+        "gender": "Geslacht",
+        "descriptions": "Beschrijvingen",
+        "descriptionsHint": "Optioneel. Eén of twee zinnen die bij de onthulling van een ronde verschijnen — nooit tijdens het spel, want dat zou het antwoord weggeven. Elke taal mag leeg blijven."
       },
       "category": {
         "BiblicalOldTestament": "Oude Testament",
@@ -684,6 +686,13 @@
       "gender": {
         "Male": "Man",
         "Female": "Vrouw"
+      },
+      "description": {
+        "en": "Engels",
+        "fr": "Frans",
+        "nl": "Nederlands",
+        "de": "Duits",
+        "sv": "Zweeds"
       }
     }
   },
