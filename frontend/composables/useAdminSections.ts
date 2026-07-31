@@ -21,7 +21,16 @@ export interface AdminSection {
   accent: string
 }
 
+// Order is deliberate and drives both surfaces: People leads, then content
+// areas. Access is the decision you make before touching anything, and putting
+// it first keeps it from being the item you scroll past.
 export const adminSections: AdminSection[] = [
+  {
+    to: '/admin/people',
+    labelKey: 'admin.sections.people.label',
+    blurbKey: 'admin.sections.people.blurb',
+    accent: '--color-accent',
+  },
   {
     to: '/admin/lexicon',
     labelKey: 'admin.sections.lexicon.label',
@@ -33,12 +42,6 @@ export const adminSections: AdminSection[] = [
     labelKey: 'admin.sections.figures.label',
     blurbKey: 'admin.sections.figures.blurb',
     accent: '--color-shmo',
-  },
-  {
-    to: '/admin/people',
-    labelKey: 'admin.sections.people.label',
-    blurbKey: 'admin.sections.people.blurb',
-    accent: '--color-accent',
   },
 ]
 

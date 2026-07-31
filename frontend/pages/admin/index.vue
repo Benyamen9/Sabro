@@ -36,7 +36,7 @@ await refreshAdmin()
       :hint="t('admin.adminRequiredHint')"
     />
 
-    <div v-else-if="isAdmin" class="grid gap-4 sm:grid-cols-2">
+    <div v-else-if="isAdmin" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <NuxtLink
         v-for="section in sections"
         :key="section.to"
