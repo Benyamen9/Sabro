@@ -103,7 +103,7 @@ public class AdminPeopleControllerTests : IDisposable
         var response = await AssignAsync(owner, targetId, Role.ShmoEditor, ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var dto = await response.Content.ReadFromJsonAsync<UserProfileDto>(SabroApiFactory.JsonOptions, ct);
+        var dto = await response.Content.ReadFromJsonAsync<PersonDto>(SabroApiFactory.JsonOptions, ct);
         dto!.Role.Should().Be(Role.ShmoEditor);
         (await RoleOfAsync(targetId, ct)).Should().Be(Role.ShmoEditor);
     }
@@ -198,6 +198,54 @@ public class AdminPeopleControllerTests : IDisposable
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         (await RoleOfAsync(ownId, ct)).Should().Be(Role.Reader);
+    }
+
+    [Fact]
+    public async Task Put_ReturnsTheSameShapeAsTheList()
+    {
+        // Reported from production: the name vanished from the row on save, because
+        // the grant answered with a bare profile while the list answers with a
+        // person. The page swaps the response straight into the table it is showing.
+        var ct = TestContext.Current.CancellationToken;
+        await ClearProfilesAsync(ct);
+        using var owner = ClientFor("shape-owner");
+        await EnsureProfileAsync(owner, ct);
+        await SetRoleAsync("shape-owner", Role.Owner, ct);
+        var targetId = await CreateProfileAsync("shape-target", ct);
+
+        var listed = await owner.GetAsync("/api/v1/admin/people", ct);
+        var people = await listed.Content.ReadFromJsonAsync<List<PersonDto>>(SabroApiFactory.JsonOptions, ct);
+        var before = people!.Single(p => p.Id == targetId);
+
+        var response = await AssignAsync(owner, targetId, Role.ShmoEditor, ct);
+        var after = await response.Content.ReadFromJsonAsync<PersonDto>(SabroApiFactory.JsonOptions, ct);
+
+        after!.Id.Should().Be(before.Id);
+        after.DisplayName.Should().Be(before.DisplayName);
+        after.Name.Should().Be(before.Name);
+        after.Email.Should().Be(before.Email);
+        after.CreatedAt.Should().Be(before.CreatedAt);
+        after.IsYou.Should().Be(before.IsYou);
+        after.Role.Should().Be(Role.ShmoEditor, "only the role should have moved");
+    }
+
+    [Fact]
+    public async Task Put_DoesNotLeakTheLogtoUserId()
+    {
+        // The list was covered; the grant was not, and it leaked the id for as long
+        // as it answered with the bare profile.
+        var ct = TestContext.Current.CancellationToken;
+        await ClearProfilesAsync(ct);
+        using var owner = ClientFor("put-privacy-owner");
+        await EnsureProfileAsync(owner, ct);
+        await SetRoleAsync("put-privacy-owner", Role.Owner, ct);
+        var targetId = await CreateProfileAsync("put-privacy-target", ct);
+
+        var response = await AssignAsync(owner, targetId, Role.ShmoEditor, ct);
+        var body = await response.Content.ReadAsStringAsync(ct);
+
+        body.Should().NotContain("put-privacy-target");
+        body.Should().NotContain("logtoUserId");
     }
 
     [Fact]

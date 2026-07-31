@@ -68,36 +68,17 @@ public sealed class AdminPeopleController : ApiControllerBase
             return FromError(result.Error!);
         }
 
-        var profiles = result.Value!;
-        var identities = await logtoManagement.GetUserIdentitiesAsync(
-            profiles.Select(p => p.LogtoUserId).ToArray(),
-            cancellationToken);
-
-        var people = profiles
-            .Select(profile =>
-            {
-                identities.TryGetValue(profile.LogtoUserId, out var identity);
-                return new PersonDto(
-                    profile.Id,
-                    profile.Role,
-                    profile.DisplayName,
-                    identity?.Name,
-                    identity?.Email,
-                    profile.CreatedAt,
-                    string.Equals(profile.LogtoUserId, logtoUserId, StringComparison.Ordinal));
-            })
-            .ToArray();
-
+        var people = await ToPeopleAsync(result.Value!, logtoUserId, cancellationToken);
         return Ok(people);
     }
 
     /// <summary>Grants a role to one person.</summary>
     [HttpPut("{profileId:guid}/role")]
-    [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PersonDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserProfileDto>> AssignRole(
+    public async Task<ActionResult<PersonDto>> AssignRole(
         Guid profileId,
         AssignRoleRequest request,
         CancellationToken cancellationToken)
@@ -109,6 +90,45 @@ public sealed class AdminPeopleController : ApiControllerBase
         }
 
         var result = await userRoles.AssignRoleAsync(logtoUserId, profileId, request.Role, cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        // Same shape as the list, deliberately. The page swaps this row straight
+        // into the table it is showing; returning the bare profile dropped the name
+        // and email (which live only in Logto) so the row went blank on save, and
+        // leaked the opaque Logto id the list is careful never to send.
+        var people = await ToPeopleAsync([result.Value!], logtoUserId, cancellationToken);
+        return Ok(people[0]);
+    }
+
+    /// <summary>
+    /// Turns profiles into people by asking Logto who they are. One path for both
+    /// endpoints, so a list row and a freshly-saved row can never disagree.
+    /// </summary>
+    private async Task<IReadOnlyList<PersonDto>> ToPeopleAsync(
+        IReadOnlyList<UserProfileDto> profiles,
+        string callerLogtoUserId,
+        CancellationToken cancellationToken)
+    {
+        var identities = await logtoManagement.GetUserIdentitiesAsync(
+            profiles.Select(p => p.LogtoUserId).ToArray(),
+            cancellationToken);
+
+        return profiles
+            .Select(profile =>
+            {
+                identities.TryGetValue(profile.LogtoUserId, out var identity);
+                return new PersonDto(
+                    profile.Id,
+                    profile.Role,
+                    profile.DisplayName,
+                    identity?.Name,
+                    identity?.Email,
+                    profile.CreatedAt,
+                    string.Equals(profile.LogtoUserId, callerLogtoUserId, StringComparison.Ordinal));
+            })
+            .ToArray();
     }
 }
