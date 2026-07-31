@@ -256,12 +256,25 @@ from Postgres via the admin endpoints (`POST /api/v1/admin/search/rebuild/{index
 ## Backups
 
 The `backup` service (built from `backup/`, image `sabro-backup`) dumps **both
-databases** (sabro + logto) nightly at 03:30 UTC in `pg_dump` custom format,
-keeps **30 daily + 12 monthly** copies in the `backup-data` volume, mirrors the
-same layout + retention to a **Hetzner Storage Box** over SFTP, and runs a
-**weekly restore test** (Sunday 04:15 UTC) that restores the newest dumps into
-a scratch cluster and checks the data is actually there. Everything logs to
+databases** (sabro + logto) nightly at 03:30 UTC in `pg_dump` custom format and
+archives **uploaded media** (`media-data`, mounted read-only at `/media`) as
+`media-<date>.tar.gz`, keeps **30 daily + 12 monthly** copies of all three in the
+`backup-data` volume, mirrors the same layout + retention to a **Hetzner Storage
+Box** over SFTP, and runs a **weekly restore test** (Sunday 04:15 UTC) that
+restores the newest dumps into a scratch cluster, checks the data is actually
+there, and re-verifies the media archive. Everything logs to
 `docker logs sabro-backup`.
+
+Media is in the backup set because pronunciation recordings are **original work**
+— unlike the Meilisearch indexes, nothing can regenerate them from Postgres.
+
+> **If the `media-data` mount is ever dropped from the `backup` service**, the job
+> logs `WARNING nothing is mounted at /media` and writes **no** archive, rather
+> than an empty one that would rotate the real copies out of the 30-day window.
+> The weekly restore test then fails once the newest archive passes a week old,
+> so it alerts through the same heartbeat as any other backup failure instead of
+> rotting quietly. Grep for it with:
+> `docker logs sabro-backup | grep -i "media:"`
 
 ### One-time setup (off-site)
 
@@ -333,6 +346,26 @@ service instead of `api`). If the VPS itself is gone: provision a new one
 (Phases 1–4), `sftp -P 23` the dumps back from the Storage Box, and restore
 before first bring-up. Afterwards rebuild the Meilisearch indexes (see above) —
 they are derived data and not part of the backups.
+
+To restore **media** (recordings lost, or a fresh VPS), unpack the archive back
+into the volume. The `backup` service mounts it read-only, so write through a
+throwaway container instead:
+
+```bash
+cd /opt/sabro
+docker compose -f docker-compose.prod.yml exec backup ls /backups/daily   # pick a date
+docker compose -f docker-compose.prod.yml cp \
+  backup:/backups/daily/media-<DATE>.tar.gz /tmp/media.tar.gz
+docker run --rm -v sabro-prod_media-data:/media -v /tmp:/in:ro \
+  alpine tar -xzf /in/media.tar.gz -C /media
+docker compose -f docker-compose.prod.yml restart api
+```
+
+The archive's paths are relative to the media root, so `pronunciations/x.mp3`
+lands back at `/app/wwwroot/media/pronunciations/x.mp3`. Restoring media does
+**not** fix entries whose `pronunciation_audio_url` was cleared in the database —
+that column comes back with the sabro dump, so restore the DB first if both are
+affected.
 
 ### Server restore (Hetzner)
 
