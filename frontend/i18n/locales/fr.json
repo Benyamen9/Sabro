@@ -46,7 +46,6 @@
     "translations": "Traductions",
     "library": "Bibliothèque",
     "admin": "Back-office",
-    "adminFigures": "Figures",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -396,8 +395,24 @@
     "Other": "Autre"
   },
   "admin": {
+    "hub": {
+      "title": "Coulisses",
+      "subtitle": "Tout ce que vous éditez, au même endroit."
+    },
+    "sections": {
+      "navLabel": "Sections des coulisses",
+      "hub": "Coulisses",
+      "lexicon": {
+        "label": "Lexique",
+        "blurb": "Mots syriaques, glosses et enregistrements."
+      },
+      "figures": {
+        "label": "Figures",
+        "blurb": "Le répertoire de Shmo et ses attributs."
+      }
+    },
     "adminRequired": "Accès administrateur requis.",
-    "adminRequiredHint": "Connectez-vous avec un compte éditeur pour gérer le lexique.",
+    "adminRequiredHint": "Connectez-vous avec un compte éditeur pour gérer ce contenu.",
     "lexicon": {
       "title": "Back-office du lexique",
       "subtitle": "Gérez la base lexicale syriaque et le vivier de mots de Meltho.",

@@ -46,7 +46,6 @@
     "translations": "Übersetzungen",
     "library": "Bibliothek",
     "admin": "Backoffice",
-    "adminFigures": "Gestalten",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -396,8 +395,24 @@
     "Other": "Sonstige"
   },
   "admin": {
+    "hub": {
+      "title": "Redaktion",
+      "subtitle": "Alles, was Sie pflegen, an einem Ort."
+    },
+    "sections": {
+      "navLabel": "Redaktionsbereiche",
+      "hub": "Redaktion",
+      "lexicon": {
+        "label": "Lexikon",
+        "blurb": "Syrische Wörter, Bedeutungen und Aufnahmen."
+      },
+      "figures": {
+        "label": "Gestalten",
+        "blurb": "Das Shmo-Verzeichnis und seine Merkmale."
+      }
+    },
     "adminRequired": "Administratorzugriff erforderlich.",
-    "adminRequiredHint": "Melden Sie sich mit einem Redakteurkonto an, um das Lexikon zu verwalten.",
+    "adminRequiredHint": "Melden Sie sich mit einem Redakteurkonto an, um diese Inhalte zu verwalten.",
     "lexicon": {
       "title": "Lexikon-Backoffice",
       "subtitle": "Verwalten Sie die syrische Lexikondatenbank und den Meltho-Wortpool.",

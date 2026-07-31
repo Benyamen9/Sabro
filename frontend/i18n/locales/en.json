@@ -46,7 +46,6 @@
     "translations": "Translations",
     "library": "Library",
     "admin": "Backoffice",
-    "adminFigures": "Figures",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -396,8 +395,24 @@
     "Other": "Other"
   },
   "admin": {
+    "hub": {
+      "title": "Backoffice",
+      "subtitle": "Everything you curate, in one place."
+    },
+    "sections": {
+      "navLabel": "Backoffice sections",
+      "hub": "Backoffice",
+      "lexicon": {
+        "label": "Lexicon",
+        "blurb": "Syriac words, glosses and recordings."
+      },
+      "figures": {
+        "label": "Figures",
+        "blurb": "The Shmo roster and its attributes."
+      }
+    },
     "adminRequired": "Admin access required.",
-    "adminRequiredHint": "Sign in with an editor account to manage the lexicon.",
+    "adminRequiredHint": "Sign in with an editor account to manage this content.",
     "lexicon": {
       "title": "Lexicon backoffice",
       "subtitle": "Manage the Syriac lexical database and the Meltho word pool.",

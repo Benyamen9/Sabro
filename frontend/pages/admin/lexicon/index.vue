@@ -158,6 +158,8 @@ function clearFilters() {
 
 <template>
   <section>
+    <AdminSectionNav />
+
     <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
         <p class="mb-2 font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">

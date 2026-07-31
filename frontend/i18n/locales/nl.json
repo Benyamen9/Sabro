@@ -46,7 +46,6 @@
     "translations": "Vertalingen",
     "library": "Bibliotheek",
     "admin": "Backoffice",
-    "adminFigures": "Figuren",
     "meltho": "Meltho",
     "mno": "Mno",
     "shmo": "Shmo"
@@ -396,8 +395,24 @@
     "Other": "Overig"
   },
   "admin": {
+    "hub": {
+      "title": "Beheer",
+      "subtitle": "Alles wat u samenstelt, op één plek."
+    },
+    "sections": {
+      "navLabel": "Beheersecties",
+      "hub": "Beheer",
+      "lexicon": {
+        "label": "Lexicon",
+        "blurb": "Syrische woorden, glossen en opnames."
+      },
+      "figures": {
+        "label": "Figuren",
+        "blurb": "Het Shmo-register en zijn kenmerken."
+      }
+    },
     "adminRequired": "Beheerderstoegang vereist.",
-    "adminRequiredHint": "Meld u aan met een redacteursaccount om het lexicon te beheren.",
+    "adminRequiredHint": "Meld u aan met een redacteursaccount om deze inhoud te beheren.",
     "lexicon": {
       "title": "Lexicon-backoffice",
       "subtitle": "Beheer de Syrische lexicale database en de Meltho-woordenpool.",

@@ -25,9 +25,11 @@ const navItems = computed(() => {
   const items: { to: string, labelKey: string }[] = [
     { to: '/library', labelKey: 'nav.library' },
   ]
+  // One entry, not one per area: the hub at /admin is the way in, and the
+  // switcher above each section carries you between them. Adding a module used
+  // to mean adding another top-level link here.
   if (isAdmin.value) {
-    items.push({ to: '/admin/lexicon', labelKey: 'nav.admin' })
-    items.push({ to: '/admin/historical-figures', labelKey: 'nav.adminFigures' })
+    items.push({ to: '/admin', labelKey: 'nav.admin' })
   }
   return items
 })
