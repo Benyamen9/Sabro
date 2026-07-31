@@ -335,6 +335,11 @@ services:
       - backup-data:/backups
       # SSH key for the Storage Box lives on the VPS, never in the repo.
       - ./secrets:/run/secrets:ro
+      # Owner-uploaded media, read-only. Recordings are original work — nothing
+      # can regenerate them the way Meilisearch is rebuilt from Postgres — so
+      # they are archived nightly alongside the database dumps. Read-only so a
+      # bug in the backup job can never damage what it is protecting.
+      - media-data:/media:ro
     networks: [internal]
 
   caddy:
