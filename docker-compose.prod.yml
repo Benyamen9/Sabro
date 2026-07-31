@@ -199,6 +199,15 @@ services:
       Cors__AllowedOrigins__3: "https://${SHMO_DOMAIN:-localhost}"
       # Ship structured logs to the co-located Seq.
       Serilog__WriteTo__1__Args__serverUrl: "http://seq:5341"
+    volumes:
+      # Owner-uploaded media (pronunciation recordings, bibliography images) is
+      # written to the container filesystem by FileSystemPronunciationAudioStorage.
+      # Without this volume it lives only in the container's writable layer and is
+      # destroyed by the next `docker compose up -d` — while the database keeps the
+      # /media/... URL, leaving a dead link on the word page. The named volume
+      # initializes from the image's wwwroot/media (which ships the pronunciations
+      # directory), so it inherits the uid-1001 ownership the non-root API needs.
+      - media-data:/app/wwwroot/media
     networks: [internal]
 
   frontend:
@@ -377,3 +386,4 @@ volumes:
   caddy-data:
   caddy-config:
   backup-data:
+  media-data:
