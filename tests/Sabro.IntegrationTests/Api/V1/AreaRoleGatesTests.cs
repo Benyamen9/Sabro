@@ -36,7 +36,7 @@ public class AreaRoleGatesTests : IDisposable
     public async Task ShmoEditor_MayListAndCreateFigures()
     {
         var ct = TestContext.Current.CancellationToken;
-        using var client = await ClientWithRoleAsync("shmo-editor", Role.ShmoEditor, ct);
+        using var client = await ClientWithRoleAsync("shmo-editor", Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Editor));
 
         (await client.GetAsync("/api/v1/admin/historical-figures", ct))
             .StatusCode.Should().Be(HttpStatusCode.OK);
@@ -50,7 +50,7 @@ public class AreaRoleGatesTests : IDisposable
         // The whole reason the roles exist: "let someone edit the characters
         // without handing over the dictionary".
         var ct = TestContext.Current.CancellationToken;
-        using var client = await ClientWithRoleAsync("shmo-editor-2", Role.ShmoEditor, ct);
+        using var client = await ClientWithRoleAsync("shmo-editor-2", Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Editor));
 
         (await ReadLexiconAsync(client, ct))
             .StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -62,7 +62,7 @@ public class AreaRoleGatesTests : IDisposable
     public async Task LexiconEditor_IsRefusedTheFigures()
     {
         var ct = TestContext.Current.CancellationToken;
-        using var client = await ClientWithRoleAsync("lexicon-editor", Role.LexiconEditor, ct);
+        using var client = await ClientWithRoleAsync("lexicon-editor", Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Editor));
 
         (await ReadLexiconAsync(client, ct))
             .StatusCode.Should().Be(HttpStatusCode.NotFound, "404 means the gate allowed the read");
@@ -77,7 +77,7 @@ public class AreaRoleGatesTests : IDisposable
     {
         // Until the proposal machinery exists, a reviewer role is read access.
         var ct = TestContext.Current.CancellationToken;
-        using var client = await ClientWithRoleAsync("shmo-reviewer", Role.ShmoReviewer, ct);
+        using var client = await ClientWithRoleAsync("shmo-reviewer", Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
 
         (await client.GetAsync("/api/v1/admin/historical-figures", ct))
             .StatusCode.Should().Be(HttpStatusCode.OK);
@@ -152,7 +152,11 @@ public class AreaRoleGatesTests : IDisposable
                 GrammaticalCategory: GrammaticalCategory.Verb),
             ct);
 
-    private async Task<HttpClient> ClientWithRoleAsync(string logtoUserId, Role role, CancellationToken ct)
+    private async Task<HttpClient> ClientWithRoleAsync(
+        string logtoUserId,
+        Role role,
+        CancellationToken ct,
+        params (ContentArea Area, AreaAccess Access)[] grants)
     {
         var client = factory.CreateClient();
         client.DefaultRequestHeaders.Add(TestAuthHandler.UserHeaderName, logtoUserId);
@@ -165,6 +169,11 @@ public class AreaRoleGatesTests : IDisposable
         await using var ctx = postgres.CreateIdentityContext();
         var profile = await ctx.UserProfiles.FirstAsync(p => p.LogtoUserId == logtoUserId, ct);
         profile.AssignRole(role);
+        foreach (var (area, access) in grants)
+        {
+            profile.SetAreaAccess(area, access);
+        }
+
         await ctx.SaveChangesAsync(ct);
 
         return client;

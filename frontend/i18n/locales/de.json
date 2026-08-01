@@ -726,7 +726,17 @@
         "Owner": "Alles",
         "ExpertReviewer": "Übersetzungen — kann prüfen"
       },
-      "noOwnerYet": "Es ist noch niemand als Eigentümer festgelegt, daher ist nichts eingeschränkt. Legen Sie sich selbst als Eigentümer fest, um zu bestimmen, wer was bearbeiten darf."
+      "noOwnerYet": "Es ist noch niemand als Eigentümer festgelegt, daher ist nichts eingeschränkt. Legen Sie sich selbst als Eigentümer fest, um zu bestimmen, wer was bearbeiten darf.",
+      "ownerEverything": "Eigentümer — voller Zugriff auf alle Bereiche.",
+      "area": {
+        "Lexicon": "Lexikon",
+        "Shmo": "Shmo-Personen"
+      },
+      "access": {
+        "none": "Kein Zugriff",
+        "Reviewer": "Prüfer — darf vorschlagen",
+        "Editor": "Redakteur — darf ändern"
+      }
     },
     "proposals": {
       "title": "Vorschläge",

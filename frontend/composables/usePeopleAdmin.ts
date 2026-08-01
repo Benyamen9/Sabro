@@ -1,4 +1,4 @@
-import type { AssignRoleRequest, PersonDto, Role } from '~/types/api'
+import type { AreaAccess, AssignRoleRequest, ContentArea, PersonDto, Role, SetAreaAccessRequest } from '~/types/api'
 
 /**
  * The Owner-only people surface: who has signed in, and what each may edit.
@@ -23,5 +23,18 @@ export function usePeopleAdmin() {
     })
   }
 
-  return { list, assignRole }
+  /**
+   * Grants, changes, or (with `access` null) revokes one person's access to one
+   * area. One call per cell: a failure then affects that cell rather than silently
+   * rewriting the rest of somebody's permissions.
+   */
+  function setAreaAccess(profileId: string, area: ContentArea, access: AreaAccess | null) {
+    const body: SetAreaAccessRequest = { access }
+    return api<PersonDto>(`/admin/people/${profileId}/areas/${area}`, {
+      method: 'PUT',
+      body,
+    })
+  }
+
+  return { list, assignRole, setAreaAccess }
 }

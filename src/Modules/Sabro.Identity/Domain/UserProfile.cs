@@ -3,10 +3,12 @@ using Sabro.Shared.Results;
 
 namespace Sabro.Identity.Domain;
 
-public sealed class UserProfile : Entity<Guid>, IAggregateRoot
+public sealed class UserProfile : Entity<Guid>, IAggregateRoot, IAccessProfile
 {
     /// <summary>Maximum length of a public display name (leaderboard, future social surfaces).</summary>
     public const int MaxDisplayNameLength = 40;
+
+    private readonly List<AreaGrant> areaPermissions = new();
 
     private UserProfile(string logtoUserId, string preferredLanguage, ScriptVariant preferredScriptVariant)
     {
@@ -52,6 +54,17 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
     /// console) so the surface stays minimal until an admin UI exists.
     /// </summary>
     public Role Role { get; private set; }
+
+    /// <summary>
+    /// Per-area access. Absence of an entry means no access to that area.
+    /// </summary>
+    /// <remarks>
+    /// Separate from <see cref="Role"/> because area and level are two questions,
+    /// not one. <see cref="Role"/> now answers only "Reader, translations reviewer,
+    /// or Owner"; which rooms somebody may enter, and how far, is answered here —
+    /// so a person can review Shmo and edit the Lexicon at the same time.
+    /// </remarks>
+    public IReadOnlyList<AreaGrant> AreaPermissions => areaPermissions;
 
     public static Result<UserProfile> Create(
         string logtoUserId,
@@ -135,6 +148,53 @@ public sealed class UserProfile : Entity<Guid>, IAggregateRoot
         }
 
         Role = role;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        return null;
+    }
+
+    /// <summary>
+    /// This profile's access to <paramref name="area"/>, or <see langword="null"/>
+    /// for none. The Owner is deliberately NOT special-cased here: this reports what
+    /// was granted, and <c>RolePermissions</c> is the one place that decides what the
+    /// Owner may additionally do. Two places answering that would eventually disagree.
+    /// </summary>
+    public AreaAccess? AccessFor(ContentArea area) =>
+        areaPermissions.FirstOrDefault(p => p.Area == area)?.Access;
+
+    /// <summary>
+    /// Grants, changes, or (with <paramref name="access"/> null) revokes access to one
+    /// area. Revoking removes the row rather than storing a "none", so there is exactly
+    /// one representation of no-access.
+    /// </summary>
+    public Error? SetAreaAccess(ContentArea area, AreaAccess? access)
+    {
+        if (!Enum.IsDefined(area))
+        {
+            return Error.Validation("Area is invalid.");
+        }
+
+        if (access is not null && !Enum.IsDefined(access.Value))
+        {
+            return Error.Validation("Access is invalid.");
+        }
+
+        var existing = areaPermissions.FirstOrDefault(p => p.Area == area);
+        if (access is null)
+        {
+            if (existing is not null)
+            {
+                areaPermissions.Remove(existing);
+            }
+        }
+        else if (existing is null)
+        {
+            areaPermissions.Add(AreaGrant.Create(area, access.Value));
+        }
+        else
+        {
+            existing.ChangeAccess(access.Value);
+        }
+
         UpdatedAt = DateTimeOffset.UtcNow;
         return null;
     }

@@ -30,7 +30,7 @@ public class FieldProposalServiceTests
     public async Task Propose_AsLexiconReviewer_RecordsTimestampReadFromTheOwningModule()
     {
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var targetId = Guid.NewGuid();
         var targetUpdatedAt = DateTimeOffset.UtcNow.AddDays(-3);
         var source = FakeSource.Lexicon(targetId, targetUpdatedAt);
@@ -67,7 +67,7 @@ public class FieldProposalServiceTests
         // pool are Owner-only decisions. A reviewer cannot even ask for them, because
         // those fields are absent from the owning module's proposable list.
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var targetId = Guid.NewGuid();
 
         await using var ctx = postgres.CreateReviewsContext();
@@ -95,7 +95,7 @@ public class FieldProposalServiceTests
         // A Shmo reviewer must not reach into the Lexicon. Area separation is the
         // entire reason the roles exist.
         var ct = TestContext.Current.CancellationToken;
-        var shmoReviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+        var shmoReviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
         var targetId = Guid.NewGuid();
 
         await using var ctx = postgres.CreateReviewsContext();
@@ -114,37 +114,46 @@ public class FieldProposalServiceTests
         result.Error!.Code.Should().Be("forbidden");
     }
 
-    [Theory]
-    [InlineData(Role.Reader)]
-    [InlineData(Role.LexiconEditor)]
-    [InlineData(Role.Owner)]
-    public async Task Propose_ByAnyoneButTheAreaReviewer_IsForbidden(Role role)
+    [Fact]
+    public async Task Propose_ByAnyoneButTheAreaReviewer_IsForbidden()
     {
+        // A plain reader, an editor of the same area, and the Owner all refused. An
+        // editor changes the entry directly, so a proposal from one would be a
+        // decision waiting on its own author; the Owner is not a reviewer of their
+        // own work.
         var ct = TestContext.Current.CancellationToken;
-        var caller = await SeedProfileAsync(role, ct);
+        var callers = new[]
+        {
+            await SeedProfileAsync(Role.Reader, ct),
+            await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Editor)),
+            await SeedProfileAsync(Role.Owner, ct),
+        };
         var targetId = Guid.NewGuid();
 
-        await using var ctx = postgres.CreateReviewsContext();
-        var service = NewService(ctx, FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow));
+        foreach (var caller in callers)
+        {
+            await using var ctx = postgres.CreateReviewsContext();
+            var service = NewService(ctx, FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow));
 
-        var result = await service.ProposeFieldChangeAsync(
-            new CreateFieldProposalRequest(
-                SuggestedEditTargetType.LexiconEntry,
-                targetId,
-                Field: "meaning.fr",
-                ProposedValue: "parole"),
-            caller,
-            ct);
+            var result = await service.ProposeFieldChangeAsync(
+                new CreateFieldProposalRequest(
+                    SuggestedEditTargetType.LexiconEntry,
+                    targetId,
+                    Field: "meaning.fr",
+                    ProposedValue: "parole"),
+                caller,
+                ct);
 
-        result.IsSuccess.Should().BeFalse();
-        result.Error!.Code.Should().Be("forbidden");
+            result.IsSuccess.Should().BeFalse();
+            result.Error!.Code.Should().Be("forbidden");
+        }
     }
 
     [Fact]
     public async Task Propose_AgainstAMissingTarget_ReturnsNotFound()
     {
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
 
         await using var ctx = postgres.CreateReviewsContext();
 
@@ -171,7 +180,7 @@ public class FieldProposalServiceTests
         // Nothing registered for HistoricalFigure: the workflow must refuse rather
         // than record a proposal nobody can resolve.
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
 
         await using var ctx = postgres.CreateReviewsContext();
         var service = NewService(ctx);
@@ -193,7 +202,7 @@ public class FieldProposalServiceTests
     public async Task Accept_AsOwner_RecordsTheDecisionWithoutChangingTheProposal()
     {
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
         var owner = await SeedProfileAsync(Role.Owner, ct);
         var targetId = Guid.NewGuid();
         var source = FakeSource.Figure(targetId, DateTimeOffset.UtcNow);
@@ -230,7 +239,7 @@ public class FieldProposalServiceTests
     public async Task Accept_ByTheReviewerWhoProposed_IsForbidden()
     {
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var targetId = Guid.NewGuid();
         var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
 
@@ -262,7 +271,7 @@ public class FieldProposalServiceTests
         // older content silently overwrites the newer edit. Refusing by default means
         // it cannot happen by clicking past a banner.
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var owner = await SeedProfileAsync(Role.Owner, ct);
         var targetId = Guid.NewGuid();
         var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
@@ -295,7 +304,7 @@ public class FieldProposalServiceTests
     public async Task Accept_WhenTheFieldChanged_SucceedsWithExplicitConfirmationAndIsRecorded()
     {
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var owner = await SeedProfileAsync(Role.Owner, ct);
         var targetId = Guid.NewGuid();
         var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
@@ -331,7 +340,7 @@ public class FieldProposalServiceTests
         // The common path must stay a single click — a confirmation demanded every
         // time is one nobody reads.
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var owner = await SeedProfileAsync(Role.Owner, ct);
         var targetId = Guid.NewGuid();
         var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
@@ -359,7 +368,7 @@ public class FieldProposalServiceTests
         // English gloss must not block a pending French one. With 1,445 description
         // texts ahead, warnings that are usually wrong stop being read.
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var owner = await SeedProfileAsync(Role.Owner, ct);
         var targetId = Guid.NewGuid();
         var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
@@ -389,7 +398,7 @@ public class FieldProposalServiceTests
         // Rejecting writes nothing to the content, so a moved target cannot cause the
         // regression the guard protects against. Blocking it would only strand rows.
         var ct = TestContext.Current.CancellationToken;
-        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Lexicon, AreaAccess.Reviewer));
         var owner = await SeedProfileAsync(Role.Owner, ct);
         var targetId = Guid.NewGuid();
         var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
@@ -462,12 +471,20 @@ public class FieldProposalServiceTests
         return new IdentityDbContext(options);
     }
 
-    private async Task<string> SeedProfileAsync(Role role, CancellationToken ct)
+    private async Task<string> SeedProfileAsync(
+        Role role,
+        CancellationToken ct,
+        params (ContentArea Area, AreaAccess Access)[] grants)
     {
         var logtoUserId = $"logto|{Guid.NewGuid():N}";
         await using var identity = postgres.CreateIdentityContext();
         var profile = UserProfile.Create(logtoUserId).Value!;
         profile.AssignRole(role);
+        foreach (var (area, access) in grants)
+        {
+            profile.SetAreaAccess(area, access);
+        }
+
         identity.UserProfiles.Add(profile);
         await identity.SaveChangesAsync(ct);
         return logtoUserId;

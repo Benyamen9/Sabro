@@ -103,12 +103,66 @@ internal sealed class UserRoleService : IUserRoleService
         return Result<UserProfileDto>.Success(Map(target));
     }
 
+    public async Task<Result<UserProfileDto>> SetAreaAccessAsync(
+        string callerLogtoUserId,
+        Guid targetProfileId,
+        ContentArea area,
+        AreaAccess? access,
+        CancellationToken cancellationToken)
+    {
+        var caller = await AuthoriseAsync(callerLogtoUserId, cancellationToken);
+        if (!caller.IsSuccess)
+        {
+            return Result<UserProfileDto>.Failure(caller.Error!);
+        }
+
+        var target = await dbContext.UserProfiles
+            .FirstOrDefaultAsync(p => p.Id == targetProfileId, cancellationToken);
+        if (target is null)
+        {
+            return Result<UserProfileDto>.Failure(Error.NotFound($"UserProfile {targetProfileId} not found."));
+        }
+
+        // No self-assignment guard here, unlike AssignRoleAsync. That rule exists so
+        // the sole Owner cannot strand the installation by demoting themselves; an
+        // area grant cannot strand anything, because the Owner role — the thing that
+        // grants access to everything, including this endpoint — is untouched by it.
+        var error = target.SetAreaAccess(area, access);
+        if (error is not null)
+        {
+            return Result<UserProfileDto>.Failure(error);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        // Privileged and security-relevant, so recorded. The profile id is not
+        // personal data and the Logto id is deliberately not written here.
+        logger.LogInformation(
+            "UserProfile area access set. TargetProfileId={TargetProfileId} Area={Area} Access={Access}",
+            target.Id,
+            area,
+            access?.ToString() ?? "none");
+
+        return Result<UserProfileDto>.Success(Map(target));
+    }
+
+    /// <summary>
+    /// Area grants, ordered by area so the payload is stable between requests —
+    /// an unordered child collection makes diffs and tests noisy for no reason.
+    /// </summary>
+    private static AreaGrantDto[] MapAreas(UserProfile profile) =>
+        profile.AreaPermissions
+            .OrderBy(a => a.Area)
+            .Select(a => new AreaGrantDto(a.Area, a.Access))
+            .ToArray();
+
     private static UserProfileDto Map(UserProfile profile) => new(
         profile.Id,
         profile.LogtoUserId,
         profile.PreferredLanguage,
         profile.PreferredScriptVariant,
         profile.Role,
+        MapAreas(profile),
         profile.DisplayName,
         profile.ShowOnLeaderboard,
         profile.CreatedAt,
@@ -141,7 +195,7 @@ internal sealed class UserRoleService : IUserRoleService
             return Result<UserProfile>.Failure(Error.Forbidden("Only the Owner may manage roles."));
         }
 
-        if (RolePermissions.CanAssignRoles(caller.Role))
+        if (RolePermissions.CanAssignRoles(caller))
         {
             return Result<UserProfile>.Success(caller);
         }

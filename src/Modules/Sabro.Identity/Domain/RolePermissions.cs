@@ -1,7 +1,7 @@
 namespace Sabro.Identity.Domain;
 
 /// <summary>
-/// What each <see cref="Role"/> may do, in one place.
+/// What each person may do, in one place.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -11,67 +11,67 @@ namespace Sabro.Identity.Domain;
 /// wrongly let in or wrongly locked out.
 /// </para>
 /// <para>
-/// This answers "may this role do X". It does not answer "is this person allowed
+/// This answers "may this person do X". It does not answer "is this person allowed
 /// through the door at all" — that remains the <c>api:v1:admin</c> scope from
 /// Logto, checked before any of this. Two questions, two answers: Logto decides
 /// who is staff, Sabro decides which rooms they may enter.
 /// </para>
+/// <para>
+/// <b>Takes a profile, not a role.</b> Access is now two independent facts — the
+/// non-area <see cref="Role"/> and a per-area grant — because one person may
+/// review Shmo while editing the Lexicon. A single role could not say that.
+/// <see cref="Role.Owner"/> is the only role that still implies area access, and
+/// this is the one place that says so.
+/// </para>
 /// </remarks>
 public static class RolePermissions
 {
-    /// <summary>May create, edit, publish and delete Lexicon entries.</summary>
-    public static bool CanEditLexicon(Role role) =>
-        role is Role.Owner or Role.LexiconEditor;
+    /// <summary>May create, edit, publish and delete the area's content.</summary>
+    public static bool CanEdit(IAccessProfile profile, ContentArea area) =>
+        IsOwner(profile) || profile?.AccessFor(area) == AreaAccess.Editor;
 
     /// <summary>
-    /// May open the Lexicon backoffice — editors plus reviewers, since a reviewer
+    /// May open the area's backoffice — editors plus reviewers, since a reviewer
     /// has to see the content to have an opinion about it.
     /// </summary>
-    public static bool CanViewLexiconBackoffice(Role role) =>
-        CanEditLexicon(role) || role is Role.LexiconReviewer;
-
-    /// <summary>May create, edit, publish and delete historical figures.</summary>
-    public static bool CanEditFigures(Role role) =>
-        role is Role.Owner or Role.ShmoEditor;
-
-    /// <summary>May open the figures backoffice — editors plus reviewers.</summary>
-    public static bool CanViewFiguresBackoffice(Role role) =>
-        CanEditFigures(role) || role is Role.ShmoReviewer;
+    public static bool CanViewBackoffice(IAccessProfile profile, ContentArea area) =>
+        CanEdit(profile, area) || profile?.AccessFor(area) == AreaAccess.Reviewer;
 
     /// <summary>
-    /// May propose corrections to Lexicon entries. Reviewers only: an editor changes
-    /// the entry directly, so a proposal from one would be a decision waiting on its
-    /// own author.
+    /// May propose corrections to the area. Reviewers only: an editor changes the
+    /// content directly, so a proposal from one would be a decision waiting on its
+    /// own author — and the Owner is not a reviewer of their own work.
     /// </summary>
-    public static bool CanProposeLexiconEdit(Role role) => role is Role.LexiconReviewer;
-
-    /// <summary>May propose corrections to historical figures. Reviewers only.</summary>
-    public static bool CanProposeFigureEdit(Role role) => role is Role.ShmoReviewer;
+    public static bool CanPropose(IAccessProfile profile, ContentArea area) =>
+        profile?.AccessFor(area) == AreaAccess.Reviewer;
 
     /// <summary>
     /// May propose corrections to translation content. The pre-existing translations
-    /// reviewer, kept distinct from the area roles it predates.
+    /// reviewer, kept distinct from the area grants it predates.
     /// </summary>
-    public static bool CanProposeTranslationEdit(Role role) => role is Role.ExpertReviewer;
+    public static bool CanProposeTranslationEdit(IAccessProfile profile) =>
+        profile?.Role == Role.ExpertReviewer;
 
     /// <summary>
-    /// May accept or reject proposals. Owner-only, and deliberately not implied by any
-    /// editor role — an editor changes content, but deciding whose correction stands is
-    /// the Owner's scholarly judgement.
+    /// May accept or reject proposals. Owner-only, and deliberately not implied by
+    /// any editor grant — an editor changes content, but deciding whose correction
+    /// stands is the Owner's scholarly judgement.
     /// </summary>
-    public static bool CanDecideProposals(Role role) => role is Role.Owner;
+    public static bool CanDecideProposals(IAccessProfile profile) => IsOwner(profile);
 
     /// <summary>
-    /// May grant and revoke other people's roles. Deliberately Owner-only and
-    /// deliberately not implied by any editor role: being trusted with content is
+    /// May grant and revoke other people's access. Deliberately Owner-only and
+    /// deliberately not implied by any editor grant: being trusted with content is
     /// not the same as being trusted with who else gets in.
     /// </summary>
-    public static bool CanAssignRoles(Role role) => role is Role.Owner;
+    public static bool CanAssignRoles(IAccessProfile profile) => IsOwner(profile);
 
     /// <summary>
     /// May reach any backoffice area at all. Used to decide whether to show the
     /// backoffice entry point rather than to authorise a specific action.
     /// </summary>
-    public static bool CanViewAnyBackoffice(Role role) =>
-        CanViewLexiconBackoffice(role) || CanViewFiguresBackoffice(role);
+    public static bool CanViewAnyBackoffice(IAccessProfile profile) =>
+        IsOwner(profile) || Enum.GetValues<ContentArea>().Any(area => CanViewBackoffice(profile, area));
+
+    private static bool IsOwner(IAccessProfile? profile) => profile?.Role == Role.Owner;
 }

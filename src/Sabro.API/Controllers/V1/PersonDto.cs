@@ -1,3 +1,4 @@
+using Sabro.Identity.Application.UserProfiles;
 using Sabro.Identity.Domain;
 
 namespace Sabro.API.Controllers.V1;
@@ -17,6 +18,7 @@ namespace Sabro.API.Controllers.V1;
 public sealed record PersonDto(
     Guid Id,
     Role Role,
+    IReadOnlyList<AreaGrantDto> Areas,
     string? DisplayName,
     string? Name,
     string? Email,

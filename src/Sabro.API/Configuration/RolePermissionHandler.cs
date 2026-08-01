@@ -43,7 +43,7 @@ internal sealed class RolePermissionHandler : AuthorizationHandler<RolePermissio
             return;
         }
 
-        if (requirement.IsAllowed(profile.Value!.Role))
+        if (requirement.IsAllowed(profile.Value!))
         {
             context.Succeed(requirement);
         }

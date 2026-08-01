@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FetchError } from 'ofetch'
-import type { PersonDto, Role } from '~/types/api'
+import type { AreaAccess, ContentArea, PersonDto, Role } from '~/types/api'
 
 /**
  * Who may edit what. Owner-only: the API refuses this list to anyone else, and
@@ -12,21 +12,27 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
-const { list, assignRole } = usePeopleAdmin()
+const { list, assignRole, setAreaAccess } = usePeopleAdmin()
 
 await refreshAdmin()
 
-// Ordered from least to most access, so the select reads as a ladder rather
-// than as an arbitrary list. ExpertReviewer is omitted: it belongs to the
-// deferred Reviews module and is not an area role.
-const assignableRoles: Role[] = [
-  'Reader',
-  'ShmoReviewer',
-  'ShmoEditor',
-  'LexiconReviewer',
-  'LexiconEditor',
-  'Owner',
-]
+// Area and level are two questions, so the page asks them separately: an Owner
+// toggle, then one row per area. The old single select forced them together and
+// could not express "reviewer for Shmo, editor for the Lexicon" at all.
+const areas: ContentArea[] = ['Lexicon', 'Shmo']
+
+// '' is the wire's null — no grant. Kept as an empty string because that is what
+// a <select> gives back; it is translated at the boundary, never stored.
+const accessOptions: (AreaAccess | '')[] = ['', 'Reviewer', 'Editor']
+
+function accessFor(person: PersonDto, area: ContentArea): AreaAccess | '' {
+  return person.areas.find(a => a.area === area)?.access ?? ''
+}
+
+/** The Owner reaches every area regardless of grants, so the rows would lie. */
+function isOwner(person: PersonDto) {
+  return person.role === 'Owner'
+}
 
 const people = ref<PersonDto[]>([])
 const viewState = ref<'loading' | 'ready' | 'unauthorized' | 'failed'>('loading')
@@ -53,6 +59,24 @@ async function load() {
   catch (error) {
     const status = (error as FetchError).statusCode
     viewState.value = status === 401 || status === 403 ? 'unauthorized' : 'failed'
+  }
+}
+
+async function onAreaChange(person: PersonDto, area: ContentArea, value: AreaAccess | '') {
+  savingId.value = person.id
+  errorMessage.value = null
+  try {
+    const updated = await setAreaAccess(person.id, area, value === '' ? null : value)
+    const index = people.value.findIndex(p => p.id === person.id)
+    if (index !== -1) people.value[index] = updated
+  }
+  catch (error) {
+    const detail = (error as FetchError).data?.detail as string | undefined
+    errorMessage.value = detail || t('admin.people.saveFailed')
+    await load()
+  }
+  finally {
+    savingId.value = null
   }
 }
 
@@ -169,26 +193,51 @@ const cellClass = 'px-3 py-3 align-middle'
                 </span>
               </td>
               <td :class="cellClass">
-                <select
-                  :value="person.role"
-                  :disabled="isLocked(person) || savingId === person.id"
-                  :aria-label="t('admin.people.mayEdit')"
-                  class="w-full max-w-[14rem] rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-2 py-1.5 font-sans text-sm text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
-                  @change="onRoleChange(person, ($event.target as HTMLSelectElement).value as Role)"
-                >
-                  <!-- ExpertReviewer is not assignable here but may already be set,
-                       so keep the current value selectable rather than silently
-                       showing the wrong one. -->
-                  <option v-if="!assignableRoles.includes(person.role)" :value="person.role">
-                    {{ t(`admin.people.role.${person.role}`) }}
-                  </option>
-                  <option v-for="role in assignableRoles" :key="role" :value="role">
-                    {{ t(`admin.people.role.${role}`) }}
-                  </option>
-                </select>
+                <!-- Owner is a yes/no, not a rung: it grants every area at once, so
+                     the per-area rows below are hidden rather than shown lying. -->
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    :checked="isOwner(person)"
+                    :disabled="isLocked(person) || savingId === person.id"
+                    class="size-4"
+                    @change="onRoleChange(person, ($event.target as HTMLInputElement).checked ? 'Owner' : 'Reader')"
+                  >
+                  <span>{{ t('admin.people.role.Owner') }}</span>
+                </label>
                 <span v-if="isLocked(person)" class="mt-1 block text-xs text-[var(--color-text-faint)]">
                   {{ t('admin.people.cannotChangeOwn') }}
                 </span>
+
+                <p v-if="isOwner(person)" class="mt-2 text-xs text-[var(--color-text-muted)]">
+                  {{ t('admin.people.ownerEverything') }}
+                </p>
+
+                <div v-else class="mt-2 grid gap-2">
+                  <label
+                    v-for="area in areas"
+                    :key="area"
+                    class="flex items-center justify-between gap-3"
+                  >
+                    <span class="text-[var(--color-text-muted)]">{{ t(`admin.people.area.${area}`) }}</span>
+                    <select
+                      :value="accessFor(person, area)"
+                      :disabled="savingId === person.id"
+                      class="w-40 rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-2 py-1 font-sans text-sm text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
+                      @change="onAreaChange(person, area, ($event.target as HTMLSelectElement).value as AreaAccess | '')"
+                    >
+                      <option v-for="option in accessOptions" :key="option || 'none'" :value="option">
+                        {{ option ? t(`admin.people.access.${option}`) : t('admin.people.access.none') }}
+                      </option>
+                    </select>
+                  </label>
+                </div>
+
+                <!-- A role predating the area grants. Not assignable here, but it may
+                     already be set, so say so rather than render it as "no access". -->
+                <p v-if="person.role === 'ExpertReviewer'" class="mt-2 text-xs text-[var(--color-text-faint)]">
+                  {{ t('admin.people.role.ExpertReviewer') }}
+                </p>
               </td>
               <td :class="[cellClass, 'whitespace-nowrap text-[var(--color-text-muted)] tabular-nums']">
                 {{ new Date(person.createdAt).toLocaleDateString() }}

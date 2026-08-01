@@ -169,8 +169,19 @@ internal sealed class UserProfileService : IUserProfileService
         profile.PreferredLanguage,
         profile.PreferredScriptVariant,
         profile.Role,
+        MapAreas(profile),
         profile.DisplayName,
         profile.ShowOnLeaderboard,
         profile.CreatedAt,
         profile.UpdatedAt);
+
+    /// <summary>
+    /// Area grants, ordered by area so the payload is stable between requests —
+    /// an unordered child collection makes diffs and tests noisy for no reason.
+    /// </summary>
+    private static AreaGrantDto[] MapAreas(UserProfile profile) =>
+        profile.AreaPermissions
+            .OrderBy(a => a.Area)
+            .Select(a => new AreaGrantDto(a.Area, a.Access))
+            .ToArray();
 }
