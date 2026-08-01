@@ -24,6 +24,35 @@ await refreshRole()
 // own, so a wrong answer here hides a control rather than granting one.
 const canPropose = computed(() => role.value === 'ShmoReviewer')
 
+// An accepted proposal being applied. The queue links here with ?proposal=<id>;
+// the named field opens holding the proposed value so the change is reviewed and
+// saved rather than retyped. Nothing is written until the editor submits.
+const { getById: getProposal } = useProposals()
+const proposalId = computed(() => (route.query.proposal as string | undefined) || null)
+const prefill = ref<{ field: string, value: string } | null>(null)
+const prefillFailed = ref(false)
+
+watch(proposalId, async (currentProposalId) => {
+  prefill.value = null
+  prefillFailed.value = false
+  if (!currentProposalId) return
+  try {
+    const proposal = await getProposal(currentProposalId)
+    // A prose proposal has no field, and one filed against a different entry is
+    // not ours to apply — either way, load the entry unchanged rather than
+    // silently putting somebody else's text into this form.
+    if (proposal.field && proposal.targetId === id.value) {
+      prefill.value = { field: proposal.field, value: proposal.proposedContent }
+    }
+    else {
+      prefillFailed.value = true
+    }
+  }
+  catch {
+    prefillFailed.value = true
+  }
+}, { immediate: true })
+
 const { data: figure, pending, error, refresh } = await useAsyncData(
   () => `admin-historical-figure-${id.value}`,
   () => getById(id.value),
@@ -169,8 +198,19 @@ const actionButtonClass
         class="mb-5 rounded-md border border-[color-mix(in_oklab,var(--color-accent)_30%,transparent)] bg-[var(--color-accent-faint)] px-4 py-3 font-sans text-sm text-[var(--color-accent)]"
       >{{ errorMessage }}</p>
 
+      <p
+        v-if="prefill"
+        class="mb-5 rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)] px-4 py-3 font-sans text-sm text-[var(--color-text)]"
+      >{{ t('admin.propose.applying') }}</p>
+      <p
+        v-else-if="prefillFailed"
+        class="mb-5 rounded-md border border-[color-mix(in_oklab,var(--color-accent)_30%,transparent)] bg-[var(--color-accent-faint)] px-4 py-3 font-sans text-sm text-[var(--color-accent)]"
+        role="alert"
+      >{{ t('admin.propose.applyFailed') }}</p>
+
       <HistoricalFigureForm
-        :key="figure.updatedAt"
+        :key="`${figure.updatedAt}:${proposalId ?? ''}`"
+        :prefill="prefill"
         :figure="figure"
         :submitting="submitting"
         :submit-label="t('common.save')"

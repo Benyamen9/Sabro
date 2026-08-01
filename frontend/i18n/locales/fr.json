@@ -792,7 +792,9 @@
         "tradition": "Tradition",
         "gender": "Genre",
         "description": "Description"
-      }
+      },
+      "applying": "Application d’une proposition : un champ a été rempli avec la valeur proposée. Vérifiez-la, puis enregistrez — rien n’est écrit avant.",
+      "applyFailed": "Cette proposition n’a pas pu être appliquée ici. L’entrée est affichée inchangée."
     }
   },
   "seo": {

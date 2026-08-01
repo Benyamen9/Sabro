@@ -792,7 +792,9 @@
         "tradition": "Traditie",
         "gender": "Geslacht",
         "description": "Beschrijving"
-      }
+      },
+      "applying": "Een voorstel toepassen: één veld is gevuld met de voorgestelde waarde. Controleer het en sla dan op — er wordt niets geschreven tot u dat doet.",
+      "applyFailed": "Dat voorstel kon hier niet worden toegepast. Het item wordt ongewijzigd getoond."
     }
   },
   "seo": {

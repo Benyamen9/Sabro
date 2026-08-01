@@ -10,8 +10,15 @@ const props = withDefaults(
     entry?: LexiconEntryDto | null
     submitting?: boolean
     submitLabel: string
+    /**
+     * An accepted proposal being applied: the named field opens holding the
+     * proposed value instead of the stored one. Everything else is unchanged, and
+     * nothing is saved until the editor submits — the proposal supplies the text,
+     * the human still commits it.
+     */
+    prefill?: { field: string, value: string } | null
   }>(),
-  { entry: null, submitting: false },
+  { entry: null, submitting: false, prefill: null },
 )
 
 const emit = defineEmits<{
@@ -43,19 +50,24 @@ function meaningFor(language: string) {
   return props.entry?.meanings.find(m => m.language === language)?.text ?? ''
 }
 
-const syriacUnvocalized = ref(props.entry?.syriacUnvocalized ?? '')
-const syriacVocalized = ref(props.entry?.syriacVocalized ?? '')
-const sblTransliteration = ref(props.entry?.sblTransliteration ?? '')
+/** The stored value, unless a proposal is being applied to this exact field. */
+function initial(field: string, stored: string) {
+  return props.prefill?.field === field ? props.prefill.value : stored
+}
+
+const syriacUnvocalized = ref(initial('syriacUnvocalized', props.entry?.syriacUnvocalized ?? ''))
+const syriacVocalized = ref(initial('syriacVocalized', props.entry?.syriacVocalized ?? ''))
+const sblTransliteration = ref(initial('sblTransliteration', props.entry?.sblTransliteration ?? ''))
 const transliterationVariants = ref((props.entry?.transliterationVariants ?? []).join(', '))
-const grammaticalCategory = ref<GrammaticalCategory>(props.entry?.grammaticalCategory ?? 'Noun')
-const morphology = ref(props.entry?.morphology ?? '')
-const meanings = reactive<Record<string, string>>({
-  en: meaningFor('en'),
-  fr: meaningFor('fr'),
-  nl: meaningFor('nl'),
-  de: meaningFor('de'),
-  sv: meaningFor('sv'),
-})
+const grammaticalCategory = ref<GrammaticalCategory>(
+  initial('grammaticalCategory', props.entry?.grammaticalCategory ?? 'Noun') as GrammaticalCategory,
+)
+const morphology = ref(initial('morphology', props.entry?.morphology ?? ''))
+const meanings = reactive<Record<string, string>>(
+  Object.fromEntries(
+    meaningLanguages.map(language => [language, initial(`meaning.${language}`, meaningFor(language))]),
+  ) as Record<string, string>,
+)
 
 // Live preview of the playable length: count Unicode letters in the
 // unvocalized form, excluding combining marks (vowel points, seyame). This

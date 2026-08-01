@@ -26,8 +26,14 @@ const props = withDefaults(
     figure?: HistoricalFigureDto | null
     submitting?: boolean
     submitLabel: string
+    /**
+     * An accepted proposal being applied: the named field opens holding the
+     * proposed value instead of the stored one. Nothing is saved until the editor
+     * submits — the proposal supplies the text, the human still commits it.
+     */
+    prefill?: { field: string, value: string } | null
   }>(),
-  { figure: null, submitting: false },
+  { figure: null, submitting: false, prefill: null },
 )
 
 const emit = defineEmits<{
@@ -37,18 +43,35 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const name = ref(props.figure?.name ?? '')
-const category = ref<HistoricalFigureCategory>(props.figure?.category ?? 'Patristic')
-const period = ref<HistoricalPeriod>(props.figure?.period ?? 'PostChalcedonian')
-const role = ref<HistoricalFigureRole>(props.figure?.role ?? 'Other')
-const region = ref<HistoricalFigureRegion>(props.figure?.region ?? 'Mesopotamia')
-const gender = ref<HistoricalFigureGender>(props.figure?.gender ?? 'Male')
+/** The stored value, unless a proposal is being applied to this exact field. */
+function initial(field: string, stored: string) {
+  return props.prefill?.field === field ? props.prefill.value : stored
+}
+
+const name = ref(initial('name', props.figure?.name ?? ''))
+const category = ref<HistoricalFigureCategory>(
+  initial('category', props.figure?.category ?? 'Patristic') as HistoricalFigureCategory,
+)
+const period = ref<HistoricalPeriod>(
+  initial('period', props.figure?.period ?? 'PostChalcedonian') as HistoricalPeriod,
+)
+const role = ref<HistoricalFigureRole>(
+  initial('role', props.figure?.role ?? 'Other') as HistoricalFigureRole,
+)
+const region = ref<HistoricalFigureRegion>(
+  initial('region', props.figure?.region ?? 'Mesopotamia') as HistoricalFigureRegion,
+)
+const gender = ref<HistoricalFigureGender>(
+  initial('gender', props.figure?.gender ?? 'Male') as HistoricalFigureGender,
+)
 // Empty string means "not yet decided" — a draft may omit it, publishing may not.
-const tradition = ref<HistoricalFigureTradition | ''>(props.figure?.tradition ?? '')
+const tradition = ref<HistoricalFigureTradition | ''>(
+  initial('tradition', props.figure?.tradition ?? '') as HistoricalFigureTradition | '',
+)
 
 // Era is entered as a signed century, so the field is a number input rather
 // than a year. Kept as a string ref because an empty input is not 0.
-const era = ref(props.figure?.era != null ? String(props.figure.era) : '')
+const era = ref(initial('era', props.figure?.era != null ? String(props.figure.era) : ''))
 
 // The five languages the ecosystem serves. Descriptions are optional enrichment
 // and never gate publication — the roster was published long before this field
@@ -59,13 +82,14 @@ function descriptionFor(language: string) {
   return props.figure?.descriptions?.find(d => d.language === language)?.text ?? ''
 }
 
-const descriptions = reactive<Record<string, string>>({
-  en: descriptionFor('en'),
-  fr: descriptionFor('fr'),
-  nl: descriptionFor('nl'),
-  de: descriptionFor('de'),
-  sv: descriptionFor('sv'),
-})
+const descriptions = reactive<Record<string, string>>(
+  Object.fromEntries(
+    descriptionLanguages.map(language => [
+      language,
+      initial(`description.${language}`, descriptionFor(language)),
+    ]),
+  ) as Record<string, string>,
+)
 
 // Longest description still in the box, so the counter warns before the server
 // does. Matches HistoricalFigureDescription.MaxTextLength on the backend.
