@@ -762,6 +762,37 @@
         "Accepted": "Geaccepteerd",
         "Rejected": "Afgewezen"
       }
+    },
+    "propose": {
+      "open": "Een correctie voorstellen",
+      "title": "Een correctie voorstellen",
+      "blurb": "Stel een nieuwe waarde voor één veld voor. De eigenaar beslist of die wordt toegepast.",
+      "value": "Voorgestelde waarde",
+      "rationale": "Waarom (optioneel)",
+      "rationaleHint": "Een korte reden helpt de eigenaar beslissen zonder alles opnieuw op te zoeken.",
+      "submit": "Voorstel versturen",
+      "sent": "Voorstel verstuurd. De eigenaar beslist erover.",
+      "failed": "Het voorstel kon niet worden verstuurd.",
+      "fieldsFailed": "De lijst met velden kon niet worden geladen.",
+      "ownerDecides": "Voorstellen wijzigen het item nooit rechtstreeks — alleen de eigenaar past ze toe.",
+      "field": {
+        "label": "Veld",
+        "syriacUnvocalized": "Syrisch (onvocaliseerd)",
+        "syriacVocalized": "Syrisch (gevocaliseerd)",
+        "sblTransliteration": "Transliteratie",
+        "grammaticalCategory": "Grammaticale categorie",
+        "morphology": "Morfologie",
+        "meaning": "Betekenis",
+        "name": "Naam",
+        "category": "Categorie",
+        "era": "Tijdperk",
+        "period": "Periode",
+        "role": "Rol",
+        "region": "Regio",
+        "tradition": "Traditie",
+        "gender": "Geslacht",
+        "description": "Beschrijving"
+      }
     }
   },
   "seo": {

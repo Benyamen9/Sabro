@@ -762,6 +762,37 @@
         "Accepted": "Godkänt",
         "Rejected": "Avslaget"
       }
+    },
+    "propose": {
+      "open": "Föreslå en rättelse",
+      "title": "Föreslå en rättelse",
+      "blurb": "Föreslå ett nytt värde för ett fält. Ägaren avgör om det tillämpas.",
+      "value": "Föreslaget värde",
+      "rationale": "Varför (valfritt)",
+      "rationaleHint": "En kort motivering hjälper ägaren att besluta utan att slå upp allt igen.",
+      "submit": "Skicka förslag",
+      "sent": "Förslaget skickat. Ägaren beslutar om det.",
+      "failed": "Förslaget kunde inte skickas.",
+      "fieldsFailed": "Fältlistan kunde inte laddas.",
+      "ownerDecides": "Förslag ändrar aldrig posten direkt — endast ägaren tillämpar dem.",
+      "field": {
+        "label": "Fält",
+        "syriacUnvocalized": "Syriska (ovokaliserad)",
+        "syriacVocalized": "Syriska (vokaliserad)",
+        "sblTransliteration": "Translitterering",
+        "grammaticalCategory": "Grammatisk kategori",
+        "morphology": "Morfologi",
+        "meaning": "Betydelse",
+        "name": "Namn",
+        "category": "Kategori",
+        "era": "Epok",
+        "period": "Period",
+        "role": "Roll",
+        "region": "Region",
+        "tradition": "Tradition",
+        "gender": "Kön",
+        "description": "Beskrivning"
+      }
     }
   },
   "seo": {

@@ -762,6 +762,37 @@
         "Accepted": "Accepted",
         "Rejected": "Rejected"
       }
+    },
+    "propose": {
+      "open": "Propose a correction",
+      "title": "Propose a correction",
+      "blurb": "Suggest a new value for one field. The Owner decides whether it is applied.",
+      "value": "Proposed value",
+      "rationale": "Why (optional)",
+      "rationaleHint": "A short reason helps the Owner decide without looking everything up again.",
+      "submit": "Send proposal",
+      "sent": "Proposal sent. The Owner will decide on it.",
+      "failed": "The proposal could not be sent.",
+      "fieldsFailed": "The list of fields could not be loaded.",
+      "ownerDecides": "Proposals never change the entry directly — only the Owner applies them.",
+      "field": {
+        "label": "Field",
+        "syriacUnvocalized": "Syriac (unvocalized)",
+        "syriacVocalized": "Syriac (vocalized)",
+        "sblTransliteration": "Transliteration",
+        "grammaticalCategory": "Grammatical category",
+        "morphology": "Morphology",
+        "meaning": "Meaning",
+        "name": "Name",
+        "category": "Category",
+        "era": "Era",
+        "period": "Period",
+        "role": "Role",
+        "region": "Region",
+        "tradition": "Tradition",
+        "gender": "Gender",
+        "description": "Description"
+      }
     }
   },
   "seo": {

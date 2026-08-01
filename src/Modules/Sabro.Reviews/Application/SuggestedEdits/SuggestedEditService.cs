@@ -204,6 +204,15 @@ internal sealed class SuggestedEditService : ISuggestedEditService
         return Result<SuggestedEditDto>.Success(Map(proposal));
     }
 
+    public Result<IReadOnlyCollection<string>> GetProposableFields(SuggestedEditTargetType targetType)
+    {
+        var source = targetSources.FirstOrDefault(s => s.TargetTypeName == targetType.ToString());
+        return source is null
+            ? Result<IReadOnlyCollection<string>>.Failure(
+                Error.Validation($"{targetType} does not accept field proposals."))
+            : Result<IReadOnlyCollection<string>>.Success(source.ProposableFields);
+    }
+
     public async Task<Result<SuggestedEditDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var edit = await dbContext.SuggestedEdits

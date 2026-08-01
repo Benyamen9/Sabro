@@ -73,6 +73,22 @@ public sealed class SuggestedEditsController : ApiControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id, version = "1" }, result.Value);
     }
 
+    /// <summary>
+    /// The fields of a target type a reviewer may propose against, as declared by the
+    /// module that owns it. The backoffice builds its picker from this rather than
+    /// keeping a second copy that could drift from the server's.
+    /// </summary>
+    [HttpGet("fields/{targetType}")]
+    [Authorize(Policy = AuthPolicies.Write)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    public ActionResult<IReadOnlyCollection<string>> ProposableFields(SuggestedEditTargetType targetType)
+    {
+        var result = service.GetProposableFields(targetType);
+        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+    }
+
     [HttpGet("{id:guid}")]
     [Authorize(Policy = AuthPolicies.Read)]
     [ProducesResponseType(typeof(SuggestedEditDto), StatusCodes.Status200OK)]

@@ -762,6 +762,37 @@
         "Accepted": "Angenommen",
         "Rejected": "Abgelehnt"
       }
+    },
+    "propose": {
+      "open": "Korrektur vorschlagen",
+      "title": "Korrektur vorschlagen",
+      "blurb": "Schlagen Sie einen neuen Wert für ein Feld vor. Der Eigentümer entscheidet über die Übernahme.",
+      "value": "Vorgeschlagener Wert",
+      "rationale": "Warum (optional)",
+      "rationaleHint": "Eine kurze Begründung hilft dem Eigentümer zu entscheiden, ohne alles nachzuschlagen.",
+      "submit": "Vorschlag senden",
+      "sent": "Vorschlag gesendet. Der Eigentümer entscheidet darüber.",
+      "failed": "Der Vorschlag konnte nicht gesendet werden.",
+      "fieldsFailed": "Die Feldliste konnte nicht geladen werden.",
+      "ownerDecides": "Vorschläge ändern den Eintrag nie direkt — nur der Eigentümer wendet sie an.",
+      "field": {
+        "label": "Feld",
+        "syriacUnvocalized": "Syrisch (unvokalisiert)",
+        "syriacVocalized": "Syrisch (vokalisiert)",
+        "sblTransliteration": "Transliteration",
+        "grammaticalCategory": "Grammatische Kategorie",
+        "morphology": "Morphologie",
+        "meaning": "Bedeutung",
+        "name": "Name",
+        "category": "Kategorie",
+        "era": "Epoche",
+        "period": "Periode",
+        "role": "Rolle",
+        "region": "Region",
+        "tradition": "Tradition",
+        "gender": "Geschlecht",
+        "description": "Beschreibung"
+      }
     }
   },
   "seo": {

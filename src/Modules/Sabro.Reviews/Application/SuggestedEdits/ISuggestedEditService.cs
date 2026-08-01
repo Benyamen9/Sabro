@@ -1,3 +1,4 @@
+using Sabro.Reviews.Domain;
 using Sabro.Shared.Pagination;
 using Sabro.Shared.Results;
 
@@ -29,6 +30,18 @@ public interface ISuggestedEditService
         CreateFieldProposalRequest request,
         string submittedByLogtoUserId,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Which fields of <paramref name="targetType"/> a reviewer may propose against,
+    /// as declared by the module that owns it.
+    /// </summary>
+    /// <remarks>
+    /// Exists so the backoffice can build its "propose a correction" picker from the
+    /// server's list instead of keeping a copy. A second copy would drift, and the
+    /// drift would be silent: the picker would offer a field the API then refuses, or
+    /// hide one it would have accepted.
+    /// </remarks>
+    Result<IReadOnlyCollection<string>> GetProposableFields(SuggestedEditTargetType targetType);
 
     Task<Result<SuggestedEditDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 

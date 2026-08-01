@@ -58,5 +58,29 @@ export function useProposals() {
     })
   }
 
-  return { list, accept, reject, editLinkFor }
+  /**
+   * The fields this target type accepts proposals for, from the server. Never
+   * hardcode a copy: the list lives with the module that owns the entity, and a
+   * second copy drifts silently — offering a field the API refuses, or hiding one
+   * it would have taken.
+   */
+  function proposableFields(targetType: SuggestedEditTargetType) {
+    return api<string[]>(`/suggested-edits/fields/${targetType}`)
+  }
+
+  /** Files a reviewer's proposed value for one field. */
+  function proposeField(input: {
+    targetType: SuggestedEditTargetType
+    targetId: string
+    field: string
+    proposedValue: string
+    rationale?: string
+  }) {
+    return api<SuggestedEditDto>('/suggested-edits/field', {
+      method: 'POST',
+      body: input,
+    })
+  }
+
+  return { list, accept, reject, proposableFields, proposeField, editLinkFor }
 }

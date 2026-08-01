@@ -762,6 +762,37 @@
         "Accepted": "Acceptée",
         "Rejected": "Refusée"
       }
+    },
+    "propose": {
+      "open": "Proposer une correction",
+      "title": "Proposer une correction",
+      "blurb": "Suggérez une nouvelle valeur pour un champ. Le propriétaire décide de son application.",
+      "value": "Valeur proposée",
+      "rationale": "Pourquoi (facultatif)",
+      "rationaleHint": "Une brève raison aide le propriétaire à décider sans tout revérifier.",
+      "submit": "Envoyer la proposition",
+      "sent": "Proposition envoyée. Le propriétaire décidera.",
+      "failed": "La proposition n’a pas pu être envoyée.",
+      "fieldsFailed": "La liste des champs n’a pas pu être chargée.",
+      "ownerDecides": "Une proposition ne modifie jamais l’entrée — seul le propriétaire l’applique.",
+      "field": {
+        "label": "Champ",
+        "syriacUnvocalized": "Syriaque (non vocalisé)",
+        "syriacVocalized": "Syriaque (vocalisé)",
+        "sblTransliteration": "Translittération",
+        "grammaticalCategory": "Catégorie grammaticale",
+        "morphology": "Morphologie",
+        "meaning": "Sens",
+        "name": "Nom",
+        "category": "Catégorie",
+        "era": "Époque",
+        "period": "Période",
+        "role": "Rôle",
+        "region": "Région",
+        "tradition": "Tradition",
+        "gender": "Genre",
+        "description": "Description"
+      }
     }
   },
   "seo": {
