@@ -325,7 +325,12 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
 **Log levels:** Debug (dev only) / Information (normal operations) / Warning (non-blocking anomalies) / Error (recoverable errors) / Fatal (app crash imminent).
 
 ### Monitoring
-- ASP.NET Core health check endpoint at `/health` — **live**
+- ASP.NET Core health checks — **live**, split by intent:
+  - `/health` — **readiness**: runs a `SELECT 1` against Postgres and returns 503
+    with a per-check breakdown when it fails. This is what UptimeRobot watches.
+  - `/health/live` — **liveness**: runs no checks, depends on nothing. The only one
+    safe for a Docker `healthcheck:` or a `depends_on: service_healthy` gate —
+    pointing those at `/health` would turn a database blip into a restart loop.
 - **UptimeRobot — live since 2026-07-28.** Five HTTP(s) monitors on a 5-minute
   interval, emailing on downtime:
 
@@ -349,11 +354,22 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   > UptimeRobot probes with **HEAD**, not GET. Grepping logs for `GET /health`
   > will show zero hits and look like the monitor is dead.
 
-> **`/health` is not a freshness check.** It answers "is the site up", not "is the
-> site serving the code we shipped". A stale container passes it happily — on
-> 2026-07-28 production silently served a two-week-old image with `/health` green
-> throughout. Use `/version` on both `api.sabro.be` and `sabro.be` to prove prod
-> matches `main`; CD asserts this after every deploy.
+> **`/health` is not a freshness check.** It answers "can this instance serve
+> requests", not "is the site serving the code we shipped". A stale container
+> passes it happily — on 2026-07-28 production silently served a two-week-old
+> image with `/health` green throughout. Use `/version` on both `api.sabro.be` and
+> `sabro.be` to prove prod matches `main`; CD asserts this after every deploy.
+
+**Disk headroom** — UptimeRobot cannot see the disk, and on 2026-07-31 an
+unpruned image pile filled it to 100%, crash-looping Postgres for ~15 minutes with
+no warning. Two independent guards now cover it:
+- CD runs `docker image prune -af --filter "until=24h"` after every container swap
+  (`until=24h` keeps the previous SHA on the box, so rollback stays instant) and
+  logs `df -h /` + `docker system df` — `Images TOTAL` must stop climbing.
+- The backup sidecar runs `disk-check.sh` every 15 minutes, pinging
+  `DISK_HEARTBEAT_URL` (`<url>/fail` at or above `DISK_USAGE_THRESHOLD`, default
+  80%). Heartbeat silence alerts too, so it also covers the box disappearing.
+  **Blank `DISK_HEARTBEAT_URL` means the check logs but nothing alerts.**
 
 Stack Prometheus/Grafana deferred — current solution is sufficient for the project's scale.
 

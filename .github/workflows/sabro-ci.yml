@@ -211,6 +211,43 @@ jobs:
             *) echo "::error::compose failed, but not on SABRO_IMAGE_TAG:"; echo "$err"; exit 1 ;;
           esac
 
+      # The disk-headroom check is the only sensor that would have caught the
+      # 2026-07-31 fill before it took Postgres down, and it runs from cron inside a
+      # container — where a broken script or a mistyped crontab line fails silently
+      # and looks exactly like "disk is fine". Exercise both branches for real.
+      - name: Disk-headroom check works in the backup image
+        run: |
+          set -euo pipefail
+          docker build -t sabro-backup-ci ./backup
+          docker volume create disk-check-ci >/dev/null
+
+          run_check() {
+            docker run --rm -e DISK_USAGE_THRESHOLD="$1" -v disk-check-ci:/backups \
+              --entrypoint disk-check.sh sabro-backup-ci
+          }
+
+          # A threshold no filesystem can reach: the healthy path must exit 0.
+          if ! out=$(run_check 100); then
+            echo "::error::disk-check.sh failed on a disk with headroom:"; echo "$out"; exit 1
+          fi
+          echo "$out"
+
+          # A threshold every filesystem exceeds: the alert path must exit non-zero,
+          # which is what pings <heartbeat>/fail and sends the mail.
+          if out=$(run_check 0); then
+            echo "::error::disk-check.sh reported OK past its threshold — a full disk would never alert."
+            echo "$out"; exit 1
+          fi
+          echo "$out"
+
+          # cron ignores a line it cannot parse without a word of complaint, so the
+          # script passing above proves nothing about it ever being run.
+          docker run --rm --entrypoint sh sabro-backup-ci -c \
+            'grep -q "disk-check.sh" /etc/crontabs/root && test -x /usr/local/bin/disk-check.sh'
+
+          docker volume rm disk-check-ci >/dev/null
+          echo "OK: disk-check.sh alerts past its threshold and is scheduled."
+
       # The gate that would have caught PR #132. A data-bearing engine bump can
       # pass every build/test and still refuse the on-disk format already sitting
       # on the production volume. Booting the stack fresh proves nothing, so this

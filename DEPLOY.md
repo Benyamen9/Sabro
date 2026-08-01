@@ -262,8 +262,11 @@ archives **uploaded media** (`media-data`, mounted read-only at `/media`) as
 `backup-data` volume, mirrors the same layout + retention to a **Hetzner Storage
 Box** over SFTP, and runs a **weekly restore test** (Sunday 04:15 UTC) that
 restores the newest dumps into a scratch cluster, checks the data is actually
-there, and re-verifies the media archive. Everything logs to
-`docker logs sabro-backup`.
+there, and re-verifies the media archive. The same sidecar also runs
+[`disk-check.sh`](#disk-headroom) every 15 minutes — it lives here because this
+container already runs cron and already has a volume on the host filesystem, so
+it reads the real partition numbers without a host mount or a Docker socket.
+Everything logs to `docker logs sabro-backup`.
 
 Media is in the backup set because pronunciation recordings are **original work**
 — unlike the Meilisearch indexes, nothing can regenerate them from Postgres.
@@ -292,13 +295,27 @@ Media is in the backup set because pronunciation recordings are **original work*
    `uXXXXXX.your-storagebox.de`; SFTP runs on **port 23**).
 4. Optional but recommended: create a check on healthchecks.io and set
    `BACKUP_HEARTBEAT_URL` — you then get an email when a backup *doesn't* run.
-5. Recreate the service and prove the pipeline end-to-end before walking away:
+5. Create a **second, separate** healthchecks.io check for disk headroom (period
+   15 min) and set `DISK_HEARTBEAT_URL`. Separate because a nightly job and a
+   quarter-hourly one need different periods, and sharing one check would make a
+   full disk look like a failed backup. Left blank, `disk-check.sh` still logs but
+   **nothing alerts** — the 2026-07-31 state. `DISK_USAGE_THRESHOLD` defaults to 80.
+6. Recreate the service and prove the pipeline end-to-end before walking away:
 
    ```bash
    cd /opt/sabro
    docker compose -f docker-compose.prod.yml up -d backup
    docker compose -f docker-compose.prod.yml exec backup backup.sh
    docker compose -f docker-compose.prod.yml exec backup restore-test.sh
+   docker compose -f docker-compose.prod.yml exec backup disk-check.sh
+   ```
+
+   To prove the disk *alert* actually delivers (not just that the check runs),
+   force the failing branch once and wait for the mail:
+
+   ```bash
+   docker compose -f docker-compose.prod.yml exec -e DISK_USAGE_THRESHOLD=1 \
+     backup disk-check.sh          # expect ALERT + exit 1 + an email
    ```
 
 Until step 3, backups are **local-only** (they survive a bad migration or a
@@ -495,15 +512,79 @@ Two things worth knowing when checking whether it works:
   shmo) log nothing per-request, so their monitors cannot be confirmed from the
   server side — UptimeRobot's own status is the check there.
 
-**`/health` proves liveness, not freshness.** A stale container answers it
-happily; on 2026-07-28 prod served a two-week-old image with `/health` green the
-whole time. `/version` on `api.sabro.be` and `sabro.be` is what proves prod
+**`/health` proves readiness, not freshness.** Since 2026-08-01 it does check the
+database (see [the two health endpoints](#the-two-health-endpoints)), but it still
+says nothing about *which build* is answering: a stale container passes it
+happily, and on 2026-07-28 prod served a two-week-old image with `/health` green
+the whole time. `/version` on `api.sabro.be` and `sabro.be` is what proves prod
 matches `main`, and CD asserts it after every deploy.
 
 To re-test alert delivery, add a throwaway monitor on a guaranteed-dead URL
 (e.g. `https://sabro.be:9999`), wait for the email, then delete it. Worth
 repeating if the alert address ever changes — a monitor that detects downtime
 but cannot deliver the mail is no better than no monitor.
+
+### The two health endpoints
+
+| Path | Answers | Checks | Who should use it |
+|---|---|---|---|
+| `/health` | *Can this instance serve requests?* | Postgres (`SELECT 1`) | UptimeRobot, the CD post-deploy gate, a human |
+| `/health/live` | *Is the process up?* | nothing at all | Docker `healthcheck:` / `depends_on`, if ever needed |
+
+`/health` returns **503** with a per-check breakdown when the database is
+unreachable, so `curl` tells you which dependency is down during an incident:
+
+```bash
+curl -sS https://api.sabro.be/health | jq
+# {"status":"Healthy","durationMs":3,"checks":{"postgres":{"status":"Healthy",...}}}
+```
+
+The exception itself is never in the response (the caller is an anonymous
+monitor) — it goes to Seq. Search there for `PostgreSQL health check failed`.
+
+> **Why the database check is on `/health` and not a new path:** UptimeRobot
+> already watches `/health`. On 2026-07-31 the disk filled, Postgres crash-looped,
+> and every data endpoint 500'd for ~15 minutes while `/health` — which checked
+> nothing — answered 200 and the monitor stayed silent. Putting the check behind a
+> new URL would have left that monitor just as blind.
+
+> ⚠️ **Never wire `/health` into a Docker `healthcheck:` or a
+> `depends_on: service_healthy` gate.** It reports on dependencies by design, so
+> doing that turns a brief database blip into a restart loop and a stack that
+> refuses to come up — which is how the 2026-07-28 Meilisearch outage took the
+> whole site down. `/health/live` exists for exactly that job. There is an
+> integration test pinning that `/health/live` stays green while the database is
+> unreachable; do not "fix" it.
+
+### Disk headroom
+
+UptimeRobot cannot see the disk, and the 2026-07-31 fill gave no warning at all.
+Two things now cover it, and they are independent on purpose:
+
+1. **CD prunes after every deploy** — `docker image prune -af --filter "until=24h"`
+   runs after the container swap, so superseded images stop accumulating (601 of
+   them, 148 GB, is what filled the box). `until=24h` keeps anything built in the
+   last day, so on a busy day — when a [rollback](#rollback) is most likely — the
+   previous SHA is still local and needs no GHCR pull. An older rollback target is
+   still recoverable, it just re-pulls first. The
+   deploy log prints `df -h /` and `docker system df` afterwards — **`Images
+   TOTAL` should stop climbing deploy over deploy.**
+2. **The backup sidecar checks headroom every 15 minutes** — `disk-check.sh`
+   pings `DISK_HEARTBEAT_URL` while there is room and `<url>/fail` at or above
+   `DISK_USAGE_THRESHOLD` (default 80%). Because the heartbeat also alerts on
+   *silence*, it covers the box going away entirely, not just a full disk.
+
+Check either by hand:
+
+```bash
+ssh -i ~/.ssh/sabro_deploy deploy@<vps> 'df -h /; docker system df'
+docker compose -f docker-compose.prod.yml exec backup disk-check.sh
+docker logs sabro-backup | grep disk-check | tail -5
+```
+
+> **`DISK_HEARTBEAT_URL` blank = no alert.** The check still logs, but nothing
+> mails — which is precisely the state that let the disk reach 100% unnoticed.
+> Set it (see [one-time setup](#one-time-setup-off-site)).
 
 ---
 

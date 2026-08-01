@@ -4,3 +4,7 @@
 30 3 * * * /usr/local/bin/backup.sh >> /proc/1/fd/1 2>&1
 # Weekly restore test, Sundays at 04:15 UTC (after that night's backup).
 15 4 * * 0 /usr/local/bin/restore-test.sh >> /proc/1/fd/1 2>&1
+# Disk headroom every 15 minutes. Frequent because the 2026-07-31 fill went from
+# comfortable to 100% within a single day of deploys, and because the heartbeat's
+# own timeout is what catches the box going away entirely.
+*/15 * * * * /usr/local/bin/disk-check.sh >> /proc/1/fd/1 2>&1

@@ -32,6 +32,11 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+    <!-- Referenced directly by Sabro.API's Postgres health check, which opens a plain
+         ADO connection rather than going through a module's DbContext (the API must not
+         reach into module infrastructure). Kept at the version the EF provider above
+         already resolves, so this pins nothing new. -->
+    <PackageVersion Include="Npgsql" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup Label="Validation / Markdown / Search">
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
