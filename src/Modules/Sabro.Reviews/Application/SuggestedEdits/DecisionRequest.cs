@@ -6,4 +6,12 @@ namespace Sabro.Reviews.Application.SuggestedEdits;
 /// impersonate. <see cref="Note"/> is an optional free-text rationale that
 /// gets persisted alongside the decision.
 /// </summary>
-public sealed record DecisionRequest(string? Note = null);
+/// <param name="Note">Optional free-text rationale, persisted with the decision.</param>
+/// <param name="AcceptChangedTarget">
+/// Confirms accepting a field proposal whose field has changed since it was filed.
+/// Defaults to <see langword="false"/>, so the risky case fails closed: accepting a
+/// correction written against older content can silently overwrite a newer one, and
+/// that must be a deliberate act rather than a banner somebody skimmed past. Ignored
+/// on reject and on prose targets.
+/// </param>
+public sealed record DecisionRequest(string? Note = null, bool AcceptChangedTarget = false);

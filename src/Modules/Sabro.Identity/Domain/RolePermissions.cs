@@ -39,6 +39,29 @@ public static class RolePermissions
         CanEditFigures(role) || role is Role.ShmoReviewer;
 
     /// <summary>
+    /// May propose corrections to Lexicon entries. Reviewers only: an editor changes
+    /// the entry directly, so a proposal from one would be a decision waiting on its
+    /// own author.
+    /// </summary>
+    public static bool CanProposeLexiconEdit(Role role) => role is Role.LexiconReviewer;
+
+    /// <summary>May propose corrections to historical figures. Reviewers only.</summary>
+    public static bool CanProposeFigureEdit(Role role) => role is Role.ShmoReviewer;
+
+    /// <summary>
+    /// May propose corrections to translation content. The pre-existing translations
+    /// reviewer, kept distinct from the area roles it predates.
+    /// </summary>
+    public static bool CanProposeTranslationEdit(Role role) => role is Role.ExpertReviewer;
+
+    /// <summary>
+    /// May accept or reject proposals. Owner-only, and deliberately not implied by any
+    /// editor role — an editor changes content, but deciding whose correction stands is
+    /// the Owner's scholarly judgement.
+    /// </summary>
+    public static bool CanDecideProposals(Role role) => role is Role.Owner;
+
+    /// <summary>
     /// May grant and revoke other people's roles. Deliberately Owner-only and
     /// deliberately not implied by any editor role: being trusted with content is
     /// not the same as being trusted with who else gets in.

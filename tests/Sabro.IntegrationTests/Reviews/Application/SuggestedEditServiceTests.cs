@@ -7,6 +7,7 @@ using Sabro.Identity.Infrastructure;
 using Sabro.Reviews.Application.SuggestedEdits;
 using Sabro.Reviews.Domain;
 using Sabro.Reviews.Infrastructure;
+using Sabro.Shared.Abstractions;
 using Sabro.Shared.Localization;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
@@ -261,10 +262,14 @@ public class SuggestedEditServiceTests
             TargetVersion: 1,
             ProposedContent: "Proposed revised content.");
 
-    private static SuggestedEditService NewService(ReviewsDbContext ctx) =>
+    private static SuggestedEditService NewService(
+        ReviewsDbContext ctx,
+        params IProposalTargetSource[] targetSources) =>
         new(
             ctx,
             new CreateSuggestedEditRequestValidator(),
+            new CreateFieldProposalRequestValidator(),
+            targetSources,
             new UserProfileService(
                 NewIdentityContext(ctx),
                 new UpdateUserProfileRequestValidator(Options.Create(new SupportedLanguagesOptions())),
