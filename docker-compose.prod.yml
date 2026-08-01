@@ -309,6 +309,12 @@ services:
   # once STORAGE_BOX_* is configured and ./secrets/storagebox_ed25519 exists.
   # Run on demand:  docker compose exec backup backup.sh
   # Restore runbook: see DEPLOY.md § Backups.
+  #
+  # Also carries the quarter-hourly disk-headroom check (disk-check.sh). It lives
+  # here rather than in its own service because this container already runs cron
+  # and already mounts a volume on the host filesystem, so it can read the real
+  # partition numbers without a host mount or a Docker socket.
+  # Run on demand:  docker compose exec backup disk-check.sh
   backup:
     image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-backup:${SABRO_IMAGE_TAG:?SABRO_IMAGE_TAG is required. CD writes it to .env.deploy; run compose with --env-file .env --env-file .env.deploy}
     container_name: sabro-backup
@@ -331,6 +337,13 @@ services:
       # Optional heartbeat (e.g. healthchecks.io) — pinged after every backup,
       # <url>/fail on failure, so a dead backup job alerts instead of rotting.
       BACKUP_HEARTBEAT_URL: ${BACKUP_HEARTBEAT_URL:-}
+      # Disk headroom watch (disk-check.sh, every 15 min). Its own heartbeat, so a
+      # full disk and a failed backup are distinguishable in the alert mail. UNSET
+      # MEANS NO ALERT: the check still logs to `docker logs sabro-backup`, but
+      # nothing emails, which is the state that let the disk reach 100% unnoticed
+      # on 2026-07-31. Threshold is a percentage of the partition.
+      DISK_HEARTBEAT_URL: ${DISK_HEARTBEAT_URL:-}
+      DISK_USAGE_THRESHOLD: ${DISK_USAGE_THRESHOLD:-80}
     volumes:
       - backup-data:/backups
       # SSH key for the Storage Box lives on the VPS, never in the repo.

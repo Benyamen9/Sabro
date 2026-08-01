@@ -207,6 +207,22 @@ jobs:
             $COMPOSE up -d --force-recreate --no-deps api frontend
             # Record exactly which image the api service ended up on (deploy observability).
             $COMPOSE images api
+            # Reclaim the images this deploy just superseded. Nothing on the VPS pruned
+            # them before, so ~a dozen deploys in one day (three images each) filled
+            # /dev/sda1 to 100% on 2026-07-31: Postgres crash-looped on "No space left on
+            # device" and every data endpoint 500'd for ~15 minutes.
+            #
+            # Placed AFTER the swap so it can never remove the image about to start, and
+            # `until=24h` rather than a bare `-af` so anything built in the last day stays
+            # on the box: on a busy day — exactly when a rollback is most likely — the
+            # previous SHA is still local and rolling back is a re-pin plus `up -d`. An
+            # older target is still recoverable, it just re-pulls from GHCR first.
+            # Non-fatal: a prune hiccup must never fail a deploy that already succeeded.
+            # The disk report that follows is the check that it is working —
+            # `Images TOTAL` should stop climbing deploy over deploy.
+            docker image prune -af --filter "until=24h" || echo "image prune failed (non-fatal)" >&2
+            df -h /
+            docker system df
             # Reload Caddy so a just-shipped Caddyfile takes effect. A bind-mounted
             # file changing on disk does NOT make Caddy re-read it — only a reload
             # does. `caddy reload` validates the new config and, if it is invalid,

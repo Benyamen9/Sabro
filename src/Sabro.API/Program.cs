@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Sabro.API.Configuration;
+using Sabro.API.Health;
 using Sabro.API.Logto;
 using Sabro.API.Media;
 using Sabro.Biblical.Public;
@@ -141,7 +142,9 @@ try
                 }));
     });
 
-    builder.Services.AddHealthChecks();
+    // /health reports on the database, not just the process — see HealthEndpoints.
+    builder.Services.AddHealthChecks()
+        .AddCheck<PostgresHealthCheck>(PostgresHealthCheck.Name);
 
     builder.Services.AddSabroSearch(builder.Configuration);
 
@@ -199,7 +202,11 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    app.MapHealthChecks("/health");
+
+    // /health = readiness (touches Postgres), /health/live = liveness (checks nothing).
+    // The dependency check lives on /health deliberately: that is the URL UptimeRobot
+    // already watches, and on 2026-07-31 it answered 200 through a total data outage.
+    app.MapSabroHealthChecks();
 
     // Deployed build identity. BUILD_SHA is baked into the image by CD; the
     // post-deploy step asserts this endpoint carries the commit it just
