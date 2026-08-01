@@ -413,6 +413,10 @@
       "people": {
         "label": "Personer",
         "blurb": "Vem som får redigera vad."
+      },
+      "proposals": {
+        "label": "Förslag",
+        "blurb": "Besluta om rättelser som dina granskare har föreslagit."
       }
     },
     "adminRequired": "Administratörsbehörighet krävs.",
@@ -723,6 +727,41 @@
         "ExpertReviewer": "Översättningar — kan granska"
       },
       "noOwnerYet": "Ingen är ännu satt som ägare, så inget är begränsat. Sätt dig själv som ägare för att styra vem som får redigera vad."
+    },
+    "proposals": {
+      "title": "Förslag",
+      "subtitle": "Rättelser föreslagna av granskare, i väntan på ditt beslut.",
+      "what": "Vad",
+      "change": "Ändring",
+      "decide": "Besluta",
+      "accept": "Godkänn",
+      "acceptAnyway": "Godkänn ändå",
+      "reject": "Avslå",
+      "wasEmpty": "(var tomt)",
+      "nonePending": "Inga förslag väntar.",
+      "noneAccepted": "Inget godkänt ännu.",
+      "showAccepted": "Visa godkända",
+      "showPending": "Visa väntande",
+      "changedUnderneath": "Fältet har ändrats sedan förslaget lämnades.",
+      "changedUnderneathHint": "Kontrollera posten först — att godkänna nu väljer den äldre rättelsen framför den nyare ändringen.",
+      "acceptedDespiteChange": "Godkänt trots att fältet hade ändrats.",
+      "applyOnEntry": "Tillämpa på posten →",
+      "acceptRecordsOnly": "Att godkänna registrerar ditt beslut. Posten ändras inte — öppna den för att tillämpa ändringen.",
+      "decisionFailed": "Beslutet kunde inte sparas.",
+      "loadFailed": "Förslagen kunde inte laddas.",
+      "ownerRequired": "Ägaråtkomst krävs",
+      "ownerRequiredHint": "Endast ägaren kan besluta om förslag.",
+      "target": {
+        "LexiconEntry": "Lexikonpost",
+        "HistoricalFigure": "Historisk person",
+        "Segment": "Översättningssegment",
+        "Annotation": "Annotering"
+      },
+      "status": {
+        "Pending": "Väntar",
+        "Accepted": "Godkänt",
+        "Rejected": "Avslaget"
+      }
     }
   },
   "seo": {
