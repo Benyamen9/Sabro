@@ -413,6 +413,10 @@
       "people": {
         "label": "Personen",
         "blurb": "Wie wat mag bewerken."
+      },
+      "proposals": {
+        "label": "Voorstellen",
+        "blurb": "Beslis over correcties die uw reviewers hebben voorgesteld."
       }
     },
     "adminRequired": "Beheerderstoegang vereist.",
@@ -723,6 +727,41 @@
         "ExpertReviewer": "Vertalingen — kan beoordelen"
       },
       "noOwnerYet": "Er is nog niemand als eigenaar ingesteld, dus niets is beperkt. Stel uzelf in als eigenaar om te bepalen wie wat mag bewerken."
+    },
+    "proposals": {
+      "title": "Voorstellen",
+      "subtitle": "Correcties voorgesteld door reviewers, in afwachting van uw beslissing.",
+      "what": "Wat",
+      "change": "Wijziging",
+      "decide": "Beslissen",
+      "accept": "Accepteren",
+      "acceptAnyway": "Toch accepteren",
+      "reject": "Afwijzen",
+      "wasEmpty": "(was leeg)",
+      "nonePending": "Er wachten geen voorstellen.",
+      "noneAccepted": "Nog niets geaccepteerd.",
+      "showAccepted": "Geaccepteerde tonen",
+      "showPending": "Wachtende tonen",
+      "changedUnderneath": "Dit veld is gewijzigd sinds het voorstel.",
+      "changedUnderneathHint": "Controleer eerst het item — nu accepteren kiest de oudere correctie boven de nieuwere bewerking.",
+      "acceptedDespiteChange": "Geaccepteerd hoewel het veld gewijzigd was.",
+      "applyOnEntry": "Toepassen op het item →",
+      "acceptRecordsOnly": "Accepteren legt uw beslissing vast. Het item verandert niet — open het om de wijziging toe te passen.",
+      "decisionFailed": "Die beslissing kon niet worden opgeslagen.",
+      "loadFailed": "De voorstellen konden niet worden geladen.",
+      "ownerRequired": "Eigenaarstoegang vereist",
+      "ownerRequiredHint": "Alleen de eigenaar kan over voorstellen beslissen.",
+      "target": {
+        "LexiconEntry": "Lexicon-item",
+        "HistoricalFigure": "Historische figuur",
+        "Segment": "Vertaalsegment",
+        "Annotation": "Annotatie"
+      },
+      "status": {
+        "Pending": "Wachtend",
+        "Accepted": "Geaccepteerd",
+        "Rejected": "Afgewezen"
+      }
     }
   },
   "seo": {
