@@ -104,6 +104,41 @@ public sealed class AdminPeopleController : ApiControllerBase
     }
 
     /// <summary>
+    /// Grants, changes, or revokes one person's access to one content area. Owner-only.
+    /// </summary>
+    /// <remarks>
+    /// One area per call: the grid changes one cell at a time, so a failure affects
+    /// that cell rather than silently rewriting the rest of somebody's permissions.
+    /// </remarks>
+    [HttpPut("{profileId:guid}/areas/{area}")]
+    [ProducesResponseType(typeof(PersonDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PersonDto>> SetAreaAccess(
+        Guid profileId,
+        ContentArea area,
+        SetAreaAccessRequest request,
+        CancellationToken cancellationToken)
+    {
+        var logtoUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(logtoUserId))
+        {
+            return FromError(Error.Validation("Authenticated user is missing a sub claim."));
+        }
+
+        var result = await userRoles.SetAreaAccessAsync(
+            logtoUserId, profileId, area, request.Access, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        var people = await ToPeopleAsync([result.Value!], logtoUserId, cancellationToken);
+        return Ok(people[0]);
+    }
+
+    /// <summary>
     /// Turns profiles into people by asking Logto who they are. One path for both
     /// endpoints, so a list row and a freshly-saved row can never disagree.
     /// </summary>
@@ -123,6 +158,7 @@ public sealed class AdminPeopleController : ApiControllerBase
                 return new PersonDto(
                     profile.Id,
                     profile.Role,
+                    profile.Areas,
                     profile.DisplayName,
                     identity?.Name,
                     identity?.Email,

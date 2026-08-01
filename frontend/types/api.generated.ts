@@ -1041,6 +1041,85 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/people/{profileId}/areas/{area}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    profileId: string;
+                    area: components["schemas"]["ContentArea"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SetAreaAccessRequest"];
+                    "text/json": components["schemas"]["SetAreaAccessRequest"];
+                    "application/*+json": components["schemas"]["SetAreaAccessRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["PersonDto"];
+                        "application/json": components["schemas"]["PersonDto"];
+                        "text/json": components["schemas"]["PersonDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/search/rebuild/{indexName}": {
         parameters: {
             query?: never;
@@ -4389,6 +4468,12 @@ export interface components {
         ApprovalStatus: "Approved" | "Rejected";
         /** @enum {string} */
         ApprovalTargetType: "Segment" | "Chapter" | "Annotation";
+        /** @enum {string} */
+        AreaAccess: "Reviewer" | "Editor";
+        AreaGrantDto: {
+            area: components["schemas"]["ContentArea"];
+            access: components["schemas"]["AreaAccess"];
+        };
         AssignRoleRequest: {
             role: components["schemas"]["Role"];
         };
@@ -4449,6 +4534,8 @@ export interface components {
             verseNumber: number | string;
             reference: string;
         };
+        /** @enum {string} */
+        ContentArea: "Lexicon" | "Shmo";
         CreateAnnotationRequest: {
             /** Format: uuid */
             segmentId: string;
@@ -5020,6 +5107,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             role: components["schemas"]["Role"];
+            areas: components["schemas"]["AreaGrantDto"][];
             displayName: null | string;
             name: null | string;
             email: null | string;
@@ -5096,6 +5184,9 @@ export interface components {
             content: string;
             /** Format: int32 */
             version: number | string;
+        };
+        SetAreaAccessRequest: {
+            access: null | components["schemas"]["AreaAccess"];
         };
         SetPlayableHistoricalFigureRequest: {
             playable: boolean;
@@ -5229,6 +5320,7 @@ export interface components {
             preferredLanguage: string;
             preferredScriptVariant: components["schemas"]["ScriptVariant"];
             role: components["schemas"]["Role"];
+            areas: components["schemas"]["AreaGrantDto"][];
             displayName: null | string;
             showOnLeaderboard: boolean;
             /** Format: date-time */

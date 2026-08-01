@@ -726,7 +726,17 @@
         "Owner": "Allt",
         "ExpertReviewer": "Översättningar — kan granska"
       },
-      "noOwnerYet": "Ingen är ännu satt som ägare, så inget är begränsat. Sätt dig själv som ägare för att styra vem som får redigera vad."
+      "noOwnerYet": "Ingen är ännu satt som ägare, så inget är begränsat. Sätt dig själv som ägare för att styra vem som får redigera vad.",
+      "ownerEverything": "Ägare — full åtkomst till alla områden.",
+      "area": {
+        "Lexicon": "Lexikon",
+        "Shmo": "Shmo-personer"
+      },
+      "access": {
+        "none": "Ingen åtkomst",
+        "Reviewer": "Granskare — kan föreslå",
+        "Editor": "Redaktör — kan ändra"
+      }
     },
     "proposals": {
       "title": "Förslag",

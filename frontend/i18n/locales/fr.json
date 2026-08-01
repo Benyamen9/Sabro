@@ -726,7 +726,17 @@
         "Owner": "Tout",
         "ExpertReviewer": "Traductions — peut réviser"
       },
-      "noOwnerYet": "Personne n'est encore défini comme propriétaire, donc rien n'est restreint. Définissez-vous comme propriétaire pour contrôler qui peut modifier quoi."
+      "noOwnerYet": "Personne n'est encore défini comme propriétaire, donc rien n'est restreint. Définissez-vous comme propriétaire pour contrôler qui peut modifier quoi.",
+      "ownerEverything": "Propriétaire — accès complet à tous les domaines.",
+      "area": {
+        "Lexicon": "Lexique",
+        "Shmo": "Figures Shmo"
+      },
+      "access": {
+        "none": "Aucun accès",
+        "Reviewer": "Relecteur — peut proposer",
+        "Editor": "Éditeur — peut modifier"
+      }
     },
     "proposals": {
       "title": "Propositions",

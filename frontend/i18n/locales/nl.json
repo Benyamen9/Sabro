@@ -726,7 +726,17 @@
         "Owner": "Alles",
         "ExpertReviewer": "Vertalingen — kan beoordelen"
       },
-      "noOwnerYet": "Er is nog niemand als eigenaar ingesteld, dus niets is beperkt. Stel uzelf in als eigenaar om te bepalen wie wat mag bewerken."
+      "noOwnerYet": "Er is nog niemand als eigenaar ingesteld, dus niets is beperkt. Stel uzelf in als eigenaar om te bepalen wie wat mag bewerken.",
+      "ownerEverything": "Eigenaar — volledige toegang tot alle gebieden.",
+      "area": {
+        "Lexicon": "Lexicon",
+        "Shmo": "Shmo-figuren"
+      },
+      "access": {
+        "none": "Geen toegang",
+        "Reviewer": "Reviewer — kan voorstellen",
+        "Editor": "Editor — kan wijzigen"
+      }
     },
     "proposals": {
       "title": "Voorstellen",

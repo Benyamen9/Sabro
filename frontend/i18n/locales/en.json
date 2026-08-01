@@ -726,7 +726,17 @@
         "Owner": "Everything",
         "ExpertReviewer": "Translations — can review"
       },
-      "noOwnerYet": "No one is set as Owner yet, so nothing is restricted. Set yourself as Owner to take control of who may edit what."
+      "noOwnerYet": "No one is set as Owner yet, so nothing is restricted. Set yourself as Owner to take control of who may edit what.",
+      "ownerEverything": "Owner — full access to every area.",
+      "area": {
+        "Lexicon": "Lexicon",
+        "Shmo": "Shmo figures"
+      },
+      "access": {
+        "none": "No access",
+        "Reviewer": "Reviewer — can propose",
+        "Editor": "Editor — can change"
+      }
     },
     "proposals": {
       "title": "Proposals",

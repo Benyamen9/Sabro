@@ -94,13 +94,17 @@ try
         // class-level policy on every admin controller, and ASP.NET demands that
         // every applicable policy succeed, so these narrow rather than replace it.
         options.AddPolicy(AuthPolicies.LexiconView, policy => policy.Requirements.Add(
-            new RolePermissionRequirement(RolePermissions.CanViewLexiconBackoffice, "view the Lexicon backoffice")));
+            new RolePermissionRequirement(
+                p => RolePermissions.CanViewBackoffice(p, ContentArea.Lexicon), "view the Lexicon backoffice")));
         options.AddPolicy(AuthPolicies.LexiconEdit, policy => policy.Requirements.Add(
-            new RolePermissionRequirement(RolePermissions.CanEditLexicon, "edit the Lexicon")));
+            new RolePermissionRequirement(
+                p => RolePermissions.CanEdit(p, ContentArea.Lexicon), "edit the Lexicon")));
         options.AddPolicy(AuthPolicies.FiguresView, policy => policy.Requirements.Add(
-            new RolePermissionRequirement(RolePermissions.CanViewFiguresBackoffice, "view the figures backoffice")));
+            new RolePermissionRequirement(
+                p => RolePermissions.CanViewBackoffice(p, ContentArea.Shmo), "view the figures backoffice")));
         options.AddPolicy(AuthPolicies.FiguresEdit, policy => policy.Requirements.Add(
-            new RolePermissionRequirement(RolePermissions.CanEditFigures, "edit the figures roster")));
+            new RolePermissionRequirement(
+                p => RolePermissions.CanEdit(p, ContentArea.Shmo), "edit the figures roster")));
     });
 
     builder.Services.AddScoped<IAuthorizationHandler, RolePermissionHandler>();

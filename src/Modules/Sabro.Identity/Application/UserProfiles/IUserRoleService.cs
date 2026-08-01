@@ -30,4 +30,20 @@ public interface IUserRoleService
         Guid targetProfileId,
         Role role,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Grants, changes, or (with <paramref name="access"/> null) revokes one person's
+    /// access to one content area. Owner-only.
+    /// </summary>
+    /// <remarks>
+    /// One area per call rather than a whole access payload: the backoffice grid
+    /// changes one cell at a time, and a partial failure then affects one area rather
+    /// than silently rewriting the rest of somebody's permissions.
+    /// </remarks>
+    Task<Result<UserProfileDto>> SetAreaAccessAsync(
+        string callerLogtoUserId,
+        Guid targetProfileId,
+        ContentArea area,
+        AreaAccess? access,
+        CancellationToken cancellationToken);
 }

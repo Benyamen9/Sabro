@@ -63,12 +63,12 @@ internal sealed class SuggestedEditService : ISuggestedEditService
             return Result<SuggestedEditDto>.Failure(roleResult.Error!);
         }
 
-        if (!RolePermissions.CanProposeTranslationEdit(roleResult.Value!.Role))
+        if (!RolePermissions.CanProposeTranslationEdit(roleResult.Value!))
         {
             logger.LogWarning(
                 "SuggestedEdit proposal forbidden. SubmittedBy={SubmittedBy} ActualRole={Role}",
                 trimmedSubmittedBy,
-                roleResult.Value.Role);
+                roleResult.Value!.Role);
             return Result<SuggestedEditDto>.Failure(Error.Forbidden("Only Expert Reviewers may propose edits."));
         }
 
@@ -128,7 +128,7 @@ internal sealed class SuggestedEditService : ISuggestedEditService
         }
 
         var mayPropose = PermissionFor(request.TargetType);
-        if (mayPropose is null || !mayPropose(roleResult.Value!.Role))
+        if (mayPropose is null || !mayPropose(roleResult.Value!))
         {
             logger.LogWarning(
                 "Field proposal forbidden. SubmittedBy={SubmittedBy} ActualRole={Role} TargetType={TargetType}",
@@ -295,10 +295,12 @@ internal sealed class SuggestedEditService : ISuggestedEditService
     /// chain of conditionals, so adding a proposable area is an entry here plus a
     /// predicate in <see cref="RolePermissions"/> — nothing scattered.
     /// </summary>
-    private static Func<Role, bool>? PermissionFor(SuggestedEditTargetType targetType) => targetType switch
+    private static Func<IAccessProfile, bool>? PermissionFor(SuggestedEditTargetType targetType) => targetType switch
     {
-        SuggestedEditTargetType.LexiconEntry => RolePermissions.CanProposeLexiconEdit,
-        SuggestedEditTargetType.HistoricalFigure => RolePermissions.CanProposeFigureEdit,
+        SuggestedEditTargetType.LexiconEntry =>
+            p => RolePermissions.CanPropose(p, ContentArea.Lexicon),
+        SuggestedEditTargetType.HistoricalFigure =>
+            p => RolePermissions.CanPropose(p, ContentArea.Shmo),
         SuggestedEditTargetType.Segment or SuggestedEditTargetType.Annotation =>
             RolePermissions.CanProposeTranslationEdit,
         _ => null,
@@ -369,12 +371,12 @@ internal sealed class SuggestedEditService : ISuggestedEditService
             return Result<SuggestedEditDto>.Failure(roleResult.Error!);
         }
 
-        if (!RolePermissions.CanDecideProposals(roleResult.Value!.Role))
+        if (!RolePermissions.CanDecideProposals(roleResult.Value!))
         {
             logger.LogWarning(
                 "SuggestedEdit decision forbidden. DecidedBy={DecidedBy} ActualRole={Role} Accept={Accept}",
                 trimmedDecidedBy,
-                roleResult.Value.Role,
+                roleResult.Value!.Role,
                 accept);
             return Result<SuggestedEditDto>.Failure(Error.Forbidden("Only the Owner may accept or reject suggestions."));
         }
