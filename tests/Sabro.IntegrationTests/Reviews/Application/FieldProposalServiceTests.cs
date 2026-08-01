@@ -412,6 +412,34 @@ public class FieldProposalServiceTests
         result.Value!.Status.Should().Be(SuggestedEditStatus.Rejected);
     }
 
+    [Fact]
+    public void ProposableFields_ComesFromTheOwningModule()
+    {
+        // The backoffice picker is built from this rather than from a copy in the
+        // frontend. A copy would drift silently: offering a field the API refuses,
+        // or hiding one it would have taken.
+        using var ctx = postgres.CreateReviewsContext();
+        var source = FakeSource.Lexicon(Guid.NewGuid(), DateTimeOffset.UtcNow);
+
+        var result = NewService(ctx, source).GetProposableFields(SuggestedEditTargetType.LexiconEntry);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(source.ProposableFields);
+        result.Value.Should().NotContain("status");
+        result.Value.Should().NotContain("playableInMeltho");
+    }
+
+    [Fact]
+    public void ProposableFields_ForATypeNoModuleClaims_Fails()
+    {
+        using var ctx = postgres.CreateReviewsContext();
+
+        var result = NewService(ctx).GetProposableFields(SuggestedEditTargetType.HistoricalFigure);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
     private static SuggestedEditService NewService(
         ReviewsDbContext ctx,
         params IProposalTargetSource[] targetSources) =>

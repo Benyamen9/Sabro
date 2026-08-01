@@ -413,6 +413,10 @@
       "people": {
         "label": "Personen",
         "blurb": "Wer was bearbeiten darf."
+      },
+      "proposals": {
+        "label": "Vorschläge",
+        "blurb": "Entscheiden Sie über Korrekturen, die Ihre Prüfer vorgeschlagen haben."
       }
     },
     "adminRequired": "Administratorzugriff erforderlich.",
@@ -723,6 +727,72 @@
         "ExpertReviewer": "Übersetzungen — kann prüfen"
       },
       "noOwnerYet": "Es ist noch niemand als Eigentümer festgelegt, daher ist nichts eingeschränkt. Legen Sie sich selbst als Eigentümer fest, um zu bestimmen, wer was bearbeiten darf."
+    },
+    "proposals": {
+      "title": "Vorschläge",
+      "subtitle": "Von Prüfern vorgeschlagene Korrekturen, die auf Ihre Entscheidung warten.",
+      "what": "Was",
+      "change": "Änderung",
+      "decide": "Entscheiden",
+      "accept": "Annehmen",
+      "acceptAnyway": "Trotzdem annehmen",
+      "reject": "Ablehnen",
+      "wasEmpty": "(war leer)",
+      "nonePending": "Es warten keine Vorschläge.",
+      "noneAccepted": "Noch nichts angenommen.",
+      "showAccepted": "Angenommene anzeigen",
+      "showPending": "Wartende anzeigen",
+      "changedUnderneath": "Dieses Feld hat sich seit dem Vorschlag geändert.",
+      "changedUnderneathHint": "Prüfen Sie zuerst den Eintrag — jetzt anzunehmen zieht die ältere Korrektur der neueren Änderung vor.",
+      "acceptedDespiteChange": "Angenommen, obwohl sich das Feld geändert hatte.",
+      "applyOnEntry": "Am Eintrag anwenden →",
+      "acceptRecordsOnly": "Das Annehmen hält Ihre Entscheidung fest. Der Eintrag ändert sich nicht — öffnen Sie ihn, um die Änderung anzuwenden.",
+      "decisionFailed": "Diese Entscheidung konnte nicht gespeichert werden.",
+      "loadFailed": "Die Vorschläge konnten nicht geladen werden.",
+      "ownerRequired": "Eigentümerzugang erforderlich",
+      "ownerRequiredHint": "Nur der Eigentümer kann über Vorschläge entscheiden.",
+      "target": {
+        "LexiconEntry": "Lexikoneintrag",
+        "HistoricalFigure": "Historische Person",
+        "Segment": "Übersetzungssegment",
+        "Annotation": "Anmerkung"
+      },
+      "status": {
+        "Pending": "Wartend",
+        "Accepted": "Angenommen",
+        "Rejected": "Abgelehnt"
+      }
+    },
+    "propose": {
+      "open": "Korrektur vorschlagen",
+      "title": "Korrektur vorschlagen",
+      "blurb": "Schlagen Sie einen neuen Wert für ein Feld vor. Der Eigentümer entscheidet über die Übernahme.",
+      "value": "Vorgeschlagener Wert",
+      "rationale": "Warum (optional)",
+      "rationaleHint": "Eine kurze Begründung hilft dem Eigentümer zu entscheiden, ohne alles nachzuschlagen.",
+      "submit": "Vorschlag senden",
+      "sent": "Vorschlag gesendet. Der Eigentümer entscheidet darüber.",
+      "failed": "Der Vorschlag konnte nicht gesendet werden.",
+      "fieldsFailed": "Die Feldliste konnte nicht geladen werden.",
+      "ownerDecides": "Vorschläge ändern den Eintrag nie direkt — nur der Eigentümer wendet sie an.",
+      "field": {
+        "label": "Feld",
+        "syriacUnvocalized": "Syrisch (unvokalisiert)",
+        "syriacVocalized": "Syrisch (vokalisiert)",
+        "sblTransliteration": "Transliteration",
+        "grammaticalCategory": "Grammatische Kategorie",
+        "morphology": "Morphologie",
+        "meaning": "Bedeutung",
+        "name": "Name",
+        "category": "Kategorie",
+        "era": "Epoche",
+        "period": "Periode",
+        "role": "Rolle",
+        "region": "Region",
+        "tradition": "Tradition",
+        "gender": "Geschlecht",
+        "description": "Beschreibung"
+      }
     }
   },
   "seo": {

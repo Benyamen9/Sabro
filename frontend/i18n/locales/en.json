@@ -413,6 +413,10 @@
       "people": {
         "label": "People",
         "blurb": "Who may edit what."
+      },
+      "proposals": {
+        "label": "Proposals",
+        "blurb": "Decide on corrections your reviewers have proposed."
       }
     },
     "adminRequired": "Admin access required.",
@@ -723,6 +727,72 @@
         "ExpertReviewer": "Translations — can review"
       },
       "noOwnerYet": "No one is set as Owner yet, so nothing is restricted. Set yourself as Owner to take control of who may edit what."
+    },
+    "proposals": {
+      "title": "Proposals",
+      "subtitle": "Corrections proposed by reviewers, waiting on your decision.",
+      "what": "What",
+      "change": "Change",
+      "decide": "Decide",
+      "accept": "Accept",
+      "acceptAnyway": "Accept anyway",
+      "reject": "Reject",
+      "wasEmpty": "(was empty)",
+      "nonePending": "No proposals are waiting.",
+      "noneAccepted": "Nothing accepted yet.",
+      "showAccepted": "Show accepted",
+      "showPending": "Show pending",
+      "changedUnderneath": "This field changed since the proposal was made.",
+      "changedUnderneathHint": "Check the entry first — accepting now takes the older correction over the newer edit.",
+      "acceptedDespiteChange": "Accepted although the field had changed.",
+      "applyOnEntry": "Apply on the entry →",
+      "acceptRecordsOnly": "Accepting records your decision. It does not change the entry — open it to apply the change.",
+      "decisionFailed": "That decision could not be saved.",
+      "loadFailed": "The proposals could not be loaded.",
+      "ownerRequired": "Owner access required",
+      "ownerRequiredHint": "Only the Owner can decide on proposals.",
+      "target": {
+        "LexiconEntry": "Lexicon entry",
+        "HistoricalFigure": "Historical figure",
+        "Segment": "Translation segment",
+        "Annotation": "Annotation"
+      },
+      "status": {
+        "Pending": "Waiting",
+        "Accepted": "Accepted",
+        "Rejected": "Rejected"
+      }
+    },
+    "propose": {
+      "open": "Propose a correction",
+      "title": "Propose a correction",
+      "blurb": "Suggest a new value for one field. The Owner decides whether it is applied.",
+      "value": "Proposed value",
+      "rationale": "Why (optional)",
+      "rationaleHint": "A short reason helps the Owner decide without looking everything up again.",
+      "submit": "Send proposal",
+      "sent": "Proposal sent. The Owner will decide on it.",
+      "failed": "The proposal could not be sent.",
+      "fieldsFailed": "The list of fields could not be loaded.",
+      "ownerDecides": "Proposals never change the entry directly — only the Owner applies them.",
+      "field": {
+        "label": "Field",
+        "syriacUnvocalized": "Syriac (unvocalized)",
+        "syriacVocalized": "Syriac (vocalized)",
+        "sblTransliteration": "Transliteration",
+        "grammaticalCategory": "Grammatical category",
+        "morphology": "Morphology",
+        "meaning": "Meaning",
+        "name": "Name",
+        "category": "Category",
+        "era": "Era",
+        "period": "Period",
+        "role": "Role",
+        "region": "Region",
+        "tradition": "Tradition",
+        "gender": "Gender",
+        "description": "Description"
+      }
     }
   },
   "seo": {

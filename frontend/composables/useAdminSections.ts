@@ -31,6 +31,14 @@ export const adminSections: AdminSection[] = [
     blurbKey: 'admin.sections.people.blurb',
     accent: '--color-accent',
   },
+  // Proposals sits second: it is work waiting on the Owner specifically, and it
+  // is not content, so it wears the house accent rather than an area's colour.
+  {
+    to: '/admin/proposals',
+    labelKey: 'admin.sections.proposals.label',
+    blurbKey: 'admin.sections.proposals.blurb',
+    accent: '--color-accent',
+  },
   {
     to: '/admin/lexicon',
     labelKey: 'admin.sections.lexicon.label',

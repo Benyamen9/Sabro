@@ -413,6 +413,10 @@
       "people": {
         "label": "Personnes",
         "blurb": "Qui peut modifier quoi."
+      },
+      "proposals": {
+        "label": "Propositions",
+        "blurb": "Décidez des corrections proposées par vos relecteurs."
       }
     },
     "adminRequired": "Accès administrateur requis.",
@@ -723,6 +727,72 @@
         "ExpertReviewer": "Traductions — peut réviser"
       },
       "noOwnerYet": "Personne n'est encore défini comme propriétaire, donc rien n'est restreint. Définissez-vous comme propriétaire pour contrôler qui peut modifier quoi."
+    },
+    "proposals": {
+      "title": "Propositions",
+      "subtitle": "Corrections proposées par les relecteurs, en attente de votre décision.",
+      "what": "Quoi",
+      "change": "Modification",
+      "decide": "Décider",
+      "accept": "Accepter",
+      "acceptAnyway": "Accepter quand même",
+      "reject": "Refuser",
+      "wasEmpty": "(vide)",
+      "nonePending": "Aucune proposition en attente.",
+      "noneAccepted": "Rien d’accepté pour l’instant.",
+      "showAccepted": "Voir les acceptées",
+      "showPending": "Voir celles en attente",
+      "changedUnderneath": "Ce champ a changé depuis la proposition.",
+      "changedUnderneathHint": "Vérifiez d’abord l’entrée — accepter maintenant retient l’ancienne correction plutôt que la modification récente.",
+      "acceptedDespiteChange": "Acceptée bien que le champ ait changé.",
+      "applyOnEntry": "Appliquer sur l’entrée →",
+      "acceptRecordsOnly": "Accepter enregistre votre décision. L’entrée n’est pas modifiée — ouvrez-la pour appliquer le changement.",
+      "decisionFailed": "Cette décision n’a pas pu être enregistrée.",
+      "loadFailed": "Les propositions n’ont pas pu être chargées.",
+      "ownerRequired": "Accès propriétaire requis",
+      "ownerRequiredHint": "Seul le propriétaire peut décider des propositions.",
+      "target": {
+        "LexiconEntry": "Entrée du lexique",
+        "HistoricalFigure": "Figure historique",
+        "Segment": "Segment de traduction",
+        "Annotation": "Annotation"
+      },
+      "status": {
+        "Pending": "En attente",
+        "Accepted": "Acceptée",
+        "Rejected": "Refusée"
+      }
+    },
+    "propose": {
+      "open": "Proposer une correction",
+      "title": "Proposer une correction",
+      "blurb": "Suggérez une nouvelle valeur pour un champ. Le propriétaire décide de son application.",
+      "value": "Valeur proposée",
+      "rationale": "Pourquoi (facultatif)",
+      "rationaleHint": "Une brève raison aide le propriétaire à décider sans tout revérifier.",
+      "submit": "Envoyer la proposition",
+      "sent": "Proposition envoyée. Le propriétaire décidera.",
+      "failed": "La proposition n’a pas pu être envoyée.",
+      "fieldsFailed": "La liste des champs n’a pas pu être chargée.",
+      "ownerDecides": "Une proposition ne modifie jamais l’entrée — seul le propriétaire l’applique.",
+      "field": {
+        "label": "Champ",
+        "syriacUnvocalized": "Syriaque (non vocalisé)",
+        "syriacVocalized": "Syriaque (vocalisé)",
+        "sblTransliteration": "Translittération",
+        "grammaticalCategory": "Catégorie grammaticale",
+        "morphology": "Morphologie",
+        "meaning": "Sens",
+        "name": "Nom",
+        "category": "Catégorie",
+        "era": "Époque",
+        "period": "Période",
+        "role": "Rôle",
+        "region": "Région",
+        "tradition": "Tradition",
+        "gender": "Genre",
+        "description": "Description"
+      }
     }
   },
   "seo": {

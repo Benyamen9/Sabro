@@ -16,6 +16,14 @@ const id = computed(() => route.params.id as string)
 
 await refreshAdmin()
 
+const { role, refresh: refreshRole } = useMyRole()
+await refreshRole()
+
+// A reviewer may read this page but not save it, so the form is the editor's
+// surface and this is theirs. Purely about what to offer — the API refuses on its
+// own, so a wrong answer here hides a control rather than granting one.
+const canPropose = computed(() => role.value === 'ShmoReviewer')
+
 const { data: figure, pending, error, refresh } = await useAsyncData(
   () => `admin-historical-figure-${id.value}`,
   () => getById(id.value),
@@ -243,5 +251,10 @@ const actionButtonClass
         >{{ t('common.delete') }}</button>
       </div>
     </template>
+    <ProposeCorrection
+      v-if="canPropose && status === 'ready'"
+      target-type="HistoricalFigure"
+      :target-id="id"
+    />
   </section>
 </template>
