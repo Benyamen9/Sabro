@@ -792,7 +792,9 @@
         "tradition": "Tradition",
         "gender": "Geschlecht",
         "description": "Beschreibung"
-      }
+      },
+      "applying": "Ein Vorschlag wird angewendet: ein Feld wurde mit dem vorgeschlagenen Wert gefüllt. Prüfen Sie ihn und speichern Sie dann — vorher wird nichts geschrieben.",
+      "applyFailed": "Dieser Vorschlag konnte hier nicht angewendet werden. Der Eintrag wird unverändert angezeigt."
     }
   },
   "seo": {

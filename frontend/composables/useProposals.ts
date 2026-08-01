@@ -58,6 +58,10 @@ export function useProposals() {
     })
   }
 
+  function getById(id: string) {
+    return api<SuggestedEditDto>(`/suggested-edits/${id}`)
+  }
+
   /**
    * The fields this target type accepts proposals for, from the server. Never
    * hardcode a copy: the list lives with the module that owns the entity, and a
@@ -82,5 +86,5 @@ export function useProposals() {
     })
   }
 
-  return { list, accept, reject, proposableFields, proposeField, editLinkFor }
+  return { list, getById, accept, reject, proposableFields, proposeField, editLinkFor }
 }

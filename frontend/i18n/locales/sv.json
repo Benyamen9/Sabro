@@ -792,7 +792,9 @@
         "tradition": "Tradition",
         "gender": "Kön",
         "description": "Beskrivning"
-      }
+      },
+      "applying": "Tillämpar ett förslag: ett fält har fyllts med det föreslagna värdet. Granska det och spara sedan — inget skrivs förrän du gör det.",
+      "applyFailed": "Förslaget kunde inte tillämpas här. Posten visas oförändrad."
     }
   },
   "seo": {

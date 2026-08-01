@@ -257,7 +257,7 @@ const cellClass = 'px-3 py-3 align-top'
                        itself. This link is the cue to go and do it. -->
                   <NuxtLink
                     v-if="proposal.status === 'Accepted' && editLinkFor(proposal.targetType, proposal.targetId)"
-                    :to="editLinkFor(proposal.targetType, proposal.targetId)!"
+                    :to="`${editLinkFor(proposal.targetType, proposal.targetId)}?proposal=${proposal.id}`"
                     class="mt-1 inline-block text-xs underline"
                   >{{ t('admin.proposals.applyOnEntry') }}</NuxtLink>
                 </div>

@@ -792,7 +792,9 @@
         "tradition": "Tradition",
         "gender": "Gender",
         "description": "Description"
-      }
+      },
+      "applying": "Applying a proposal: one field has been filled with the proposed value. Review it, then save — nothing is written until you do.",
+      "applyFailed": "That proposal could not be applied here. The entry is shown unchanged."
     }
   },
   "seo": {
