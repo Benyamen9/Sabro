@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.Lexicon.Application.Dictionary;
 using Sabro.Lexicon.Application.Entries;
+using Sabro.Lexicon.Application.Proposals;
 using Sabro.Lexicon.Application.Roots;
 using Sabro.Lexicon.Application.Search;
 using Sabro.Lexicon.Infrastructure;
@@ -39,6 +40,11 @@ public sealed class LexiconModule : IModuleRegistration
         services.AddScoped<ILexiconLibraryReader, LexiconLibraryReader>();
         services.AddScoped<ISearchRebuilder, LexiconSearchRebuilder>();
         services.AddSingleton<IPronunciationAudioStorage, FileSystemPronunciationAudioStorage>();
+
+        // Lets Reviews resolve entries as proposal targets without referencing this
+        // module. Registered against the shared interface, not the concrete type —
+        // Reviews picks the source whose TargetTypeName matches.
+        services.AddScoped<IProposalTargetSource, LexiconEntryProposalTargetSource>();
 
         services.AddSearchIndex<LexiconEntrySearchDocument, LexiconEntryIndexDescriptor>();
     }

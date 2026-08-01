@@ -14,7 +14,13 @@ internal sealed class SuggestedEditConfiguration : IEntityTypeConfiguration<Sugg
 
         builder.Property(e => e.TargetType).HasConversion<string>().HasMaxLength(32).IsRequired();
         builder.Property(e => e.TargetId).IsRequired();
-        builder.Property(e => e.TargetVersion).IsRequired();
+
+        // Nullable since field proposals arrived: prose targets carry a version,
+        // Lexicon/Historical targets carry TargetUpdatedAt instead. Widening a NOT NULL
+        // column is forward-compatible, so it deploys without an expand/contract dance.
+        builder.Property(e => e.TargetVersion);
+        builder.Property(e => e.TargetUpdatedAt);
+        builder.Property(e => e.Field).HasMaxLength(128);
         builder.Property(e => e.ProposedContent).IsRequired();
         builder.Property(e => e.Rationale);
         builder.Property(e => e.SubmittedByLogtoUserId).HasMaxLength(256).IsRequired();

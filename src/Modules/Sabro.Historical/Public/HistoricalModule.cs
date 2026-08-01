@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.Historical.Application.Figures;
+using Sabro.Historical.Application.Proposals;
 using Sabro.Historical.Infrastructure;
 using Sabro.Shared.Abstractions;
 
@@ -28,5 +29,10 @@ public sealed class HistoricalModule : IModuleRegistration
 
         services.AddScoped<IHistoricalFigureService, HistoricalFigureService>();
         services.AddScoped<IHistoricalFigurePlayablePool, HistoricalFigurePlayablePool>();
+
+        // Lets Reviews resolve figures as proposal targets without referencing this
+        // module. Registered against the shared interface, not the concrete type —
+        // Reviews picks the source whose TargetTypeName matches.
+        services.AddScoped<IProposalTargetSource, HistoricalFigureProposalTargetSource>();
     }
 }

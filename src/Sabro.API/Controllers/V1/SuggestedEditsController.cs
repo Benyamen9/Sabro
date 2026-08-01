@@ -42,6 +42,37 @@ public sealed class SuggestedEditsController : ApiControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id, version = "1" }, result.Value);
     }
 
+    /// <summary>
+    /// Files a proposed new value for one field of a Lexicon entry or a historical
+    /// figure. The reviewer role for that area is required; the target must exist and
+    /// the field must be one its module declares proposable.
+    /// </summary>
+    [HttpPost("field")]
+    [Authorize(Policy = AuthPolicies.Write)]
+    [ProducesResponseType(typeof(SuggestedEditDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<SuggestedEditDto>> ProposeFieldChange(
+        CreateFieldProposalRequest request,
+        CancellationToken cancellationToken)
+    {
+        var subResult = ResolveLogtoUserId();
+        if (!subResult.IsSuccess)
+        {
+            return FromError(subResult.Error!);
+        }
+
+        var result = await service.ProposeFieldChangeAsync(request, subResult.Value!, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id, version = "1" }, result.Value);
+    }
+
     [HttpGet("{id:guid}")]
     [Authorize(Policy = AuthPolicies.Read)]
     [ProducesResponseType(typeof(SuggestedEditDto), StatusCodes.Status200OK)]

@@ -15,6 +15,21 @@ public interface ISuggestedEditService
         string submittedByLogtoUserId,
         CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Files a proposed new value for one field of a Lexicon entry or a historical
+    /// figure. Caller must hold the reviewer role for that area.
+    /// </summary>
+    /// <remarks>
+    /// The target must exist and the field must be one the owning module declares
+    /// proposable — which is what keeps publication state (<c>Status</c>,
+    /// <c>PlayableInMeltho</c>, <c>PlayableInShmo</c>) out of reach: a reviewer
+    /// cannot propose a change to something that is not on the list.
+    /// </remarks>
+    Task<Result<SuggestedEditDto>> ProposeFieldChangeAsync(
+        CreateFieldProposalRequest request,
+        string submittedByLogtoUserId,
+        CancellationToken cancellationToken);
+
     Task<Result<SuggestedEditDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
     Task<Result<PagedResult<SuggestedEditDto>>> ListAsync(

@@ -3927,6 +3927,93 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/suggested-edits/field": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateFieldProposalRequest"];
+                    "text/json": components["schemas"]["CreateFieldProposalRequest"];
+                    "application/*+json": components["schemas"]["CreateFieldProposalRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["SuggestedEditDto"];
+                        "application/json": components["schemas"]["SuggestedEditDto"];
+                        "text/json": components["schemas"]["SuggestedEditDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/suggested-edits/{id}": {
         parameters: {
             query?: never;
@@ -4338,6 +4425,14 @@ export interface components {
             order: number | string;
             syriacName?: null | string;
         };
+        CreateFieldProposalRequest: {
+            targetType: components["schemas"]["SuggestedEditTargetType"];
+            /** Format: uuid */
+            targetId: string;
+            field: string;
+            proposedValue: string;
+            rationale?: null | string;
+        };
         CreateHistoricalFigureRequest: {
             name: string;
             category: components["schemas"]["HistoricalFigureCategory"];
@@ -4397,6 +4492,8 @@ export interface components {
         };
         DecisionRequest: {
             note?: null | string;
+            /** @default false */
+            acceptChangedTarget: boolean;
         };
         DictionaryEntryDetailResponse: {
             /** Format: uuid */
@@ -4982,7 +5079,12 @@ export interface components {
             /** Format: uuid */
             targetId: string;
             /** Format: int32 */
-            targetVersion: number | string;
+            targetVersion: null | number | string;
+            /** Format: date-time */
+            targetUpdatedAt: null | string;
+            field: null | string;
+            originalValue: null | string;
+            acceptedDespiteChange: boolean;
             proposedContent: string;
             rationale: null | string;
             submittedByLogtoUserId: string;
@@ -4999,7 +5101,7 @@ export interface components {
         /** @enum {string} */
         SuggestedEditStatus: "Pending" | "Accepted" | "Rejected";
         /** @enum {string} */
-        SuggestedEditTargetType: "Segment" | "Annotation";
+        SuggestedEditTargetType: "Segment" | "Annotation" | "LexiconEntry" | "HistoricalFigure";
         SyriacLetter: {
             letter: string;
             code: components["schemas"]["SyriacLetterCode"];

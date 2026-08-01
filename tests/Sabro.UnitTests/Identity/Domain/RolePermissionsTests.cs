@@ -79,6 +79,52 @@ public class RolePermissionsTests
         RolePermissions.CanViewAnyBackoffice(Role.ExpertReviewer).Should().BeFalse();
     }
 
+    [Theory]
+    [InlineData(Role.LexiconReviewer, true)]
+    [InlineData(Role.ShmoReviewer, false)]
+    [InlineData(Role.LexiconEditor, false)]
+    [InlineData(Role.Owner, false)]
+    [InlineData(Role.Reader, false)]
+    public void OnlyTheLexiconReviewerProposesLexiconEdits(Role role, bool expected)
+    {
+        // An editor and the Owner change entries directly — a proposal from either
+        // would be a decision waiting on its own author. And a Shmo reviewer must not
+        // reach into the Lexicon: that separation is the whole point of area roles.
+        RolePermissions.CanProposeLexiconEdit(role).Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(Role.ShmoReviewer, true)]
+    [InlineData(Role.LexiconReviewer, false)]
+    [InlineData(Role.ShmoEditor, false)]
+    [InlineData(Role.Owner, false)]
+    public void OnlyTheShmoReviewerProposesFigureEdits(Role role, bool expected)
+    {
+        RolePermissions.CanProposeFigureEdit(role).Should().Be(expected);
+    }
+
+    [Fact]
+    public void OnlyTheOwnerDecidesProposals()
+    {
+        // "Only the Owner accepts or rejects proposals" — an editor changes content,
+        // but whose correction stands is the Owner's scholarly judgement.
+        RolePermissions.CanDecideProposals(Role.Owner).Should().BeTrue();
+
+        foreach (var role in Enum.GetValues<Role>().Where(r => r != Role.Owner))
+        {
+            RolePermissions.CanDecideProposals(role).Should().BeFalse();
+        }
+    }
+
+    [Fact]
+    public void NoReviewerRoleCanEditDirectly()
+    {
+        // The distinction the whole workflow rests on: a reviewer proposes, an editor
+        // changes. If a reviewer ever gains direct edit rights, the queue is bypassable.
+        RolePermissions.CanEditLexicon(Role.LexiconReviewer).Should().BeFalse();
+        RolePermissions.CanEditFigures(Role.ShmoReviewer).Should().BeFalse();
+    }
+
     [Fact]
     public void EveryRoleIsAccountedFor()
     {

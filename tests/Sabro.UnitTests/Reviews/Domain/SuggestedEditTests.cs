@@ -232,6 +232,113 @@ public class SuggestedEditTests
         edit.Status.Should().Be(SuggestedEditStatus.Accepted);
     }
 
+    [Fact]
+    public void ProposeFieldChange_WithValidInputs_RecordsFieldAndTargetTimestamp()
+    {
+        var targetUpdatedAt = DateTimeOffset.UtcNow.AddDays(-2);
+
+        var result = SuggestedEdit.ProposeFieldChange(
+            SuggestedEditTargetType.LexiconEntry,
+            TargetId,
+            field: "meaning.fr",
+            proposedValue: "parole",
+            originalValue: "mot",
+            targetUpdatedAt,
+            SubmittedBy,
+            rationale: "The current gloss renders the Greek, not the Syriac.");
+
+        result.IsSuccess.Should().BeTrue();
+        var proposal = result.Value!;
+        proposal.Status.Should().Be(SuggestedEditStatus.Pending);
+        proposal.Field.Should().Be("meaning.fr");
+        proposal.ProposedContent.Should().Be("parole");
+        proposal.TargetUpdatedAt.Should().Be(targetUpdatedAt);
+        proposal.OriginalValue.Should().Be("mot");
+        proposal.AcceptedDespiteChange.Should().BeFalse();
+
+        // Field proposals carry no version: the Lexicon does not version entries, so
+        // staleness is judged by TargetUpdatedAt instead.
+        proposal.TargetVersion.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData(SuggestedEditTargetType.Segment)]
+    [InlineData(SuggestedEditTargetType.Annotation)]
+    public void ProposeFieldChange_AgainstAProseTarget_Fails(SuggestedEditTargetType targetType)
+    {
+        // Prose targets replace their whole content and carry a version. Letting one
+        // through here would produce a row with neither a version nor a real field.
+        var result = SuggestedEdit.ProposeFieldChange(
+            targetType,
+            TargetId,
+            field: "meaning.fr",
+            proposedValue: "parole",
+            originalValue: "mot",
+            DateTimeOffset.UtcNow,
+            SubmittedBy);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Theory]
+    [InlineData(SuggestedEditTargetType.LexiconEntry)]
+    [InlineData(SuggestedEditTargetType.HistoricalFigure)]
+    public void Create_AgainstAFieldTarget_Fails(SuggestedEditTargetType targetType)
+    {
+        // The mirror image: a field target must not be filed through the prose factory,
+        // which would leave Field null and nothing to apply.
+        var result = SuggestedEdit.Create(
+            targetType,
+            TargetId,
+            targetVersion: 1,
+            ProposedContent,
+            SubmittedBy);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void ProposeFieldChange_WithoutAField_Fails(string field)
+    {
+        var result = SuggestedEdit.ProposeFieldChange(
+            SuggestedEditTargetType.LexiconEntry,
+            TargetId,
+            field,
+            proposedValue: "parole",
+            originalValue: "mot",
+            DateTimeOffset.UtcNow,
+            SubmittedBy);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Fact]
+    public void ProposeFieldChange_ThenAccept_DoesNotAlterTheProposedValue()
+    {
+        // Accepting records a decision; it never rewrites what was proposed. The Owner
+        // applies the change through the entry's own edit path.
+        var result = SuggestedEdit.ProposeFieldChange(
+            SuggestedEditTargetType.HistoricalFigure,
+            TargetId,
+            field: "era",
+            proposedValue: "451",
+            originalValue: "450",
+            DateTimeOffset.UtcNow,
+            SubmittedBy);
+
+        var proposal = result.Value!;
+        proposal.Accept(DecidedBy, "Agreed, Chalcedon.").Should().BeNull();
+
+        proposal.Status.Should().Be(SuggestedEditStatus.Accepted);
+        proposal.ProposedContent.Should().Be("451");
+        proposal.Field.Should().Be("era");
+    }
+
     private static SuggestedEdit NewPending() =>
         SuggestedEdit.Create(
             SuggestedEditTargetType.Segment,

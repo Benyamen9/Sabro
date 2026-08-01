@@ -1,0 +1,492 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using Sabro.Identity.Application.UserProfiles;
+using Sabro.Identity.Domain;
+using Sabro.Identity.Infrastructure;
+using Sabro.Reviews.Application.SuggestedEdits;
+using Sabro.Reviews.Domain;
+using Sabro.Reviews.Infrastructure;
+using Sabro.Shared.Abstractions;
+using Sabro.Shared.Localization;
+
+namespace Sabro.IntegrationTests.Reviews.Application;
+
+/// <summary>
+/// The reviewer workflow for field targets: a reviewer proposes one field of a
+/// Lexicon entry or a historical figure, and only the Owner decides.
+/// </summary>
+[Collection(IntegrationCollection.Name)]
+public class FieldProposalServiceTests
+{
+    private readonly PostgresFixture postgres;
+
+    public FieldProposalServiceTests(PostgresFixture postgres)
+    {
+        this.postgres = postgres;
+    }
+
+    [Fact]
+    public async Task Propose_AsLexiconReviewer_RecordsTimestampReadFromTheOwningModule()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var targetId = Guid.NewGuid();
+        var targetUpdatedAt = DateTimeOffset.UtcNow.AddDays(-3);
+        var source = FakeSource.Lexicon(targetId, targetUpdatedAt);
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var service = NewService(ctx, source);
+
+        var result = await service.ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry,
+                targetId,
+                Field: "meaning.fr",
+                ProposedValue: "parole",
+                Rationale: "The current gloss renders the Greek."),
+            reviewer,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Status.Should().Be(SuggestedEditStatus.Pending);
+        result.Value.Field.Should().Be("meaning.fr");
+
+        // Read server-side, never taken from the request — a caller who could set it
+        // could hide that they are proposing against content which has since moved.
+        result.Value.TargetUpdatedAt.Should().BeCloseTo(targetUpdatedAt, TimeSpan.FromSeconds(1));
+        result.Value.TargetVersion.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData("status")]
+    [InlineData("playableInMeltho")]
+    public async Task Propose_ForAPublicationField_IsRejected(string field)
+    {
+        // The rule that matters: publishing an entry and putting a word into Meltho's
+        // pool are Owner-only decisions. A reviewer cannot even ask for them, because
+        // those fields are absent from the owning module's proposable list.
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var targetId = Guid.NewGuid();
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var service = NewService(ctx, FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow));
+
+        var result = await service.ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry,
+                targetId,
+                Field: field,
+                ProposedValue: "Published"),
+            reviewer,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+
+        await using var verify = postgres.CreateReviewsContext();
+        (await verify.SuggestedEdits.CountAsync(e => e.TargetId == targetId, ct)).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Propose_ByAReviewerOfAnotherArea_IsForbidden()
+    {
+        // A Shmo reviewer must not reach into the Lexicon. Area separation is the
+        // entire reason the roles exist.
+        var ct = TestContext.Current.CancellationToken;
+        var shmoReviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+        var targetId = Guid.NewGuid();
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var service = NewService(ctx, FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow));
+
+        var result = await service.ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry,
+                targetId,
+                Field: "meaning.fr",
+                ProposedValue: "parole"),
+            shmoReviewer,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("forbidden");
+    }
+
+    [Theory]
+    [InlineData(Role.Reader)]
+    [InlineData(Role.LexiconEditor)]
+    [InlineData(Role.Owner)]
+    public async Task Propose_ByAnyoneButTheAreaReviewer_IsForbidden(Role role)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var caller = await SeedProfileAsync(role, ct);
+        var targetId = Guid.NewGuid();
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var service = NewService(ctx, FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow));
+
+        var result = await service.ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry,
+                targetId,
+                Field: "meaning.fr",
+                ProposedValue: "parole"),
+            caller,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("forbidden");
+    }
+
+    [Fact]
+    public async Task Propose_AgainstAMissingTarget_ReturnsNotFound()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+
+        await using var ctx = postgres.CreateReviewsContext();
+
+        // The source reports no timestamp for this id, which is how a module says
+        // "no such target".
+        var service = NewService(ctx, FakeSource.Figure(Guid.NewGuid(), DateTimeOffset.UtcNow));
+
+        var result = await service.ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.HistoricalFigure,
+                Guid.NewGuid(),
+                Field: "era",
+                ProposedValue: "451"),
+            reviewer,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("not_found");
+    }
+
+    [Fact]
+    public async Task Propose_WhenNoModuleClaimsTheTargetType_IsRejected()
+    {
+        // Nothing registered for HistoricalFigure: the workflow must refuse rather
+        // than record a proposal nobody can resolve.
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var service = NewService(ctx);
+
+        var result = await service.ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.HistoricalFigure,
+                Guid.NewGuid(),
+                Field: "era",
+                ProposedValue: "451"),
+            reviewer,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("validation");
+    }
+
+    [Fact]
+    public async Task Accept_AsOwner_RecordsTheDecisionWithoutChangingTheProposal()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.ShmoReviewer, ct);
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Figure(targetId, DateTimeOffset.UtcNow);
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.HistoricalFigure,
+                targetId,
+                Field: "era",
+                ProposedValue: "451"),
+            reviewer,
+            ct);
+        proposed.IsSuccess.Should().BeTrue();
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id,
+            new DecisionRequest("Agreed, Chalcedon."),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Status.Should().Be(SuggestedEditStatus.Accepted);
+        result.Value.DecisionByLogtoUserId.Should().Be(owner);
+
+        // Accepting is a decision, not an edit — the figure itself is untouched, and
+        // the Owner applies the change through the figure's own edit path.
+        result.Value.ProposedContent.Should().Be("451");
+        result.Value.Field.Should().Be("era");
+    }
+
+    [Fact]
+    public async Task Accept_ByTheReviewerWhoProposed_IsForbidden()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry,
+                targetId,
+                Field: "syriacVocalized",
+                ProposedValue: "ܡܶܠܬ݂ܳܐ"),
+            reviewer,
+            ct);
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id,
+            new DecisionRequest(),
+            reviewer,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("forbidden");
+    }
+
+    [Fact]
+    public async Task Accept_WhenTheFieldChangedSinceProposal_IsRefusedByDefault()
+    {
+        // The regression this guard exists for: taking a correction written against
+        // older content silently overwrites the newer edit. Refusing by default means
+        // it cannot happen by clicking past a banner.
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
+        source.Values["meaning.fr"] = "mot";
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry, targetId, "meaning.fr", "parole"),
+            reviewer,
+            ct);
+        proposed.Value!.OriginalValue.Should().Be("mot");
+
+        // Somebody edits that exact field while the proposal waits.
+        source.Values["meaning.fr"] = "verbe";
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value.Id, new DecisionRequest("Looks right."), owner, ct);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("conflict");
+
+        await using var verify = postgres.CreateReviewsContext();
+        var stored = await verify.SuggestedEdits.FirstAsync(e => e.Id == proposed.Value.Id, ct);
+        stored.Status.Should().Be(SuggestedEditStatus.Pending, "a refused accept must not half-apply");
+    }
+
+    [Fact]
+    public async Task Accept_WhenTheFieldChanged_SucceedsWithExplicitConfirmationAndIsRecorded()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
+        source.Values["meaning.fr"] = "mot";
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry, targetId, "meaning.fr", "parole"),
+            reviewer,
+            ct);
+
+        source.Values["meaning.fr"] = "verbe";
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id,
+            new DecisionRequest("Checked; the reviewer is still right.", AcceptChangedTarget: true),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Status.Should().Be(SuggestedEditStatus.Accepted);
+
+        // Recorded, not merely allowed: "we knowingly took an older correction over a
+        // newer edit" stays visible afterwards.
+        result.Value.AcceptedDespiteChange.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Accept_WhenTheFieldIsUnchanged_NeedsNoConfirmation()
+    {
+        // The common path must stay a single click — a confirmation demanded every
+        // time is one nobody reads.
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
+        source.Values["meaning.fr"] = "mot";
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry, targetId, "meaning.fr", "parole"),
+            reviewer,
+            ct);
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id, new DecisionRequest(), owner, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.AcceptedDespiteChange.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Accept_WhenAnUnrelatedFieldChanged_IsNotTreatedAsStale()
+    {
+        // Why staleness is per field and not on the entity's UpdatedAt: editing the
+        // English gloss must not block a pending French one. With 1,445 description
+        // texts ahead, warnings that are usually wrong stop being read.
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
+        source.Values["meaning.fr"] = "mot";
+        source.Values["meaning.en"] = "word";
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry, targetId, "meaning.fr", "parole"),
+            reviewer,
+            ct);
+
+        source.Values["meaning.en"] = "utterance";
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id, new DecisionRequest(), owner, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.AcceptedDespiteChange.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Reject_IsNeverBlockedByAChangedField()
+    {
+        // Rejecting writes nothing to the content, so a moved target cannot cause the
+        // regression the guard protects against. Blocking it would only strand rows.
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.LexiconReviewer, ct);
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Lexicon(targetId, DateTimeOffset.UtcNow);
+        source.Values["meaning.fr"] = "mot";
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.LexiconEntry, targetId, "meaning.fr", "parole"),
+            reviewer,
+            ct);
+
+        source.Values["meaning.fr"] = "verbe";
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).RejectAsync(
+            proposed.Value!.Id, new DecisionRequest("Superseded."), owner, ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Status.Should().Be(SuggestedEditStatus.Rejected);
+    }
+
+    private static SuggestedEditService NewService(
+        ReviewsDbContext ctx,
+        params IProposalTargetSource[] targetSources) =>
+        new(
+            ctx,
+            new CreateSuggestedEditRequestValidator(),
+            new CreateFieldProposalRequestValidator(),
+            targetSources,
+            new UserProfileService(
+                NewIdentityContext(ctx),
+                new UpdateUserProfileRequestValidator(Options.Create(new SupportedLanguagesOptions())),
+                NullLogger<UserProfileService>.Instance),
+            NullLogger<SuggestedEditService>.Instance);
+
+    private static IdentityDbContext NewIdentityContext(ReviewsDbContext reviewsContext)
+    {
+        var options = new DbContextOptionsBuilder<IdentityDbContext>()
+            .UseNpgsql(reviewsContext.Database.GetConnectionString()!)
+            .Options;
+        return new IdentityDbContext(options);
+    }
+
+    private async Task<string> SeedProfileAsync(Role role, CancellationToken ct)
+    {
+        var logtoUserId = $"logto|{Guid.NewGuid():N}";
+        await using var identity = postgres.CreateIdentityContext();
+        var profile = UserProfile.Create(logtoUserId).Value!;
+        profile.AssignRole(role);
+        identity.UserProfiles.Add(profile);
+        await identity.SaveChangesAsync(ct);
+        return logtoUserId;
+    }
+
+    /// <summary>
+    /// Stands in for a content module. Real sources are backed by the Lexicon and
+    /// Historical DbContexts; what matters to Reviews is only the target-type name,
+    /// the proposable list, and whether a timestamp comes back.
+    /// </summary>
+    private sealed class FakeSource : IProposalTargetSource
+    {
+        private readonly Guid knownId;
+        private readonly DateTimeOffset updatedAt;
+
+        private FakeSource(string targetTypeName, string[] fields, Guid knownId, DateTimeOffset updatedAt)
+        {
+            TargetTypeName = targetTypeName;
+            ProposableFields = fields;
+            this.knownId = knownId;
+            this.updatedAt = updatedAt;
+        }
+
+        public string TargetTypeName { get; }
+
+        public IReadOnlyCollection<string> ProposableFields { get; }
+
+        /// <summary>Current value per field, mutable so a test can change it mid-flight.</summary>
+        public Dictionary<string, string?> Values { get; } = new(StringComparer.Ordinal);
+
+        /// <summary>Mirrors the real Lexicon list — note the absence of status/playable.</summary>
+        public static FakeSource Lexicon(Guid knownId, DateTimeOffset updatedAt) => new(
+            "LexiconEntry",
+            ["syriacUnvocalized", "syriacVocalized", "sblTransliteration", "meaning.en", "meaning.fr"],
+            knownId,
+            updatedAt);
+
+        public static FakeSource Figure(Guid knownId, DateTimeOffset updatedAt) => new(
+            "HistoricalFigure",
+            ["name", "era", "period", "region", "description.en"],
+            knownId,
+            updatedAt);
+
+        public Task<DateTimeOffset?> GetUpdatedAtAsync(Guid targetId, CancellationToken cancellationToken) =>
+            Task.FromResult(targetId == knownId ? updatedAt : (DateTimeOffset?)null);
+
+        public Task<string?> GetFieldValueAsync(Guid targetId, string field, CancellationToken cancellationToken) =>
+            Task.FromResult(targetId == knownId && Values.TryGetValue(field, out var value) ? value : null);
+    }
+}
