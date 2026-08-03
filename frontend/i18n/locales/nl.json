@@ -721,6 +721,9 @@
     "people": {
       "title": "Personen",
       "subtitle": "Wie wat mag bewerken. Alleen u kunt een rol wijzigen.",
+      "sinceDate": "sinds {date}",
+      "makeOwner": "Eigenaar — alles, overal",
+      "accessLabel": "Toegang tot {area}",
       "statPeople": "personen | persoon | personen",
       "statOwners": "eigenaren | eigenaar | eigenaren",
       "statGranted": "met toegang | met toegang | met toegang",

@@ -57,6 +57,27 @@ const needsFirstOwner = computed(() => people.value.length > 0 && !people.value.
 function isLocked(person: PersonDto) {
   return person.isYou && !needsFirstOwner.value
 }
+/** Area colours, so a grant reads as belonging to its section at a glance. */
+const areaAccent: Record<ContentArea, string> = {
+  Lexicon: '--color-meltho',
+  Shmo: '--color-shmo',
+}
+
+/** The three levels, in order of increasing power. */
+const accessChoices = computed(() => accessOptions.map(option => ({
+  value: option,
+  label: option ? t(`admin.people.access.${option}`) : t('admin.people.access.none'),
+})))
+
+/**
+ * First letter of whatever the person is called. Falls back to a dash rather than
+ * a letter from the opaque id, which would look like information and be noise.
+ */
+function initialFor(person: PersonDto) {
+  const label = labelFor(person)
+  return label ? [...label][0]!.toUpperCase() : '—'
+}
+
 const errorMessage = ref<string | null>(null)
 
 async function load() {
@@ -118,7 +139,6 @@ function labelFor(person: PersonDto) {
   return person.name || person.displayName || null
 }
 
-const cellClass = 'px-3 py-3 align-middle'
 </script>
 
 <template>
@@ -164,97 +184,103 @@ const cellClass = 'px-3 py-3 align-middle'
         role="alert"
       >{{ errorMessage }}</p>
 
-      <div class="overflow-x-auto">
-        <table class="w-full min-w-[36rem] border-collapse font-sans text-sm">
-          <thead>
-            <tr class="border-b border-[var(--color-border)] text-left">
-              <th :class="[cellClass, 'text-xs font-semibold uppercase tracking-wider text-[var(--color-text-faint)]']">
-                {{ t('admin.people.person') }}
-              </th>
-              <th :class="[cellClass, 'text-xs font-semibold uppercase tracking-wider text-[var(--color-text-faint)]']">
-                {{ t('admin.people.mayEdit') }}
-              </th>
-              <th :class="[cellClass, 'text-xs font-semibold uppercase tracking-wider text-[var(--color-text-faint)]']">
-                {{ t('admin.people.since') }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="person in people"
-              :key="person.id"
-              class="border-b border-[var(--color-border)]"
-            >
-              <td :class="cellClass">
-                <span v-if="labelFor(person)" class="font-medium text-[var(--color-text)]">
-                  {{ labelFor(person) }}
-                </span>
-                <!-- Sabro stores no name; when Logto cannot be reached there is
-                     genuinely nothing to show, so say that rather than print an id. -->
-                <span v-else class="italic text-[var(--color-text-faint)]">
-                  {{ t('admin.people.unnamed') }}
-                </span>
-                <span v-if="person.isYou" class="ml-2 text-xs text-[var(--color-text-faint)]">
-                  {{ t('admin.people.you') }}
-                </span>
-                <span v-if="person.email" class="mt-0.5 block text-xs text-[var(--color-text-muted)]">
-                  {{ person.email }}
-                </span>
-              </td>
-              <td :class="cellClass">
-                <!-- Owner is a yes/no, not a rung: it grants every area at once, so
-                     the per-area rows below are hidden rather than shown lying. -->
-                <label class="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    :checked="isOwner(person)"
-                    :disabled="isLocked(person) || savingId === person.id"
-                    class="size-4"
-                    @change="onRoleChange(person, ($event.target as HTMLInputElement).checked ? 'Owner' : 'Reader')"
-                  >
-                  <span>{{ t('admin.people.role.Owner') }}</span>
-                </label>
-                <span v-if="isLocked(person)" class="mt-1 block text-xs text-[var(--color-text-faint)]">
-                  {{ t('admin.people.cannotChangeOwn') }}
-                </span>
+      <!-- One card per person rather than a table row. Access is a rare,
+           consequential decision, and it was being made through a select nested in
+           a table cell: the options hidden until opened, the whole thing scrolling
+           sideways on a phone. Cards stack, and the segmented control shows every
+           level at once — including the one you are not granting. -->
+      <ul class="grid gap-3">
+        <li
+          v-for="person in people"
+          :key="person.id"
+          class="grid grid-cols-[2.5rem_1fr] gap-3 rounded-lg border p-4 sm:gap-4 sm:p-5"
+          :class="isOwner(person)
+            ? 'border-[color-mix(in_oklab,var(--color-accent)_35%,var(--color-border))] bg-[color-mix(in_oklab,var(--color-accent-faint)_45%,var(--color-bg-elevated))]'
+            : 'border-[var(--color-border)] bg-[var(--color-bg-elevated)]'"
+        >
+          <!-- An initial, not an avatar: Sabro stores no picture and never will.
+               It gives the eye something to land on down a list of addresses. -->
+          <span
+            class="grid size-10 place-items-center rounded-full font-serif text-base font-semibold"
+            :class="isOwner(person)
+              ? 'bg-[var(--color-accent)] text-white'
+              : 'border border-[var(--color-border)] bg-[var(--color-bg-subtle)] text-[var(--color-text-muted)]'"
+            aria-hidden="true"
+          >{{ initialFor(person) }}</span>
 
-                <p v-if="isOwner(person)" class="mt-2 text-xs text-[var(--color-text-muted)]">
-                  {{ t('admin.people.ownerEverything') }}
-                </p>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span v-if="labelFor(person)" class="font-sans font-semibold text-[var(--color-text)] break-all">
+                {{ labelFor(person) }}
+              </span>
+              <span v-else class="font-sans italic text-[var(--color-text-faint)]">
+                {{ t('admin.people.unnamed') }}
+              </span>
 
-                <div v-else class="mt-2 grid gap-2">
-                  <label
-                    v-for="area in areas"
-                    :key="area"
-                    class="flex items-center justify-between gap-3"
-                  >
-                    <span class="text-[var(--color-text-muted)]">{{ t(`admin.people.area.${area}`) }}</span>
-                    <select
-                      :value="accessFor(person, area)"
-                      :disabled="savingId === person.id"
-                      class="w-40 rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-2 py-1 font-sans text-sm text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-60"
-                      @change="onAreaChange(person, area, ($event.target as HTMLSelectElement).value as AreaAccess | '')"
-                    >
-                      <option v-for="option in accessOptions" :key="option || 'none'" :value="option">
-                        {{ option ? t(`admin.people.access.${option}`) : t('admin.people.access.none') }}
-                      </option>
-                    </select>
-                  </label>
-                </div>
+              <span
+                v-if="person.isYou"
+                class="rounded-full bg-[var(--color-bg-subtle)] px-2 py-0.5 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]"
+              >{{ t('admin.people.you') }}</span>
+              <span
+                v-if="isOwner(person)"
+                class="rounded-full bg-[var(--color-accent)] px-2 py-0.5 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-white"
+              >{{ t('admin.people.role.Owner') }}</span>
+            </div>
 
-                <!-- A role predating the area grants. Not assignable here, but it may
-                     already be set, so say so rather than render it as "no access". -->
-                <p v-if="person.role === 'ExpertReviewer'" class="mt-2 text-xs text-[var(--color-text-faint)]">
-                  {{ t('admin.people.role.ExpertReviewer') }}
-                </p>
-              </td>
-              <td :class="[cellClass, 'whitespace-nowrap text-[var(--color-text-muted)] tabular-nums']">
-                {{ new Date(person.createdAt).toLocaleDateString() }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <p class="mt-0.5 font-sans text-xs text-[var(--color-text-muted)] tabular-nums">
+              {{ t('admin.people.sinceDate', { date: new Date(person.createdAt).toLocaleDateString() }) }}
+            </p>
+
+            <!-- Owner is a yes/no, not a rung: it grants every area at once, so the
+                 per-area controls are hidden rather than shown lying. -->
+            <label class="mt-3 flex items-center gap-2 font-sans text-sm">
+              <input
+                type="checkbox"
+                :checked="isOwner(person)"
+                :disabled="isLocked(person) || savingId === person.id"
+                class="size-4"
+                @change="onRoleChange(person, ($event.target as HTMLInputElement).checked ? 'Owner' : 'Reader')"
+              >
+              <span>{{ t('admin.people.makeOwner') }}</span>
+            </label>
+            <p v-if="isLocked(person)" class="mt-1 font-sans text-xs text-[var(--color-text-faint)]">
+              {{ t('admin.people.cannotChangeOwn') }}
+            </p>
+
+            <p v-if="isOwner(person)" class="mt-2 font-sans text-sm text-[var(--color-text-muted)]">
+              {{ t('admin.people.ownerEverything') }}
+            </p>
+
+            <div v-else class="mt-3 grid gap-2">
+              <div
+                v-for="area in areas"
+                :key="area"
+                class="flex flex-wrap items-center justify-between gap-2"
+              >
+                <span class="inline-flex items-center gap-2 font-sans text-sm text-[var(--color-text-muted)]">
+                  <span class="h-3.5 w-[3px] rounded-full" :style="{ backgroundColor: `var(${areaAccent[area]})` }" aria-hidden="true" />
+                  {{ t(`admin.people.area.${area}`) }}
+                </span>
+                <SegmentedControl
+                  :name="`access-${person.id}-${area}`"
+                  :model-value="accessFor(person, area)"
+                  :options="accessChoices"
+                  :label="t('admin.people.accessLabel', { area: t(`admin.people.area.${area}`) })"
+                  :accent="areaAccent[area]"
+                  :disabled="savingId === person.id"
+                  @update:model-value="onAreaChange(person, area, $event as AreaAccess | '')"
+                />
+              </div>
+            </div>
+
+            <!-- A role predating the area grants. Not assignable here, but it may
+                 already be set, so say so rather than render it as "no access". -->
+            <p v-if="person.role === 'ExpertReviewer'" class="mt-2 font-sans text-xs text-[var(--color-text-faint)]">
+              {{ t('admin.people.role.ExpertReviewer') }}
+            </p>
+          </div>
+        </li>
+      </ul>
 
       <p class="mt-5 max-w-prose font-sans text-xs text-[var(--color-text-faint)]">
         {{ t('admin.people.identityNote') }}

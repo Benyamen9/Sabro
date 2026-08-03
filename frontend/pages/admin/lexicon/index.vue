@@ -318,11 +318,11 @@ function clearFilters() {
             <thead class="border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
               <tr class="font-sans text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
                 <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.syriac') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.transliteration') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.category') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.length') }}</th>
+                <th class="hidden sm:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.transliteration') }}</th>
+                <th class="hidden md:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.category') }}</th>
+                <th class="hidden md:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.length') }}</th>
                 <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.status') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.playable') }}</th>
+                <th class="hidden md:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.playable') }}</th>
                 <th class="px-4 py-3" />
               </tr>
             </thead>
@@ -335,13 +335,13 @@ function clearFilters() {
                 <td class="px-4 py-3">
                   <SyriacText :text="entry.syriacUnvocalized" class="!text-xl" />
                 </td>
-                <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
+                <td class="hidden sm:table-cell px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ entry.sblTransliteration || '—' }}
                 </td>
-                <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
+                <td class="hidden md:table-cell px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ t(`admin.lexicon.category.${entry.grammaticalCategory}`) }}
                 </td>
-                <td class="px-4 py-3">
+                <td class="hidden md:table-cell px-4 py-3">
                   <span
                     class="inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 font-sans text-xs font-semibold"
                     :class="
@@ -361,7 +361,7 @@ function clearFilters() {
                     "
                   >{{ t(`admin.lexicon.status.${entry.status}`) }}</span>
                 </td>
-                <td class="px-4 py-3 font-sans text-sm">
+                <td class="hidden md:table-cell px-4 py-3 font-sans text-sm">
                   <span v-if="entry.playableInMeltho" :title="t('admin.lexicon.lifecycle.inPool')">✓</span>
                   <span v-else class="text-[var(--color-text-faint)]">—</span>
                 </td>

@@ -721,6 +721,9 @@
     "people": {
       "title": "Personer",
       "subtitle": "Vem som får redigera vad. Endast du kan ändra en roll.",
+      "sinceDate": "sedan {date}",
+      "makeOwner": "Ägare — allt, överallt",
+      "accessLabel": "Åtkomst till {area}",
       "statPeople": "personer | person | personer",
       "statOwners": "ägare | ägare | ägare",
       "statGranted": "med åtkomst | med åtkomst | med åtkomst",

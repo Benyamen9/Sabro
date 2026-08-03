@@ -123,7 +123,9 @@ function originalOf(proposal: SuggestedEditDto) {
 
 onMounted(load)
 
-const cellClass = 'px-3 py-3 align-top'
+// `max-sm:block` turns each cell into a stacked band; the padding drops on
+// small screens because the card already provides it.
+const cellClass = 'px-3 py-3 align-top max-sm:block max-sm:px-0 max-sm:py-1.5'
 </script>
 
 <template>
@@ -183,9 +185,13 @@ const cellClass = 'px-3 py-3 align-top'
         class="rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-4 py-6 text-center font-sans text-sm text-[var(--color-text-muted)]"
       >{{ showDecided ? t('admin.proposals.noneAccepted') : t('admin.proposals.nonePending') }}</p>
 
-      <div v-else class="overflow-x-auto">
-        <table class="w-full min-w-[44rem] border-collapse font-sans text-sm">
-          <thead>
+      <!-- The three columns become three stacked blocks below `sm`: a proposal is
+           read top to bottom (what, the change, the decision) so the table's
+           reading order survives the collapse. `min-w` is gone — a 44rem floor
+           put the decide buttons behind a sideways scroll on every phone. -->
+      <div v-else class="block sm:overflow-x-auto">
+        <table class="w-full border-collapse font-sans text-sm max-sm:block">
+          <thead class="max-sm:hidden">
             <tr class="border-b border-[var(--color-border)] text-left">
               <th :class="[cellClass, 'text-xs font-semibold uppercase tracking-wider text-[var(--color-text-faint)]']">
                 {{ t('admin.proposals.what') }}
@@ -198,11 +204,11 @@ const cellClass = 'px-3 py-3 align-top'
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="max-sm:block">
             <tr
               v-for="proposal in proposals"
               :key="proposal.id"
-              class="border-b border-[var(--color-border)]"
+              class="border-b border-[var(--color-border)] max-sm:mb-3 max-sm:block max-sm:rounded-lg max-sm:border max-sm:bg-[var(--color-bg-elevated)] max-sm:p-4"
             >
               <td :class="cellClass">
                 <span class="font-medium text-[var(--color-text)]">

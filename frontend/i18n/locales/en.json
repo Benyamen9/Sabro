@@ -721,6 +721,9 @@
     "people": {
       "title": "People",
       "subtitle": "Who may edit what. Only you can change a role.",
+      "sinceDate": "since {date}",
+      "makeOwner": "Owner — everything, everywhere",
+      "accessLabel": "Access to {area}",
       "statPeople": "people | person | people",
       "statOwners": "owners | owner | owners",
       "statGranted": "with access | with access | with access",
