@@ -68,15 +68,59 @@ async function apiFetch(api, token, method, path, body) {
   return json;
 }
 
-async function listAll(api, token, path) {
-  const items = [];
-  const pageSize = 200;
-  for (let page = 1; ; page++) {
-    const result = await apiFetch(api, token, 'GET', `${path}?page=${page}&pageSize=${pageSize}`);
-    items.push(...result.items);
-    if (page * pageSize >= result.total || result.items.length === 0) break;
+// The launch pool, fetched once.
+//
+// Two lookups were wrong before this one. Scanning every entry broke silently
+// when the SEDRA import took the Lexicon past 32,000: the admin list is served
+// by Meilisearch, which stops returning results after 1,000, so the loop hit an
+// empty page and reported every launch word as missing. Searching per word then
+// matched the wrong entries — SEDRA holds bare twins of the pool's plurals, so
+// `ܡܝܐ` matched a draft while the pool's `ܡܝ̈ܐ` went untouched, and the German
+// and Swedish landed on somebody else's word.
+//
+// The pool is precisely the published entries: 42 of them, no cap, no twins.
+// Filtering to Published is what makes the match unambiguous.
+async function loadPublishedPool(api, token) {
+  const result = await apiFetch(
+    api,
+    token,
+    'GET',
+    '/api/v1/admin/lexicon?page=1&pageSize=200&status=Published',
+  );
+
+  const byForm = new Map();
+  for (const entry of result.items ?? []) {
+    byForm.set(nfc(entry.syriacUnvocalized), entry);
   }
-  return items;
+
+  if (result.total > (result.items ?? []).length) {
+    throw new Error(
+      `Published pool is ${result.total} entries but only ${result.items.length} came back — `
+      + 'raise pageSize rather than let this match against a partial pool.',
+    );
+  }
+
+  return byForm;
+}
+
+// Seyame (U+0308) marks a plural, and the dataset predates the correction that
+// added it to the pool's plural words. Stripping it is safe *within the pool*,
+// where the forms are unique — it is exactly what was unsafe against the whole
+// Lexicon, which holds unmarked twins of several of them.
+function withoutSeyame(form) {
+  return form.replace(/\u0308/g, '');
+}
+
+function findInPool(pool, form) {
+  const exact = pool.get(form);
+  if (exact) return { entry: exact, viaSeyame: false };
+
+  const bare = withoutSeyame(form);
+  for (const [poolForm, entry] of pool) {
+    if (withoutSeyame(poolForm) === bare) return { entry, viaSeyame: true };
+  }
+
+  return { entry: undefined, viaSeyame: false };
 }
 
 async function main() {
@@ -104,18 +148,18 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`API: ${args.api}\nFetching existing entries...`);
-  const entryByForm = new Map();
-  for (const e of await listAll(args.api, token, '/api/v1/admin/lexicon')) {
-    entryByForm.set(nfc(e.syriacUnvocalized), e);
-  }
-  console.log(`Found ${entryByForm.size} existing entr${entryByForm.size === 1 ? 'y' : 'ies'}.\n`);
+  console.log(`API: ${args.api}\nLoading the published pool...`);
+  const pool = await loadPublishedPool(args.api, token);
+  console.log(`${pool.size} published entries.\n`);
 
   const summary = { updated: 0, skipped: 0, missing: 0, failed: 0 };
   for (const w of words) {
     const label = w.form;
     try {
-      const entry = entryByForm.get(w.form);
+      const { entry, viaSeyame } = findInPool(pool, w.form);
+      if (entry && viaSeyame) {
+        console.log(`  ~ ${label}: matched ${entry.syriacUnvocalized} (seyame differs — dataset is older than the data)`);
+      }
       if (!entry) {
         summary.missing++;
         console.error(`  ! ${label}: no existing entry found`);
