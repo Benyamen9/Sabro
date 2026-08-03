@@ -58,13 +58,14 @@ public class AdminPeopleControllerTests : IDisposable
     [Fact]
     public async Task Get_AsNonOwnerOnceAnOwnerExists_Returns403()
     {
-        // The bootstrap clause must close itself the moment an Owner exists.
+        // The bootstrap clause must close itself the moment an Owner exists — even
+        // for somebody who genuinely has backoffice access to an area.
         var ct = TestContext.Current.CancellationToken;
         await ClearProfilesAsync(ct);
         await CreateProfileAsync("the-owner", ct, Role.Owner);
         using var client = ClientFor("a-mere-editor");
         await EnsureProfileAsync(client, ct);
-        await SetRoleAsync("a-mere-editor", Role.ShmoEditor, ct);
+        await GrantAreaAsync("a-mere-editor", ContentArea.Shmo, AreaAccess.Editor, ct);
 
         var response = await client.GetAsync("/api/v1/admin/people", ct);
 
@@ -72,16 +73,16 @@ public class AdminPeopleControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Put_AsShmoEditor_Returns403()
+    public async Task Put_AsAreaEditor_Returns403()
     {
-        // Holding the admin scope is not enough: an area editor must not be able
-        // to promote themselves or anyone else.
+        // Holding the admin scope AND a real area grant is still not enough: editing
+        // content is not the same as deciding who else gets in.
         var ct = TestContext.Current.CancellationToken;
         await ClearProfilesAsync(ct);
         await CreateProfileAsync("the-owner", ct, Role.Owner);
         using var client = ClientFor("sneaky-editor");
         await EnsureProfileAsync(client, ct);
-        await SetRoleAsync("sneaky-editor", Role.ShmoEditor, ct);
+        await GrantAreaAsync("sneaky-editor", ContentArea.Shmo, AreaAccess.Editor, ct);
         var targetId = await CreateProfileAsync("some-reader", ct);
 
         var response = await AssignAsync(client, targetId, Role.Owner, ct);
@@ -100,12 +101,12 @@ public class AdminPeopleControllerTests : IDisposable
         await SetRoleAsync("granting-owner", Role.Owner, ct);
         var targetId = await CreateProfileAsync("the-helper", ct);
 
-        var response = await AssignAsync(owner, targetId, Role.ShmoEditor, ct);
+        var response = await AssignAsync(owner, targetId, Role.ExpertReviewer, ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var dto = await response.Content.ReadFromJsonAsync<PersonDto>(SabroApiFactory.JsonOptions, ct);
-        dto!.Role.Should().Be(Role.ShmoEditor);
-        (await RoleOfAsync(targetId, ct)).Should().Be(Role.ShmoEditor);
+        dto!.Role.Should().Be(Role.ExpertReviewer);
+        (await RoleOfAsync(targetId, ct)).Should().Be(Role.ExpertReviewer);
     }
 
     [Fact]
@@ -194,7 +195,7 @@ public class AdminPeopleControllerTests : IDisposable
         await EnsureProfileAsync(caller, ct);
         var ownId = await ProfileIdOfAsync("opportunist", ct);
 
-        var response = await AssignAsync(caller, ownId, Role.LexiconEditor, ct);
+        var response = await AssignAsync(caller, ownId, Role.ExpertReviewer, ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         (await RoleOfAsync(ownId, ct)).Should().Be(Role.Reader);
@@ -217,7 +218,7 @@ public class AdminPeopleControllerTests : IDisposable
         var people = await listed.Content.ReadFromJsonAsync<List<PersonDto>>(SabroApiFactory.JsonOptions, ct);
         var before = people!.Single(p => p.Id == targetId);
 
-        var response = await AssignAsync(owner, targetId, Role.ShmoEditor, ct);
+        var response = await AssignAsync(owner, targetId, Role.ExpertReviewer, ct);
         var after = await response.Content.ReadFromJsonAsync<PersonDto>(SabroApiFactory.JsonOptions, ct);
 
         after!.Id.Should().Be(before.Id);
@@ -226,7 +227,7 @@ public class AdminPeopleControllerTests : IDisposable
         after.Email.Should().Be(before.Email);
         after.CreatedAt.Should().Be(before.CreatedAt);
         after.IsYou.Should().Be(before.IsYou);
-        after.Role.Should().Be(Role.ShmoEditor, "only the role should have moved");
+        after.Role.Should().Be(Role.ExpertReviewer, "only the role should have moved");
     }
 
     [Fact]
@@ -241,7 +242,7 @@ public class AdminPeopleControllerTests : IDisposable
         await SetRoleAsync("put-privacy-owner", Role.Owner, ct);
         var targetId = await CreateProfileAsync("put-privacy-target", ct);
 
-        var response = await AssignAsync(owner, targetId, Role.ShmoEditor, ct);
+        var response = await AssignAsync(owner, targetId, Role.ExpertReviewer, ct);
         var body = await response.Content.ReadAsStringAsync(ct);
 
         body.Should().NotContain("put-privacy-target");
@@ -257,7 +258,7 @@ public class AdminPeopleControllerTests : IDisposable
         await EnsureProfileAsync(owner, ct);
         await SetRoleAsync("owner-404", Role.Owner, ct);
 
-        var response = await AssignAsync(owner, Guid.NewGuid(), Role.ShmoEditor, ct);
+        var response = await AssignAsync(owner, Guid.NewGuid(), Role.ExpertReviewer, ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -316,6 +317,29 @@ public class AdminPeopleControllerTests : IDisposable
         await using var ctx = postgres.CreateIdentityContext();
         var profile = await ctx.UserProfiles.FirstAsync(p => p.LogtoUserId == logtoUserId, ct);
         profile.AssignRole(role);
+        await ctx.SaveChangesAsync(ct);
+    }
+
+    /// <summary>
+    /// Seeds an area grant, which is what actually confers backoffice access.
+    /// </summary>
+    /// <remarks>
+    /// These tests used to stand up a non-Owner caller with <c>Role.ShmoEditor</c>.
+    /// Since access moved to per-area grants that role confers nothing, so the caller
+    /// was a plain Reader and the refusals were being asserted against someone who had
+    /// never been let in — passing, but not for the reason the test names claim. A
+    /// grant makes the caller genuinely staff with genuine area access, which is the
+    /// case worth refusing.
+    /// </remarks>
+    private async Task GrantAreaAsync(
+        string logtoUserId,
+        ContentArea area,
+        AreaAccess access,
+        CancellationToken ct)
+    {
+        await using var ctx = postgres.CreateIdentityContext();
+        var profile = await ctx.UserProfiles.FirstAsync(p => p.LogtoUserId == logtoUserId, ct);
+        profile.SetAreaAccess(area, access).Should().BeNull();
         await ctx.SaveChangesAsync(ct);
     }
 
