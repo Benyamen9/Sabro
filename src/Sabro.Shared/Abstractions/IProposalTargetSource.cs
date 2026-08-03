@@ -1,3 +1,5 @@
+using Sabro.Shared.Results;
+
 namespace Sabro.Shared.Abstractions;
 
 /// <summary>
@@ -69,4 +71,38 @@ public interface IProposalTargetSource
     /// </para>
     /// </remarks>
     Task<string?> GetFieldValueAsync(Guid targetId, string field, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Names the given targets, so a queue of proposals can say what each one is
+    /// about. Ids with no surviving target are simply absent from the result.
+    /// </summary>
+    /// <remarks>
+    /// Batched deliberately: the review queue resolves a whole page at once, and a
+    /// per-row lookup would turn one screen into one query per proposal.
+    /// </remarks>
+    Task<IReadOnlyDictionary<Guid, ProposalTargetLabel>> GetLabelsAsync(
+        IReadOnlyCollection<Guid> targetIds,
+        CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Writes an accepted value onto the target, returning <see langword="null"/> on
+    /// success or the error that stopped it.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Goes through the owning module's normal write path, so validation,
+    /// normalisation and search indexing all happen exactly as they would from the
+    /// backoffice form. Reviews must never write another module's content itself.
+    /// </para>
+    /// <para>
+    /// The caller has already checked that the field is proposable and that the
+    /// target has not changed underneath. This does not re-decide any of that; it
+    /// applies what the Owner accepted.
+    /// </para>
+    /// </remarks>
+    Task<Error?> ApplyFieldAsync(
+        Guid targetId,
+        string field,
+        string value,
+        CancellationToken cancellationToken);
 }

@@ -7672,6 +7672,10 @@
           "acceptChangedTarget": {
             "type": "boolean",
             "default": false
+          },
+          "apply": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -9823,6 +9827,23 @@
           }
         }
       },
+      "ProposalTargetLabel": {
+        "required": [
+          "primary"
+        ],
+        "type": "object",
+        "properties": {
+          "primary": {
+            "type": "string"
+          },
+          "secondary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "RecordGameResultRequest": {
         "required": [
           "gameId",
@@ -10286,6 +10307,16 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "targetLabel": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ProposalTargetLabel"
+              }
+            ]
           }
         }
       },

@@ -43,11 +43,15 @@ export function useProposals() {
    * server has refused it because the field moved since the proposal was filed —
    * never send it on the first attempt, or the guard is defeated by the client
    * that was supposed to honour it.
+   *
+   * `apply` writes the value onto the entry as part of accepting, instead of
+   * only recording the decision. The staleness guard applies either way: with
+   * `apply` the refusal happens before anything is written.
    */
-  function accept(id: string, note?: string, acceptChangedTarget = false) {
+  function accept(id: string, note?: string, acceptChangedTarget = false, apply = false) {
     return api<SuggestedEditDto>(`/suggested-edits/${id}/accept`, {
       method: 'POST',
-      body: { note, acceptChangedTarget },
+      body: { note, acceptChangedTarget, apply },
     })
   }
 

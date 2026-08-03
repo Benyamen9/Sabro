@@ -9,6 +9,7 @@ using Sabro.Reviews.Domain;
 using Sabro.Reviews.Infrastructure;
 using Sabro.Shared.Abstractions;
 using Sabro.Shared.Localization;
+using Sabro.Shared.Results;
 
 namespace Sabro.IntegrationTests.Reviews.Application;
 
@@ -196,6 +197,188 @@ public class FieldProposalServiceTests
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Code.Should().Be("validation");
+    }
+
+    [Fact]
+    public async Task AcceptWithApply_WritesTheValueThroughTheOwningModule()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Figure(targetId, DateTimeOffset.UtcNow);
+        source.Values["era"] = "450";
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.HistoricalFigure,
+                targetId,
+                Field: "era",
+                ProposedValue: "451"),
+            reviewer,
+            ct);
+        proposed.IsSuccess.Should().BeTrue();
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id,
+            new DecisionRequest(Apply: true),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Status.Should().Be(SuggestedEditStatus.Accepted);
+
+        // Reviews never writes another module's content itself — it hands the value to
+        // the owning module, which applies it through its own write path.
+        source.Applied.Should().ContainSingle();
+        source.Applied[0].Should().Be(("era", "451"));
+    }
+
+    [Fact]
+    public async Task Accept_WithoutApply_LeavesTheTargetUntouched()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Figure(targetId, DateTimeOffset.UtcNow);
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.HistoricalFigure,
+                targetId,
+                Field: "era",
+                ProposedValue: "451"),
+            reviewer,
+            ct);
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id,
+            new DecisionRequest(),
+            owner,
+            ct);
+
+        // The default is still decide-only: the two-step path has to keep working for
+        // a value the Owner wants to see in context before committing.
+        result.IsSuccess.Should().BeTrue();
+        source.Applied.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task AcceptWithApply_WhenTheWriteFails_RecordsNoDecision()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Figure(targetId, DateTimeOffset.UtcNow);
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.HistoricalFigure,
+                targetId,
+                Field: "era",
+                ProposedValue: "not-a-year"),
+            reviewer,
+            ct);
+
+        source.ApplyError = Error.Validation("that is not a valid era.");
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id,
+            new DecisionRequest(Apply: true),
+            owner,
+            ct);
+
+        result.IsSuccess.Should().BeFalse();
+
+        // An accepted proposal whose value was refused would be a decision the content
+        // does not reflect. The proposal stays pending instead.
+        await using var readCtx = postgres.CreateReviewsContext();
+        var stored = await NewService(readCtx, source).GetByIdAsync(proposed.Value!.Id, ct);
+        stored.Value!.Status.Should().Be(SuggestedEditStatus.Pending);
+    }
+
+    [Fact]
+    public async Task AcceptWithApply_OnAChangedField_RefusesBeforeWritingAnything()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
+        var owner = await SeedProfileAsync(Role.Owner, ct);
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Figure(targetId, DateTimeOffset.UtcNow);
+        source.Values["era"] = "450";
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        var proposed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+            new CreateFieldProposalRequest(
+                SuggestedEditTargetType.HistoricalFigure,
+                targetId,
+                Field: "era",
+                ProposedValue: "451"),
+            reviewer,
+            ct);
+
+        // Somebody edited the same field while the proposal waited.
+        source.Values["era"] = "452";
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).AcceptAsync(
+            proposed.Value!.Id,
+            new DecisionRequest(Apply: true),
+            owner,
+            ct);
+
+        // The one-click path must not be a way round the staleness guard: it refuses
+        // exactly as decide-only does, and writes nothing.
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Code.Should().Be("conflict");
+        source.Applied.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task List_NamesEachTarget_InOneLookupPerModule()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var reviewer = await SeedProfileAsync(Role.Reader, ct, (ContentArea.Shmo, AreaAccess.Reviewer));
+        var targetId = Guid.NewGuid();
+        var source = FakeSource.Figure(targetId, DateTimeOffset.UtcNow);
+        source.Label = new ProposalTargetLabel("Jacob of Serugh");
+
+        await using var seedCtx = postgres.CreateReviewsContext();
+        foreach (var value in new[] { "451", "452" })
+        {
+            var filed = await NewService(seedCtx, source).ProposeFieldChangeAsync(
+                new CreateFieldProposalRequest(
+                    SuggestedEditTargetType.HistoricalFigure,
+                    targetId,
+                    Field: "era",
+                    ProposedValue: value),
+                reviewer,
+                ct);
+            filed.IsSuccess.Should().BeTrue();
+        }
+
+        source.LabelBatches.Clear();
+
+        await using var ctx = postgres.CreateReviewsContext();
+        var result = await NewService(ctx, source).ListAsync(
+            new SuggestedEditListFilters(TargetId: targetId),
+            page: 1,
+            pageSize: 20,
+            ct);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Items.Should().OnlyContain(item => item.TargetLabel!.Primary == "Jacob of Serugh");
+
+        // Batched: two proposals on one module cost one lookup, not one per row.
+        source.LabelBatches.Should().ContainSingle();
     }
 
     [Fact]
@@ -515,6 +698,17 @@ public class FieldProposalServiceTests
         /// <summary>Current value per field, mutable so a test can change it mid-flight.</summary>
         public Dictionary<string, string?> Values { get; } = new(StringComparer.Ordinal);
 
+        /// <summary>Every apply that got through, in order.</summary>
+        public List<(string Field, string Value)> Applied { get; } = [];
+
+        /// <summary>Set to make the next apply fail, standing in for a validation refusal.</summary>
+        public Error? ApplyError { get; set; }
+
+        /// <summary>How many ids each label lookup was asked for — one entry per call.</summary>
+        public List<int> LabelBatches { get; } = [];
+
+        public ProposalTargetLabel Label { get; set; } = new("label", "secondary");
+
         /// <summary>Mirrors the real Lexicon list — note the absence of status/playable.</summary>
         public static FakeSource Lexicon(Guid knownId, DateTimeOffset updatedAt) => new(
             "LexiconEntry",
@@ -533,5 +727,38 @@ public class FieldProposalServiceTests
 
         public Task<string?> GetFieldValueAsync(Guid targetId, string field, CancellationToken cancellationToken) =>
             Task.FromResult(targetId == knownId && Values.TryGetValue(field, out var value) ? value : null);
+
+        public Task<IReadOnlyDictionary<Guid, ProposalTargetLabel>> GetLabelsAsync(
+            IReadOnlyCollection<Guid> targetIds,
+            CancellationToken cancellationToken)
+        {
+            IReadOnlyDictionary<Guid, ProposalTargetLabel> labels = targetIds.Contains(knownId)
+                ? new Dictionary<Guid, ProposalTargetLabel> { [knownId] = Label }
+                : new Dictionary<Guid, ProposalTargetLabel>();
+            LabelBatches.Add(targetIds.Count);
+            return Task.FromResult(labels);
+        }
+
+        /// <summary>Records what was actually written, so a test can assert the value landed.</summary>
+        public Task<Error?> ApplyFieldAsync(
+            Guid targetId,
+            string field,
+            string value,
+            CancellationToken cancellationToken)
+        {
+            if (targetId != knownId)
+            {
+                return Task.FromResult<Error?>(Error.NotFound($"{TargetTypeName} {targetId}"));
+            }
+
+            if (ApplyError is not null)
+            {
+                return Task.FromResult<Error?>(ApplyError);
+            }
+
+            Applied.Add((field, value));
+            Values[field] = value;
+            return Task.FromResult<Error?>(null);
+        }
     }
 }

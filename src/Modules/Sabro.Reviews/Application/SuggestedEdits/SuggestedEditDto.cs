@@ -1,4 +1,5 @@
 using Sabro.Reviews.Domain;
+using Sabro.Shared.Abstractions;
 
 namespace Sabro.Reviews.Application.SuggestedEdits;
 
@@ -24,4 +25,5 @@ public sealed record SuggestedEditDto(
     DateTimeOffset? DecisionAt,
     string? DecisionNote,
     DateTimeOffset CreatedAt,
-    DateTimeOffset UpdatedAt);
+    DateTimeOffset UpdatedAt,
+    ProposalTargetLabel? TargetLabel = null);

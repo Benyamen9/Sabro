@@ -218,9 +218,13 @@ internal sealed class SuggestedEditService : ISuggestedEditService
         var edit = await dbContext.SuggestedEdits
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
-        return edit is null
-            ? Result<SuggestedEditDto>.Failure(Error.NotFound($"SuggestedEdit {id} not found."))
-            : Result<SuggestedEditDto>.Success(Map(edit));
+        if (edit is null)
+        {
+            return Result<SuggestedEditDto>.Failure(Error.NotFound($"SuggestedEdit {id} not found."));
+        }
+
+        var labels = await ResolveLabelsAsync([edit], cancellationToken);
+        return Result<SuggestedEditDto>.Success(Map(edit, LabelFor(labels, edit)));
     }
 
     public async Task<Result<PagedResult<SuggestedEditDto>>> ListAsync(
@@ -271,7 +275,8 @@ internal sealed class SuggestedEditService : ISuggestedEditService
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-        var mapped = items.Select(Map).ToArray();
+        var labels = await ResolveLabelsAsync(items, cancellationToken);
+        var mapped = items.Select(edit => Map(edit, LabelFor(labels, edit))).ToArray();
         return Result<PagedResult<SuggestedEditDto>>.Success(
             new PagedResult<SuggestedEditDto>(mapped, total, page, pageSize));
     }
@@ -306,7 +311,7 @@ internal sealed class SuggestedEditService : ISuggestedEditService
         _ => null,
     };
 
-    private static SuggestedEditDto Map(SuggestedEdit edit) => new(
+    private static SuggestedEditDto Map(SuggestedEdit edit, ProposalTargetLabel? label = null) => new(
         edit.Id,
         edit.TargetType,
         edit.TargetId,
@@ -323,7 +328,84 @@ internal sealed class SuggestedEditService : ISuggestedEditService
         edit.DecisionAt,
         edit.DecisionNote,
         edit.CreatedAt,
-        edit.UpdatedAt);
+        edit.UpdatedAt,
+        label);
+
+    private static ProposalTargetLabel? LabelFor(
+        IReadOnlyDictionary<(SuggestedEditTargetType TargetType, Guid TargetId), ProposalTargetLabel> labels,
+        SuggestedEdit edit) =>
+        labels.TryGetValue((edit.TargetType, edit.TargetId), out var label) ? label : null;
+
+    /// <summary>
+    /// Hands the accepted value to the module that owns the target, which writes it
+    /// through its own normal write path.
+    /// </summary>
+    /// <remarks>
+    /// Reviews never writes another module's content itself. Everything that guards a
+    /// backoffice save — validation, NFC normalisation, the publication rules, the
+    /// Meilisearch reindex — has to guard this too, and the only way to be sure of
+    /// that is to go through the same service the form posts to.
+    /// </remarks>
+    private async Task<Error?> ApplyToTargetAsync(SuggestedEdit edit, CancellationToken cancellationToken)
+    {
+        var source = targetSources.FirstOrDefault(s => s.TargetTypeName == edit.TargetType.ToString());
+        if (source is null)
+        {
+            return Error.Validation(
+                $"{edit.TargetType} proposals cannot be applied: no module claims that target type.");
+        }
+
+        return await source.ApplyFieldAsync(
+            edit.TargetId,
+            edit.Field!,
+            edit.ProposedContent,
+            cancellationToken);
+    }
+
+    /// <summary>
+    /// Names every target on a page of proposals, so the queue can say which word or
+    /// which figure each one is about.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// One call per module rather than one per row: a page of twenty proposals across
+    /// two areas costs two queries. Grouping by target type is what makes that
+    /// possible, and it is why the interface takes a collection.
+    /// </para>
+    /// <para>
+    /// A target with no label — deleted since, or owned by a module no longer
+    /// registered — is simply absent. The queue then shows the proposal without a
+    /// name, which is what it did for every row before this existed; losing the label
+    /// must never lose the proposal.
+    /// </para>
+    /// </remarks>
+    private async Task<IReadOnlyDictionary<(SuggestedEditTargetType TargetType, Guid TargetId), ProposalTargetLabel>>
+        ResolveLabelsAsync(List<SuggestedEdit> edits, CancellationToken cancellationToken)
+    {
+        var resolved = new Dictionary<(SuggestedEditTargetType, Guid), ProposalTargetLabel>();
+        if (edits.Count == 0)
+        {
+            return resolved;
+        }
+
+        foreach (var group in edits.GroupBy(edit => edit.TargetType))
+        {
+            var source = targetSources.FirstOrDefault(s => s.TargetTypeName == group.Key.ToString());
+            if (source is null)
+            {
+                continue;
+            }
+
+            var ids = group.Select(edit => edit.TargetId).Distinct().ToArray();
+            var labels = await source.GetLabelsAsync(ids, cancellationToken);
+            foreach (var (id, label) in labels)
+            {
+                resolved[(group.Key, id)] = label;
+            }
+        }
+
+        return resolved;
+    }
 
     /// <summary>
     /// True when the proposed field's current value differs from what it held when the
@@ -420,6 +502,25 @@ internal sealed class SuggestedEditService : ISuggestedEditService
         if (domainError is not null)
         {
             return Result<SuggestedEditDto>.Failure(domainError);
+        }
+
+        // Write the content before recording the decision, so a rejected value never
+        // leaves an accepted proposal behind. If the write fails the decision is not
+        // saved either, and the proposal stays pending — the Owner can retry or fall
+        // back to opening the entry themselves.
+        if (accept && request.Apply && edit.Field is not null)
+        {
+            var applyError = await ApplyToTargetAsync(edit, cancellationToken);
+            if (applyError is not null)
+            {
+                logger.LogWarning(
+                    "Accept-and-apply failed on {TargetType} {TargetId} field {Field}: {Message}",
+                    edit.TargetType,
+                    edit.TargetId,
+                    edit.Field,
+                    applyError.Message);
+                return Result<SuggestedEditDto>.Failure(applyError);
+            }
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
