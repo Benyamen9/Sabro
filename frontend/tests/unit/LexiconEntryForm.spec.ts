@@ -13,14 +13,14 @@ function entry(): LexiconEntryDto {
     rootId: null,
     transliterationVariants: [],
     morphology: null,
-    meanings: [{ language: 'en', text: 'word', position: 0 }],
+    meanings: [{ language: 'en', text: 'word' }],
     status: 'Draft',
     playableInMeltho: false,
     playableLength: 4,
     pronunciationAudioUrl: null,
     createdAt: '2026-08-01T00:00:00Z',
     updatedAt: '2026-08-01T00:00:00Z',
-  } as LexiconEntryDto
+  }
 }
 
 describe('LexiconEntryForm', () => {
