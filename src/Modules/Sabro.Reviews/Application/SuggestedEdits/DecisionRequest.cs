@@ -14,4 +14,14 @@ namespace Sabro.Reviews.Application.SuggestedEdits;
 /// that must be a deliberate act rather than a banner somebody skimmed past. Ignored
 /// on reject and on prose targets.
 /// </param>
-public sealed record DecisionRequest(string? Note = null, bool AcceptChangedTarget = false);
+/// <param name="Apply">
+/// Writes the proposed value onto the target as part of accepting, instead of only
+/// recording the decision. Defaults to <see langword="false"/>, which keeps the
+/// original two-step shape: the Owner accepts, then opens the entry with the value
+/// prefilled and saves it in context. Both are wanted — a typo does not need the
+/// second look, a gloss read beside its four siblings does. Ignored on reject.
+/// </param>
+public sealed record DecisionRequest(
+    string? Note = null,
+    bool AcceptChangedTarget = false,
+    bool Apply = false);

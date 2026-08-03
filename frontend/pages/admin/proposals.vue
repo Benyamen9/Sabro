@@ -51,12 +51,18 @@ async function load() {
   }
 }
 
-async function onAccept(proposal: SuggestedEditDto) {
+/**
+ * @param apply Writes the value onto the entry as part of accepting, rather than
+ * recording the decision and leaving the edit to be made on the entry's own page.
+ * Both are offered: a typo does not need a second look, a gloss read beside its
+ * four siblings does.
+ */
+async function onAccept(proposal: SuggestedEditDto, apply = false) {
   const override = conflicted.value.has(proposal.id)
   busyId.value = proposal.id
   errorMessage.value = null
   try {
-    const updated = await accept(proposal.id, undefined, override)
+    const updated = await accept(proposal.id, undefined, override, apply)
     replace(updated)
     conflicted.value.delete(proposal.id)
   }
@@ -199,6 +205,22 @@ const cellClass = 'px-3 py-3 align-top'
                 <span class="font-medium text-[var(--color-text)]">
                   {{ t(`admin.proposals.target.${proposal.targetType}`) }}
                 </span>
+                <!-- Which word or figure this is about. Without it the queue names
+                     a field on an entry you would have to open to identify. The
+                     primary half can be Syriac, so it gets its own element with
+                     the right direction rather than being glued to the Latin. -->
+                <span v-if="proposal.targetLabel" class="mt-0.5 block">
+                  <SyriacText
+                    v-if="proposal.targetType === 'LexiconEntry'"
+                    :text="proposal.targetLabel.primary"
+                    class="text-base text-[var(--color-text)]"
+                  />
+                  <span v-else class="text-[var(--color-text)]">{{ proposal.targetLabel.primary }}</span>
+                  <span
+                    v-if="proposal.targetLabel.secondary"
+                    class="ml-2 text-xs italic text-[var(--color-text-muted)]"
+                  >{{ proposal.targetLabel.secondary }}</span>
+                </span>
                 <code class="mt-0.5 block text-xs text-[var(--color-text-muted)]">{{ proposal.field }}</code>
                 <span class="mt-1 block text-xs text-[var(--color-text-faint)]">
                   {{ new Date(proposal.createdAt).toLocaleDateString() }}
@@ -228,6 +250,21 @@ const cellClass = 'px-3 py-3 align-top'
 
               <td :class="cellClass">
                 <div v-if="proposal.status === 'Pending'" class="flex flex-wrap items-center gap-2">
+                  <!-- The common case in one click: decide and write. The plain
+                       Accept beside it keeps the considered path, for a value worth
+                       seeing in the entry before it is committed. Both refuse a
+                       changed field the same way. -->
+                  <button
+                    v-if="proposal.field"
+                    type="button"
+                    :disabled="busyId === proposal.id"
+                    class="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
+                    @click="onAccept(proposal, true)"
+                  >
+                    {{ conflicted.has(proposal.id)
+                      ? t('admin.proposals.acceptAndApplyAnyway')
+                      : t('admin.proposals.acceptAndApply') }}
+                  </button>
                   <button
                     type="button"
                     :disabled="busyId === proposal.id"
@@ -271,7 +308,7 @@ const cellClass = 'px-3 py-3 align-top'
       </div>
 
       <p class="mt-5 max-w-prose font-sans text-xs text-[var(--color-text-faint)]">
-        {{ t('admin.proposals.acceptRecordsOnly') }}
+        {{ t('admin.proposals.acceptOrApplyHint') }}
       </p>
     </div>
   </section>

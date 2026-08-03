@@ -111,13 +111,118 @@ public class LexiconEntryProposalTargetSourceTests
         fields.Should().Contain("meaning.en");
     }
 
-    private static LexiconEntryProposalTargetSource NewSource(LexiconDbContext ctx) =>
-        new(ctx, Options.Create(new SupportedLanguagesOptions()));
-
-    private async Task<Guid> CreateEntryAsync(CancellationToken ct)
+    [Fact]
+    public async Task GetLabelsAsync_NamesTheEntriesItWasAskedFor()
     {
+        var ct = TestContext.Current.CancellationToken;
+        var id = await CreateEntryAsync(ct);
+
         await using var ctx = fixture.CreateLexiconContext();
-        var service = new LexiconEntryService(
+        var labels = await NewSource(ctx).GetLabelsAsync([id, Guid.NewGuid()], ct);
+
+        // The unknown id is simply absent rather than an error: losing a label must
+        // never lose the proposal it belongs to.
+        labels.Should().HaveCount(1);
+        labels[id].Primary.Should().Be(KtbUnvocalized);
+        labels[id].Secondary.Should().Be("ktb");
+    }
+
+    [Fact]
+    public async Task GetLabelsAsync_WithNoIds_AsksTheDatabaseNothing()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await using var ctx = fixture.CreateLexiconContext();
+        var labels = await NewSource(ctx).GetLabelsAsync([], ct);
+
+        labels.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ApplyFieldAsync_WritesAScalarFieldThroughTheNormalUpdatePath()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var id = await CreateEntryAsync(ct);
+
+        await using var ctx = fixture.CreateLexiconContext();
+        var error = await NewSource(ctx).ApplyFieldAsync(id, "sblTransliteration", "kthab", ct);
+
+        error.Should().BeNull();
+
+        await using var read = fixture.CreateLexiconContext();
+        var value = await NewSource(read).GetFieldValueAsync(id, "sblTransliteration", ct);
+        value.Should().Be("kthab");
+    }
+
+    [Fact]
+    public async Task ApplyFieldAsync_ChangesOneMeaningAndLeavesTheOthersAlone()
+    {
+        // The update path replaces the whole meaning collection, so applying one
+        // language has to carry the rest through untouched — otherwise accepting a
+        // French correction would silently delete the English gloss.
+        var ct = TestContext.Current.CancellationToken;
+        var id = await CreateEntryAsync(ct);
+
+        await using var ctx = fixture.CreateLexiconContext();
+        var error = await NewSource(ctx).ApplyFieldAsync(id, "meaning.fr", "rédiger", ct);
+
+        error.Should().BeNull();
+
+        await using var read = fixture.CreateLexiconContext();
+        var source = NewSource(read);
+        (await source.GetFieldValueAsync(id, "meaning.fr", ct)).Should().Be("rédiger");
+        (await source.GetFieldValueAsync(id, "meaning.en", ct)).Should().Be("to write");
+    }
+
+    [Fact]
+    public async Task ApplyFieldAsync_AddsAMeaningForALanguageThatHadNone()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var id = await CreateEntryAsync(ct);
+
+        await using var ctx = fixture.CreateLexiconContext();
+        var error = await NewSource(ctx).ApplyFieldAsync(id, "meaning.nl", "schrijven", ct);
+
+        error.Should().BeNull();
+
+        await using var read = fixture.CreateLexiconContext();
+        (await NewSource(read).GetFieldValueAsync(id, "meaning.nl", ct)).Should().Be("schrijven");
+    }
+
+    [Fact]
+    public async Task ApplyFieldAsync_RefusesAValueTheEntryWouldReject()
+    {
+        // Applying goes through the same validation as the backoffice form, so a
+        // proposal cannot become a quieter way to write something invalid.
+        var ct = TestContext.Current.CancellationToken;
+        var id = await CreateEntryAsync(ct);
+
+        await using var ctx = fixture.CreateLexiconContext();
+        var error = await NewSource(ctx).ApplyFieldAsync(id, "syriacUnvocalized", "not syriac", ct);
+
+        error.Should().NotBeNull();
+
+        await using var read = fixture.CreateLexiconContext();
+        (await NewSource(read).GetFieldValueAsync(id, "syriacUnvocalized", ct)).Should().Be(KtbUnvocalized);
+    }
+
+    [Fact]
+    public async Task ApplyFieldAsync_OnAnUnknownEntry_ReportsItRatherThanThrowing()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await using var ctx = fixture.CreateLexiconContext();
+        var error = await NewSource(ctx).ApplyFieldAsync(Guid.NewGuid(), "morphology", "x", ct);
+
+        error.Should().NotBeNull();
+        error!.Code.Should().Be("not_found");
+    }
+
+    private static LexiconEntryProposalTargetSource NewSource(LexiconDbContext ctx) =>
+        new(ctx, NewEntryService(ctx), Options.Create(new SupportedLanguagesOptions()));
+
+    private static LexiconEntryService NewEntryService(LexiconDbContext ctx) =>
+        new(
             ctx,
             new CreateLexiconEntryRequestValidator(),
             new UpdateLexiconEntryRequestValidator(),
@@ -125,6 +230,11 @@ public class LexiconEntryProposalTargetSourceTests
             Substitute.For<IPronunciationAudioStorage>(),
             Options.Create(new SupportedLanguagesOptions()),
             NullLogger<LexiconEntryService>.Instance);
+
+    private async Task<Guid> CreateEntryAsync(CancellationToken ct)
+    {
+        await using var ctx = fixture.CreateLexiconContext();
+        var service = NewEntryService(ctx);
 
         var result = await service.CreateAsync(
             new CreateLexiconEntryRequest(

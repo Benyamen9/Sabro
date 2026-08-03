@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Sabro.Lexicon.Application.Entries;
+using Sabro.Lexicon.Domain;
 using Sabro.Lexicon.Infrastructure;
 using Sabro.Shared.Abstractions;
 using Sabro.Shared.Localization;
+using Sabro.Shared.Results;
 
 namespace Sabro.Lexicon.Application.Proposals;
 
@@ -39,15 +42,18 @@ internal sealed class LexiconEntryProposalTargetSource : IProposalTargetSource
     ];
 
     private readonly LexiconDbContext dbContext;
+    private readonly ILexiconEntryService entries;
     private readonly string[] proposableFields;
 
     public LexiconEntryProposalTargetSource(
         LexiconDbContext dbContext,
+        ILexiconEntryService entries,
         IOptions<SupportedLanguagesOptions> supportedLanguages)
     {
         ArgumentNullException.ThrowIfNull(supportedLanguages);
 
         this.dbContext = dbContext;
+        this.entries = entries;
 
         // Meaning fields come from the configured language set rather than a literal
         // list, so adding a language stays the one config change it is everywhere else.
@@ -113,5 +119,93 @@ internal sealed class LexiconEntryProposalTargetSource : IProposalTargetSource
             "morphology" => entry.Morphology,
             _ => null,
         };
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, ProposalTargetLabel>> GetLabelsAsync(
+        IReadOnlyCollection<Guid> targetIds,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(targetIds);
+        if (targetIds.Count == 0)
+        {
+            return new Dictionary<Guid, ProposalTargetLabel>();
+        }
+
+        // The unvocalized form identifies the entry, and the transliteration rides
+        // along because a queue is scanned, and a Latin handle is faster to scan than
+        // an unfamiliar script.
+        var rows = await dbContext.Entries
+            .AsNoTracking()
+            .Where(entry => targetIds.Contains(entry.Id))
+            .Select(entry => new { entry.Id, entry.SyriacUnvocalized, entry.SblTransliteration })
+            .ToListAsync(cancellationToken);
+
+        return rows.ToDictionary(
+            row => row.Id,
+            row => new ProposalTargetLabel(row.SyriacUnvocalized, row.SblTransliteration));
+    }
+
+    public async Task<Error?> ApplyFieldAsync(
+        Guid targetId,
+        string field,
+        string value,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+
+        var entry = await dbContext.Entries
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == targetId, cancellationToken);
+        if (entry is null)
+        {
+            return Error.NotFound($"LexiconEntry {targetId}");
+        }
+
+        // Rebuilt from what is stored, with the accepted field replaced, and sent
+        // through the same service the backoffice form posts to. That keeps NFC
+        // normalisation, the Syriac-range validation, the publication rules and the
+        // Meilisearch reindex on one path — a proposal must not be a second, quieter
+        // way to write content.
+        var meanings = entry.Meanings
+            .Select(meaning => new CreateLexiconMeaningRequest(meaning.Language, meaning.Text))
+            .ToList();
+
+        if (field.StartsWith("meaning.", StringComparison.Ordinal))
+        {
+            var language = field["meaning.".Length..];
+            var existing = meanings.FindIndex(
+                m => string.Equals(m.Language, language, StringComparison.OrdinalIgnoreCase));
+            if (existing >= 0)
+            {
+                meanings[existing] = new CreateLexiconMeaningRequest(language, value);
+            }
+            else
+            {
+                meanings.Add(new CreateLexiconMeaningRequest(language, value));
+            }
+        }
+        else if (field == "grammaticalCategory" && !Enum.TryParse<GrammaticalCategory>(value, out _))
+        {
+            // Caught here rather than in the domain so the message names the field the
+            // Owner accepted, not an enum parse failure.
+            return Error.Validation($"'{value}' is not a grammatical category.");
+        }
+
+        var category = field == "grammaticalCategory"
+            ? Enum.Parse<GrammaticalCategory>(value)
+            : entry.GrammaticalCategory;
+
+        var request = new UpdateLexiconEntryRequest(
+            SyriacUnvocalized: field == "syriacUnvocalized" ? value : entry.SyriacUnvocalized,
+            SblTransliteration: field == "sblTransliteration" ? value : entry.SblTransliteration,
+            GrammaticalCategory: category,
+            SyriacVocalized: field == "syriacVocalized" ? value : entry.SyriacVocalized,
+            RootId: entry.RootId,
+            TransliterationVariants: entry.TransliterationVariants,
+            Morphology: field == "morphology" ? value : entry.Morphology,
+            Meanings: meanings);
+
+        var result = await entries.UpdateAsync(targetId, request, cancellationToken);
+        return result.IsSuccess ? null : result.Error;
     }
 }

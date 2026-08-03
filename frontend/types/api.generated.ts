@@ -4642,6 +4642,8 @@ export interface components {
             note?: null | string;
             /** @default false */
             acceptChangedTarget: boolean;
+            /** @default false */
+            apply: boolean;
         };
         DictionaryEntryDetailResponse: {
             /** Format: uuid */
@@ -5130,6 +5132,10 @@ export interface components {
             profile: components["schemas"]["UserProfileDto"];
             gameResults: components["schemas"]["GameResultDto"][];
         };
+        ProposalTargetLabel: {
+            primary: string;
+            secondary?: null | string;
+        };
         RecordGameResultRequest: {
             gameId: string;
             /** Format: date */
@@ -5249,6 +5255,7 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
+            targetLabel?: null | components["schemas"]["ProposalTargetLabel"];
         };
         /** @enum {string} */
         SuggestedEditStatus: "Pending" | "Accepted" | "Rejected";
