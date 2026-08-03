@@ -17,13 +17,26 @@ fi
 
 cd /src
 
-# Active-module DbContexts only — Lexicon, Identity, Historical, Play. The
-# deferred modules (Translations, Reviews, Biblical) have migrations in the tree
-# but are NOT part of the launch and must not create their schema in production;
-# add them here when those modules are un-deferred.
+# Active-module DbContexts only — Lexicon, Identity, Historical, Play, Reviews.
+# Translations and Biblical have migrations in the tree but are NOT part of the
+# launch and must not create their schema in production; add them here when
+# those modules are un-deferred.
+#
+# ⚠️ Every module registers its DbContext in DI, deferred ones included, so DI is
+# no signal of what belongs here. This list is the only place that says which
+# schemas exist in production — a module shipped without an entry here works
+# everywhere except production, and fails there at the first write with
+# 42P01 "relation does not exist".
+#
+# Reviews was added 2026-08-03, after the reviewer workflow shipped and every
+# proposal in production failed on a missing `reviews.suggested_edits`. The
+# module was built while Reviews was still marked deferred, and un-deferring it
+# in the code never reached this list.
 #
 # Historical precedes Play: Play's Shmo daily puzzle points at a historical
-# figure, so the roster's schema must exist before Play's does.
+# figure, so the roster's schema must exist before Play's does. Reviews has no
+# cross-module foreign keys at all — its target is a string discriminator, by
+# design — so its position here is free.
 #
 # "ContextName:project path" — keep in sync with the active module DbContexts.
 contexts=(
@@ -31,6 +44,7 @@ contexts=(
   "IdentityDbContext:src/Modules/Sabro.Identity"
   "HistoricalDbContext:src/Modules/Sabro.Historical"
   "PlayDbContext:src/Modules/Sabro.Play"
+  "ReviewsDbContext:src/Modules/Sabro.Reviews"
 )
 
 # Sabro.API is the single --startup-project for every context: it references the
