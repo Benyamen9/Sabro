@@ -12,9 +12,15 @@ const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { refresh: refreshAccess } = useMyAccess()
 const { visibleSections } = useAdminSections()
+const { overview, refresh: refreshOverview } = useAdminOverview()
 
 await refreshAdmin()
 await refreshAccess()
+
+// After the access refresh: what can be counted depends on what this person may
+// see, and both counts are read client-side so a slow Meilisearch never holds
+// up the page.
+onMounted(refreshOverview)
 </script>
 
 <template>
@@ -47,7 +53,14 @@ await refreshAccess()
       :hint="t('admin.hub.noAreasHint')"
     />
 
-    <div v-else-if="isAdmin" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <template v-else-if="isAdmin">
+      <AdminAttention
+        :pending-proposals="overview.pendingProposals"
+        :playable-words="overview.playableWords"
+        :pool-target="overview.poolTarget"
+      />
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <NuxtLink
         v-for="section in visibleSections"
         :key="section.to"
@@ -66,7 +79,8 @@ await refreshAccess()
         <p class="mt-1.5 font-sans text-sm text-[var(--color-text-muted)]">
           {{ t(section.blurbKey) }}
         </p>
-      </NuxtLink>
-    </div>
+        </NuxtLink>
+      </div>
+    </template>
   </section>
 </template>

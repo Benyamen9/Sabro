@@ -48,12 +48,13 @@ async function onSubmit(payload: CreateLexiconEntryRequest) {
 
 <template>
   <section class="mx-auto max-w-3xl">
+    <AdminBreadcrumb
+      section-key="admin.sections.lexicon.label"
+      section-to="/admin/lexicon"
+      :current="t('admin.lexicon.newEntry')"
+    />
     <AdminSectionNav />
 
-    <NuxtLink
-      to="/admin/lexicon"
-      class="font-sans text-sm text-[var(--color-text-muted)] no-underline hover:text-[var(--color-text)]"
-    >← {{ t('admin.lexicon.backToList') }}</NuxtLink>
 
     <StateMessage
       v-if="isAdmin === null"

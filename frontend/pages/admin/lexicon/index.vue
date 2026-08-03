@@ -166,6 +166,7 @@ function clearFilters() {
 
 <template>
   <section>
+    <AdminBreadcrumb section-key="admin.sections.lexicon.label" section-to="/admin/lexicon" />
     <AdminSectionNav />
 
     <header class="mb-8 flex flex-wrap items-end justify-between gap-4">

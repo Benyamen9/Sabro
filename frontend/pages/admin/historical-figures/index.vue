@@ -168,6 +168,7 @@ const selectClass
 
 <template>
   <section>
+    <AdminBreadcrumb section-key="admin.sections.figures.label" section-to="/admin/historical-figures" />
     <AdminSectionNav />
 
     <header class="mb-8 flex flex-wrap items-end justify-between gap-4">

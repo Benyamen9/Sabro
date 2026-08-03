@@ -399,7 +399,14 @@
       "title": "Coulisses",
       "subtitle": "Tout ce que vous éditez, au même endroit.",
       "noAreas": "Aucun domaine pour l’instant.",
-      "noAreasHint": "Votre compte fait partie de l’équipe, mais aucun domaine ne lui a encore été accordé. Le propriétaire accorde l’accès depuis la page des personnes."
+      "noAreasHint": "Votre compte fait partie de l’équipe, mais aucun domaine ne lui a encore été accordé. Le propriétaire accorde l’accès depuis la page des personnes.",
+      "pendingProposals": "rien n’attend votre décision | proposition attend votre décision | propositions attendent votre décision",
+      "reviewProposals": "Les examiner →",
+      "playableWords": "mots jouables dans Meltho, sur {target}",
+      "poolProgress": "{count} mots jouables sur {target}"
+    },
+    "breadcrumb": {
+      "label": "Vous êtes ici"
     },
     "sections": {
       "navLabel": "Sections des coulisses",
@@ -437,7 +444,6 @@
       "readOnlyNotice": "Vous pouvez consulter cette entrée mais pas la modifier. Proposez une correction ci-dessous ; le propriétaire décide.",
       "deleteFailed": "Impossible de supprimer l’entrée.",
       "actionFailed": "L’action n’a pas pu être effectuée.",
-      "backToList": "Retour au lexique",
       "deleteConfirm": "Supprimer définitivement cette entrée ? Cette action est irréversible.",
       "columns": {
         "syriac": "Syriaque",
@@ -559,7 +565,6 @@
       "readOnlyNotice": "Vous pouvez consulter cette figure mais pas la modifier. Proposez une correction ci-dessous ; le propriétaire décide.",
       "deleteFailed": "La figure n’a pas pu être supprimée.",
       "actionFailed": "Cette action n’a pas pu être effectuée.",
-      "backToList": "Retour au répertoire",
       "deleteConfirm": "Supprimer cette figure ? Cette action est irréversible.",
       "eraBc": "{century}e s. av. J.-C.",
       "eraAd": "{century}e s. apr. J.-C.",

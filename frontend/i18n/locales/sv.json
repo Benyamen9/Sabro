@@ -399,7 +399,14 @@
       "title": "Redaktion",
       "subtitle": "Allt du sköter, på ett ställe.",
       "noAreas": "Inga områden ännu.",
-      "noAreasHint": "Ditt konto tillhör personalen, men inget område har tilldelats det ännu. Ägaren ger åtkomst på personsidan."
+      "noAreasHint": "Ditt konto tillhör personalen, men inget område har tilldelats det ännu. Ägaren ger åtkomst på personsidan.",
+      "pendingProposals": "inget väntar på ditt beslut | förslag väntar på ditt beslut | förslag väntar på ditt beslut",
+      "reviewProposals": "Granska dem →",
+      "playableWords": "ord spelbara i Meltho, av {target}",
+      "poolProgress": "{count} av {target} spelbara ord"
+    },
+    "breadcrumb": {
+      "label": "Du är här"
     },
     "sections": {
       "navLabel": "Redaktionens avdelningar",
@@ -437,7 +444,6 @@
       "readOnlyNotice": "Du kan granska posten men inte redigera den. Föreslå en rättelse nedan – ägaren beslutar.",
       "deleteFailed": "Det gick inte att ta bort posten.",
       "actionFailed": "Åtgärden kunde inte slutföras.",
-      "backToList": "Tillbaka till lexikonet",
       "deleteConfirm": "Ta bort den här posten permanent? Detta kan inte ångras.",
       "columns": {
         "syriac": "Syriska",
@@ -559,7 +565,6 @@
       "readOnlyNotice": "Du kan granska gestalten men inte redigera den. Föreslå en rättelse nedan – ägaren beslutar.",
       "deleteFailed": "Gestalten kunde inte tas bort.",
       "actionFailed": "Åtgärden kunde inte slutföras.",
-      "backToList": "Tillbaka till registret",
       "deleteConfirm": "Ta bort den här gestalten? Detta går inte att ångra.",
       "eraBc": "{century}:e årh. f.Kr.",
       "eraAd": "{century}:e årh. e.Kr.",

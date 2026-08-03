@@ -116,6 +116,7 @@ const cellClass = 'px-3 py-3 align-middle'
 
 <template>
   <section>
+    <AdminBreadcrumb section-key="admin.sections.people.label" section-to="/admin/people" />
     <AdminSectionNav />
 
     <header class="mb-8">
