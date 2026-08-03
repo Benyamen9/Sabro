@@ -11,6 +11,9 @@ public sealed class IdentityModule : IModuleRegistration
 {
     public string ModuleName => "Identity";
 
+    /// <inheritdoc />
+    public string? ProductionDbContextName => "IdentityDbContext";
+
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<IdentityDbContext>((sp, options) =>

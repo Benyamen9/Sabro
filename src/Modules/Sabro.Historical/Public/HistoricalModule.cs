@@ -12,6 +12,9 @@ public sealed class HistoricalModule : IModuleRegistration
 {
     public string ModuleName => "Historical";
 
+    /// <inheritdoc />
+    public string? ProductionDbContextName => "HistoricalDbContext";
+
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<HistoricalDbContext>((sp, options) =>

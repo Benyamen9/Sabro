@@ -121,9 +121,13 @@ Sabro.{ModuleName}/
 ### Lexicon
 Manages the Syriac lexical database. Each entry includes the Syriac form (canonical, unvocalized), an optional vocalized form, the Semitic root, the SBL transliteration with accepted variants, grammatical category, morphology, and meanings (multilingual). Foundational data layer consumed by all other modules and by client applications — including Meltho, whose word pool is drawn entirely from here.
 
-**Required vs optional fields.** The unvocalized Syriac form is required. The vocalized form and SBL transliteration are optional enrichment — they do not gate publication. Meanings are required in all three languages (EN + FR + NL) for an entry to be publishable.
+**Required vs optional fields.** The unvocalized Syriac form is required. The vocalized form and SBL transliteration are optional enrichment — they do not gate publication. Meanings are required in **every configured content language** for an entry to be publishable — currently **five**: EN, FR, NL, DE, SV.
 
-**Entry lifecycle — `Draft` → `Published`.** An entry may be saved as `Draft` with partial data (Syriac form today, FR/NL glosses later) without loss. It becomes `Published` only when all three glosses are present. Only `Published` entries may be marked playable or served to clients. This is how the three-language rule holds without forcing every entry to be finished in one sitting — the pool can be populated incrementally.
+The list is not hardcoded: it is `SupportedLanguages:Codes` (`SupportedLanguagesOptions`, default `["en","fr","nl","de","sv"]`), and the publish check asks for all of them. Adding a language therefore raises the publication bar for every future entry, which is the intended behaviour — but note it does **not** unpublish anything: the gate is applied at publish time only.
+
+> **The 42 published entries are mixed** — some carry all five glosses, most only EN/FR/NL, from when the rule was three languages. They are grandfathered, not broken. Do not "fix" them by unpublishing; do not read the three-language ones as evidence that the rule is three.
+
+**Entry lifecycle — `Draft` → `Published`.** An entry may be saved as `Draft` with partial data (Syriac form today, the other glosses later) without loss. It becomes `Published` only when every configured language has a gloss. Only `Published` entries may be marked playable or served to clients. This is how the language rule holds without forcing every entry to be finished in one sitting — the pool can be populated incrementally.
 
 **Playable flag (`PlayableInMeltho`).** A manual editorial boolean set by the Owner. The Lexicon is broader than the puzzle pool — the Owner decides which published words make good puzzles. This is editorial curation, not an automatic property.
 
@@ -202,8 +206,8 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 **Write path.** All writes go through the same Application layer and FluentValidation as the rest of Sabro, via admin-scope API endpoints. No parallel, unvalidated write path.
 
 **v1 scope (to launch Meltho): Lexicon word CRUD only.**
-- Create / edit / delete a Lexicon entry: unvocalized + optional vocalized Syriac (NFC on input), optional SBL transliteration, EN + FR + NL glosses.
-- `Draft` ↔ `Published` lifecycle (publish gated on all three glosses).
+- Create / edit / delete a Lexicon entry: unvocalized + optional vocalized Syriac (NFC on input), optional SBL transliteration, a gloss per configured language (EN + FR + NL + DE + SV).
+- `Draft` ↔ `Published` lifecycle (publish gated on a gloss in every configured language).
 - `PlayableInMeltho` toggle (only on `Published` entries).
 - Computed playable length shown read-only.
 
@@ -299,10 +303,10 @@ Provisional standard: **SBL** (Society of Biblical Literature). Stored alongside
 ## Internationalization (i18n)
 
 ### UI
-All interface strings in `@nuxtjs/i18n` from day one. Three locale files prepared (`en.json`, `fr.json`, `nl.json`). EN filled at MVP; FR and NL translated later. No hardcoded UI strings anywhere — everything goes through `$t('key')`.
+All interface strings in `@nuxtjs/i18n` from day one. **Five** locale files (`en.json`, `fr.json`, `nl.json`, `de.json`, `sv.json`) — a new string must be added to all five or the build ships a missing key. No hardcoded UI strings anywhere — everything goes through `$t('key')`.
 
 ### Content
-Schema is multilingual from day one (`language` column on `Translation` and `LexiconMeaning` tables). Lexicon meanings require EN + FR + NL to publish (see Lexicon). For deferred translation content, only English exists at first, with a "coming soon" message for FR and NL. Adding new languages later requires no migration — just new content rows.
+Schema is multilingual from day one (`language` column on `Translation` and `LexiconMeaning` tables). Lexicon meanings require a gloss in every configured language to publish — currently EN + FR + NL + DE + SV (see Lexicon). For deferred translation content, only English exists at first, with a "coming soon" message for the others. Adding new languages later requires no migration — just new content rows.
 
 ---
 
@@ -549,7 +553,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 - Chapter-level approval cascades validation to all its verses unless individually overridden *(Reviews module)*
 - Suggested edits from reviewers create pending proposals — they never modify content directly *(Reviews module)*
 - Only the Owner accepts or rejects proposals; only the Owner edits the Lexicon and publishes entries
-- A Lexicon entry is publishable only with EN + FR + NL meanings; only published entries can be marked playable or served to clients
+- A Lexicon entry is publishable only with a meaning in every configured language (`SupportedLanguages:Codes`, currently five); only published entries can be marked playable or served to clients
 - **Client read/write rule.** Client applications (Meltho, future apps) are **read-only consumers of Sabro's content** — they never edit curated content and never connect to the database directly. They **may write their own play data** (game results) through controlled, authenticated API endpoints. All writes — content and play — go exclusively through Sabro's validated API.
 - Bibliography images are stored locally under `wwwroot/media/` — small volume, no S3 needed at this scale
 
@@ -564,7 +568,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 5. Clone the repo and open `Sabro.slnx` in Visual Studio
 6. Copy `appsettings.Development.example.json` to `appsettings.Development.json` and fill in connection strings, Logto config, Meilisearch URL, and `Meltho:AntiRepetitionWindowDays`
 7. Start auxiliary services: `docker-compose up -d` (Meilisearch + Seq + Logto)
-8. Run migrations for the active modules (Lexicon, Identity, Play), e.g. `dotnet ef database update --project src/Modules/Sabro.Lexicon` (repeat per module)
+8. Run migrations for the active modules — **Lexicon, Identity, Historical, Play, Reviews** — e.g. `dotnet ef database update --project src/Modules/Sabro.Lexicon --startup-project src/Sabro.API --context LexiconDbContext` (repeat per module). The authoritative list is `scripts/apply-migrations.sh`, which is what CD runs; a module missing from it works locally and fails in production. `ModuleMigrationCoverageTests` fails the build if that list and the modules disagree.
 9. Start the API: F5 in Visual Studio
 10. Start the frontend: `cd frontend && npm install && npm run dev`
 

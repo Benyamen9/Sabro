@@ -163,16 +163,9 @@ try
     builder.Services.Configure<SupportedLanguagesOptions>(
         builder.Configuration.GetSection(SupportedLanguagesOptions.SectionName));
 
-    var modules = new IModuleRegistration[]
-    {
-        new LexiconModule(),
-        new TranslationsModule(),
-        new ReviewsModule(),
-        new BiblicalModule(),
-        new HistoricalModule(),
-        new IdentityModule(),
-        new PlayModule(),
-    };
+    // Declared in SabroModules so the migration-coverage test reads the same list
+    // this does, rather than a copy that can quietly disagree with it.
+    var modules = SabroModules.All;
 
     foreach (var module in modules)
     {

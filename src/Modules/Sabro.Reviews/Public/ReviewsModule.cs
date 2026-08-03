@@ -12,6 +12,9 @@ public sealed class ReviewsModule : IModuleRegistration
 {
     public string ModuleName => "Reviews";
 
+    /// <inheritdoc />
+    public string? ProductionDbContextName => "ReviewsDbContext";
+
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ReviewsDbContext>((sp, options) =>
