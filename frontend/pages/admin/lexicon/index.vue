@@ -87,6 +87,10 @@ const hasActiveFilters = computed(() =>
   Boolean(search.value || status.value || grammaticalCategory.value || playableInMeltho.value),
 )
 
+// The count under the title: how many entries match what is being looked at,
+// which is the whole section when no filter is set.
+const total = computed(() => data.value?.total ?? 0)
+
 const totalPages = computed(() => {
   const total = data.value?.total ?? 0
   return Math.max(1, Math.ceil(total / pageSize.value))
@@ -169,24 +173,20 @@ function clearFilters() {
     <AdminBreadcrumb section-key="admin.sections.lexicon.label" section-to="/admin/lexicon" />
     <AdminSectionNav />
 
-    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p class="mb-2 font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
-          {{ t('nav.admin') }}
-        </p>
-        <h1 class="font-serif text-3xl font-semibold tracking-[-0.015em]">{{ t('admin.lexicon.title') }}</h1>
-        <p class="mt-2 font-sans text-sm text-[var(--color-text-muted)]">
-          {{ t('admin.lexicon.subtitle') }}
-        </p>
-      </div>
-      <NuxtLink
-        v-if="mayEdit && (viewState === 'ready' || viewState === 'empty' || viewState === 'noResults')"
-        to="/admin/lexicon/new"
-        class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
-      >
-        <span aria-hidden="true">+</span> {{ t('admin.lexicon.newEntry') }}
-      </NuxtLink>
-    </header>
+    <AdminPageHeader :title="t('admin.lexicon.title')" :subtitle="t('admin.lexicon.subtitle')">
+      <template v-if="viewState === 'ready' || viewState === 'noResults'" #stats>
+        <AdminStat :value="total" :label="t('admin.lexicon.statMatching', total)" />
+      </template>
+
+      <template v-if="mayEdit && (viewState === 'ready' || viewState === 'empty' || viewState === 'noResults')" #actions>
+        <NuxtLink
+          to="/admin/lexicon/new"
+          class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
+        >
+          <span aria-hidden="true">+</span> {{ t('admin.lexicon.newEntry') }}
+        </NuxtLink>
+      </template>
+    </AdminPageHeader>
 
     <StateMessage
       v-if="viewState === 'loading'"
@@ -318,11 +318,11 @@ function clearFilters() {
             <thead class="border-b border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
               <tr class="font-sans text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
                 <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.syriac') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.transliteration') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.category') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.length') }}</th>
+                <th class="hidden sm:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.transliteration') }}</th>
+                <th class="hidden md:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.category') }}</th>
+                <th class="hidden md:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.length') }}</th>
                 <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.status') }}</th>
-                <th class="px-4 py-3 font-medium">{{ t('admin.lexicon.columns.playable') }}</th>
+                <th class="hidden md:table-cell px-4 py-3 font-medium">{{ t('admin.lexicon.columns.playable') }}</th>
                 <th class="px-4 py-3" />
               </tr>
             </thead>
@@ -335,13 +335,13 @@ function clearFilters() {
                 <td class="px-4 py-3">
                   <SyriacText :text="entry.syriacUnvocalized" class="!text-xl" />
                 </td>
-                <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
+                <td class="hidden sm:table-cell px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ entry.sblTransliteration || '—' }}
                 </td>
-                <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
+                <td class="hidden md:table-cell px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ t(`admin.lexicon.category.${entry.grammaticalCategory}`) }}
                 </td>
-                <td class="px-4 py-3">
+                <td class="hidden md:table-cell px-4 py-3">
                   <span
                     class="inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 font-sans text-xs font-semibold"
                     :class="
@@ -361,7 +361,7 @@ function clearFilters() {
                     "
                   >{{ t(`admin.lexicon.status.${entry.status}`) }}</span>
                 </td>
-                <td class="px-4 py-3 font-sans text-sm">
+                <td class="hidden md:table-cell px-4 py-3 font-sans text-sm">
                   <span v-if="entry.playableInMeltho" :title="t('admin.lexicon.lifecycle.inPool')">✓</span>
                   <span v-else class="text-[var(--color-text-faint)]">—</span>
                 </td>
