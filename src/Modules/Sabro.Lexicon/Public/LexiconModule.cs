@@ -16,6 +16,9 @@ public sealed class LexiconModule : IModuleRegistration
 {
     public string ModuleName => "Lexicon";
 
+    /// <inheritdoc />
+    public string? ProductionDbContextName => "LexiconDbContext";
+
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<LexiconDbContext>((sp, options) =>

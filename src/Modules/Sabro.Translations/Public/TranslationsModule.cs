@@ -16,6 +16,10 @@ public sealed class TranslationsModule : IModuleRegistration
 {
     public string ModuleName => "Translations";
 
+    /// <inheritdoc />
+    /// <remarks>Deferred: no translation content ships yet, so its schema stays out of production.</remarks>
+    public string? ProductionDbContextName => null;
+
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<TranslationsDbContext>((sp, options) =>

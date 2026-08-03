@@ -14,6 +14,10 @@ public sealed class BiblicalModule : IModuleRegistration
 {
     public string ModuleName => "Biblical";
 
+    /// <inheritdoc />
+    /// <remarks>Deferred: no biblical passages ship yet, so its schema stays out of production.</remarks>
+    public string? ProductionDbContextName => null;
+
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<BiblicalDbContext>((sp, options) =>

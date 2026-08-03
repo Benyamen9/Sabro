@@ -15,6 +15,9 @@ public sealed class PlayModule : IModuleRegistration
 {
     public string ModuleName => "Play";
 
+    /// <inheritdoc />
+    public string? ProductionDbContextName => "PlayDbContext";
+
     public void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<PlayDbContext>((sp, options) =>
