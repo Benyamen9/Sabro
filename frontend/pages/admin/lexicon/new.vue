@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { FetchError } from 'ofetch'
 import type { CreateLexiconEntryRequest } from '~/types/api'
 
 // Editorial / deferred surface — keep out of search indexes.
@@ -31,14 +30,15 @@ async function onSubmit(payload: CreateLexiconEntryRequest) {
     await router.push(`/admin/lexicon/${entry.id}`)
   }
   catch (error) {
-    // Same as the edit page: the server names the fields it rejected, and the
-    // form needs those names to mark them.
-    const problem = (error as FetchError).data as { errors?: Record<string, string[]> } | undefined
-    const errors = problem?.errors
-    fieldErrors.value = errors && Object.keys(errors).length > 0 ? errors : null
-    errorMessage.value = fieldErrors.value
-      ? t('admin.lexicon.saveFailedFields')
-      : t('admin.lexicon.saveFailed')
+    // Same as the edit page: a refusal, named fields, or neither.
+    const failure = classifySaveFailure(error)
+    fieldErrors.value = failure.kind === 'fields' ? failure.fields : null
+    errorMessage.value = t(
+      failure.kind === 'forbidden'
+        ? 'admin.lexicon.saveForbidden'
+        : failure.kind === 'fields'
+          ? 'admin.lexicon.saveFailedFields'
+          : 'admin.lexicon.saveFailed')
   }
   finally {
     submitting.value = false

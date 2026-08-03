@@ -100,15 +100,17 @@ async function onSubmit(payload: CreateLexiconEntryRequest) {
     await refresh()
   }
   catch (error) {
-    // The server names the fields it rejected, in `ValidationProblemDetails.errors`.
-    // Throwing that away is what left "check the highlighted fields" pointing at
-    // nothing highlightable — the form needs the names to mark them.
-    const problem = (error as FetchError).data as { errors?: Record<string, string[]> } | undefined
-    const errors = problem?.errors
-    fieldErrors.value = errors && Object.keys(errors).length > 0 ? errors : null
-    errorMessage.value = fieldErrors.value
-      ? t('admin.lexicon.saveFailedFields')
-      : t('admin.lexicon.saveFailed')
+    // Three different situations, three different messages. A refusal has no
+    // field to fix, and the server names the fields it rejected — both were
+    // collapsed into one "check the highlighted fields" that fitted neither.
+    const failure = classifySaveFailure(error)
+    fieldErrors.value = failure.kind === 'fields' ? failure.fields : null
+    errorMessage.value = t(
+      failure.kind === 'forbidden'
+        ? 'admin.lexicon.saveForbidden'
+        : failure.kind === 'fields'
+          ? 'admin.lexicon.saveFailedFields'
+          : 'admin.lexicon.saveFailed')
   }
   finally {
     submitting.value = false
