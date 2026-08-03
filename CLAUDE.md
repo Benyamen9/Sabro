@@ -14,7 +14,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 
 1. Ship Sabro as the ecosystem hub + API: **Lexicon**, **Identity/Profile**, **Play**, the `/api/v1/` contract, Logto, and a lean hub frontend.
 2. Launch **Meltho** first, against that API.
-3. **Translations, Reviews, and Biblical modules are deferred** to after Meltho's launch — fully specified below, but not on the launch critical path. Meltho depends only on the Lexicon, never on translated content.
+3. **Translations and Biblical are deferred** to after Meltho's launch — fully specified below, but not on the launch critical path. Meltho depends only on the Lexicon, never on translated content. **Reviews is now partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
 **Launch critical path:**
 Sabro deployed (Lexicon + Identity/Profile + Play + API + Logto) → backoffice (word CRUD) → populate a small launch pool (~30–50 published, playable words is enough to launch; the full 500–600 is a growth target, not a launch gate) → Meltho frontend (game + login + raw profile stats).
@@ -85,7 +85,7 @@ Sabro/
 │       ├── Sabro.Identity/         ← User profiles, roles (Logto integration)
 │       ├── Sabro.Play/             ← Cross-game results + Meltho daily-puzzle state
 │       ├── Sabro.Translations/     ← Translations, versioning, multilingual content (DEFERRED)
-│       ├── Sabro.Reviews/          ← Peer review (3 levels), suggested edits workflow (DEFERRED)
+│       ├── Sabro.Reviews/          ← Field proposals (ACTIVE); peer review 3 levels (DEFERRED)
 │       └── Sabro.Biblical/         ← Biblical passages (Peshitta), cross-references (DEFERRED)
 ├── frontend/                       ← Nuxt application (public hub + admin backoffice)
 │   ├── pages/
@@ -153,9 +153,16 @@ Owns **ecosystem play data**: cross-game results and Meltho's daily-puzzle state
 Manages original English translations of biblical books (Peshitta) and patristic works (starting with Dionysios bar Ṣalibi's commentaries). All content is added progressively (chapter by chapter, verse by verse). Every change creates a new version — full history is preserved. Content is authored in Markdown (rendered via Markdig). The schema supports multilingual content from day one (EN at MVP, FR + NL planned).
 
 ### Reviews
-**Status: deferred (post-Meltho-launch). Spec retained, not built first.**
+**Status: PARTLY ACTIVE.** The **field-proposal workflow is live** — area reviewers propose a
+correction to one field of a Lexicon entry or historical figure, and the Owner accepts or rejects it.
+That means `ReviewsDbContext` is an **active schema in production** and must stay in
+`scripts/apply-migrations.sh`; it was missing there until 2026-08-03, which made every proposal in
+production fail on `relation "reviews.suggested_edits" does not exist` while working locally.
 
-Three-level peer review system:
+The three-level peer review below (verse / chapter / annotation) is still **deferred**, because it
+reviews translated prose and the Translations module is deferred.
+
+Three-level peer review system *(deferred)*:
 - **Verse-level** — individual verse translations
 - **Chapter-level** — chapter-wide validation with cascade logic to verses
 - **Annotation-level** — inline annotations and cross-references
@@ -576,7 +583,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 ## Deferred Decisions
 
 These decisions are intentionally deferred and will be made when relevant:
-- **Translations, Reviews, Biblical modules** — deferred to post-Meltho-launch. Specs retained above; not on the launch critical path.
+- **Translations and Biblical modules** — deferred to post-Meltho-launch. Specs retained above; not on the launch critical path. (Reviews is no longer on this list: its field-proposal half is live.)
 - **Liturgical calendar / manual daily-word pinning** — data model kept ready (a scheduled date → word override); no backoffice UI at launch. Algorithmic get-or-create selection with the anti-repetition window covers launch.
 - **Leaderboard, aggregate player stats, score sharing** — deferred; launch surface is profile + raw Meltho stats only.
 - **Rich cross-project dashboard** — deferred; the `GameResult` model is already multi-game, so this is additive UI, not a model change.
