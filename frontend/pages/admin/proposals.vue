@@ -128,6 +128,7 @@ const cellClass = 'px-3 py-3 align-top'
 
 <template>
   <section>
+    <AdminBreadcrumb section-key="admin.sections.proposals.label" section-to="/admin/proposals" />
     <AdminSectionNav />
 
     <header class="mb-8">

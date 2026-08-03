@@ -170,12 +170,12 @@ const actionButtonClass
 
 <template>
   <section class="mx-auto max-w-3xl">
+    <AdminBreadcrumb
+      section-key="admin.sections.figures.label"
+      section-to="/admin/historical-figures"
+      :current="figure?.name ?? null"
+    />
     <AdminSectionNav />
-
-    <NuxtLink
-      to="/admin/historical-figures"
-      class="font-sans text-sm text-[var(--color-text-muted)] no-underline hover:text-[var(--color-text)]"
-    >← {{ t('admin.historicalFigures.backToList') }}</NuxtLink>
 
     <StateMessage
       v-if="status === 'loading'"

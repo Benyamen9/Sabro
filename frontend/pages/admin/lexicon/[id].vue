@@ -212,12 +212,15 @@ const actionButtonClass
 
 <template>
   <section class="mx-auto max-w-3xl">
+    <!-- The trail names the word itself, so the tab and the page agree about
+         which entry you are in without opening the form. -->
+    <AdminBreadcrumb
+      section-key="admin.sections.lexicon.label"
+      section-to="/admin/lexicon"
+      :current="entry?.syriacUnvocalized ?? null"
+      current-is-syriac
+    />
     <AdminSectionNav />
-
-    <NuxtLink
-      to="/admin/lexicon"
-      class="font-sans text-sm text-[var(--color-text-muted)] no-underline hover:text-[var(--color-text)]"
-    >← {{ t('admin.lexicon.backToList') }}</NuxtLink>
 
     <StateMessage
       v-if="status === 'loading'"

@@ -399,7 +399,14 @@
       "title": "Beheer",
       "subtitle": "Alles wat u samenstelt, op één plek.",
       "noAreas": "Nog geen gebieden.",
-      "noAreasHint": "Uw account hoort bij het team, maar er is nog geen gebied aan toegekend. De eigenaar verleent toegang op de personenpagina."
+      "noAreasHint": "Uw account hoort bij het team, maar er is nog geen gebied aan toegekend. De eigenaar verleent toegang op de personenpagina.",
+      "pendingProposals": "niets wacht op uw beslissing | voorstel wacht op uw beslissing | voorstellen wachten op uw beslissing",
+      "reviewProposals": "Bekijk ze →",
+      "playableWords": "woorden speelbaar in Meltho, van {target}",
+      "poolProgress": "{count} van {target} speelbare woorden"
+    },
+    "breadcrumb": {
+      "label": "U bent hier"
     },
     "sections": {
       "navLabel": "Beheersecties",
@@ -437,7 +444,6 @@
       "readOnlyNotice": "U kunt deze vermelding bekijken maar niet bewerken. Stel hieronder een correctie voor; de eigenaar beslist.",
       "deleteFailed": "Kan de vermelding niet verwijderen.",
       "actionFailed": "De actie kon niet worden voltooid.",
-      "backToList": "Terug naar lexicon",
       "deleteConfirm": "Deze vermelding definitief verwijderen? Dit kan niet ongedaan worden gemaakt.",
       "columns": {
         "syriac": "Syrisch",
@@ -559,7 +565,6 @@
       "readOnlyNotice": "U kunt deze figuur bekijken maar niet bewerken. Stel hieronder een correctie voor; de eigenaar beslist.",
       "deleteFailed": "De figuur kon niet worden verwijderd.",
       "actionFailed": "Die actie kon niet worden uitgevoerd.",
-      "backToList": "Terug naar het register",
       "deleteConfirm": "Deze figuur verwijderen? Dit kan niet ongedaan worden gemaakt.",
       "eraBc": "{century}e eeuw v.Chr.",
       "eraAd": "{century}e eeuw n.Chr.",

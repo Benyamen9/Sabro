@@ -3,8 +3,13 @@
  * The switcher that sits above every backoffice section.
  *
  * The hub at `/admin` is the way in, but landing in a section should not be a
- * dead end — this keeps every other section one click away, and the hub itself
- * reachable, without spending a permanent sidebar on it.
+ * dead end — this keeps every other section one click away, without spending a
+ * permanent sidebar on it.
+ *
+ * It used to carry a "← Backoffice" link too, which put two back-links on every
+ * detail page pointing at different places. Going back up now belongs to
+ * `AdminBreadcrumb`; this owns sideways moves only, and the two devices no
+ * longer overlap.
  *
  * The current section is marked with `aria-current="page"` rather than colour
  * alone, so the distinction survives for a screen reader and in high contrast.
@@ -18,16 +23,6 @@ const { visibleSections, isCurrent } = useAdminSections()
     :aria-label="t('admin.sections.navLabel')"
     class="mb-8 flex flex-wrap items-center gap-x-1 gap-y-2 border-b border-[var(--color-border)] pb-3"
   >
-    <NuxtLink
-      to="/admin"
-      class="mr-1 inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 font-sans text-sm text-[var(--color-text-muted)] no-underline transition-colors hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-text)]"
-    >
-      <span aria-hidden="true">&larr;</span>
-      {{ t('admin.sections.hub') }}
-    </NuxtLink>
-
-    <span class="mr-1 h-4 w-px bg-[var(--color-border-strong)]" aria-hidden="true" />
-
     <NuxtLink
       v-for="section in visibleSections"
       :key="section.to"
