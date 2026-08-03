@@ -80,9 +80,14 @@ internal sealed class LexiconEntryProposalTargetSource : IProposalTargetSource
         string field,
         CancellationToken cancellationToken)
     {
+        // No Include for the meanings: they are an owned collection mapped to the
+        // private `meanings` field, and EF loads owned types with their owner
+        // automatically. Including them by the public `Meanings` property throws at
+        // query-compile time — the configuration `Ignore`s that property, so it is
+        // not a navigation EF can target. Every other read here loads them the same
+        // way, by not asking.
         var entry = await dbContext.Entries
             .AsNoTracking()
-            .Include(e => e.Meanings)
             .FirstOrDefaultAsync(e => e.Id == targetId, cancellationToken);
         if (entry is null)
         {
