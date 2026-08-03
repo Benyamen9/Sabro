@@ -119,6 +119,41 @@ const eraValid = computed(() => {
 
 const eraPreview = computed(() => (eraValid.value ? formatEra(eraNumber.value!, t) : null))
 
+/**
+ * A proposal that arrives after this form has mounted.
+ *
+ * The page fetches the figure and the proposal in parallel without awaiting the
+ * proposal, so reading `prefill` only in setup left the outcome to whichever won
+ * the race — and under real latency the figure wins, leaving the banner claiming
+ * a proposal was being applied while every field held its stored value.
+ *
+ * Only a non-null prefill is applied, and only the field it names, so nothing
+ * the editor has already typed elsewhere is lost.
+ */
+watch(() => props.prefill, (incoming) => {
+  if (!incoming) return
+  seedFromPrefill(incoming.field, incoming.value)
+})
+
+function seedFromPrefill(field: string, value: string) {
+  if (field.startsWith('description.')) {
+    descriptions[field.slice('description.'.length)] = value
+    return
+  }
+
+  switch (field) {
+    case 'name': name.value = value; break
+    case 'era': era.value = value; break
+    case 'category': category.value = value as HistoricalFigureCategory; break
+    case 'period': period.value = value as HistoricalPeriod; break
+    case 'role': role.value = value as HistoricalFigureRole; break
+    case 'region': region.value = value as HistoricalFigureRegion; break
+    case 'gender': gender.value = value as HistoricalFigureGender; break
+    case 'tradition': tradition.value = value as HistoricalFigureTradition | ''; break
+    default: break
+  }
+}
+
 const canSubmit = computed(() =>
   name.value.trim().length > 0 && eraValid.value && !props.submitting && !props.readonly)
 

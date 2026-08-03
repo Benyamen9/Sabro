@@ -66,6 +66,61 @@ describe('LexiconEntryForm', () => {
     expect(wrapper.text()).toContain('A rule this form does not edit.')
   })
 
+  it('opens holding a proposal it was given at mount', async () => {
+    const wrapper = await mountSuspended(LexiconEntryForm, {
+      props: {
+        entry: entry(),
+        submitLabel: 'Save',
+        prefill: { field: 'meaning.fr', value: 'rédiger' },
+      },
+    })
+
+    expect((wrapper.find('#meaning-fr').element as HTMLInputElement).value).toBe('rédiger')
+  })
+
+  it('takes a proposal that arrives after it has mounted', async () => {
+    // The bug this covers: the page fetches the entry and the proposal in
+    // parallel and does not await the proposal. When the entry won the race the
+    // banner said a proposal was being applied while every field still held the
+    // stored value — reading `prefill` only in setup made the result depend on
+    // which request came back first.
+    const wrapper = await mountSuspended(LexiconEntryForm, {
+      props: { entry: entry(), submitLabel: 'Save', prefill: null },
+    })
+
+    expect((wrapper.find('#meaning-fr').element as HTMLInputElement).value).toBe('')
+
+    await wrapper.setProps({ prefill: { field: 'meaning.fr', value: 'rédiger' } })
+
+    expect((wrapper.find('#meaning-fr').element as HTMLInputElement).value).toBe('rédiger')
+  })
+
+  it('leaves the other fields alone when a proposal lands', async () => {
+    const wrapper = await mountSuspended(LexiconEntryForm, {
+      props: { entry: entry(), submitLabel: 'Save', prefill: null },
+    })
+
+    const sbl = wrapper.find('#sbl').element as HTMLInputElement
+    sbl.value = 'typed by hand'
+    await sbl.dispatchEvent(new Event('input'))
+
+    await wrapper.setProps({ prefill: { field: 'meaning.fr', value: 'rédiger' } })
+
+    // Seeding one named field must never wipe what the editor has already typed
+    // into another.
+    expect((wrapper.find('#sbl').element as HTMLInputElement).value).toBe('typed by hand')
+  })
+
+  it('seeds a scalar field from a late proposal too', async () => {
+    const wrapper = await mountSuspended(LexiconEntryForm, {
+      props: { entry: entry(), submitLabel: 'Save', prefill: null },
+    })
+
+    await wrapper.setProps({ prefill: { field: 'syriacUnvocalized', value: 'ܟܬܒ' } })
+
+    expect((wrapper.find('#syriac-unvocalized').element as HTMLInputElement).value).toBe('ܟܬܒ')
+  })
+
   it('is fully editable and submittable by default', async () => {
     const wrapper = await mountSuspended(LexiconEntryForm, {
       props: { entry: entry(), submitLabel: 'Save' },

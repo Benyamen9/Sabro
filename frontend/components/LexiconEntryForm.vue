@@ -81,6 +81,40 @@ const meanings = reactive<Record<string, string>>(
   ) as Record<string, string>,
 )
 
+/**
+ * A proposal that arrives after this form has mounted.
+ *
+ * The page fetches the entry and the proposal in parallel and does not await the
+ * proposal, so whichever resolves first decides what the form was constructed
+ * with. Reading `prefill` only in setup meant that when the entry won — which it
+ * does under any real latency — the banner said a proposal was being applied
+ * while every field still held the stored value. Seeding on arrival makes the
+ * outcome the same whichever order they land in.
+ *
+ * Only a non-null prefill is applied, and only the field it names: this must
+ * never wipe something the editor has already typed into the other boxes.
+ */
+watch(() => props.prefill, (incoming) => {
+  if (!incoming) return
+  seedFromPrefill(incoming.field, incoming.value)
+})
+
+function seedFromPrefill(field: string, value: string) {
+  if (field.startsWith('meaning.')) {
+    meanings[field.slice('meaning.'.length)] = value
+    return
+  }
+
+  switch (field) {
+    case 'syriacUnvocalized': syriacUnvocalized.value = value; break
+    case 'syriacVocalized': syriacVocalized.value = value; break
+    case 'sblTransliteration': sblTransliteration.value = value; break
+    case 'morphology': morphology.value = value; break
+    case 'grammaticalCategory': grammaticalCategory.value = value as GrammaticalCategory; break
+    default: break
+  }
+}
+
 // Live preview of the playable length: count Unicode letters in the
 // unvocalized form, excluding combining marks (vowel points, seyame). This
 // mirrors the server-side computation; the authoritative value is returned
