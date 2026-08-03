@@ -127,7 +127,7 @@ services:
     # database has not applied, and Logto refuses to boot ("Found undeployed
     # database alterations") — a restart on :latest would silently crash-loop.
     # Bump deliberately: raise this tag, then run `npm run alteration deploy`.
-    image: svhd/logto:1.41.0
+    image: svhd/logto:1.42.0
     container_name: sabro-logto
     restart: unless-stopped
     depends_on:
