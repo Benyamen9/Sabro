@@ -433,6 +433,7 @@
     "lexicon": {
       "title": "Back-office du lexique",
       "subtitle": "Gérez la base lexicale syriaque et le vivier de mots de Meltho.",
+      "statMatching": "entrées | entrée | entrées",
       "newEntry": "Nouvelle entrée",
       "empty": "Aucune entrée de lexique pour le moment. Créez la première.",
       "loadFailed": "Impossible de charger les entrées du lexique.",
@@ -554,6 +555,7 @@
     "historicalFigures": {
       "title": "Figures historiques",
       "subtitle": "Le répertoire de Shmo : figures bibliques et patristiques syriaques que les joueurs devinent par leurs attributs.",
+      "statMatching": "figures | figure | figures",
       "newFigure": "Nouvelle figure",
       "empty": "Aucune figure pour l’instant. Ajoutez la première pour commencer le répertoire.",
       "loadFailed": "Le répertoire n’a pas pu être chargé.",
@@ -719,6 +721,9 @@
     "people": {
       "title": "Personnes",
       "subtitle": "Qui peut modifier quoi. Vous seul pouvez changer un rôle.",
+      "statPeople": "personnes | personne | personnes",
+      "statOwners": "propriétaires | propriétaire | propriétaires",
+      "statGranted": "avec accès | avec accès | avec accès",
       "person": "Personne",
       "mayEdit": "Peut modifier",
       "since": "Inscrit le",
@@ -772,6 +777,8 @@
       "acceptedDespiteChange": "Acceptée bien que le champ ait changé.",
       "applyOnEntry": "Appliquer sur l’entrée →",
       "acceptOrApplyHint": "Accepter et appliquer écrit la valeur dans l’entrée. Accepter seul enregistre votre décision sans modifier l’entrée — ouvrez-la pour appliquer le changement vous-même.",
+      "statWaiting": "en attente de vous | en attente de vous | en attente de vous",
+      "statDecided": "décidées | décidée | décidées",
       "decisionFailed": "Cette décision n’a pas pu être enregistrée.",
       "loadFailed": "Les propositions n’ont pas pu être chargées.",
       "ownerRequired": "Accès propriétaire requis",

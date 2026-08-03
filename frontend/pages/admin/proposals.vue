@@ -131,15 +131,17 @@ const cellClass = 'px-3 py-3 align-top'
     <AdminBreadcrumb section-key="admin.sections.proposals.label" section-to="/admin/proposals" />
     <AdminSectionNav />
 
-    <header class="mb-8">
-      <p class="mb-2 font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
-        {{ t('nav.admin') }}
-      </p>
-      <h1 class="font-serif text-3xl font-semibold tracking-[-0.015em]">{{ t('admin.proposals.title') }}</h1>
-      <p class="mt-2 max-w-prose font-sans text-sm text-[var(--color-text-muted)]">
-        {{ t('admin.proposals.subtitle') }}
-      </p>
-    </header>
+    <AdminPageHeader :title="t('admin.proposals.title')" :subtitle="t('admin.proposals.subtitle')">
+      <template v-if="viewState === 'ready'" #stats>
+        <AdminStat
+          :value="proposals.length"
+          :label="showDecided
+            ? t('admin.proposals.statDecided', proposals.length)
+            : t('admin.proposals.statWaiting', proposals.length)"
+          :tone="!showDecided && proposals.length > 0 ? 'waiting' : 'plain'"
+        />
+      </template>
+    </AdminPageHeader>
 
     <StateMessage
       v-if="viewState === 'loading'"

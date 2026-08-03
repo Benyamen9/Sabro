@@ -44,6 +44,13 @@ const savingId = ref<string | null>(null)
 // Nobody is Owner yet — the state a fresh installation starts in. The server
 // lets an admin appoint the first Owner, including themselves, so the page must
 // not disable the only row that can end it.
+const ownerCount = computed(() => people.value.filter(p => p.role === 'Owner').length)
+
+// Holding an area is what actually opens the backoffice, so it is the number
+// worth showing beside the head count — not how many rows exist.
+const grantedCount = computed(() =>
+  people.value.filter(p => p.role === 'Owner' || (p.areas?.length ?? 0) > 0).length)
+
 const needsFirstOwner = computed(() => people.value.length > 0 && !people.value.some(p => p.role === 'Owner'))
 
 /** Your own row is locked once an Owner exists; during bootstrap it is the way out. */
@@ -119,15 +126,13 @@ const cellClass = 'px-3 py-3 align-middle'
     <AdminBreadcrumb section-key="admin.sections.people.label" section-to="/admin/people" />
     <AdminSectionNav />
 
-    <header class="mb-8">
-      <p class="mb-2 font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
-        {{ t('nav.admin') }}
-      </p>
-      <h1 class="font-serif text-3xl font-semibold tracking-[-0.015em]">{{ t('admin.people.title') }}</h1>
-      <p class="mt-2 max-w-prose font-sans text-sm text-[var(--color-text-muted)]">
-        {{ t('admin.people.subtitle') }}
-      </p>
-    </header>
+    <AdminPageHeader :title="t('admin.people.title')" :subtitle="t('admin.people.subtitle')">
+      <template v-if="viewState === 'ready' && people.length > 0" #stats>
+        <AdminStat :value="people.length" :label="t('admin.people.statPeople', people.length)" />
+        <AdminStat :value="ownerCount" :label="t('admin.people.statOwners', ownerCount)" />
+        <AdminStat :value="grantedCount" :label="t('admin.people.statGranted', grantedCount)" />
+      </template>
+    </AdminPageHeader>
 
     <StateMessage
       v-if="viewState === 'loading'"

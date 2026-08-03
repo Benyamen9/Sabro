@@ -86,6 +86,10 @@ const hasActiveFilters = computed(() =>
   Boolean(search.value || status.value || category.value || period.value || role.value || region.value || playableInShmo.value),
 )
 
+// The count under the title: how many entries match what is being looked at,
+// which is the whole section when no filter is set.
+const total = computed(() => data.value?.total ?? 0)
+
 const totalPages = computed(() => {
   const total = data.value?.total ?? 0
   return Math.max(1, Math.ceil(total / pageSize.value))
@@ -171,24 +175,20 @@ const selectClass
     <AdminBreadcrumb section-key="admin.sections.figures.label" section-to="/admin/historical-figures" />
     <AdminSectionNav />
 
-    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p class="mb-2 font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
-          {{ t('nav.admin') }}
-        </p>
-        <h1 class="font-serif text-3xl font-semibold tracking-[-0.015em]">{{ t('admin.historicalFigures.title') }}</h1>
-        <p class="mt-2 font-sans text-sm text-[var(--color-text-muted)]">
-          {{ t('admin.historicalFigures.subtitle') }}
-        </p>
-      </div>
-      <NuxtLink
-        v-if="mayEdit && (viewState === 'ready' || viewState === 'empty' || viewState === 'noResults')"
-        to="/admin/historical-figures/new"
-        class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
-      >
-        <span aria-hidden="true">+</span> {{ t('admin.historicalFigures.newFigure') }}
-      </NuxtLink>
-    </header>
+    <AdminPageHeader :title="t('admin.historicalFigures.title')" :subtitle="t('admin.historicalFigures.subtitle')">
+      <template v-if="viewState === 'ready' || viewState === 'noResults'" #stats>
+        <AdminStat :value="total" :label="t('admin.historicalFigures.statMatching', total)" />
+      </template>
+
+      <template v-if="mayEdit && (viewState === 'ready' || viewState === 'empty' || viewState === 'noResults')" #actions>
+        <NuxtLink
+          to="/admin/historical-figures/new"
+          class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
+        >
+          <span aria-hidden="true">+</span> {{ t('admin.historicalFigures.newFigure') }}
+        </NuxtLink>
+      </template>
+    </AdminPageHeader>
 
     <StateMessage
       v-if="viewState === 'loading'"

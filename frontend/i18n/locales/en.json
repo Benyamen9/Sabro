@@ -433,6 +433,7 @@
     "lexicon": {
       "title": "Lexicon backoffice",
       "subtitle": "Manage the Syriac lexical database and the Meltho word pool.",
+      "statMatching": "entries | entry | entries",
       "newEntry": "New entry",
       "empty": "No lexicon entries yet. Create the first one.",
       "loadFailed": "Could not load lexicon entries.",
@@ -554,6 +555,7 @@
     "historicalFigures": {
       "title": "Historical figures",
       "subtitle": "The Shmo roster: biblical and Syriac patristic figures players guess by their attributes.",
+      "statMatching": "figures | figure | figures",
       "newFigure": "New figure",
       "empty": "No figures yet. Add the first one to start the roster.",
       "loadFailed": "The roster could not be loaded.",
@@ -719,6 +721,9 @@
     "people": {
       "title": "People",
       "subtitle": "Who may edit what. Only you can change a role.",
+      "statPeople": "people | person | people",
+      "statOwners": "owners | owner | owners",
+      "statGranted": "with access | with access | with access",
       "person": "Person",
       "mayEdit": "May edit",
       "since": "Signed up",
@@ -772,6 +777,8 @@
       "acceptedDespiteChange": "Accepted although the field had changed.",
       "applyOnEntry": "Apply on the entry →",
       "acceptOrApplyHint": "Accept and apply writes the value onto the entry. Accept on its own records your decision and leaves the entry unchanged — open it to apply the change yourself.",
+      "statWaiting": "waiting on you | waiting on you | waiting on you",
+      "statDecided": "decided | decided | decided",
       "decisionFailed": "That decision could not be saved.",
       "loadFailed": "The proposals could not be loaded.",
       "ownerRequired": "Owner access required",

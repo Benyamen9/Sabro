@@ -433,6 +433,7 @@
     "lexicon": {
       "title": "Lexicon-backoffice",
       "subtitle": "Beheer de Syrische lexicale database en de Meltho-woordenpool.",
+      "statMatching": "vermeldingen | vermelding | vermeldingen",
       "newEntry": "Nieuwe vermelding",
       "empty": "Nog geen lexiconvermeldingen. Maak de eerste aan.",
       "loadFailed": "Kan de lexiconvermeldingen niet laden.",
@@ -554,6 +555,7 @@
     "historicalFigures": {
       "title": "Historische figuren",
       "subtitle": "Het Shmo-register: Bijbelse en Syrisch-patristische figuren die spelers raden aan hun kenmerken.",
+      "statMatching": "figuren | figuur | figuren",
       "newFigure": "Nieuwe figuur",
       "empty": "Nog geen figuren. Voeg de eerste toe om het register te beginnen.",
       "loadFailed": "Het register kon niet worden geladen.",
@@ -719,6 +721,9 @@
     "people": {
       "title": "Personen",
       "subtitle": "Wie wat mag bewerken. Alleen u kunt een rol wijzigen.",
+      "statPeople": "personen | persoon | personen",
+      "statOwners": "eigenaren | eigenaar | eigenaren",
+      "statGranted": "met toegang | met toegang | met toegang",
       "person": "Persoon",
       "mayEdit": "Mag bewerken",
       "since": "Aangemeld op",
@@ -772,6 +777,8 @@
       "acceptedDespiteChange": "Geaccepteerd hoewel het veld gewijzigd was.",
       "applyOnEntry": "Toepassen op het item →",
       "acceptOrApplyHint": "Accepteren en toepassen schrijft de waarde in het item. Alleen accepteren legt uw beslissing vast en laat het item ongewijzigd — open het om de wijziging zelf toe te passen.",
+      "statWaiting": "wacht op u | wacht op u | wachten op u",
+      "statDecided": "beslist | beslist | beslist",
       "decisionFailed": "Die beslissing kon niet worden opgeslagen.",
       "loadFailed": "De voorstellen konden niet worden geladen.",
       "ownerRequired": "Eigenaarstoegang vereist",

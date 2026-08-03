@@ -433,6 +433,7 @@
     "lexicon": {
       "title": "Lexikon-Backoffice",
       "subtitle": "Verwalten Sie die syrische Lexikondatenbank und den Meltho-Wortpool.",
+      "statMatching": "Einträge | Eintrag | Einträge",
       "newEntry": "Neuer Eintrag",
       "empty": "Noch keine Lexikoneinträge. Erstellen Sie den ersten.",
       "loadFailed": "Lexikoneinträge konnten nicht geladen werden.",
@@ -554,6 +555,7 @@
     "historicalFigures": {
       "title": "Historische Gestalten",
       "subtitle": "Das Shmo-Verzeichnis: biblische und syrisch-patristische Gestalten, die Spieler anhand ihrer Merkmale erraten.",
+      "statMatching": "Gestalten | Gestalt | Gestalten",
       "newFigure": "Neue Gestalt",
       "empty": "Noch keine Gestalten. Fügen Sie die erste hinzu, um das Verzeichnis zu beginnen.",
       "loadFailed": "Das Verzeichnis konnte nicht geladen werden.",
@@ -719,6 +721,9 @@
     "people": {
       "title": "Personen",
       "subtitle": "Wer was bearbeiten darf. Nur Sie können eine Rolle ändern.",
+      "statPeople": "Personen | Person | Personen",
+      "statOwners": "Eigentümer | Eigentümer | Eigentümer",
+      "statGranted": "mit Zugang | mit Zugang | mit Zugang",
       "person": "Person",
       "mayEdit": "Darf bearbeiten",
       "since": "Angemeldet am",
@@ -772,6 +777,8 @@
       "acceptedDespiteChange": "Angenommen, obwohl sich das Feld geändert hatte.",
       "applyOnEntry": "Am Eintrag anwenden →",
       "acceptOrApplyHint": "Annehmen und anwenden schreibt den Wert in den Eintrag. Nur annehmen hält Ihre Entscheidung fest und lässt den Eintrag unverändert — öffnen Sie ihn, um die Änderung selbst anzuwenden.",
+      "statWaiting": "wartet auf Sie | wartet auf Sie | warten auf Sie",
+      "statDecided": "entschieden | entschieden | entschieden",
       "decisionFailed": "Diese Entscheidung konnte nicht gespeichert werden.",
       "loadFailed": "Die Vorschläge konnten nicht geladen werden.",
       "ownerRequired": "Eigentümerzugang erforderlich",

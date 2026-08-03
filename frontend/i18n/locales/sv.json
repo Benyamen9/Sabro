@@ -433,6 +433,7 @@
     "lexicon": {
       "title": "Lexikon-backoffice",
       "subtitle": "Hantera den syriska lexikondatabasen och Meltho-ordpoolen.",
+      "statMatching": "poster | post | poster",
       "newEntry": "Ny post",
       "empty": "Inga lexikonposter än. Skapa den första.",
       "loadFailed": "Det gick inte att läsa in lexikonposterna.",
@@ -554,6 +555,7 @@
     "historicalFigures": {
       "title": "Historiska gestalter",
       "subtitle": "Shmo-registret: bibliska och syrisk-patristiska gestalter som spelarna gissar utifrån deras egenskaper.",
+      "statMatching": "gestalter | gestalt | gestalter",
       "newFigure": "Ny gestalt",
       "empty": "Inga gestalter ännu. Lägg till den första för att börja registret.",
       "loadFailed": "Registret kunde inte laddas.",
@@ -719,6 +721,9 @@
     "people": {
       "title": "Personer",
       "subtitle": "Vem som får redigera vad. Endast du kan ändra en roll.",
+      "statPeople": "personer | person | personer",
+      "statOwners": "ägare | ägare | ägare",
+      "statGranted": "med åtkomst | med åtkomst | med åtkomst",
       "person": "Person",
       "mayEdit": "Får redigera",
       "since": "Registrerad",
@@ -772,6 +777,8 @@
       "acceptedDespiteChange": "Godkänt trots att fältet hade ändrats.",
       "applyOnEntry": "Tillämpa på posten →",
       "acceptOrApplyHint": "Godkänn och tillämpa skriver in värdet i posten. Enbart godkänna registrerar ditt beslut och lämnar posten oförändrad — öppna den för att tillämpa ändringen själv.",
+      "statWaiting": "väntar på dig | väntar på dig | väntar på dig",
+      "statDecided": "avgjorda | avgjord | avgjorda",
       "decisionFailed": "Beslutet kunde inte sparas.",
       "loadFailed": "Förslagen kunde inte laddas.",
       "ownerRequired": "Ägaråtkomst krävs",
