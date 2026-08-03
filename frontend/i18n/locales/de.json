@@ -397,7 +397,9 @@
   "admin": {
     "hub": {
       "title": "Redaktion",
-      "subtitle": "Alles, was Sie pflegen, an einem Ort."
+      "subtitle": "Alles, was Sie pflegen, an einem Ort.",
+      "noAreas": "Noch keine Bereiche.",
+      "noAreasHint": "Ihr Konto gehört zum Team, aber es wurde ihm noch kein Bereich zugewiesen. Der Eigentümer vergibt den Zugang auf der Personenseite."
     },
     "sections": {
       "navLabel": "Redaktionsbereiche",
@@ -429,7 +431,9 @@
       "loadFailed": "Lexikoneinträge konnten nicht geladen werden.",
       "loadEntryFailed": "Dieser Eintrag konnte nicht geladen werden.",
       "notFound": "Eintrag nicht gefunden.",
-      "saveFailed": "Der Eintrag konnte nicht gespeichert werden. Überprüfen Sie die markierten Felder.",
+      "saveFailed": "Der Eintrag konnte nicht gespeichert werden.",
+      "saveFailedFields": "Der Eintrag konnte nicht gespeichert werden. Überprüfen Sie die markierten Felder.",
+      "readOnlyNotice": "Sie können diesen Eintrag ansehen, aber nicht bearbeiten. Schlagen Sie unten eine Korrektur vor; der Eigentümer entscheidet.",
       "deleteFailed": "Der Eintrag konnte nicht gelöscht werden.",
       "actionFailed": "Die Aktion konnte nicht abgeschlossen werden.",
       "backToList": "Zurück zum Lexikon",
@@ -549,6 +553,8 @@
       "loadFigureFailed": "Diese Gestalt konnte nicht geladen werden.",
       "notFound": "Diese Gestalt existiert nicht.",
       "saveFailed": "Die Gestalt konnte nicht gespeichert werden.",
+      "saveFailedFields": "Die Gestalt konnte nicht gespeichert werden. Überprüfen Sie die markierten Felder.",
+      "readOnlyNotice": "Sie können diese Gestalt ansehen, aber nicht bearbeiten. Schlagen Sie unten eine Korrektur vor; der Eigentümer entscheidet.",
       "deleteFailed": "Die Gestalt konnte nicht gelöscht werden.",
       "actionFailed": "Diese Aktion konnte nicht ausgeführt werden.",
       "backToList": "Zurück zum Verzeichnis",

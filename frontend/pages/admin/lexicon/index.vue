@@ -7,12 +7,19 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
+const { canEdit, canViewBackoffice, refresh: refreshAccess } = useMyAccess()
 const { list } = useLexiconAdmin()
 
 const route = useRoute()
 const router = useRouter()
 
 await refreshAdmin()
+await refreshAccess()
+
+// A reviewer browses the list but creates nothing. Offering only — the API
+// refuses independently.
+const mayEdit = computed(() => canEdit('Lexicon'))
+const mayView = computed(() => canViewBackoffice('Lexicon'))
 
 const categories: GrammaticalCategory[] = [
   'Noun',
@@ -86,7 +93,8 @@ const totalPages = computed(() => {
 })
 
 const viewState = computed<'loading' | 'unauthorized' | 'failed' | 'empty' | 'noResults' | 'ready'>(() => {
-  if (isAdmin.value === false) return 'unauthorized'
+  // Both locks: the admin scope says staff, the Lexicon grant says this area.
+  if (isAdmin.value === false || !mayView.value) return 'unauthorized'
   if (isAdmin.value === null || pending.value) return 'loading'
   if (error.value) {
     const fetchError = error.value as FetchError
@@ -171,7 +179,7 @@ function clearFilters() {
         </p>
       </div>
       <NuxtLink
-        v-if="viewState === 'ready' || viewState === 'empty' || viewState === 'noResults'"
+        v-if="mayEdit && (viewState === 'ready' || viewState === 'empty' || viewState === 'noResults')"
         to="/admin/lexicon/new"
         class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
       >

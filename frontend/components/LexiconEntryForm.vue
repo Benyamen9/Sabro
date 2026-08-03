@@ -17,8 +17,20 @@ const props = withDefaults(
      * the human still commits it.
      */
     prefill?: { field: string, value: string } | null
+    /**
+     * Read-only: the fields are shown but cannot be changed and there is nothing
+     * to submit. A reviewer has to see the entry to have an opinion about it, and
+     * proposes their correction through the panel below rather than saving here.
+     */
+    readonly?: boolean
+    /**
+     * Per-field validation errors from the server, keyed by camelCase property
+     * path exactly as `ValidationProblemDetails` returns them:
+     * `syriacUnvocalized`, `transliterationVariants[1]`, `meanings[0].text`.
+     */
+    fieldErrors?: Record<string, string[]> | null
   }>(),
-  { entry: null, submitting: false, prefill: null },
+  { entry: null, submitting: false, prefill: null, readonly: false, fieldErrors: null },
 )
 
 const emit = defineEmits<{
@@ -78,7 +90,57 @@ const playableLength = computed(() =>
 )
 const lengthInRange = computed(() => playableLength.value >= 2 && playableLength.value <= 8)
 
-const canSubmit = computed(() => syriacUnvocalized.value.trim().length > 0 && !props.submitting)
+const canSubmit = computed(() =>
+  syriacUnvocalized.value.trim().length > 0 && !props.submitting && !props.readonly)
+
+/**
+ * The languages sent in the last submission, in order. The server names a bad
+ * meaning by its position in the payload (`meanings[0].text`), and the payload
+ * carries only the languages that had text — so without this, position 0 would
+ * be blamed on English whatever was actually sent.
+ */
+const submittedMeaningLanguages = ref<string[]>([])
+
+/** Server keys are property paths, so an indexed or nested key belongs to its root field. */
+function matchesField(key: string, field: string) {
+  return key === field || key.startsWith(`${field}[`) || key.startsWith(`${field}.`)
+}
+
+function errorsFor(field: string): string[] {
+  return Object.entries(props.fieldErrors ?? {})
+    .filter(([key]) => matchesField(key, field))
+    .flatMap(([, messages]) => messages)
+}
+
+function meaningErrorsFor(language: string): string[] {
+  const index = submittedMeaningLanguages.value.indexOf(language)
+  if (index === -1) return []
+  return Object.entries(props.fieldErrors ?? {})
+    .filter(([key]) => key.startsWith(`meanings[${index}]`))
+    .flatMap(([, messages]) => messages)
+}
+
+const scalarFields = [
+  'syriacUnvocalized',
+  'syriacVocalized',
+  'sblTransliteration',
+  'transliterationVariants',
+  'grammaticalCategory',
+  'morphology',
+] as const
+
+/**
+ * Anything the server rejected that no field on this form owns — a rule on a
+ * property the backoffice does not edit, or a name that has since changed.
+ * Shown rather than dropped: an invisible error is how "check the highlighted
+ * fields" ends up pointing at nothing.
+ */
+const unmappedErrors = computed(() =>
+  Object.entries(props.fieldErrors ?? {})
+    .filter(([key]) =>
+      !scalarFields.some(field => matchesField(key, field))
+      && !(key.startsWith('meanings[') && submittedMeaningLanguages.value.length > 0))
+    .flatMap(([, messages]) => messages))
 
 function toNullable(value: string): string | null {
   const trimmed = value.trim()
@@ -97,6 +159,8 @@ function onSubmit() {
     .map(language => ({ language, text: (meanings[language] ?? '').trim() }))
     .filter(m => m.text.length > 0)
 
+  submittedMeaningLanguages.value = meaningPayload.map(m => m.language)
+
   emit('submit', {
     syriacUnvocalized: syriacUnvocalized.value.normalize('NFC').trim(),
     syriacVocalized: toNullable(syriacVocalized.value.normalize('NFC')),
@@ -110,13 +174,30 @@ function onSubmit() {
 }
 
 const fieldClass
-  = 'w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-2 font-sans text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none'
+  = 'w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-2 font-sans text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none read-only:bg-[var(--color-bg-subtle)] read-only:text-[var(--color-text-muted)] disabled:bg-[var(--color-bg-subtle)] disabled:text-[var(--color-text-muted)]'
 const labelClass = 'block font-sans text-sm font-medium text-[var(--color-text)]'
 const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
+
+// The highlight itself. The house accent rather than a red, because the palette
+// has no danger colour and every other error surface here already uses the
+// accent — inventing one belongs to a design pass, not to this fix. The accent
+// is also the focus colour, so the field carries a tinted background too, and
+// the state is doubled by `aria-invalid` and the message below it: it survives
+// for a screen reader and for anyone who cannot separate the two borders.
+const errorFieldClass
+  = 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] focus:border-[var(--color-accent)]'
+const errorTextClass = 'mt-1 font-sans text-xs font-medium text-[var(--color-accent)]'
 </script>
 
 <template>
   <form class="flex flex-col gap-6" @submit.prevent="onSubmit">
+    <!-- Rejected for a reason no field on this form owns. Never silently dropped. -->
+    <p
+      v-if="unmappedErrors.length"
+      role="alert"
+      class="rounded-md border border-[color-mix(in_oklab,var(--color-accent)_30%,transparent)] bg-[var(--color-accent-faint)] px-4 py-3 font-sans text-sm text-[var(--color-accent)]"
+    >{{ unmappedErrors.join(' ') }}</p>
+
     <!-- Syriac forms -->
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
@@ -128,9 +209,18 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
           v-model="syriacUnvocalized"
           dir="rtl"
           required
-          :class="[fieldClass, 'mt-1 text-right text-lg']"
+          :readonly="readonly"
+          :aria-invalid="errorsFor('syriacUnvocalized').length > 0"
+          :aria-describedby="errorsFor('syriacUnvocalized').length ? 'syriac-unvocalized-error' : undefined"
+          :class="[fieldClass, 'mt-1 text-right text-lg', errorsFor('syriacUnvocalized').length ? errorFieldClass : '']"
           style="font-family: 'Noto Sans Syriac', serif;"
         >
+        <p
+          v-if="errorsFor('syriacUnvocalized').length"
+          id="syriac-unvocalized-error"
+          role="alert"
+          :class="errorTextClass"
+        >{{ errorsFor('syriacUnvocalized').join(' ') }}</p>
         <p :class="hintClass">{{ t('admin.lexicon.form.syriacUnvocalizedHint') }}</p>
       </div>
       <div>
@@ -141,9 +231,18 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
           id="syriac-vocalized"
           v-model="syriacVocalized"
           dir="rtl"
-          :class="[fieldClass, 'mt-1 text-right text-lg']"
+          :readonly="readonly"
+          :aria-invalid="errorsFor('syriacVocalized').length > 0"
+          :aria-describedby="errorsFor('syriacVocalized').length ? 'syriac-vocalized-error' : undefined"
+          :class="[fieldClass, 'mt-1 text-right text-lg', errorsFor('syriacVocalized').length ? errorFieldClass : '']"
           style="font-family: 'Noto Sans Syriac', serif;"
         >
+        <p
+          v-if="errorsFor('syriacVocalized').length"
+          id="syriac-vocalized-error"
+          role="alert"
+          :class="errorTextClass"
+        >{{ errorsFor('syriacVocalized').join(' ') }}</p>
         <p :class="hintClass">{{ t('admin.lexicon.form.syriacVocalizedHint') }}</p>
       </div>
     </div>
@@ -172,12 +271,38 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
         <label for="sbl" :class="labelClass">{{ t('admin.lexicon.form.sblTransliteration') }}</label>
-        <input id="sbl" v-model="sblTransliteration" :class="[fieldClass, 'mt-1']">
+        <input
+          id="sbl"
+          v-model="sblTransliteration"
+          :readonly="readonly"
+          :aria-invalid="errorsFor('sblTransliteration').length > 0"
+          :aria-describedby="errorsFor('sblTransliteration').length ? 'sbl-error' : undefined"
+          :class="[fieldClass, 'mt-1', errorsFor('sblTransliteration').length ? errorFieldClass : '']"
+        >
+        <p
+          v-if="errorsFor('sblTransliteration').length"
+          id="sbl-error"
+          role="alert"
+          :class="errorTextClass"
+        >{{ errorsFor('sblTransliteration').join(' ') }}</p>
         <p :class="hintClass">{{ t('admin.lexicon.form.sblTransliterationHint') }}</p>
       </div>
       <div>
         <label for="variants" :class="labelClass">{{ t('admin.lexicon.form.transliterationVariants') }}</label>
-        <input id="variants" v-model="transliterationVariants" :class="[fieldClass, 'mt-1']">
+        <input
+          id="variants"
+          v-model="transliterationVariants"
+          :readonly="readonly"
+          :aria-invalid="errorsFor('transliterationVariants').length > 0"
+          :aria-describedby="errorsFor('transliterationVariants').length ? 'variants-error' : undefined"
+          :class="[fieldClass, 'mt-1', errorsFor('transliterationVariants').length ? errorFieldClass : '']"
+        >
+        <p
+          v-if="errorsFor('transliterationVariants').length"
+          id="variants-error"
+          role="alert"
+          :class="errorTextClass"
+        >{{ errorsFor('transliterationVariants').join(' ') }}</p>
         <p :class="hintClass">{{ t('admin.lexicon.form.transliterationVariantsHint') }}</p>
       </div>
     </div>
@@ -186,15 +311,42 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
         <label for="category" :class="labelClass">{{ t('admin.lexicon.form.grammaticalCategory') }}</label>
-        <select id="category" v-model="grammaticalCategory" :class="[fieldClass, 'mt-1']">
+        <!-- A select has no read-only state, so a reviewer's is disabled. -->
+        <select
+          id="category"
+          v-model="grammaticalCategory"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('grammaticalCategory').length > 0"
+          :aria-describedby="errorsFor('grammaticalCategory').length ? 'category-error' : undefined"
+          :class="[fieldClass, 'mt-1', errorsFor('grammaticalCategory').length ? errorFieldClass : '']"
+        >
           <option v-for="category in categories" :key="category" :value="category">
             {{ t(`admin.lexicon.category.${category}`) }}
           </option>
         </select>
+        <p
+          v-if="errorsFor('grammaticalCategory').length"
+          id="category-error"
+          role="alert"
+          :class="errorTextClass"
+        >{{ errorsFor('grammaticalCategory').join(' ') }}</p>
       </div>
       <div>
         <label for="morphology" :class="labelClass">{{ t('admin.lexicon.form.morphology') }}</label>
-        <input id="morphology" v-model="morphology" :class="[fieldClass, 'mt-1']">
+        <input
+          id="morphology"
+          v-model="morphology"
+          :readonly="readonly"
+          :aria-invalid="errorsFor('morphology').length > 0"
+          :aria-describedby="errorsFor('morphology').length ? 'morphology-error' : undefined"
+          :class="[fieldClass, 'mt-1', errorsFor('morphology').length ? errorFieldClass : '']"
+        >
+        <p
+          v-if="errorsFor('morphology').length"
+          id="morphology-error"
+          role="alert"
+          :class="errorTextClass"
+        >{{ errorsFor('morphology').join(' ') }}</p>
         <p :class="hintClass">{{ t('admin.lexicon.form.morphologyHint') }}</p>
       </div>
     </div>
@@ -207,12 +359,26 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
         <label :for="`meaning-${language}`" class="font-sans text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
           {{ t(`admin.lexicon.meaning.${language}`) }}
         </label>
-        <input :id="`meaning-${language}`" v-model="meanings[language]" :class="fieldClass">
+        <input
+          :id="`meaning-${language}`"
+          v-model="meanings[language]"
+          :readonly="readonly"
+          :aria-invalid="meaningErrorsFor(language).length > 0"
+          :aria-describedby="meaningErrorsFor(language).length ? `meaning-${language}-error` : undefined"
+          :class="[fieldClass, meaningErrorsFor(language).length ? errorFieldClass : '']"
+        >
+        <p
+          v-if="meaningErrorsFor(language).length"
+          :id="`meaning-${language}-error`"
+          role="alert"
+          :class="errorTextClass"
+        >{{ meaningErrorsFor(language).join(' ') }}</p>
       </div>
     </fieldset>
 
-    <!-- Actions -->
-    <div class="flex items-center gap-3 border-t border-[var(--color-border)] pt-5">
+    <!-- Actions. A reviewer has nothing to submit here; their surface is the
+         propose panel below. -->
+    <div v-if="!readonly" class="flex items-center gap-3 border-t border-[var(--color-border)] pt-5">
       <button
         type="submit"
         :disabled="!canSubmit"

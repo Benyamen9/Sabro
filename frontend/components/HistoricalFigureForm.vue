@@ -32,8 +32,20 @@ const props = withDefaults(
      * submits — the proposal supplies the text, the human still commits it.
      */
     prefill?: { field: string, value: string } | null
+    /**
+     * Read-only: the fields are shown but cannot be changed and there is nothing
+     * to submit. A reviewer has to see the figure to have an opinion about it, and
+     * proposes their correction through the panel below rather than saving here.
+     */
+    readonly?: boolean
+    /**
+     * Per-field validation errors from the server, keyed by camelCase property
+     * path exactly as `ValidationProblemDetails` returns them: `name`, `era`,
+     * `descriptions[0].text`.
+     */
+    fieldErrors?: Record<string, string[]> | null
   }>(),
-  { figure: null, submitting: false, prefill: null },
+  { figure: null, submitting: false, prefill: null, readonly: false, fieldErrors: null },
 )
 
 const emit = defineEmits<{
@@ -107,10 +119,70 @@ const eraValid = computed(() => {
 
 const eraPreview = computed(() => (eraValid.value ? formatEra(eraNumber.value!, t) : null))
 
-const canSubmit = computed(() => name.value.trim().length > 0 && eraValid.value && !props.submitting)
+const canSubmit = computed(() =>
+  name.value.trim().length > 0 && eraValid.value && !props.submitting && !props.readonly)
+
+/**
+ * The languages sent in the last submission, in order. The server names a bad
+ * description by its position in the payload (`descriptions[0].text`), and the
+ * payload carries only the languages that had text — so without this, position 0
+ * would be blamed on English whatever was actually sent.
+ */
+const submittedDescriptionLanguages = ref<string[]>([])
+
+/** Server keys are property paths, so an indexed or nested key belongs to its root field. */
+function matchesField(key: string, field: string) {
+  return key === field || key.startsWith(`${field}[`) || key.startsWith(`${field}.`)
+}
+
+function errorsFor(field: string): string[] {
+  return Object.entries(props.fieldErrors ?? {})
+    .filter(([key]) => matchesField(key, field))
+    .flatMap(([, messages]) => messages)
+}
+
+function descriptionErrorsFor(language: string): string[] {
+  const index = submittedDescriptionLanguages.value.indexOf(language)
+  if (index === -1) return []
+  return Object.entries(props.fieldErrors ?? {})
+    .filter(([key]) => key.startsWith(`descriptions[${index}]`))
+    .flatMap(([, messages]) => messages)
+}
+
+const scalarFields = [
+  'name',
+  'category',
+  'era',
+  'period',
+  'role',
+  'region',
+  'tradition',
+  'gender',
+] as const
+
+/**
+ * Anything the server rejected that no field on this form owns. Shown rather
+ * than dropped: an invisible error is an error the editor cannot act on.
+ */
+const unmappedErrors = computed(() =>
+  Object.entries(props.fieldErrors ?? {})
+    .filter(([key]) =>
+      !scalarFields.some(field => matchesField(key, field))
+      && !(key.startsWith('descriptions[') && submittedDescriptionLanguages.value.length > 0))
+    .flatMap(([, messages]) => messages))
+
+const errorFieldClass
+  = 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] focus:border-[var(--color-accent)]'
+const errorTextClass = 'mt-1 font-sans text-xs font-medium text-[var(--color-accent)]'
 
 function onSubmit() {
   if (!canSubmit.value) return
+
+  const descriptionPayload = descriptionLanguages
+    .map(language => ({ language, text: (descriptions[language] ?? '').trim() }))
+    .filter(d => d.text.length > 0)
+
+  submittedDescriptionLanguages.value = descriptionPayload.map(d => d.language)
 
   emit('submit', {
     name: name.value.trim(),
@@ -123,20 +195,25 @@ function onSubmit() {
     tradition: tradition.value === '' ? null : tradition.value,
     // Empty boxes are omitted rather than sent as blank strings: the domain
     // rejects an empty description, and a language left alone simply has none.
-    descriptions: descriptionLanguages
-      .map(language => ({ language, text: (descriptions[language] ?? '').trim() }))
-      .filter(d => d.text.length > 0),
+    descriptions: descriptionPayload,
   })
 }
 
 const fieldClass
-  = 'w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-2 font-sans text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none'
+  = 'w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-2 font-sans text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none read-only:bg-[var(--color-bg-subtle)] read-only:text-[var(--color-text-muted)] disabled:bg-[var(--color-bg-subtle)] disabled:text-[var(--color-text-muted)]'
 const labelClass = 'block font-sans text-sm font-medium text-[var(--color-text)]'
 const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
 </script>
 
 <template>
   <form class="flex flex-col gap-6" @submit.prevent="onSubmit">
+    <!-- Rejected for a reason no field on this form owns. Never silently dropped. -->
+    <p
+      v-if="unmappedErrors.length"
+      role="alert"
+      class="rounded-md border border-[color-mix(in_oklab,var(--color-accent)_30%,transparent)] bg-[var(--color-accent-faint)] px-4 py-3 font-sans text-sm text-[var(--color-accent)]"
+    >{{ unmappedErrors.join(' ') }}</p>
+
     <!-- Name — the answer of a Shmo round. -->
     <div>
       <label for="figure-name" :class="labelClass">
@@ -147,8 +224,14 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
         v-model="name"
         required
         maxlength="256"
-        :class="[fieldClass, 'mt-1 text-lg']"
+        :readonly="readonly"
+        :aria-invalid="errorsFor('name').length > 0"
+        :aria-describedby="errorsFor('name').length ? 'figure-name-error' : undefined"
+        :class="[fieldClass, 'mt-1 text-lg', errorsFor('name').length ? errorFieldClass : '']"
       >
+      <p v-if="errorsFor('name').length" id="figure-name-error" role="alert" :class="errorTextClass">
+        {{ errorsFor('name').join(' ') }}
+      </p>
       <p :class="hintClass">{{ t('admin.historicalFigures.form.nameHint') }}</p>
     </div>
 
@@ -156,11 +239,21 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
         <label for="figure-category" :class="labelClass">{{ t('admin.historicalFigures.form.category') }}</label>
-        <select id="figure-category" v-model="category" :class="[fieldClass, 'mt-1']">
+        <!-- A select has no read-only state, so a reviewer's is disabled. -->
+        <select
+          id="figure-category"
+          v-model="category"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('category').length > 0"
+          :class="[fieldClass, 'mt-1', errorsFor('category').length ? errorFieldClass : '']"
+        >
           <option v-for="value in HISTORICAL_FIGURE_CATEGORIES" :key="value" :value="value">
             {{ t(`admin.historicalFigures.category.${value}`) }}
           </option>
         </select>
+        <p v-if="errorsFor('category').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('category').join(' ') }}
+        </p>
       </div>
       <div>
         <label for="figure-era" :class="labelClass">
@@ -174,8 +267,14 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
           required
           :min="MIN_ERA"
           :max="MAX_ERA"
-          :class="[fieldClass, 'mt-1']"
+          :readonly="readonly"
+          :aria-invalid="errorsFor('era').length > 0"
+          :aria-describedby="errorsFor('era').length ? 'figure-era-error' : undefined"
+          :class="[fieldClass, 'mt-1', errorsFor('era').length ? errorFieldClass : '']"
         >
+        <p v-if="errorsFor('era').length" id="figure-era-error" role="alert" :class="errorTextClass">
+          {{ errorsFor('era').join(' ') }}
+        </p>
         <p :class="hintClass">
           <span v-if="eraPreview" class="text-[var(--color-accent)]">{{ eraPreview }}</span>
           <span v-else>{{ t('admin.historicalFigures.form.eraHint') }}</span>
@@ -187,50 +286,95 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
         <label for="figure-period" :class="labelClass">{{ t('admin.historicalFigures.form.period') }}</label>
-        <select id="figure-period" v-model="period" :class="[fieldClass, 'mt-1']">
+        <select
+          id="figure-period"
+          v-model="period"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('period').length > 0"
+          :class="[fieldClass, 'mt-1', errorsFor('period').length ? errorFieldClass : '']"
+        >
           <option v-for="value in HISTORICAL_PERIODS" :key="value" :value="value">
             {{ t(`admin.historicalFigures.period.${value}`) }}
           </option>
         </select>
+        <p v-if="errorsFor('period').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('period').join(' ') }}
+        </p>
         <p :class="hintClass">{{ t('admin.historicalFigures.form.periodHint') }}</p>
       </div>
       <div>
         <label for="figure-role" :class="labelClass">{{ t('admin.historicalFigures.form.role') }}</label>
-        <select id="figure-role" v-model="role" :class="[fieldClass, 'mt-1']">
+        <select
+          id="figure-role"
+          v-model="role"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('role').length > 0"
+          :class="[fieldClass, 'mt-1', errorsFor('role').length ? errorFieldClass : '']"
+        >
           <option v-for="value in HISTORICAL_FIGURE_ROLES" :key="value" :value="value">
             {{ t(`admin.historicalFigures.role.${value}`) }}
           </option>
         </select>
+        <p v-if="errorsFor('role').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('role').join(' ') }}
+        </p>
         <p :class="hintClass">{{ t('admin.historicalFigures.form.roleHint') }}</p>
       </div>
       <div>
         <label for="figure-region" :class="labelClass">{{ t('admin.historicalFigures.form.region') }}</label>
-        <select id="figure-region" v-model="region" :class="[fieldClass, 'mt-1']">
+        <select
+          id="figure-region"
+          v-model="region"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('region').length > 0"
+          :class="[fieldClass, 'mt-1', errorsFor('region').length ? errorFieldClass : '']"
+        >
           <option v-for="value in HISTORICAL_FIGURE_REGIONS" :key="value" :value="value">
             {{ t(`admin.historicalFigures.region.${value}`) }}
           </option>
         </select>
+        <p v-if="errorsFor('region').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('region').join(' ') }}
+        </p>
       </div>
     </div>
 
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
         <label for="figure-tradition" :class="labelClass">{{ t('admin.historicalFigures.form.tradition') }}</label>
-        <select id="figure-tradition" v-model="tradition" :class="[fieldClass, 'mt-1']">
+        <select
+          id="figure-tradition"
+          v-model="tradition"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('tradition').length > 0"
+          :class="[fieldClass, 'mt-1', errorsFor('tradition').length ? errorFieldClass : '']"
+        >
           <option value="">{{ t('admin.historicalFigures.form.traditionUnset') }}</option>
           <option v-for="value in HISTORICAL_FIGURE_TRADITIONS" :key="value" :value="value">
             {{ t(`admin.historicalFigures.tradition.${value}`) }}
           </option>
         </select>
+        <p v-if="errorsFor('tradition').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('tradition').join(' ') }}
+        </p>
         <p :class="hintClass">{{ t('admin.historicalFigures.form.traditionHint') }}</p>
       </div>
       <div>
         <label for="figure-gender" :class="labelClass">{{ t('admin.historicalFigures.form.gender') }}</label>
-        <select id="figure-gender" v-model="gender" :class="[fieldClass, 'mt-1']">
+        <select
+          id="figure-gender"
+          v-model="gender"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('gender').length > 0"
+          :class="[fieldClass, 'mt-1', errorsFor('gender').length ? errorFieldClass : '']"
+        >
           <option v-for="value in HISTORICAL_FIGURE_GENDERS" :key="value" :value="value">
             {{ t(`admin.historicalFigures.gender.${value}`) }}
           </option>
         </select>
+        <p v-if="errorsFor('gender').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('gender').join(' ') }}
+        </p>
       </div>
     </div>
 
@@ -250,16 +394,26 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
           v-model="descriptions[language]"
           rows="2"
           :maxlength="descriptionMaxLength"
-          :class="[fieldClass, 'resize-y']"
+          :readonly="readonly"
+          :aria-invalid="descriptionErrorsFor(language).length > 0"
+          :aria-describedby="descriptionErrorsFor(language).length ? `description-${language}-error` : undefined"
+          :class="[fieldClass, 'resize-y', descriptionErrorsFor(language).length ? errorFieldClass : '']"
         />
+        <p
+          v-if="descriptionErrorsFor(language).length"
+          :id="`description-${language}-error`"
+          role="alert"
+          :class="errorTextClass"
+        >{{ descriptionErrorsFor(language).join(' ') }}</p>
         <p :class="hintClass">
           {{ (descriptions[language] ?? '').length }} / {{ descriptionMaxLength }}
         </p>
       </div>
     </fieldset>
 
-    <!-- Actions -->
-    <div class="flex items-center gap-3 border-t border-[var(--color-border)] pt-5">
+    <!-- Actions. A reviewer has nothing to submit here; their surface is the
+         propose panel below. -->
+    <div v-if="!readonly" class="flex items-center gap-3 border-t border-[var(--color-border)] pt-5">
       <button
         type="submit"
         :disabled="!canSubmit"

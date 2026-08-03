@@ -10,7 +10,7 @@
  * alone, so the distinction survives for a screen reader and in high contrast.
  */
 const { t } = useI18n()
-const { sections, isCurrent } = useAdminSections()
+const { visibleSections, isCurrent } = useAdminSections()
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const { sections, isCurrent } = useAdminSections()
     <span class="mr-1 h-4 w-px bg-[var(--color-border-strong)]" aria-hidden="true" />
 
     <NuxtLink
-      v-for="section in sections"
+      v-for="section in visibleSections"
       :key="section.to"
       :to="section.to"
       :aria-current="isCurrent(section.to) ? 'page' : undefined"

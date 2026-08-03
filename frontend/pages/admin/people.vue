@@ -15,6 +15,9 @@ const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { list, assignRole, setAreaAccess } = usePeopleAdmin()
 
 await refreshAdmin()
+// Not for this page's own gate — the API decides that — but so the section
+// switcher above it knows which other sections to offer.
+await useMyAccess().refresh()
 
 // Area and level are two questions, so the page asks them separately: an Owner
 // toggle, then one row per area. The old single select forced them together and
