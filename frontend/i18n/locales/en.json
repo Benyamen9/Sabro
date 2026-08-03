@@ -397,7 +397,9 @@
   "admin": {
     "hub": {
       "title": "Backoffice",
-      "subtitle": "Everything you curate, in one place."
+      "subtitle": "Everything you curate, in one place.",
+      "noAreas": "No areas yet.",
+      "noAreasHint": "Your account is staff, but no area has been granted to it yet. The Owner grants access on the people page."
     },
     "sections": {
       "navLabel": "Backoffice sections",
@@ -429,7 +431,9 @@
       "loadFailed": "Could not load lexicon entries.",
       "loadEntryFailed": "Could not load this entry.",
       "notFound": "Entry not found.",
-      "saveFailed": "Could not save the entry. Check the highlighted fields.",
+      "saveFailed": "Could not save the entry.",
+      "saveFailedFields": "Could not save the entry. Check the highlighted fields.",
+      "readOnlyNotice": "You can review this entry but not edit it. Propose a correction below and the Owner decides.",
       "deleteFailed": "Could not delete the entry.",
       "actionFailed": "The action could not be completed.",
       "backToList": "Back to lexicon",
@@ -549,6 +553,8 @@
       "loadFigureFailed": "This figure could not be loaded.",
       "notFound": "This figure does not exist.",
       "saveFailed": "The figure could not be saved.",
+      "saveFailedFields": "The figure could not be saved. Check the highlighted fields.",
+      "readOnlyNotice": "You can review this figure but not edit it. Propose a correction below and the Owner decides.",
       "deleteFailed": "The figure could not be deleted.",
       "actionFailed": "That action could not be completed.",
       "backToList": "Back to the roster",

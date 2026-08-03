@@ -397,7 +397,9 @@
   "admin": {
     "hub": {
       "title": "Redaktion",
-      "subtitle": "Allt du sköter, på ett ställe."
+      "subtitle": "Allt du sköter, på ett ställe.",
+      "noAreas": "Inga områden ännu.",
+      "noAreasHint": "Ditt konto tillhör personalen, men inget område har tilldelats det ännu. Ägaren ger åtkomst på personsidan."
     },
     "sections": {
       "navLabel": "Redaktionens avdelningar",
@@ -429,7 +431,9 @@
       "loadFailed": "Det gick inte att läsa in lexikonposterna.",
       "loadEntryFailed": "Det gick inte att läsa in den här posten.",
       "notFound": "Posten hittades inte.",
-      "saveFailed": "Det gick inte att spara posten. Kontrollera de markerade fälten.",
+      "saveFailed": "Det gick inte att spara posten.",
+      "saveFailedFields": "Det gick inte att spara posten. Kontrollera de markerade fälten.",
+      "readOnlyNotice": "Du kan granska posten men inte redigera den. Föreslå en rättelse nedan – ägaren beslutar.",
       "deleteFailed": "Det gick inte att ta bort posten.",
       "actionFailed": "Åtgärden kunde inte slutföras.",
       "backToList": "Tillbaka till lexikonet",
@@ -549,6 +553,8 @@
       "loadFigureFailed": "Den här gestalten kunde inte laddas.",
       "notFound": "Den här gestalten finns inte.",
       "saveFailed": "Gestalten kunde inte sparas.",
+      "saveFailedFields": "Gestalten kunde inte sparas. Kontrollera de markerade fälten.",
+      "readOnlyNotice": "Du kan granska gestalten men inte redigera den. Föreslå en rättelse nedan – ägaren beslutar.",
       "deleteFailed": "Gestalten kunde inte tas bort.",
       "actionFailed": "Åtgärden kunde inte slutföras.",
       "backToList": "Tillbaka till registret",

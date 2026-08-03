@@ -397,7 +397,9 @@
   "admin": {
     "hub": {
       "title": "Beheer",
-      "subtitle": "Alles wat u samenstelt, op één plek."
+      "subtitle": "Alles wat u samenstelt, op één plek.",
+      "noAreas": "Nog geen gebieden.",
+      "noAreasHint": "Uw account hoort bij het team, maar er is nog geen gebied aan toegekend. De eigenaar verleent toegang op de personenpagina."
     },
     "sections": {
       "navLabel": "Beheersecties",
@@ -429,7 +431,9 @@
       "loadFailed": "Kan de lexiconvermeldingen niet laden.",
       "loadEntryFailed": "Kan deze vermelding niet laden.",
       "notFound": "Vermelding niet gevonden.",
-      "saveFailed": "Kan de vermelding niet opslaan. Controleer de gemarkeerde velden.",
+      "saveFailed": "Kan de vermelding niet opslaan.",
+      "saveFailedFields": "Kan de vermelding niet opslaan. Controleer de gemarkeerde velden.",
+      "readOnlyNotice": "U kunt deze vermelding bekijken maar niet bewerken. Stel hieronder een correctie voor; de eigenaar beslist.",
       "deleteFailed": "Kan de vermelding niet verwijderen.",
       "actionFailed": "De actie kon niet worden voltooid.",
       "backToList": "Terug naar lexicon",
@@ -549,6 +553,8 @@
       "loadFigureFailed": "Deze figuur kon niet worden geladen.",
       "notFound": "Deze figuur bestaat niet.",
       "saveFailed": "De figuur kon niet worden opgeslagen.",
+      "saveFailedFields": "De figuur kon niet worden opgeslagen. Controleer de gemarkeerde velden.",
+      "readOnlyNotice": "U kunt deze figuur bekijken maar niet bewerken. Stel hieronder een correctie voor; de eigenaar beslist.",
       "deleteFailed": "De figuur kon niet worden verwijderd.",
       "actionFailed": "Die actie kon niet worden uitgevoerd.",
       "backToList": "Terug naar het register",

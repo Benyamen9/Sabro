@@ -18,6 +18,9 @@ const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { list, accept, reject, editLinkFor } = useProposals()
 
 await refreshAdmin()
+// Not for this page's own gate — the API decides that — but so the section
+// switcher above it knows which other sections to offer.
+await useMyAccess().refresh()
 
 const proposals = ref<SuggestedEditDto[]>([])
 const viewState = ref<'loading' | 'ready' | 'unauthorized' | 'failed'>('loading')

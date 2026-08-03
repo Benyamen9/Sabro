@@ -397,7 +397,9 @@
   "admin": {
     "hub": {
       "title": "Coulisses",
-      "subtitle": "Tout ce que vous éditez, au même endroit."
+      "subtitle": "Tout ce que vous éditez, au même endroit.",
+      "noAreas": "Aucun domaine pour l’instant.",
+      "noAreasHint": "Votre compte fait partie de l’équipe, mais aucun domaine ne lui a encore été accordé. Le propriétaire accorde l’accès depuis la page des personnes."
     },
     "sections": {
       "navLabel": "Sections des coulisses",
@@ -429,7 +431,9 @@
       "loadFailed": "Impossible de charger les entrées du lexique.",
       "loadEntryFailed": "Impossible de charger cette entrée.",
       "notFound": "Entrée introuvable.",
-      "saveFailed": "Impossible d’enregistrer l’entrée. Vérifiez les champs en surbrillance.",
+      "saveFailed": "Impossible d’enregistrer l’entrée.",
+      "saveFailedFields": "Impossible d’enregistrer l’entrée. Vérifiez les champs en surbrillance.",
+      "readOnlyNotice": "Vous pouvez consulter cette entrée mais pas la modifier. Proposez une correction ci-dessous ; le propriétaire décide.",
       "deleteFailed": "Impossible de supprimer l’entrée.",
       "actionFailed": "L’action n’a pas pu être effectuée.",
       "backToList": "Retour au lexique",
@@ -549,6 +553,8 @@
       "loadFigureFailed": "Cette figure n’a pas pu être chargée.",
       "notFound": "Cette figure n’existe pas.",
       "saveFailed": "La figure n’a pas pu être enregistrée.",
+      "saveFailedFields": "La figure n’a pas pu être enregistrée. Vérifiez les champs en surbrillance.",
+      "readOnlyNotice": "Vous pouvez consulter cette figure mais pas la modifier. Proposez une correction ci-dessous ; le propriétaire décide.",
       "deleteFailed": "La figure n’a pas pu être supprimée.",
       "actionFailed": "Cette action n’a pas pu être effectuée.",
       "backToList": "Retour au répertoire",

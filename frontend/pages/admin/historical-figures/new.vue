@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FetchError } from 'ofetch'
 import type { CreateHistoricalFigureRequest } from '~/types/api'
 
 // Editorial / deferred surface — keep out of search indexes.
@@ -6,23 +7,38 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
+const { canEdit, refresh: refreshAccess } = useMyAccess()
 const { create } = useHistoricalFiguresAdmin()
 const router = useRouter()
 
 await refreshAdmin()
+await refreshAccess()
+
+// Adding a figure is an editor action. A reviewer corrects what exists; they do
+// not add to the roster.
+const mayEdit = computed(() => canEdit('Shmo'))
 
 const submitting = ref(false)
 const errorMessage = ref<string | null>(null)
+const fieldErrors = ref<Record<string, string[]> | null>(null)
 
 async function onSubmit(payload: CreateHistoricalFigureRequest) {
   submitting.value = true
   errorMessage.value = null
+  fieldErrors.value = null
   try {
     const figure = await create(payload)
     await router.push(`/admin/historical-figures/${figure.id}`)
   }
-  catch {
-    errorMessage.value = t('admin.historicalFigures.saveFailed')
+  catch (error) {
+    // Same as the edit page: the server names the fields it rejected, and the
+    // form needs those names to mark them.
+    const problem = (error as FetchError).data as { errors?: Record<string, string[]> } | undefined
+    const errors = problem?.errors
+    fieldErrors.value = errors && Object.keys(errors).length > 0 ? errors : null
+    errorMessage.value = fieldErrors.value
+      ? t('admin.historicalFigures.saveFailedFields')
+      : t('admin.historicalFigures.saveFailed')
   }
   finally {
     submitting.value = false
@@ -45,7 +61,7 @@ async function onSubmit(payload: CreateHistoricalFigureRequest) {
       :message="t('common.loading')"
     />
     <StateMessage
-      v-else-if="isAdmin === false"
+      v-else-if="isAdmin === false || !mayEdit"
       variant="unauthorized"
       :message="t('admin.adminRequired')"
       :hint="t('admin.adminRequiredHint')"
@@ -65,6 +81,7 @@ async function onSubmit(payload: CreateHistoricalFigureRequest) {
 
       <HistoricalFigureForm
         :submitting="submitting"
+        :field-errors="fieldErrors"
         :submit-label="t('admin.historicalFigures.actions.create')"
         @submit="onSubmit"
         @cancel="router.push('/admin/historical-figures')"

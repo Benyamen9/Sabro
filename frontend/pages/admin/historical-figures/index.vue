@@ -20,12 +20,19 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
+const { canEdit, canViewBackoffice, refresh: refreshAccess } = useMyAccess()
 const { list } = useHistoricalFiguresAdmin()
 
 const route = useRoute()
 const router = useRouter()
 
 await refreshAdmin()
+await refreshAccess()
+
+// A reviewer browses the roster but creates nothing. Offering only — the API
+// refuses independently.
+const mayEdit = computed(() => canEdit('Shmo'))
+const mayView = computed(() => canViewBackoffice('Shmo'))
 
 const pageSizeOptions = [20, 50, 100, 200] as const
 
@@ -85,7 +92,8 @@ const totalPages = computed(() => {
 })
 
 const viewState = computed<'loading' | 'unauthorized' | 'failed' | 'empty' | 'noResults' | 'ready'>(() => {
-  if (isAdmin.value === false) return 'unauthorized'
+  // Both locks: the admin scope says staff, the Shmo grant says this area.
+  if (isAdmin.value === false || !mayView.value) return 'unauthorized'
   if (isAdmin.value === null || pending.value) return 'loading'
   if (error.value) {
     const fetchError = error.value as FetchError
@@ -173,7 +181,7 @@ const selectClass
         </p>
       </div>
       <NuxtLink
-        v-if="viewState === 'ready' || viewState === 'empty' || viewState === 'noResults'"
+        v-if="mayEdit && (viewState === 'ready' || viewState === 'empty' || viewState === 'noResults')"
         to="/admin/historical-figures/new"
         class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
       >

@@ -10,9 +10,11 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
-const { sections } = useAdminSections()
+const { refresh: refreshAccess } = useMyAccess()
+const { visibleSections } = useAdminSections()
 
 await refreshAdmin()
+await refreshAccess()
 </script>
 
 <template>
@@ -36,9 +38,18 @@ await refreshAdmin()
       :hint="t('admin.adminRequiredHint')"
     />
 
+    <!-- Staff, but granted nothing yet. Saying so is kinder than an empty page,
+         which reads as a broken backoffice rather than as access still to come. -->
+    <StateMessage
+      v-else-if="isAdmin && visibleSections.length === 0"
+      variant="unauthorized"
+      :message="t('admin.hub.noAreas')"
+      :hint="t('admin.hub.noAreasHint')"
+    />
+
     <div v-else-if="isAdmin" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <NuxtLink
-        v-for="section in sections"
+        v-for="section in visibleSections"
         :key="section.to"
         :to="section.to"
         class="group relative block overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5 no-underline transition-shadow hover:shadow-[var(--shadow-soft)]"

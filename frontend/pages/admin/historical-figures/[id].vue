@@ -16,13 +16,16 @@ const id = computed(() => route.params.id as string)
 
 await refreshAdmin()
 
-const { role, refresh: refreshRole } = useMyRole()
-await refreshRole()
+const { canEdit, canViewBackoffice, canPropose, refresh: refreshAccess } = useMyAccess()
+await refreshAccess()
 
 // A reviewer may read this page but not save it, so the form is the editor's
-// surface and this is theirs. Purely about what to offer — the API refuses on its
-// own, so a wrong answer here hides a control rather than granting one.
-const canPropose = computed(() => role.value === 'ShmoReviewer')
+// surface and the propose panel is theirs. Purely about what to offer — the API
+// applies the same rules and refuses on its own, so a wrong answer here hides a
+// control rather than granting one.
+const mayEdit = computed(() => canEdit('Shmo'))
+const mayPropose = computed(() => canPropose('Shmo'))
+const mayView = computed(() => canViewBackoffice('Shmo'))
 
 // An accepted proposal being applied. The queue links here with ?proposal=<id>;
 // the named field opens holding the proposed value so the change is reviewed and
@@ -62,9 +65,13 @@ const { data: figure, pending, error, refresh } = await useAsyncData(
 const submitting = ref(false)
 const acting = ref(false)
 const errorMessage = ref<string | null>(null)
+const fieldErrors = ref<Record<string, string[]> | null>(null)
 
 const status = computed<'loading' | 'unauthorized' | 'failed' | 'notFound' | 'ready'>(() => {
-  if (isAdmin.value === false) return 'unauthorized'
+  // Both locks, in the order they are checked server-side: the admin scope says
+  // whether this person is staff at all, the Shmo grant says whether this is one
+  // of their areas.
+  if (isAdmin.value === false || !mayView.value) return 'unauthorized'
   if (isAdmin.value === null || pending.value) return 'loading'
   if (error.value) {
     const fetchError = error.value as FetchError
@@ -88,12 +95,21 @@ async function onSubmit(payload: CreateHistoricalFigureRequest) {
   if (!figure.value) return
   submitting.value = true
   errorMessage.value = null
+  fieldErrors.value = null
   try {
     await update(figure.value.id, payload)
     await refresh()
   }
-  catch {
-    errorMessage.value = t('admin.historicalFigures.saveFailed')
+  catch (error) {
+    // The server names the fields it rejected, in `ValidationProblemDetails.errors`.
+    // Throwing that away is what left "check the highlighted fields" pointing at
+    // nothing highlightable — the form needs the names to mark them.
+    const problem = (error as FetchError).data as { errors?: Record<string, string[]> } | undefined
+    const errors = problem?.errors
+    fieldErrors.value = errors && Object.keys(errors).length > 0 ? errors : null
+    errorMessage.value = fieldErrors.value
+      ? t('admin.historicalFigures.saveFailedFields')
+      : t('admin.historicalFigures.saveFailed')
   }
   finally {
     submitting.value = false
@@ -208,18 +224,28 @@ const actionButtonClass
         role="alert"
       >{{ t('admin.propose.applyFailed') }}</p>
 
+      <!-- A reviewer sees the figure but cannot save it. Saying so up front beats a
+           form that looks editable until the server refuses it. -->
+      <p
+        v-if="!mayEdit"
+        class="mb-5 rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)] px-4 py-3 font-sans text-sm text-[var(--color-text)]"
+      >{{ t('admin.historicalFigures.readOnlyNotice') }}</p>
+
       <HistoricalFigureForm
         :key="`${figure.updatedAt}:${proposalId ?? ''}`"
         :prefill="prefill"
         :figure="figure"
         :submitting="submitting"
+        :readonly="!mayEdit"
+        :field-errors="fieldErrors"
         :submit-label="t('common.save')"
         @submit="onSubmit"
         @cancel="router.push('/admin/historical-figures')"
       />
 
-      <!-- Lifecycle -->
-      <div class="mt-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-6">
+      <!-- Lifecycle. Publishing and the playable pool are editor actions; a
+           reviewer proposes instead. -->
+      <div v-if="mayEdit" class="mt-10 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-6">
         <h2 class="font-sans text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
           {{ t('admin.historicalFigures.lifecycle.heading') }}
         </h2>
@@ -292,7 +318,7 @@ const actionButtonClass
       </div>
     </template>
     <ProposeCorrection
-      v-if="canPropose && status === 'ready'"
+      v-if="mayPropose && status === 'ready'"
       target-type="HistoricalFigure"
       :target-id="id"
     />
