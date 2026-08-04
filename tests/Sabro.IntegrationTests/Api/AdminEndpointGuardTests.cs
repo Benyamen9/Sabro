@@ -39,6 +39,8 @@ public class AdminEndpointGuardTests
         AuthPolicies.LexiconEdit,
         AuthPolicies.FiguresView,
         AuthPolicies.FiguresEdit,
+        AuthPolicies.ChantsView,
+        AuthPolicies.ChantsEdit,
     };
 
     /// <summary>
