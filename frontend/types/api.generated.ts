@@ -4535,7 +4535,7 @@ export interface components {
             reference: string;
         };
         /** @enum {string} */
-        ContentArea: "Lexicon" | "Shmo";
+        ContentArea: "Lexicon" | "Shmo" | "Nahlo";
         CreateAnnotationRequest: {
             /** Format: uuid */
             segmentId: string;

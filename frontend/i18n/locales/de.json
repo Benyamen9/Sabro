@@ -751,7 +751,8 @@
       "ownerEverything": "Eigentümer — voller Zugriff auf alle Bereiche.",
       "area": {
         "Lexicon": "Lexikon",
-        "Shmo": "Shmo-Personen"
+        "Shmo": "Shmo-Personen",
+        "Nahlo": "Nahlo-Gesänge"
       },
       "access": {
         "none": "Kein Zugriff",

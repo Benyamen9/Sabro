@@ -34,15 +34,17 @@ cd /src
 # in the code never reached this list.
 #
 # Historical precedes Play: Play's Shmo daily puzzle points at a historical
-# figure, so the roster's schema must exist before Play's does. Reviews has no
-# cross-module foreign keys at all — its target is a string discriminator, by
-# design — so its position here is free.
+# figure, so the roster's schema must exist before Play's does. BethGazo
+# precedes Play for the same reason — Nahlo's daily puzzle points at a chant.
+# Reviews has no cross-module foreign keys at all — its target is a string
+# discriminator, by design — so its position here is free.
 #
 # "ContextName:project path" — keep in sync with the active module DbContexts.
 contexts=(
   "LexiconDbContext:src/Modules/Sabro.Lexicon"
   "IdentityDbContext:src/Modules/Sabro.Identity"
   "HistoricalDbContext:src/Modules/Sabro.Historical"
+  "BethGazoDbContext:src/Modules/Sabro.BethGazo"
   "PlayDbContext:src/Modules/Sabro.Play"
   "ReviewsDbContext:src/Modules/Sabro.Reviews"
 )
