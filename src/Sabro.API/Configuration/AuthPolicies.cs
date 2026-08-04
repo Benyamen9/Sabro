@@ -21,6 +21,10 @@ public static class AuthPolicies
 
     public const string FiguresEdit = "figures:edit";
 
+    public const string ChantsView = "chants:view";
+
+    public const string ChantsEdit = "chants:edit";
+
     /// <summary>
     /// True when the caller's token grants <paramref name="scope"/>. OIDC issues
     /// the granted scopes as a single space-delimited <c>scope</c> claim

@@ -1,6 +1,8 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sabro.BethGazo.Application.Chants;
 using Sabro.BethGazo.Infrastructure;
 using Sabro.Shared.Abstractions;
 
@@ -28,6 +30,8 @@ public sealed class BethGazoModule : IModuleRegistration
                 npgsql.MigrationsHistoryTable("__EFMigrationsHistory", BethGazoDbContext.SchemaName));
         });
 
+        services.AddScoped<IChantService, ChantService>();
         services.AddScoped<IChantPlayablePool, ChantPlayablePool>();
+        services.AddValidatorsFromAssemblyContaining<CreateChantRequestValidator>();
     }
 }

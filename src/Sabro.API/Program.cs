@@ -105,6 +105,12 @@ try
         options.AddPolicy(AuthPolicies.FiguresEdit, policy => policy.Requirements.Add(
             new RolePermissionRequirement(
                 p => RolePermissions.CanEdit(p, ContentArea.Shmo), "edit the figures roster")));
+        options.AddPolicy(AuthPolicies.ChantsView, policy => policy.Requirements.Add(
+            new RolePermissionRequirement(
+                p => RolePermissions.CanViewBackoffice(p, ContentArea.Nahlo), "view the chants backoffice")));
+        options.AddPolicy(AuthPolicies.ChantsEdit, policy => policy.Requirements.Add(
+            new RolePermissionRequirement(
+                p => RolePermissions.CanEdit(p, ContentArea.Nahlo), "edit the Beth Gazo")));
     });
 
     builder.Services.AddScoped<IAuthorizationHandler, RolePermissionHandler>();
