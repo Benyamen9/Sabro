@@ -2,9 +2,11 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
+using Sabro.API.Media;
 using Sabro.BethGazo.Application.Chants;
 using Sabro.BethGazo.Domain;
 using Sabro.Shared.Pagination;
+using Sabro.Shared.Results;
 
 namespace Sabro.API.Controllers.V1;
 
@@ -19,6 +21,12 @@ namespace Sabro.API.Controllers.V1;
 [Authorize(Policy = AuthPolicies.Admin)]
 public sealed class AdminChantsController : ApiControllerBase
 {
+    /// <summary>
+    /// Larger than the Lexicon's 5 MB pronunciation cap: a chant is a sung phrase
+    /// rather than a single word, so the recordings are longer.
+    /// </summary>
+    private const long MaxChantAudioBytes = 15 * 1024 * 1024;
+
     private readonly IChantService chantService;
 
     public AdminChantsController(IChantService chantService)
@@ -143,20 +151,52 @@ public sealed class AdminChantsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Points the chant at its recording. The upload itself reuses the Lexicon's
-    /// media path; this only records where the file landed.
+    /// Uploads the chant's recording, replacing any previous one.
     /// </summary>
+    /// <remarks>
+    /// An upload rather than a URL field: letting a caller name the URL would let a
+    /// chant point at anything at all. The accepted formats and the content type each
+    /// is served back with come from one table, so a format cannot be accepted
+    /// without declaring how it is served.
+    /// </remarks>
     [Authorize(Policy = AuthPolicies.ChantsEdit)]
-    [HttpPut("{id:guid}/audio")]
+    [HttpPost("{id:guid}/audio")]
+    [Consumes("multipart/form-data")]
     [ProducesResponseType(typeof(ChantDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ChantDto>> SetAudio(
-        Guid id,
-        SetChantAudioRequest request,
-        CancellationToken cancellationToken)
+    [RequestSizeLimit(MaxChantAudioBytes)]
+    public async Task<ActionResult<ChantDto>> UploadAudio(Guid id, IFormFile file, CancellationToken cancellationToken)
     {
-        var result = await chantService.SetAudioAsync(id, request.AudioUrl, cancellationToken);
+        if (file is null || file.Length == 0)
+        {
+            return FromError(Error.Validation("An audio file is required."));
+        }
+
+        if (file.Length > MaxChantAudioBytes)
+        {
+            return FromError(Error.Validation("The recording must be 15 MB or smaller."));
+        }
+
+        if (!PronunciationAudioFormats.ExtensionsByUploadContentType.TryGetValue(file.ContentType, out var extension))
+        {
+            return FromError(Error.Validation(
+                $"Unsupported audio type '{file.ContentType}'. Use MP3, WAV, OGG, WebM, or M4A."));
+        }
+
+        await using var stream = file.OpenReadStream();
+        var result = await chantService.UploadAudioAsync(id, stream, extension, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+    }
+
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpDelete("{id:guid}/audio")]
+    [ProducesResponseType(typeof(ChantDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ChantDto>> RemoveAudio(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await chantService.RemoveAudioAsync(id, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
     }
 }

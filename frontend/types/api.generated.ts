@@ -462,7 +462,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: {
+        put?: never;
+        post: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -473,9 +474,9 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["SetChantAudioRequest"];
-                    "text/json": components["schemas"]["SetChantAudioRequest"];
-                    "application/*+json": components["schemas"]["SetChantAudioRequest"];
+                    "multipart/form-data": {
+                        file?: components["schemas"]["IFormFile"];
+                    };
                 };
             };
             responses: {
@@ -514,8 +515,52 @@ export interface paths {
                 };
             };
         };
-        post?: never;
-        delete?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ChantDto"];
+                        "application/json": components["schemas"]["ChantDto"];
+                        "text/json": components["schemas"]["ChantDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
         patch?: never;
@@ -5759,9 +5804,6 @@ export interface components {
         };
         SetAreaAccessRequest: {
             access: null | components["schemas"]["AreaAccess"];
-        };
-        SetChantAudioRequest: {
-            audioUrl: null | string;
         };
         SetPlayableChantRequest: {
             playable: boolean;
