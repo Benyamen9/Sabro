@@ -13,17 +13,20 @@ internal sealed class ChantService : IChantService
     private const int MaxPageSize = 100;
 
     private readonly BethGazoDbContext dbContext;
+    private readonly IChantAudioStorage audioStorage;
     private readonly IValidator<CreateChantRequest> createValidator;
     private readonly IValidator<UpdateChantRequest> updateValidator;
     private readonly ILogger<ChantService> logger;
 
     public ChantService(
         BethGazoDbContext dbContext,
+        IChantAudioStorage audioStorage,
         IValidator<CreateChantRequest> createValidator,
         IValidator<UpdateChantRequest> updateValidator,
         ILogger<ChantService> logger)
     {
         this.dbContext = dbContext;
+        this.audioStorage = audioStorage;
         this.createValidator = createValidator;
         this.updateValidator = updateValidator;
         this.logger = logger;
@@ -164,8 +167,73 @@ internal sealed class ChantService : IChantService
     public async Task<Result<ChantDto>> SetPlayableAsync(Guid id, bool playable, CancellationToken cancellationToken) =>
         await MutateAsync(id, chant => chant.SetPlayable(playable), $"playable set to {playable}", cancellationToken);
 
-    public async Task<Result<ChantDto>> SetAudioAsync(Guid id, string? audioUrl, CancellationToken cancellationToken) =>
-        await MutateAsync(id, chant => chant.SetAudioUrl(audioUrl), "audio changed", cancellationToken);
+    public async Task<Result<ChantDto>> UploadAudioAsync(
+        Guid id,
+        Stream content,
+        string extension,
+        CancellationToken cancellationToken)
+    {
+        var chant = await dbContext.Chants.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        if (chant is null)
+        {
+            return Result<ChantDto>.Failure(Error.NotFound("Chant not found."));
+        }
+
+        var previousUrl = chant.AudioUrl;
+        var newUrl = await audioStorage.SaveAsync(id, content, extension, cancellationToken);
+
+        var error = chant.SetAudioUrl(newUrl);
+        if (error is not null)
+        {
+            // The file is already written; drop it rather than leaving an orphan
+            // nothing points at.
+            audioStorage.Delete(newUrl);
+            return Result<ChantDto>.Failure(error);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        // Replace, not accumulate: drop the old file once the new one is recorded.
+        // Guarded on inequality because re-uploading the same format overwrites in
+        // place — the name is the chant id — and deleting then would remove the file
+        // just saved.
+        if (previousUrl is not null && previousUrl != newUrl)
+        {
+            audioStorage.Delete(previousUrl);
+        }
+
+        logger.LogInformation("Chant recording uploaded. ChantId={ChantId}", id);
+        return await ProjectAsync(id, cancellationToken);
+    }
+
+    public async Task<Result<ChantDto>> RemoveAudioAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var chant = await dbContext.Chants.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+        if (chant is null)
+        {
+            return Result<ChantDto>.Failure(Error.NotFound("Chant not found."));
+        }
+
+        var previousUrl = chant.AudioUrl;
+
+        // Refused while published, by the domain — a published chant without audio
+        // would sit in the pool as an unplayable puzzle.
+        var error = chant.SetAudioUrl(null);
+        if (error is not null)
+        {
+            return Result<ChantDto>.Failure(error);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        if (previousUrl is not null)
+        {
+            audioStorage.Delete(previousUrl);
+        }
+
+        logger.LogInformation("Chant recording removed. ChantId={ChantId}", id);
+        return await ProjectAsync(id, cancellationToken);
+    }
 
     public async Task<Result<ChantDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {

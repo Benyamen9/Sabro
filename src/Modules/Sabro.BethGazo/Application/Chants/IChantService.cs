@@ -18,8 +18,18 @@ public interface IChantService
 
     Task<Result<ChantDto>> SetPlayableAsync(Guid id, bool playable, CancellationToken cancellationToken);
 
-    /// <summary>Attaches or clears the recording. Clearing is refused while published.</summary>
-    Task<Result<ChantDto>> SetAudioAsync(Guid id, string? audioUrl, CancellationToken cancellationToken);
+    /// <summary>
+    /// Stores an uploaded recording and points the chant at it, replacing any
+    /// previous one.
+    /// </summary>
+    Task<Result<ChantDto>> UploadAudioAsync(
+        Guid id,
+        Stream content,
+        string extension,
+        CancellationToken cancellationToken);
+
+    /// <summary>Removes the recording. Refused while published — a published chant must keep its audio.</summary>
+    Task<Result<ChantDto>> RemoveAudioAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>Returns any chant regardless of status. For Owner/admin surfaces.</summary>
     Task<Result<ChantDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
