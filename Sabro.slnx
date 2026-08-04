@@ -5,6 +5,7 @@
     <Project Path="src/Sabro.Shared.Infrastructure/Sabro.Shared.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
+    <Project Path="src/Modules/Sabro.BethGazo/Sabro.BethGazo.csproj" />
     <Project Path="src/Modules/Sabro.Biblical/Sabro.Biblical.csproj" />
     <Project Path="src/Modules/Sabro.Historical/Sabro.Historical.csproj" />
     <Project Path="src/Modules/Sabro.Identity/Sabro.Identity.csproj" />

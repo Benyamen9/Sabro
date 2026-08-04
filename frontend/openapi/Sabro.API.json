@@ -7218,7 +7218,8 @@
       "ContentArea": {
         "enum": [
           "Lexicon",
-          "Shmo"
+          "Shmo",
+          "Nahlo"
         ],
         "type": "string"
       },

@@ -1,3 +1,4 @@
+using Sabro.BethGazo.Public;
 using Sabro.Biblical.Public;
 using Sabro.Historical.Public;
 using Sabro.Identity.Public;
@@ -34,6 +35,7 @@ public static class SabroModules
         new ReviewsModule(),
         new BiblicalModule(),
         new HistoricalModule(),
+        new BethGazoModule(),
         new IdentityModule(),
         new PlayModule(),
     ];

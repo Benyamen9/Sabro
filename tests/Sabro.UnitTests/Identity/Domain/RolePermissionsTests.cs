@@ -138,7 +138,7 @@ public class RolePermissionsTests
         // A new ContentArea defaults to "nobody may touch it" only if someone
         // remembered to think about it. This fails when one is added silently.
         Enum.GetValues<ContentArea>().Should().BeEquivalentTo(
-            new[] { ContentArea.Lexicon, ContentArea.Shmo },
+            new[] { ContentArea.Lexicon, ContentArea.Shmo, ContentArea.Nahlo },
             "a new ContentArea needs a decision here and a row in the backoffice grid");
     }
 

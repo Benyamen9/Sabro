@@ -22,7 +22,7 @@ await useMyAccess().refresh()
 // Area and level are two questions, so the page asks them separately: an Owner
 // toggle, then one row per area. The old single select forced them together and
 // could not express "reviewer for Shmo, editor for the Lexicon" at all.
-const areas: ContentArea[] = ['Lexicon', 'Shmo']
+const areas: ContentArea[] = ['Lexicon', 'Shmo', 'Nahlo']
 
 // '' is the wire's null — no grant. Kept as an empty string because that is what
 // a <select> gives back; it is translated at the boundary, never stored.
@@ -61,6 +61,7 @@ function isLocked(person: PersonDto) {
 const areaAccent: Record<ContentArea, string> = {
   Lexicon: '--color-meltho',
   Shmo: '--color-shmo',
+  Nahlo: '--color-nahlo',
 }
 
 /** The three levels, in order of increasing power. */
