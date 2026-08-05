@@ -419,6 +419,10 @@
         "label": "Figures",
         "blurb": "Le répertoire de Shmo et ses attributs."
       },
+      "chants": {
+        "label": "Chants",
+        "blurb": "Le Beth Gazo : mélodies, modes et enregistrements pour Nahlo."
+      },
       "people": {
         "label": "Personnes",
         "blurb": "Qui peut modifier quoi."
@@ -716,6 +720,105 @@
         "nl": "Néerlandais",
         "de": "Allemand",
         "sv": "Suédois"
+      }
+    },
+    "chants": {
+      "title": "Chants",
+      "subtitle": "Le Beth Gazo : les mélodies dont Nahlo tire son énigme quotidienne. Chacune se nomme par trois éléments — mélodie, mode et, le cas échéant, son shuḥlofo.",
+      "statMatching": "chants | chant | chants",
+      "newChant": "Nouveau chant",
+      "empty": "Aucun chant pour l’instant. Ajoutez le premier pour ouvrir le Beth Gazo.",
+      "loadFailed": "Le Beth Gazo n’a pas pu être chargé.",
+      "loadChantFailed": "Ce chant n’a pas pu être chargé.",
+      "notFound": "Ce chant n’existe pas.",
+      "saveFailed": "Le chant n’a pas pu être enregistré.",
+      "saveFailedFields": "Le chant n’a pas pu être enregistré. Vérifiez les champs en surbrillance.",
+      "saveForbidden": "Vous n’avez pas la permission d’enregistrer ce chant.",
+      "saveConflict": "Un chant avec cette mélodie, ce mode et ce shuḥlofo existe déjà.",
+      "readOnlyNotice": "Vous pouvez consulter ce chant mais pas le modifier.",
+      "deleteFailed": "Le chant n’a pas pu être supprimé.",
+      "deleteConflict": "D’autres chants héritent de cette mélodie. Réaffectez-les ou supprimez-les d’abord.",
+      "deleteConfirm": "Supprimer ce chant ? Cette action est irréversible.",
+      "actionFailed": "Cette action n’a pas pu être effectuée.",
+      "inheritsFrom": "Mélodie de {melody}",
+      "columns": {
+        "melody": "Mélodie",
+        "syriac": "Incipit",
+        "mode": "Mode",
+        "shuhlofo": "Shuḥlofo",
+        "recording": "Enregistrement",
+        "status": "Statut",
+        "playable": "Pool Nahlo"
+      },
+      "status": {
+        "Draft": "Brouillon",
+        "Published": "Publié"
+      },
+      "filters": {
+        "searchPlaceholder": "Rechercher par mélodie ou syriaque…",
+        "searchClear": "Effacer la recherche",
+        "statusLabel": "Statut",
+        "statusAll": "Tous les statuts",
+        "modeLabel": "Mode",
+        "modeAll": "Tous les modes",
+        "playableLabel": "Pool Nahlo",
+        "playableAll": "Tout état du pool",
+        "playableYes": "Dans le pool",
+        "playableNo": "Hors du pool",
+        "clear": "Effacer les filtres",
+        "noResults": "Aucun chant ne correspond à ces filtres.",
+        "pageSizeLabel": "Lignes par page"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "create": "Créer le chant",
+        "publish": "Publier",
+        "unpublish": "Dépublier",
+        "addToPool": "Ajouter au pool",
+        "removeFromPool": "Retirer du pool"
+      },
+      "recording": {
+        "heading": "Enregistrement",
+        "hint": "Le chant interprété. Requis pour publier — sans audio, il n’y a pas d’énigme.",
+        "none": "Aucun enregistrement pour l’instant.",
+        "present": "Possède un enregistrement",
+        "upload": "Téléverser un enregistrement",
+        "replace": "Remplacer l’enregistrement",
+        "remove": "Supprimer l’enregistrement",
+        "uploading": "Téléversement…",
+        "uploadFailed": "Impossible de téléverser l’enregistrement.",
+        "uploadRejected": "Ce fichier a été refusé. Utilisez MP3, WAV, OGG, WebM ou M4A, jusqu’à 15 Mo.",
+        "removeFailed": "Impossible de supprimer l’enregistrement.",
+        "removeWhilePublished": "Un chant publié conserve son enregistrement. Dépubliez-le avant de retirer l’audio.",
+        "formatHint": "MP3, WAV, OGG, WebM ou M4A, jusqu’à 15 Mo."
+      },
+      "lifecycle": {
+        "heading": "Cycle de vie",
+        "publishHint": "Seuls les chants publiés peuvent rejoindre le pool Nahlo.",
+        "recordingRequired": "Téléversez un enregistrement avant de publier — un chant sans audio n’est pas une énigme.",
+        "poolHeading": "Pool Nahlo",
+        "poolHint": "Le pool est la source de l’énigme quotidienne. Chants publiés uniquement.",
+        "inPool": "Dans le pool Nahlo",
+        "notInPool": "Hors du pool Nahlo",
+        "solqinPoolHint": "Ce chant emprunte la mélodie de {melody}. Les solqin restent hors du pool de lancement : ce que l’auditeur reconnaît, c’est la mélodie empruntée."
+      },
+      "form": {
+        "createTitle": "Nouveau chant",
+        "syriacIncipit": "Incipit syriaque",
+        "syriacIncipitHint": "Les premiers mots, sans vocalisation. Caractères syriaques uniquement.",
+        "syriacIncipitVocalized": "Incipit vocalisé",
+        "syriacIncipitVocalizedHint": "Enrichissement facultatif. Ne conditionne jamais la publication.",
+        "transliteration": "Mélodie",
+        "transliterationHint": "Le nom de la mélodie en translittération SBL — c’est ce que les joueurs saisissent, p. ex. « Maryam yoldath Aloho ».",
+        "mode": "Mode",
+        "modeUnset": "Choisir un mode",
+        "modeHint": "Un nom de mélodie revient dans plusieurs modes : c’est la paire qui identifie le chant.",
+        "shuhlofo": "Shuḥlofo",
+        "shuhlofoHint": "Facultatif — seules certaines mélodies ont une variation. Les joueurs la devinent comme une partie à part de la réponse.",
+        "inheritsMelodyFrom": "Hérite de la mélodie de",
+        "inheritsMelodyFromNone": "Aucune — il porte sa propre mélodie",
+        "inheritsMelodyFromHint": "À renseigner pour un solqin : un chant qui emprunte la mélodie d’un autre avec ses propres variations.",
+        "recordingComesLater": "Enregistrez d’abord le chant, puis téléversez son enregistrement. La publication attend l’audio."
       }
     },
     "people": {

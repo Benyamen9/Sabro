@@ -419,6 +419,10 @@
         "label": "Figures",
         "blurb": "The Shmo roster and its attributes."
       },
+      "chants": {
+        "label": "Chants",
+        "blurb": "The Beth Gazo: melodies, modes and recordings for Nahlo."
+      },
       "people": {
         "label": "People",
         "blurb": "Who may edit what."
@@ -716,6 +720,105 @@
         "nl": "Dutch",
         "de": "German",
         "sv": "Swedish"
+      }
+    },
+    "chants": {
+      "title": "Chants",
+      "subtitle": "The Beth Gazo: the melodies Nahlo serves as its daily puzzle. Each is named by three things — melody, mode, and its shuḥlofo where it has one.",
+      "statMatching": "chants | chant | chants",
+      "newChant": "New chant",
+      "empty": "No chants yet. Add the first one to start the Beth Gazo.",
+      "loadFailed": "The Beth Gazo could not be loaded.",
+      "loadChantFailed": "This chant could not be loaded.",
+      "notFound": "This chant does not exist.",
+      "saveFailed": "The chant could not be saved.",
+      "saveFailedFields": "The chant could not be saved. Check the highlighted fields.",
+      "saveForbidden": "You do not have permission to save this chant.",
+      "saveConflict": "A chant with that melody, mode and shuḥlofo already exists.",
+      "readOnlyNotice": "You can review this chant but not edit it.",
+      "deleteFailed": "The chant could not be deleted.",
+      "deleteConflict": "Other chants inherit this melody. Repoint or delete them first.",
+      "deleteConfirm": "Delete this chant? This cannot be undone.",
+      "actionFailed": "That action could not be completed.",
+      "inheritsFrom": "Melody of {melody}",
+      "columns": {
+        "melody": "Melody",
+        "syriac": "Incipit",
+        "mode": "Mode",
+        "shuhlofo": "Shuḥlofo",
+        "recording": "Recording",
+        "status": "Status",
+        "playable": "Nahlo pool"
+      },
+      "status": {
+        "Draft": "Draft",
+        "Published": "Published"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by melody or Syriac…",
+        "searchClear": "Clear search",
+        "statusLabel": "Status",
+        "statusAll": "All statuses",
+        "modeLabel": "Mode",
+        "modeAll": "All modes",
+        "playableLabel": "Nahlo pool",
+        "playableAll": "Any pool state",
+        "playableYes": "In the pool",
+        "playableNo": "Not in the pool",
+        "clear": "Clear filters",
+        "noResults": "No chants match these filters.",
+        "pageSizeLabel": "Rows per page"
+      },
+      "actions": {
+        "edit": "Edit",
+        "create": "Create chant",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "addToPool": "Add to pool",
+        "removeFromPool": "Remove from pool"
+      },
+      "recording": {
+        "heading": "Recording",
+        "hint": "The chant sung. Required to publish — without audio there is no puzzle.",
+        "none": "No recording yet.",
+        "present": "Has a recording",
+        "upload": "Upload recording",
+        "replace": "Replace recording",
+        "remove": "Remove recording",
+        "uploading": "Uploading…",
+        "uploadFailed": "The recording could not be uploaded.",
+        "uploadRejected": "That file was refused. Use MP3, WAV, OGG, WebM or M4A, up to 15 MB.",
+        "removeFailed": "The recording could not be removed.",
+        "removeWhilePublished": "A published chant keeps its recording. Unpublish it first to remove the audio.",
+        "formatHint": "MP3, WAV, OGG, WebM or M4A, up to 15 MB."
+      },
+      "lifecycle": {
+        "heading": "Lifecycle",
+        "publishHint": "Only published chants can join the Nahlo pool.",
+        "recordingRequired": "Upload a recording before publishing — a chant with no audio is not a puzzle.",
+        "poolHeading": "Nahlo pool",
+        "poolHint": "The pool is what the daily puzzle draws from. Published chants only.",
+        "inPool": "In the Nahlo pool",
+        "notInPool": "Not in the Nahlo pool",
+        "solqinPoolHint": "This chant borrows the melody of {melody}. Solqin are kept out of the launch pool: what a listener recognises is the melody it borrows."
+      },
+      "form": {
+        "createTitle": "New chant",
+        "syriacIncipit": "Syriac incipit",
+        "syriacIncipitHint": "The opening words, unvocalized. Syriac characters only.",
+        "syriacIncipitVocalized": "Vocalized incipit",
+        "syriacIncipitVocalizedHint": "Optional enrichment. It never gates publication.",
+        "transliteration": "Melody",
+        "transliterationHint": "The melody name in SBL transliteration — this is what players type, e.g. “Maryam yoldath Aloho”.",
+        "mode": "Mode",
+        "modeUnset": "Choose a mode",
+        "modeHint": "A melody name recurs across modes, so it is the pair that identifies the chant.",
+        "shuhlofo": "Shuḥlofo",
+        "shuhlofoHint": "Optional — only some melodies have a variation. Players guess it as its own part of the answer.",
+        "inheritsMelodyFrom": "Inherits its melody from",
+        "inheritsMelodyFromNone": "None — it carries its own melody",
+        "inheritsMelodyFromHint": "Set this for a solqin: a chant that borrows another’s melody with variations of its own.",
+        "recordingComesLater": "Save the chant first, then upload its recording. Publishing waits on the audio."
       }
     },
     "people": {
