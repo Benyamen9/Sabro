@@ -4432,6 +4432,35 @@
         }
       }
     },
+    "/api/v1/chants/answer-options": {
+      "get": {
+        "tags": [
+          "Chants"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChantAnswerOptionsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChantAnswerOptionsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChantAnswerOptionsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/dictionary": {
       "get": {
         "tags": [
@@ -8129,6 +8158,34 @@
           },
           "reference": {
             "type": "string"
+          }
+        }
+      },
+      "ChantAnswerOptionsDto": {
+        "required": [
+          "melodies",
+          "modes",
+          "shuhlofe"
+        ],
+        "type": "object",
+        "properties": {
+          "melodies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "modes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BethGazoModeDto"
+            }
+          },
+          "shuhlofe": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -11960,6 +12017,9 @@
     },
     {
       "name": "BiblicalPassages"
+    },
+    {
+      "name": "Chants"
     },
     {
       "name": "Dictionary"
