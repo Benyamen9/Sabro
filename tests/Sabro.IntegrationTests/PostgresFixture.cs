@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Sabro.BethGazo.Infrastructure;
 using Sabro.Biblical.Infrastructure;
 using Sabro.Historical.Infrastructure;
 using Sabro.Identity.Domain;
@@ -56,6 +57,14 @@ public sealed class PostgresFixture : IAsyncLifetime
         await using (var historical = CreateHistoricalContext())
         {
             await historical.Database.MigrateAsync(ct);
+        }
+
+        // BethGazo precedes Play for the same reason Historical does: Nahlo's
+        // daily puzzle points at a chant. Mirrors the order in
+        // scripts/apply-migrations.sh, which is what production runs.
+        await using (var bethGazo = CreateBethGazoContext())
+        {
+            await bethGazo.Database.MigrateAsync(ct);
         }
 
         await using (var play = CreatePlayContext())
@@ -119,6 +128,14 @@ public sealed class PostgresFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString)
             .Options;
         return new HistoricalDbContext(options);
+    }
+
+    public BethGazoDbContext CreateBethGazoContext()
+    {
+        var options = new DbContextOptionsBuilder<BethGazoDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+        return new BethGazoDbContext(options);
     }
 
     public PlayDbContext CreatePlayContext()
