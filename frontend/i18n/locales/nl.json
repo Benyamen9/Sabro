@@ -419,6 +419,10 @@
         "label": "Figuren",
         "blurb": "Het Shmo-register en zijn kenmerken."
       },
+      "chants": {
+        "label": "Gezangen",
+        "blurb": "Het Beth Gazo: melodieën, modi en opnames voor Nahlo."
+      },
       "people": {
         "label": "Personen",
         "blurb": "Wie wat mag bewerken."
@@ -716,6 +720,105 @@
         "nl": "Nederlands",
         "de": "Duits",
         "sv": "Zweeds"
+      }
+    },
+    "chants": {
+      "title": "Gezangen",
+      "subtitle": "Het Beth Gazo: de melodieën waaruit Nahlo zijn dagelijkse puzzel put. Elk gezang heeft drie kenmerken — melodie, modus en, indien aanwezig, zijn shuḥlofo.",
+      "statMatching": "gezangen | gezang | gezangen",
+      "newChant": "Nieuw gezang",
+      "empty": "Nog geen gezangen. Voeg het eerste toe om het Beth Gazo te beginnen.",
+      "loadFailed": "Het Beth Gazo kon niet worden geladen.",
+      "loadChantFailed": "Dit gezang kon niet worden geladen.",
+      "notFound": "Dit gezang bestaat niet.",
+      "saveFailed": "Het gezang kon niet worden opgeslagen.",
+      "saveFailedFields": "Het gezang kon niet worden opgeslagen. Controleer de gemarkeerde velden.",
+      "saveForbidden": "U hebt geen toestemming om dit gezang op te slaan.",
+      "saveConflict": "Er bestaat al een gezang met die melodie, modus en shuḥlofo.",
+      "readOnlyNotice": "U kunt dit gezang bekijken maar niet bewerken.",
+      "deleteFailed": "Het gezang kon niet worden verwijderd.",
+      "deleteConflict": "Andere gezangen erven deze melodie. Wijs ze eerst opnieuw toe of verwijder ze.",
+      "deleteConfirm": "Dit gezang verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "actionFailed": "Die actie kon niet worden uitgevoerd.",
+      "inheritsFrom": "Melodie van {melody}",
+      "columns": {
+        "melody": "Melodie",
+        "syriac": "Incipit",
+        "mode": "Modus",
+        "shuhlofo": "Shuḥlofo",
+        "recording": "Opname",
+        "status": "Status",
+        "playable": "Nahlo-pool"
+      },
+      "status": {
+        "Draft": "Concept",
+        "Published": "Gepubliceerd"
+      },
+      "filters": {
+        "searchPlaceholder": "Zoek op melodie of Syrisch…",
+        "searchClear": "Zoekopdracht wissen",
+        "statusLabel": "Status",
+        "statusAll": "Alle statussen",
+        "modeLabel": "Modus",
+        "modeAll": "Alle modi",
+        "playableLabel": "Nahlo-pool",
+        "playableAll": "Elke poolstatus",
+        "playableYes": "In de pool",
+        "playableNo": "Niet in de pool",
+        "clear": "Filters wissen",
+        "noResults": "Geen gezangen voldoen aan deze filters.",
+        "pageSizeLabel": "Rijen per pagina"
+      },
+      "actions": {
+        "edit": "Bewerken",
+        "create": "Gezang aanmaken",
+        "publish": "Publiceren",
+        "unpublish": "Depubliceren",
+        "addToPool": "Aan pool toevoegen",
+        "removeFromPool": "Uit pool verwijderen"
+      },
+      "recording": {
+        "heading": "Opname",
+        "hint": "Het gezang gezongen. Vereist om te publiceren — zonder audio is er geen puzzel.",
+        "none": "Nog geen opname.",
+        "present": "Heeft een opname",
+        "upload": "Opname uploaden",
+        "replace": "Opname vervangen",
+        "remove": "Opname verwijderen",
+        "uploading": "Uploaden…",
+        "uploadFailed": "De opname kon niet worden geüpload.",
+        "uploadRejected": "Dat bestand is geweigerd. Gebruik MP3, WAV, OGG, WebM of M4A, tot 15 MB.",
+        "removeFailed": "De opname kon niet worden verwijderd.",
+        "removeWhilePublished": "Een gepubliceerd gezang behoudt zijn opname. Depubliceer het eerst om de audio te verwijderen.",
+        "formatHint": "MP3, WAV, OGG, WebM of M4A, tot 15 MB."
+      },
+      "lifecycle": {
+        "heading": "Levenscyclus",
+        "publishHint": "Alleen gepubliceerde gezangen kunnen in de Nahlo-pool.",
+        "recordingRequired": "Upload een opname vóór publicatie — een gezang zonder audio is geen puzzel.",
+        "poolHeading": "Nahlo-pool",
+        "poolHint": "De pool voedt de dagelijkse puzzel. Alleen gepubliceerde gezangen.",
+        "inPool": "In de Nahlo-pool",
+        "notInPool": "Niet in de Nahlo-pool",
+        "solqinPoolHint": "Dit gezang leent de melodie van {melody}. Solqin blijven buiten de startpool: wat een luisteraar herkent, is de geleende melodie."
+      },
+      "form": {
+        "createTitle": "Nieuw gezang",
+        "syriacIncipit": "Syrisch incipit",
+        "syriacIncipitHint": "De openingswoorden, zonder klinkertekens. Alleen Syrische tekens.",
+        "syriacIncipitVocalized": "Gevocaliseerd incipit",
+        "syriacIncipitVocalizedHint": "Optionele verrijking. Bepaalt nooit of publicatie mogelijk is.",
+        "transliteration": "Melodie",
+        "transliterationHint": "De naam van de melodie in SBL-transliteratie — dit typen spelers in, bv. “Maryam yoldath Aloho”.",
+        "mode": "Modus",
+        "modeUnset": "Kies een modus",
+        "modeHint": "Een melodienaam komt in meerdere modi voor; het paar identificeert het gezang.",
+        "shuhlofo": "Shuḥlofo",
+        "shuhlofoHint": "Optioneel — slechts sommige melodieën hebben een variatie. Spelers raden die als een apart deel van het antwoord.",
+        "inheritsMelodyFrom": "Erft de melodie van",
+        "inheritsMelodyFromNone": "Geen — het heeft een eigen melodie",
+        "inheritsMelodyFromHint": "Vul dit in voor een solqin: een gezang dat de melodie van een ander leent met eigen variaties.",
+        "recordingComesLater": "Sla het gezang eerst op en upload daarna de opname. Publicatie wacht op de audio."
       }
     },
     "people": {

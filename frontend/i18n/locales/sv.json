@@ -419,6 +419,10 @@
         "label": "Gestalter",
         "blurb": "Shmos register och dess egenskaper."
       },
+      "chants": {
+        "label": "Sånger",
+        "blurb": "Beth Gazo: melodier, modus och inspelningar för Nahlo."
+      },
       "people": {
         "label": "Personer",
         "blurb": "Vem som får redigera vad."
@@ -716,6 +720,105 @@
         "nl": "Nederländska",
         "de": "Tyska",
         "sv": "Svenska"
+      }
+    },
+    "chants": {
+      "title": "Sånger",
+      "subtitle": "Beth Gazo: melodierna som Nahlo hämtar sitt dagliga pussel ur. Varje sång namnges av tre delar — melodi, modus och, när det finns, dess shuḥlofo.",
+      "statMatching": "sånger | sång | sånger",
+      "newChant": "Ny sång",
+      "empty": "Inga sånger ännu. Lägg till den första för att öppna Beth Gazo.",
+      "loadFailed": "Beth Gazo kunde inte laddas.",
+      "loadChantFailed": "Den här sången kunde inte laddas.",
+      "notFound": "Den här sången finns inte.",
+      "saveFailed": "Sången kunde inte sparas.",
+      "saveFailedFields": "Sången kunde inte sparas. Kontrollera de markerade fälten.",
+      "saveForbidden": "Du har inte behörighet att spara den här sången.",
+      "saveConflict": "En sång med den melodin, det modus och det shuḥlofo finns redan.",
+      "readOnlyNotice": "Du kan granska sången men inte redigera den.",
+      "deleteFailed": "Sången kunde inte tas bort.",
+      "deleteConflict": "Andra sånger ärver den här melodin. Peka om eller ta bort dem först.",
+      "deleteConfirm": "Ta bort den här sången? Detta går inte att ångra.",
+      "actionFailed": "Åtgärden kunde inte slutföras.",
+      "inheritsFrom": "Melodi från {melody}",
+      "columns": {
+        "melody": "Melodi",
+        "syriac": "Incipit",
+        "mode": "Modus",
+        "shuhlofo": "Shuḥlofo",
+        "recording": "Inspelning",
+        "status": "Status",
+        "playable": "Nahlo-pool"
+      },
+      "status": {
+        "Draft": "Utkast",
+        "Published": "Publicerad"
+      },
+      "filters": {
+        "searchPlaceholder": "Sök på melodi eller syriska…",
+        "searchClear": "Rensa sökning",
+        "statusLabel": "Status",
+        "statusAll": "Alla statusar",
+        "modeLabel": "Modus",
+        "modeAll": "Alla modus",
+        "playableLabel": "Nahlo-pool",
+        "playableAll": "Valfritt poolläge",
+        "playableYes": "I poolen",
+        "playableNo": "Inte i poolen",
+        "clear": "Rensa filter",
+        "noResults": "Inga sånger matchar dessa filter.",
+        "pageSizeLabel": "Rader per sida"
+      },
+      "actions": {
+        "edit": "Redigera",
+        "create": "Skapa sång",
+        "publish": "Publicera",
+        "unpublish": "Avpublicera",
+        "addToPool": "Lägg till i poolen",
+        "removeFromPool": "Ta bort från poolen"
+      },
+      "recording": {
+        "heading": "Inspelning",
+        "hint": "Sången framförd. Krävs för publicering — utan ljud finns inget pussel.",
+        "none": "Ingen inspelning ännu.",
+        "present": "Har en inspelning",
+        "upload": "Ladda upp inspelning",
+        "replace": "Ersätt inspelning",
+        "remove": "Ta bort inspelning",
+        "uploading": "Laddar upp…",
+        "uploadFailed": "Inspelningen kunde inte laddas upp.",
+        "uploadRejected": "Filen avvisades. Använd MP3, WAV, OGG, WebM eller M4A, upp till 15 MB.",
+        "removeFailed": "Inspelningen kunde inte tas bort.",
+        "removeWhilePublished": "En publicerad sång behåller sin inspelning. Avpublicera den först för att ta bort ljudet.",
+        "formatHint": "MP3, WAV, OGG, WebM eller M4A, upp till 15 MB."
+      },
+      "lifecycle": {
+        "heading": "Livscykel",
+        "publishHint": "Endast publicerade sånger kan ingå i Nahlo-poolen.",
+        "recordingRequired": "Ladda upp en inspelning före publicering — en sång utan ljud är inget pussel.",
+        "poolHeading": "Nahlo-pool",
+        "poolHint": "Poolen är det dagliga pusslets källa. Endast publicerade sånger.",
+        "inPool": "I Nahlo-poolen",
+        "notInPool": "Inte i Nahlo-poolen",
+        "solqinPoolHint": "Den här sången lånar melodin från {melody}. Solqin hålls utanför startpoolen: det en lyssnare känner igen är den lånade melodin."
+      },
+      "form": {
+        "createTitle": "Ny sång",
+        "syriacIncipit": "Syriskt incipit",
+        "syriacIncipitHint": "De inledande orden, utan vokaltecken. Endast syriska tecken.",
+        "syriacIncipitVocalized": "Vokaliserat incipit",
+        "syriacIncipitVocalizedHint": "Valfri komplettering. Den styr aldrig om publicering är möjlig.",
+        "transliteration": "Melodi",
+        "transliterationHint": "Melodins namn i SBL-translitterering — det är detta spelarna skriver, t.ex. ”Maryam yoldath Aloho”.",
+        "mode": "Modus",
+        "modeUnset": "Välj ett modus",
+        "modeHint": "Ett melodinamn återkommer i flera modus, så det är paret som identifierar sången.",
+        "shuhlofo": "Shuḥlofo",
+        "shuhlofoHint": "Valfritt — bara vissa melodier har en variation. Spelarna gissar den som en egen del av svaret.",
+        "inheritsMelodyFrom": "Ärver sin melodi från",
+        "inheritsMelodyFromNone": "Ingen — den bär sin egen melodi",
+        "inheritsMelodyFromHint": "Anges för en solqin: en sång som lånar en annans melodi med egna variationer.",
+        "recordingComesLater": "Spara sången först och ladda sedan upp dess inspelning. Publiceringen väntar på ljudet."
       }
     },
     "people": {

@@ -68,6 +68,14 @@ export const adminSections: AdminSection[] = [
     area: 'Shmo',
     ownerOnly: false,
   },
+  {
+    to: '/admin/chants',
+    labelKey: 'admin.sections.chants.label',
+    blurbKey: 'admin.sections.chants.blurb',
+    accent: '--color-nahlo',
+    area: 'Nahlo',
+    ownerOnly: false,
+  },
 ]
 
 export function useAdminSections() {

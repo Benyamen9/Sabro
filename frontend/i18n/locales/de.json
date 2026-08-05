@@ -419,6 +419,10 @@
         "label": "Gestalten",
         "blurb": "Das Shmo-Verzeichnis und seine Merkmale."
       },
+      "chants": {
+        "label": "Gesänge",
+        "blurb": "Das Beth Gazo: Melodien, Modi und Aufnahmen für Nahlo."
+      },
       "people": {
         "label": "Personen",
         "blurb": "Wer was bearbeiten darf."
@@ -716,6 +720,105 @@
         "nl": "Niederländisch",
         "de": "Deutsch",
         "sv": "Schwedisch"
+      }
+    },
+    "chants": {
+      "title": "Gesänge",
+      "subtitle": "Das Beth Gazo: die Melodien, aus denen Nahlo sein Tagesrätsel zieht. Jeder Gesang trägt drei Kennzeichen — Melodie, Modus und, sofern vorhanden, sein Shuḥlofo.",
+      "statMatching": "Gesänge | Gesang | Gesänge",
+      "newChant": "Neuer Gesang",
+      "empty": "Noch keine Gesänge. Legen Sie den ersten an, um das Beth Gazo zu beginnen.",
+      "loadFailed": "Das Beth Gazo konnte nicht geladen werden.",
+      "loadChantFailed": "Dieser Gesang konnte nicht geladen werden.",
+      "notFound": "Dieser Gesang existiert nicht.",
+      "saveFailed": "Der Gesang konnte nicht gespeichert werden.",
+      "saveFailedFields": "Der Gesang konnte nicht gespeichert werden. Überprüfen Sie die markierten Felder.",
+      "saveForbidden": "Sie haben keine Berechtigung, diesen Gesang zu speichern.",
+      "saveConflict": "Ein Gesang mit dieser Melodie, diesem Modus und diesem Shuḥlofo existiert bereits.",
+      "readOnlyNotice": "Sie können diesen Gesang ansehen, aber nicht bearbeiten.",
+      "deleteFailed": "Der Gesang konnte nicht gelöscht werden.",
+      "deleteConflict": "Andere Gesänge erben diese Melodie. Weisen Sie sie zuerst neu zu oder löschen Sie sie.",
+      "deleteConfirm": "Diesen Gesang löschen? Das lässt sich nicht rückgängig machen.",
+      "actionFailed": "Diese Aktion konnte nicht ausgeführt werden.",
+      "inheritsFrom": "Melodie von {melody}",
+      "columns": {
+        "melody": "Melodie",
+        "syriac": "Incipit",
+        "mode": "Modus",
+        "shuhlofo": "Shuḥlofo",
+        "recording": "Aufnahme",
+        "status": "Status",
+        "playable": "Nahlo-Pool"
+      },
+      "status": {
+        "Draft": "Entwurf",
+        "Published": "Veröffentlicht"
+      },
+      "filters": {
+        "searchPlaceholder": "Nach Melodie oder Syrisch suchen…",
+        "searchClear": "Suche löschen",
+        "statusLabel": "Status",
+        "statusAll": "Alle Status",
+        "modeLabel": "Modus",
+        "modeAll": "Alle Modi",
+        "playableLabel": "Nahlo-Pool",
+        "playableAll": "Jeder Pool-Status",
+        "playableYes": "Im Pool",
+        "playableNo": "Nicht im Pool",
+        "clear": "Filter zurücksetzen",
+        "noResults": "Keine Gesänge entsprechen diesen Filtern.",
+        "pageSizeLabel": "Zeilen pro Seite"
+      },
+      "actions": {
+        "edit": "Bearbeiten",
+        "create": "Gesang anlegen",
+        "publish": "Veröffentlichen",
+        "unpublish": "Zurückziehen",
+        "addToPool": "Zum Pool hinzufügen",
+        "removeFromPool": "Aus dem Pool entfernen"
+      },
+      "recording": {
+        "heading": "Aufnahme",
+        "hint": "Der gesungene Gesang. Zum Veröffentlichen erforderlich — ohne Audio gibt es kein Rätsel.",
+        "none": "Noch keine Aufnahme.",
+        "present": "Hat eine Aufnahme",
+        "upload": "Aufnahme hochladen",
+        "replace": "Aufnahme ersetzen",
+        "remove": "Aufnahme entfernen",
+        "uploading": "Wird hochgeladen…",
+        "uploadFailed": "Die Aufnahme konnte nicht hochgeladen werden.",
+        "uploadRejected": "Diese Datei wurde abgelehnt. Verwenden Sie MP3, WAV, OGG, WebM oder M4A, bis zu 15 MB.",
+        "removeFailed": "Die Aufnahme konnte nicht entfernt werden.",
+        "removeWhilePublished": "Ein veröffentlichter Gesang behält seine Aufnahme. Ziehen Sie ihn zuerst zurück, um das Audio zu entfernen.",
+        "formatHint": "MP3, WAV, OGG, WebM oder M4A, bis zu 15 MB."
+      },
+      "lifecycle": {
+        "heading": "Lebenszyklus",
+        "publishHint": "Nur veröffentlichte Gesänge können in den Nahlo-Pool.",
+        "recordingRequired": "Laden Sie vor dem Veröffentlichen eine Aufnahme hoch — ein Gesang ohne Audio ist kein Rätsel.",
+        "poolHeading": "Nahlo-Pool",
+        "poolHint": "Aus dem Pool zieht das Tagesrätsel. Nur veröffentlichte Gesänge.",
+        "inPool": "Im Nahlo-Pool",
+        "notInPool": "Nicht im Nahlo-Pool",
+        "solqinPoolHint": "Dieser Gesang übernimmt die Melodie von {melody}. Solqin bleiben aus dem Startpool heraus: Was ein Hörer erkennt, ist die übernommene Melodie."
+      },
+      "form": {
+        "createTitle": "Neuer Gesang",
+        "syriacIncipit": "Syrisches Incipit",
+        "syriacIncipitHint": "Die Anfangsworte, unvokalisiert. Nur syrische Zeichen.",
+        "syriacIncipitVocalized": "Vokalisiertes Incipit",
+        "syriacIncipitVocalizedHint": "Optionale Ergänzung. Sie ist nie Voraussetzung für die Veröffentlichung.",
+        "transliteration": "Melodie",
+        "transliterationHint": "Der Melodiename in SBL-Umschrift — genau das tippen die Spielenden, z. B. „Maryam yoldath Aloho“.",
+        "mode": "Modus",
+        "modeUnset": "Modus wählen",
+        "modeHint": "Ein Melodiename kommt in mehreren Modi vor; erst das Paar bestimmt den Gesang.",
+        "shuhlofo": "Shuḥlofo",
+        "shuhlofoHint": "Optional — nur manche Melodien haben eine Variation. Die Spielenden raten sie als eigenen Teil der Antwort.",
+        "inheritsMelodyFrom": "Übernimmt die Melodie von",
+        "inheritsMelodyFromNone": "Keine — er trägt seine eigene Melodie",
+        "inheritsMelodyFromHint": "Für ein Solqin zu setzen: ein Gesang, der die Melodie eines anderen mit eigenen Variationen übernimmt.",
+        "recordingComesLater": "Speichern Sie zuerst den Gesang und laden Sie dann seine Aufnahme hoch. Die Veröffentlichung wartet auf das Audio."
       }
     },
     "people": {
