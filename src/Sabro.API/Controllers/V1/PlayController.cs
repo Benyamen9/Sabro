@@ -5,6 +5,7 @@ using Sabro.API.Configuration;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Application.Meltho;
 using Sabro.Play.Application.Mno;
+using Sabro.Play.Application.Nahlo;
 using Sabro.Play.Application.Shmo;
 using Sabro.Play.Domain;
 using Sabro.Shared.Pagination;
@@ -26,6 +27,7 @@ public sealed class PlayController : ApiControllerBase
     private readonly IMelthoLeaderboardService melthoLeaderboardService;
     private readonly IMnoPuzzleService mnoPuzzleService;
     private readonly IShmoPuzzleService shmoPuzzleService;
+    private readonly INahloPuzzleService nahloPuzzleService;
 
     public PlayController(
         IMelthoPuzzleService melthoPuzzleService,
@@ -33,7 +35,8 @@ public sealed class PlayController : ApiControllerBase
         IGameResultService gameResultService,
         IMelthoLeaderboardService melthoLeaderboardService,
         IMnoPuzzleService mnoPuzzleService,
-        IShmoPuzzleService shmoPuzzleService)
+        IShmoPuzzleService shmoPuzzleService,
+        INahloPuzzleService nahloPuzzleService)
     {
         this.melthoPuzzleService = melthoPuzzleService;
         this.melthoLibraryService = melthoLibraryService;
@@ -41,6 +44,7 @@ public sealed class PlayController : ApiControllerBase
         this.melthoLeaderboardService = melthoLeaderboardService;
         this.mnoPuzzleService = mnoPuzzleService;
         this.shmoPuzzleService = shmoPuzzleService;
+        this.nahloPuzzleService = nahloPuzzleService;
     }
 
     /// <summary>
@@ -107,6 +111,30 @@ public sealed class PlayController : ApiControllerBase
     public async Task<ActionResult<ShmoPuzzleDto>> GetTodaysShmoPuzzle(CancellationToken cancellationToken)
     {
         var result = await shmoPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Returns today's Nahlo puzzle (get-or-create per date; identical for all
+    /// players; respects the anti-repetition window). The recording plus all three
+    /// parts of the answer — melody, mode and shuḥlofo — ship with the puzzle:
+    /// like Meltho's word and Shmo's figure, guess evaluation is client logic and
+    /// per-part feedback needs the answer. Public: anyone can play without an
+    /// account — login is only needed to persist a result. Rate-limited as a
+    /// public endpoint.
+    /// </summary>
+    [HttpGet("nahlo/today")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(NahloPuzzleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<NahloPuzzleDto>> GetTodaysNahloPuzzle(CancellationToken cancellationToken)
+    {
+        var result = await nahloPuzzleService.GetTodaysPuzzleAsync(cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

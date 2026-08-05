@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Application.Meltho;
 using Sabro.Play.Application.Mno;
+using Sabro.Play.Application.Nahlo;
 using Sabro.Play.Application.Shmo;
 using Sabro.Play.Infrastructure;
 using Sabro.Shared.Abstractions;
@@ -35,6 +36,7 @@ public sealed class PlayModule : IModuleRegistration
 
         services.Configure<MelthoOptions>(configuration.GetSection(MelthoOptions.SectionName));
         services.Configure<ShmoOptions>(configuration.GetSection(ShmoOptions.SectionName));
+        services.Configure<NahloOptions>(configuration.GetSection(NahloOptions.SectionName));
         services.TryAddSingleton(TimeProvider.System);
 
         services.AddScoped<IGameResultService, GameResultService>();
@@ -43,5 +45,6 @@ public sealed class PlayModule : IModuleRegistration
         services.AddScoped<IMelthoLeaderboardService, MelthoLeaderboardService>();
         services.AddScoped<IMnoPuzzleService, MnoPuzzleService>();
         services.AddScoped<IShmoPuzzleService, ShmoPuzzleService>();
+        services.AddScoped<INahloPuzzleService, NahloPuzzleService>();
     }
 }

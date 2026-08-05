@@ -3627,6 +3627,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/play/nahlo/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["NahloPuzzleDto"];
+                        "application/json": components["schemas"]["NahloPuzzleDto"];
+                        "text/json": components["schemas"]["NahloPuzzleDto"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/play/meltho/library": {
         parameters: {
             query?: never;
@@ -5526,6 +5574,18 @@ export interface components {
             tileCount: number | string;
             expression: string;
             tileForm: string;
+        };
+        NahloPuzzleDto: {
+            /** Format: date */
+            date: string;
+            /** Format: uuid */
+            chantId: string;
+            audioUrl: string;
+            transliteration: string;
+            modeName: string;
+            shuhlofo: null | string;
+            syriacIncipit: string;
+            syriacIncipitVocalized: null | string;
         };
         PagedResultOfAnnotationDto: {
             items: components["schemas"]["AnnotationDto"][];
