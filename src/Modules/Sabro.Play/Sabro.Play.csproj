@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\Sabro.Shared.Infrastructure\Sabro.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\Sabro.Lexicon\Sabro.Lexicon.csproj" />
     <ProjectReference Include="..\Sabro.Historical\Sabro.Historical.csproj" />
+    <ProjectReference Include="..\Sabro.BethGazo\Sabro.BethGazo.csproj" />
     <ProjectReference Include="..\Sabro.Identity\Sabro.Identity.csproj" />
   </ItemGroup>
 

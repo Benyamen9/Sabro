@@ -5554,6 +5554,55 @@
         }
       }
     },
+    "/api/v1/play/nahlo/today": {
+      "get": {
+        "tags": [
+          "Play"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NahloPuzzleDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NahloPuzzleDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NahloPuzzleDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/play/meltho/library": {
       "get": {
         "tags": [
@@ -9884,6 +9933,53 @@
           },
           "tileForm": {
             "type": "string"
+          }
+        }
+      },
+      "NahloPuzzleDto": {
+        "required": [
+          "date",
+          "chantId",
+          "audioUrl",
+          "transliteration",
+          "modeName",
+          "shuhlofo",
+          "syriacIncipit",
+          "syriacIncipitVocalized"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "chantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "audioUrl": {
+            "type": "string"
+          },
+          "transliteration": {
+            "type": "string"
+          },
+          "modeName": {
+            "type": "string"
+          },
+          "shuhlofo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "syriacIncipit": {
+            "type": "string"
+          },
+          "syriacIncipitVocalized": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
