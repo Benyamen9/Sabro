@@ -864,7 +864,7 @@
       "removeOwner": "Ta bort ägarskapet…",
       "empty": "Ingen har loggat in ännu.",
       "unidentifiedShort": "Konto {id}",
-      "unidentifiedHint": "Inloggningstjänsten gav varken namn eller e-postadress för det här kontot. Det kan ha tagits bort från Logto, eller så misslyckades uppslagningen när sidan laddades — ladda om innan du utgår från att det är borta.",
+      "unidentifiedHint": "Inloggningstjänsten gav ingenting för det här kontot — inget namn, ingen adress. Oftast betyder det att identiteten togs bort från Logto: en engångstoken för maskiner som skapats för ett skript lämnar precis ett sådant profil efter sig. Det kan också vara att uppslagningen misslyckades när sidan laddades — ladda om innan du betraktar det som borta.",
       "unidentifiedNotice": "inget konto saknar namn | 1 konto saknar namn och adress från inloggningstjänsten | {count} konton saknar namn och adress från inloggningstjänsten",
       "showUnidentified": "Visa bara dessa",
       "tier": {

@@ -864,7 +864,7 @@
       "removeOwner": "Eigenaarschap intrekken…",
       "empty": "Er heeft zich nog niemand aangemeld.",
       "unidentifiedShort": "Account {id}",
-      "unidentifiedHint": "De aanmeldservice gaf voor dit account geen naam en geen e-mailadres terug. Mogelijk is het uit Logto verwijderd, of de opvraging mislukte tijdens het laden van deze pagina — herlaad voordat u aanneemt dat het weg is.",
+      "unidentifiedHint": "De aanmeldservice gaf niets terug voor dit account — geen naam, geen adres. Meestal betekent dat dat de identiteit uit Logto is verwijderd: een eenmalig machinetoken voor een script laat precies zo'n profiel achter. Het kan ook zijn dat de opvraging mislukte tijdens het laden van de pagina — herlaad voordat u het als verdwenen beschouwt.",
       "unidentifiedNotice": "geen account zonder naam | 1 account heeft geen naam of adres van de aanmeldservice | {count} accounts hebben geen naam of adres van de aanmeldservice",
       "showUnidentified": "Alleen deze tonen",
       "tier": {

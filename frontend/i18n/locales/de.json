@@ -864,7 +864,7 @@
       "removeOwner": "Eigentümerrolle entziehen…",
       "empty": "Es hat sich noch niemand angemeldet.",
       "unidentifiedShort": "Konto {id}",
-      "unidentifiedHint": "Der Anmeldedienst lieferte für dieses Konto weder einen Namen noch eine E-Mail-Adresse. Möglicherweise wurde es aus Logto gelöscht, oder die Abfrage schlug beim Laden dieser Seite fehl — laden Sie neu, bevor Sie es für verschwunden halten.",
+      "unidentifiedHint": "Der Anmeldedienst lieferte für dieses Konto nichts — keinen Namen, keine Adresse. Meist wurde die Identität aus Logto gelöscht: ein einmaliges Maschinentoken für ein Skript hinterlässt genau so ein Profil. Es kann auch sein, dass die Abfrage beim Laden der Seite fehlschlug — laden Sie neu, bevor Sie es für verloren halten.",
       "unidentifiedNotice": "kein Konto ohne Namen | 1 Konto hat weder Namen noch Adresse vom Anmeldedienst | {count} Konten haben weder Namen noch Adresse vom Anmeldedienst",
       "showUnidentified": "Nur diese anzeigen",
       "tier": {

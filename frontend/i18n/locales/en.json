@@ -864,7 +864,7 @@
       "removeOwner": "Remove Owner…",
       "empty": "Nobody has signed in yet.",
       "unidentifiedShort": "Account {id}",
-      "unidentifiedHint": "The sign-in service returned neither a name nor an email address for this account. It may have been removed from Logto, or the lookup failed while this page loaded — reload before assuming it is gone.",
+      "unidentifiedHint": "Nothing came back from the sign-in service for this account — no name, no address. Most often that means the identity was deleted from Logto: a one-off machine token minted for a script leaves a profile behind exactly like this. It can also mean the lookup failed while the page loaded, so reload before treating it as gone.",
       "unidentifiedNotice": "no account is missing its name | 1 account has no name or address from the sign-in service | {count} accounts have no name or address from the sign-in service",
       "showUnidentified": "Show only these",
       "tier": {

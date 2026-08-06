@@ -864,7 +864,7 @@
       "removeOwner": "Retirer le rôle de propriétaire…",
       "empty": "Personne ne s'est encore connecté.",
       "unidentifiedShort": "Compte {id}",
-      "unidentifiedHint": "Le service de connexion n'a renvoyé ni nom ni adresse e-mail pour ce compte. Il a peut-être été supprimé de Logto, ou la recherche a échoué au chargement de cette page — rechargez avant de conclure qu'il n'existe plus.",
+      "unidentifiedHint": "Le service de connexion n'a rien renvoyé pour ce compte — ni nom, ni adresse. Le plus souvent, l'identité a été supprimée de Logto : un jeton machine ponctuel créé pour un script laisse exactement ce genre de profil derrière lui. Cela peut aussi venir d'une recherche qui a échoué au chargement de la page : rechargez avant de le considérer comme perdu.",
       "unidentifiedNotice": "aucun compte sans nom | 1 compte n'a ni nom ni adresse renvoyés par le service de connexion | {count} comptes n'ont ni nom ni adresse renvoyés par le service de connexion",
       "showUnidentified": "N'afficher que ceux-ci",
       "tier": {
