@@ -21,6 +21,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { findEntryByForm } from './lib/lexicon-lookup.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -59,15 +60,20 @@ async function apiFetch(api, token, method, path, body) {
   return json;
 }
 
-async function listAllEntries(api, token) {
-  const byForm = new Map();
-  const pageSize = 200;
-  for (let page = 1; ; page++) {
-    const result = await apiFetch(api, token, 'GET', `/api/v1/admin/lexicon?page=${page}&pageSize=${pageSize}`);
-    for (const e of result.items) byForm.set(e.syriacUnvocalized.normalize('NFC'), e);
-    if (page * pageSize >= result.total || result.items.length === 0) break;
-  }
-  return byForm;
+// Existence is checked one word at a time, deliberately.
+//
+// This used to page through the whole admin list into a form -> entry map. That
+// list is served by Meilisearch, which stops at 1,000 results, so once the SEDRA
+// import took the Lexicon past 32,000 the map held 1,000 entries that did not
+// include the launch pool — and not-found is this script's signal to CREATE.
+// Re-running it would have duplicated all 42 published, playable words.
+//
+// See scripts/lib/lexicon-lookup.mjs for the whole story.
+async function findExisting(api, token, form) {
+  return findEntryByForm(
+    (method, path, body) => apiFetch(api, token, method, path, body),
+    form,
+  );
 }
 
 async function main() {
@@ -110,16 +116,17 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`API: ${args.api}\nFetching existing entries for idempotency...`);
-  const existing = await listAllEntries(args.api, token);
-  console.log(`Found ${existing.size} existing entr${existing.size === 1 ? 'y' : 'ies'}.\n`);
+  console.log(`API: ${args.api}\nChecking each word before creating anything...\n`);
 
   const summary = { created: 0, published: 0, madePlayable: 0, alreadyDone: 0, failed: 0 };
   for (const w of words) {
     const form = w.syriacUnvocalized.normalize('NFC');
     const label = `${form} (${w.sblTransliteration})`;
     try {
-      let entry = existing.get(form);
+      // Looked up per word rather than against a prefetched map — the map was
+      // the bug. A throw here (several entries share the form) stops this word
+      // and is reported below; it never falls through to a create.
+      let entry = await findExisting(args.api, token, form);
       const actions = [];
 
       if (!entry) {

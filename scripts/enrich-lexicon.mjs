@@ -31,6 +31,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { fetchAllOrThrow, findEntryByForm } from './lib/lexicon-lookup.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const nfc = (s) => (s ?? '').normalize('NFC');
@@ -73,16 +74,8 @@ async function apiFetch(api, token, method, path, body) {
   return json;
 }
 
-async function listAll(api, token, path) {
-  const items = [];
-  const pageSize = 200;
-  for (let page = 1; ; page++) {
-    const result = await apiFetch(api, token, 'GET', `${path}?page=${page}&pageSize=${pageSize}`);
-    items.push(...result.items);
-    if (page * pageSize >= result.total || result.items.length === 0) break;
-  }
-  return items;
-}
+/** Bound to one API + token, so the shared lookup helpers can call it. */
+const fetcher = (api, token) => (method, path, body) => apiFetch(api, token, method, path, body);
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
@@ -133,8 +126,12 @@ async function main() {
 
   // --- Roots: ensure each distinct root exists, create the missing ones. ---
   console.log(`API: ${args.api}\nFetching existing roots...`);
+  const api = fetcher(args.api, token);
   const rootIdByForm = new Map();
-  for (const r of await listAll(args.api, token, '/api/v1/lexicon-roots')) {
+  // Roots are Postgres-backed, so paging here is honest — but a truncated read
+  // would make this create duplicate roots, so it refuses a partial list rather
+  // than pages through one.
+  for (const r of await fetchAllOrThrow(api, '/api/v1/lexicon-roots', { label: 'The root table' })) {
     rootIdByForm.set(nfc(r.form), r.id);
   }
   console.log(`Found ${rootIdByForm.size} existing root(s).`);
@@ -150,19 +147,19 @@ async function main() {
   }
   console.log(`Roots ready (created ${rootsCreated}, reused ${distinctRoots.length - rootsCreated}).\n`);
 
-  // --- Entries: fetch existing, then full-replace PUT with the enrichment merged in. ---
-  console.log('Fetching existing entries...');
-  const entryByForm = new Map();
-  for (const e of await listAll(args.api, token, '/api/v1/admin/lexicon')) {
-    entryByForm.set(nfc(e.syriacUnvocalized), e);
-  }
-  console.log(`Found ${entryByForm.size} existing entr${entryByForm.size === 1 ? 'y' : 'ies'}.\n`);
+  // --- Entries: look each one up, then full-replace PUT with the enrichment merged in. ---
+  //
+  // Looked up per word rather than by enumerating the admin list: that list is
+  // Meilisearch-backed and stops at 1,000 results, so once SEDRA took the Lexicon
+  // past 32,000 the map held entries that did not include the launch pool and
+  // every word here was reported missing. See scripts/lib/lexicon-lookup.mjs.
+  console.log('Looking up each entry...\n');
 
   const summary = { updated: 0, skipped: 0, missing: 0, failed: 0 };
   for (const w of words) {
     const label = `${w.form} (${w.translit})`;
     try {
-      const entry = entryByForm.get(w.form);
+      const entry = await findEntryByForm(api, w.form);
       if (!entry) {
         summary.missing++;
         console.error(`  ! ${label}: no existing entry found — run seed-lexicon.mjs first`);
