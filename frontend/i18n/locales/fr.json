@@ -825,7 +825,7 @@
       "title": "Personnes",
       "subtitle": "Qui peut modifier quoi. Vous seul pouvez changer un rôle.",
       "sinceDate": "depuis le {date}",
-      "makeOwner": "Propriétaire — tout, partout",
+      "makeOwner": "Nommer propriétaire…",
       "accessLabel": "Accès à {area}",
       "statPeople": "personnes | personne | personnes",
       "statOwners": "propriétaires | propriétaire | propriétaires",
@@ -834,7 +834,6 @@
       "mayEdit": "Peut modifier",
       "since": "Inscrit le",
       "you": "(vous)",
-      "unnamed": "Nom indisponible",
       "cannotChangeOwn": "Vous ne pouvez pas changer votre propre rôle.",
       "ownerRequired": "Accès propriétaire requis.",
       "ownerRequiredHint": "Seul le propriétaire peut voir et modifier les rôles.",
@@ -861,6 +860,43 @@
         "none": "Aucun accès",
         "Reviewer": "Relecteur — peut proposer",
         "Editor": "Éditeur — peut modifier"
+      },
+      "removeOwner": "Retirer le rôle de propriétaire…",
+      "empty": "Personne ne s'est encore connecté.",
+      "unidentifiedShort": "Compte {id}",
+      "unidentifiedHint": "Le service de connexion n'a renvoyé ni nom ni adresse e-mail pour ce compte. Il a peut-être été supprimé de Logto, ou la recherche a échoué au chargement de cette page — rechargez avant de conclure qu'il n'existe plus.",
+      "unidentifiedNotice": "aucun compte sans nom | 1 compte n'a ni nom ni adresse renvoyés par le service de connexion | {count} comptes n'ont ni nom ni adresse renvoyés par le service de connexion",
+      "showUnidentified": "N'afficher que ceux-ci",
+      "tier": {
+        "Owner": "Propriétaire",
+        "Editor": "Éditeurs",
+        "Reviewer": "Relecteurs",
+        "None": "Sans accès"
+      },
+      "tierHint": {
+        "Owner": "Tout, partout — y compris qui d'autre entre.",
+        "Editor": "Peut modifier le contenu d'au moins un domaine.",
+        "Reviewer": "Peut proposer des corrections, sans rien modifier directement.",
+        "None": "Connecté, sans aucun droit. Peut jouer, pas éditer."
+      },
+      "filters": {
+        "searchPlaceholder": "Rechercher par nom, e-mail ou identifiant",
+        "searchClear": "Effacer la recherche",
+        "tierLabel": "Filtrer par accès",
+        "tierAll": "Tous les accès",
+        "areaLabel": "Filtrer par domaine",
+        "areaAll": "Tous les domaines",
+        "unidentifiedOnly": "Sans nom",
+        "clear": "Effacer les filtres",
+        "noResults": "Personne ne correspond à ces filtres."
+      },
+      "confirmOwner": {
+        "promoteTitle": "Nommer cette personne propriétaire ?",
+        "promoteBody": "{name} aura un accès complet à tous les domaines et pourra modifier les droits de tout le monde — y compris les vôtres. À ne faire que pour quelqu'un à qui vous confiez tout le projet.",
+        "promoteConfirm": "Oui, nommer propriétaire",
+        "demoteTitle": "Retirer le rôle de propriétaire ?",
+        "demoteBody": "{name} perdra le rôle de propriétaire et ne gardera que les domaines accordés ci-dessous — aucun, sauf si vous en accordez. S'il s'agit du dernier propriétaire, plus personne ne pourra gérer les accès.",
+        "demoteConfirm": "Oui, retirer le rôle"
       }
     },
     "proposals": {

@@ -825,7 +825,7 @@
       "title": "Personer",
       "subtitle": "Vem som får redigera vad. Endast du kan ändra en roll.",
       "sinceDate": "sedan {date}",
-      "makeOwner": "Ägare — allt, överallt",
+      "makeOwner": "Gör till ägare…",
       "accessLabel": "Åtkomst till {area}",
       "statPeople": "personer | person | personer",
       "statOwners": "ägare | ägare | ägare",
@@ -834,7 +834,6 @@
       "mayEdit": "Får redigera",
       "since": "Registrerad",
       "you": "(du)",
-      "unnamed": "Namn ej tillgängligt",
       "cannotChangeOwn": "Du kan inte ändra din egen roll.",
       "ownerRequired": "Ägarbehörighet krävs.",
       "ownerRequiredHint": "Endast ägaren kan se och ändra roller.",
@@ -861,6 +860,43 @@
         "none": "Ingen åtkomst",
         "Reviewer": "Granskare — kan föreslå",
         "Editor": "Redaktör — kan ändra"
+      },
+      "removeOwner": "Ta bort ägarskapet…",
+      "empty": "Ingen har loggat in ännu.",
+      "unidentifiedShort": "Konto {id}",
+      "unidentifiedHint": "Inloggningstjänsten gav varken namn eller e-postadress för det här kontot. Det kan ha tagits bort från Logto, eller så misslyckades uppslagningen när sidan laddades — ladda om innan du utgår från att det är borta.",
+      "unidentifiedNotice": "inget konto saknar namn | 1 konto saknar namn och adress från inloggningstjänsten | {count} konton saknar namn och adress från inloggningstjänsten",
+      "showUnidentified": "Visa bara dessa",
+      "tier": {
+        "Owner": "Ägare",
+        "Editor": "Redaktörer",
+        "Reviewer": "Granskare",
+        "None": "Ingen åtkomst"
+      },
+      "tierHint": {
+        "Owner": "Allt, överallt — även vem mer som släpps in.",
+        "Editor": "Kan ändra innehåll i minst ett område.",
+        "Reviewer": "Kan föreslå rättelser, men ändrar inget direkt.",
+        "None": "Inloggad, utan rättigheter. Kan spela, inte redigera."
+      },
+      "filters": {
+        "searchPlaceholder": "Sök på namn, e-post eller id",
+        "searchClear": "Rensa sökningen",
+        "tierLabel": "Filtrera på åtkomst",
+        "tierAll": "All åtkomst",
+        "areaLabel": "Filtrera på område",
+        "areaAll": "Alla områden",
+        "unidentifiedOnly": "Utan namn",
+        "clear": "Rensa filter",
+        "noResults": "Ingen matchar de här filtren."
+      },
+      "confirmOwner": {
+        "promoteTitle": "Göra den här personen till ägare?",
+        "promoteBody": "{name} får full åtkomst till varje område och kan ändra allas rättigheter — även dina. Gör detta bara för någon du anförtror hela projektet.",
+        "promoteConfirm": "Ja, gör till ägare",
+        "demoteTitle": "Ta bort ägarskapet?",
+        "demoteBody": "{name} förlorar ägarskapet och behåller bara områdena nedan — inga, om du inte ger några. Är detta den sista ägaren kan ingen därefter hantera åtkomst.",
+        "demoteConfirm": "Ja, ta bort"
       }
     },
     "proposals": {

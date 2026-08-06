@@ -825,7 +825,7 @@
       "title": "Personen",
       "subtitle": "Wie wat mag bewerken. Alleen u kunt een rol wijzigen.",
       "sinceDate": "sinds {date}",
-      "makeOwner": "Eigenaar — alles, overal",
+      "makeOwner": "Eigenaar maken…",
       "accessLabel": "Toegang tot {area}",
       "statPeople": "personen | persoon | personen",
       "statOwners": "eigenaren | eigenaar | eigenaren",
@@ -834,7 +834,6 @@
       "mayEdit": "Mag bewerken",
       "since": "Aangemeld op",
       "you": "(u)",
-      "unnamed": "Naam niet beschikbaar",
       "cannotChangeOwn": "U kunt uw eigen rol niet wijzigen.",
       "ownerRequired": "Eigenaarstoegang vereist.",
       "ownerRequiredHint": "Alleen de eigenaar kan rollen zien en wijzigen.",
@@ -861,6 +860,43 @@
         "none": "Geen toegang",
         "Reviewer": "Reviewer — kan voorstellen",
         "Editor": "Editor — kan wijzigen"
+      },
+      "removeOwner": "Eigenaarschap intrekken…",
+      "empty": "Er heeft zich nog niemand aangemeld.",
+      "unidentifiedShort": "Account {id}",
+      "unidentifiedHint": "De aanmeldservice gaf voor dit account geen naam en geen e-mailadres terug. Mogelijk is het uit Logto verwijderd, of de opvraging mislukte tijdens het laden van deze pagina — herlaad voordat u aanneemt dat het weg is.",
+      "unidentifiedNotice": "geen account zonder naam | 1 account heeft geen naam of adres van de aanmeldservice | {count} accounts hebben geen naam of adres van de aanmeldservice",
+      "showUnidentified": "Alleen deze tonen",
+      "tier": {
+        "Owner": "Eigenaar",
+        "Editor": "Redacteuren",
+        "Reviewer": "Beoordelaars",
+        "None": "Geen toegang"
+      },
+      "tierHint": {
+        "Owner": "Alles, overal — ook wie er verder binnenkomt.",
+        "Editor": "Kan inhoud wijzigen in ten minste één gebied.",
+        "Reviewer": "Kan correcties voorstellen, maar niets rechtstreeks wijzigen.",
+        "None": "Aangemeld, zonder rechten. Kan spelen, niet bewerken."
+      },
+      "filters": {
+        "searchPlaceholder": "Zoek op naam, e-mail of id",
+        "searchClear": "Zoekopdracht wissen",
+        "tierLabel": "Filteren op toegang",
+        "tierAll": "Alle toegang",
+        "areaLabel": "Filteren op gebied",
+        "areaAll": "Alle gebieden",
+        "unidentifiedOnly": "Zonder naam",
+        "clear": "Filters wissen",
+        "noResults": "Niemand voldoet aan deze filters."
+      },
+      "confirmOwner": {
+        "promoteTitle": "Deze persoon eigenaar maken?",
+        "promoteBody": "{name} krijgt volledige toegang tot elk gebied en kan de rechten van iedereen wijzigen — ook die van u. Doe dit alleen voor iemand aan wie u het hele project toevertrouwt.",
+        "promoteConfirm": "Ja, eigenaar maken",
+        "demoteTitle": "Eigenaarschap intrekken?",
+        "demoteBody": "{name} verliest het eigenaarschap en houdt alleen de hieronder toegekende gebieden over — geen, tenzij u die toekent. Als dit de laatste eigenaar is, kan niemand daarna de toegang nog beheren.",
+        "demoteConfirm": "Ja, intrekken"
       }
     },
     "proposals": {
