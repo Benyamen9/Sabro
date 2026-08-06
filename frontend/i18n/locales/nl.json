@@ -825,7 +825,7 @@
       "title": "Personen",
       "subtitle": "Wie wat mag bewerken. Alleen u kunt een rol wijzigen.",
       "sinceDate": "sinds {date}",
-      "makeOwner": "Eigenaar maken…",
+      "makeOwner": "Eigenaar maken",
       "accessLabel": "Toegang tot {area}",
       "statPeople": "personen | persoon | personen",
       "statOwners": "eigenaren | eigenaar | eigenaren",
@@ -861,7 +861,7 @@
         "Reviewer": "Reviewer — kan voorstellen",
         "Editor": "Editor — kan wijzigen"
       },
-      "removeOwner": "Eigenaarschap intrekken…",
+      "removeOwner": "Eigenaarschap intrekken",
       "empty": "Er heeft zich nog niemand aangemeld.",
       "unidentifiedShort": "Account {id}",
       "unidentifiedHint": "De aanmeldservice gaf niets terug voor dit account — geen naam, geen adres. Meestal betekent dat dat de identiteit uit Logto is verwijderd: een eenmalig machinetoken voor een script laat precies zo'n profiel achter. Het kan ook zijn dat de opvraging mislukte tijdens het laden van de pagina — herlaad voordat u het als verdwenen beschouwt.",

@@ -825,7 +825,7 @@
       "title": "Personnes",
       "subtitle": "Qui peut modifier quoi. Vous seul pouvez changer un rôle.",
       "sinceDate": "depuis le {date}",
-      "makeOwner": "Nommer propriétaire…",
+      "makeOwner": "Nommer propriétaire",
       "accessLabel": "Accès à {area}",
       "statPeople": "personnes | personne | personnes",
       "statOwners": "propriétaires | propriétaire | propriétaires",
@@ -861,7 +861,7 @@
         "Reviewer": "Relecteur — peut proposer",
         "Editor": "Éditeur — peut modifier"
       },
-      "removeOwner": "Retirer le rôle de propriétaire…",
+      "removeOwner": "Retirer le rôle de propriétaire",
       "empty": "Personne ne s'est encore connecté.",
       "unidentifiedShort": "Compte {id}",
       "unidentifiedHint": "Le service de connexion n'a rien renvoyé pour ce compte — ni nom, ni adresse. Le plus souvent, l'identité a été supprimée de Logto : un jeton machine ponctuel créé pour un script laisse exactement ce genre de profil derrière lui. Cela peut aussi venir d'une recherche qui a échoué au chargement de la page : rechargez avant de le considérer comme perdu.",

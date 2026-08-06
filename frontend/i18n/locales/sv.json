@@ -825,7 +825,7 @@
       "title": "Personer",
       "subtitle": "Vem som får redigera vad. Endast du kan ändra en roll.",
       "sinceDate": "sedan {date}",
-      "makeOwner": "Gör till ägare…",
+      "makeOwner": "Gör till ägare",
       "accessLabel": "Åtkomst till {area}",
       "statPeople": "personer | person | personer",
       "statOwners": "ägare | ägare | ägare",
@@ -861,7 +861,7 @@
         "Reviewer": "Granskare — kan föreslå",
         "Editor": "Redaktör — kan ändra"
       },
-      "removeOwner": "Ta bort ägarskapet…",
+      "removeOwner": "Ta bort ägarskapet",
       "empty": "Ingen har loggat in ännu.",
       "unidentifiedShort": "Konto {id}",
       "unidentifiedHint": "Inloggningstjänsten gav ingenting för det här kontot — inget namn, ingen adress. Oftast betyder det att identiteten togs bort från Logto: en engångstoken för maskiner som skapats för ett skript lämnar precis ett sådant profil efter sig. Det kan också vara att uppslagningen misslyckades när sidan laddades — ladda om innan du betraktar det som borta.",

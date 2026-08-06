@@ -432,12 +432,15 @@ const selectClass
                   <!-- Owner is a yes/no, not a rung: it grants every area at once, so the
                        per-area controls are hidden rather than shown lying. -->
                   <div class="flex shrink-0 flex-col items-end gap-1">
+                    <!-- Quiet: a rounded pill in the card's own badge language, not
+                         a grey form control parked in the corner. It carries the
+                         accent only when it takes something away. -->
                     <button
                       type="button"
-                      class="rounded-md border px-3 py-1.5 font-sans text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                      class="rounded-full border px-3.5 py-1.5 font-sans text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
                       :class="isOwner(person)
-                        ? 'border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent-faint)]'
-                        : 'border-[var(--color-border-strong)] text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]'"
+                        ? 'border-[color-mix(in_oklab,var(--color-accent)_35%,transparent)] text-[var(--color-accent)] hover:bg-[var(--color-accent-faint)]'
+                        : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-text)]'"
                       :disabled="isLocked(person) || savingId === person.id"
                       @click="askOwnerChange(person)"
                     >
