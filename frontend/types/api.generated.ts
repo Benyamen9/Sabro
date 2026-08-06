@@ -5466,10 +5466,7 @@ export interface components {
         IFormFile: string;
         /** @enum {string} */
         LetterHardening: "Qushoyo" | "Rukkokho";
-        /**
-         * @default 0
-         * @enum {string}
-         */
+        /** @enum {string} */
         LexiconAdminSort: "Recent" | "Syriac" | "Status" | "Length";
         LexiconEntryDto: {
             /** Format: uuid */
@@ -5523,10 +5520,7 @@ export interface components {
             meaningTexts: string[];
             meaningLanguages: string[];
         };
-        /**
-         * @default 0
-         * @enum {string}
-         */
+        /** @enum {string} */
         LibrarySort: "Recent" | "Alphabetical" | "Length";
         MelthoLeaderboardDto: {
             top: components["schemas"]["MelthoLeaderboardEntryDto"][];
@@ -5603,10 +5597,7 @@ export interface components {
             language: string;
             text: string;
         };
-        /**
-         * @default 2
-         * @enum {string}
-         */
+        /** @enum {string} */
         MnoDifficulty: "Beginner" | "Easy" | "Normal" | "Hard" | "Extreme";
         MnoPuzzleDto: {
             /** Format: date */

@@ -1592,6 +1592,7 @@
             "name": "sort",
             "in": "query",
             "schema": {
+              "default": 0,
               "$ref": "#/components/schemas/LexiconAdminSort"
             }
           },
@@ -5352,6 +5353,7 @@
             "name": "sort",
             "in": "query",
             "schema": {
+              "default": 1,
               "$ref": "#/components/schemas/LibrarySort"
             }
           },
@@ -5486,6 +5488,7 @@
             "name": "difficulty",
             "in": "query",
             "schema": {
+              "default": 2,
               "$ref": "#/components/schemas/MnoDifficulty"
             }
           }
@@ -5668,6 +5671,7 @@
             "name": "sort",
             "in": "query",
             "schema": {
+              "default": 0,
               "$ref": "#/components/schemas/LibrarySort"
             }
           },
@@ -9376,8 +9380,7 @@
           "Status",
           "Length"
         ],
-        "type": "string",
-        "default": 0
+        "type": "string"
       },
       "LexiconEntryDto": {
         "required": [
@@ -9604,8 +9607,7 @@
           "Alphabetical",
           "Length"
         ],
-        "type": "string",
-        "default": 0
+        "type": "string"
       },
       "MelthoLeaderboardDto": {
         "required": [
@@ -9957,8 +9959,7 @@
           "Hard",
           "Extreme"
         ],
-        "type": "string",
-        "default": 2
+        "type": "string"
       },
       "MnoPuzzleDto": {
         "required": [
