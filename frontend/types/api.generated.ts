@@ -5587,6 +5587,8 @@ export interface components {
         MelthoPuzzleDto: {
             /** Format: date */
             date: string;
+            /** Format: int32 */
+            dayNumber: number | string;
             /** Format: uuid */
             lexiconEntryId: string;
             syriacUnvocalized: string;

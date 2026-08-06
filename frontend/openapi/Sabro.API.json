@@ -9873,6 +9873,7 @@
       "MelthoPuzzleDto": {
         "required": [
           "date",
+          "dayNumber",
           "lexiconEntryId",
           "syriacUnvocalized",
           "syriacVocalized",
@@ -9886,6 +9887,14 @@
           "date": {
             "type": "string",
             "format": "date"
+          },
+          "dayNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           },
           "lexiconEntryId": {
             "type": "string",
