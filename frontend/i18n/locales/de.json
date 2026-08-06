@@ -825,7 +825,7 @@
       "title": "Personen",
       "subtitle": "Wer was bearbeiten darf. Nur Sie können eine Rolle ändern.",
       "sinceDate": "seit {date}",
-      "makeOwner": "Eigentümer — alles, überall",
+      "makeOwner": "Zum Eigentümer machen",
       "accessLabel": "Zugang zu {area}",
       "statPeople": "Personen | Person | Personen",
       "statOwners": "Eigentümer | Eigentümer | Eigentümer",
@@ -834,7 +834,6 @@
       "mayEdit": "Darf bearbeiten",
       "since": "Angemeldet am",
       "you": "(Sie)",
-      "unnamed": "Name nicht verfügbar",
       "cannotChangeOwn": "Sie können Ihre eigene Rolle nicht ändern.",
       "ownerRequired": "Eigentümerzugriff erforderlich.",
       "ownerRequiredHint": "Nur der Eigentümer kann Rollen sehen und ändern.",
@@ -861,6 +860,46 @@
         "none": "Kein Zugriff",
         "Reviewer": "Prüfer — darf vorschlagen",
         "Editor": "Redakteur — darf ändern"
+      },
+      "removeOwner": "Eigentümerrolle entziehen",
+      "empty": "Es hat sich noch niemand angemeldet.",
+      "unidentifiedShort": "Konto {id}",
+      "unidentifiedHint": "Der Anmeldedienst lieferte für dieses Konto nichts — keinen Namen, keine Adresse. Meist wurde die Identität aus Logto gelöscht: ein einmaliges Maschinentoken für ein Skript hinterlässt genau so ein Profil. Es kann auch sein, dass die Abfrage beim Laden der Seite fehlschlug — laden Sie neu, bevor Sie es für verloren halten.",
+      "unidentifiedNotice": "kein Konto ohne Namen | 1 Konto hat weder Namen noch Adresse vom Anmeldedienst | {count} Konten haben weder Namen noch Adresse vom Anmeldedienst",
+      "showUnidentified": "Nur diese anzeigen",
+      "tier": {
+        "Owner": "Eigentümer",
+        "Editor": "Redakteure",
+        "Reviewer": "Prüfer",
+        "None": "Kein Zugriff"
+      },
+      "tierHint": {
+        "Owner": "Alles, überall — auch wer sonst hereinkommt.",
+        "Editor": "Kann Inhalte in mindestens einem Bereich ändern.",
+        "Reviewer": "Kann Korrekturen vorschlagen, aber nichts direkt ändern.",
+        "None": "Angemeldet, ohne Rechte. Kann spielen, nicht bearbeiten."
+      },
+      "filters": {
+        "searchPlaceholder": "Nach Name, E-Mail oder ID suchen",
+        "searchClear": "Suche löschen",
+        "tierLabel": "Nach Zugriff filtern",
+        "tierAll": "Jeder Zugriff",
+        "areaLabel": "Nach Bereich filtern",
+        "areaAll": "Alle Bereiche",
+        "unidentifiedOnly": "Ohne Namen",
+        "clear": "Filter zurücksetzen",
+        "noResults": "Niemand entspricht diesen Filtern."
+      },
+      "confirmOwner": {
+        "promoteTitle": "Diese Person zum Eigentümer machen?",
+        "promoteBody": "{name} erhält vollen Zugriff auf jeden Bereich und kann die Rechte aller anderen ändern — auch Ihre. Nur für jemanden, dem Sie das ganze Projekt anvertrauen.",
+        "promoteConfirm": "Ja, zum Eigentümer machen",
+        "demoteTitle": "Eigentümerrolle entziehen?",
+        "demoteBody": "{name} verliert die Eigentümerrolle und behält nur die unten gewährten Bereiche — keine, sofern Sie keine gewähren. Ist dies der letzte Eigentümer, kann danach niemand mehr Zugriffe verwalten.",
+        "demoteConfirm": "Ja, entziehen",
+        "typeToConfirm": "Zum Bestätigen den Namen dieser Person eingeben",
+        "typeToConfirmHint": "Groß- und Kleinschreibung sowie umgebende Leerzeichen spielen keine Rolle.",
+        "typeToConfirmMismatch": "Das stimmt noch nicht mit dem Namen oben überein."
       }
     },
     "proposals": {
