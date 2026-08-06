@@ -13,6 +13,8 @@
  *
  * Focus moves to the cancel button on open — never to the confirming one, so a
  * held or repeated Enter cannot carry through from the button that opened this.
+ * A slot may claim focus instead by marking an element `data-confirm-focus`:
+ * a field you have to fill in is safe to land on and is the thing to do next.
  */
 const props = withDefaults(
   defineProps<{
@@ -25,12 +27,15 @@ const props = withDefaults(
     /** `danger` for taking access away, `accent` for granting it. */
     tone?: 'accent' | 'danger'
     busy?: boolean
+    /** Held shut until the slot says its condition is met. */
+    confirmDisabled?: boolean
   }>(),
-  { tone: 'accent', busy: false },
+  { tone: 'accent', busy: false, confirmDisabled: false },
 )
 
 const emit = defineEmits<{ (e: 'confirm' | 'cancel'): void }>()
 
+const panel = ref<HTMLElement | null>(null)
 const cancelButton = ref<HTMLButtonElement | null>(null)
 const titleId = useId()
 const bodyId = useId()
@@ -40,7 +45,8 @@ watch(
   async (open) => {
     if (!open) return
     await nextTick()
-    cancelButton.value?.focus()
+    const claimed = panel.value?.querySelector<HTMLElement>('[data-confirm-focus]')
+    ;(claimed ?? cancelButton.value)?.focus()
   },
 )
 
@@ -81,6 +87,7 @@ const confirmClass = computed(() =>
       @click.self="onCancel"
     >
       <div
+        ref="panel"
         role="dialog"
         aria-modal="true"
         :aria-labelledby="titleId"
@@ -108,7 +115,7 @@ const confirmClass = computed(() =>
             type="button"
             class="rounded-md px-4 py-2 font-sans text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             :class="confirmClass"
-            :disabled="busy"
+            :disabled="busy || confirmDisabled"
             @click="emit('confirm')"
           >{{ confirmLabel }}</button>
         </div>

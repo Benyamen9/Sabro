@@ -136,34 +136,60 @@ const pendingOwnerChange = ref<PersonDto | null>(null)
 const pendingIsPromotion = computed(() =>
   pendingOwnerChange.value ? !isOwner(pendingOwnerChange.value) : true)
 
+/** What the card calls this person — and so what has to be typed back. */
 const pendingName = computed(() => {
   const person = pendingOwnerChange.value
   if (!person) return ''
   return personIdentity(person).label ?? t('admin.people.unidentifiedShort', { id: personIdentity(person).shortId })
 })
 
+// Typing the name back is the second lock. Reading a dialog is easy to do
+// without reading it; writing the name out is not, and it is the step that
+// catches the case the dialog alone cannot — the right dialog on the wrong row.
+const typedName = ref('')
+
+const typedNameId = useId()
+
+function normalise(value: string) {
+  return value.trim().toLocaleLowerCase()
+}
+
+// Trimmed and case-insensitive: the point is to prove you meant this person, and
+// an address that has to be capitalised the way Logto happens to store it proves
+// nothing extra.
+const typedNameMatches = computed(() =>
+  pendingName.value !== '' && normalise(typedName.value) === normalise(pendingName.value))
+
 function askOwnerChange(person: PersonDto) {
   if (isLocked(person) || savingId.value === person.id) return
+  typedName.value = ''
   pendingOwnerChange.value = person
+}
+
+function cancelOwnerChange() {
+  pendingOwnerChange.value = null
+  typedName.value = ''
 }
 
 async function confirmOwnerChange() {
   const person = pendingOwnerChange.value
-  if (!person) return
+  // Checked here as well as on the button: a disabled attribute is a hint, not
+  // a guarantee, and this call is the one that hands over the backoffice.
+  if (!person || !typedNameMatches.value) return
 
   const role: Role = isOwner(person) ? 'Reader' : 'Owner'
   savingId.value = person.id
   errorMessage.value = null
   try {
     replacePerson(await assignRole(person.id, role))
-    pendingOwnerChange.value = null
+    cancelOwnerChange()
   }
   catch (error) {
     // Surface the server's reason — "you cannot change your own role" is the
     // common one and is far more use than a generic failure.
     const detail = (error as FetchError).data?.detail as string | undefined
     errorMessage.value = detail || t('admin.people.saveFailed')
-    pendingOwnerChange.value = null
+    cancelOwnerChange()
     await load()
   }
   finally {
@@ -367,59 +393,66 @@ const selectClass
               >{{ personInitial(person) }}</span>
 
               <div class="min-w-0">
-                <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span
-                    v-if="personIdentity(person).label"
-                    class="font-sans font-semibold break-all text-[var(--color-text)]"
-                  >{{ personIdentity(person).label }}</span>
-                  <!-- No name and no address: the account is real, our knowledge of
-                       it is not. Says which account it is, so it can be chased. -->
-                  <span v-else class="font-sans font-semibold text-[var(--color-text-muted)]">
-                    {{ t('admin.people.unidentifiedShort', { id: personIdentity(person).shortId }) }}
-                  </span>
+                <!-- Name on the left, the Owner button top-right on its line. The
+                     button used to sit below the dates, in the middle of the card
+                     and level with nothing. -->
+                <div class="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      <span
+                        v-if="personIdentity(person).label"
+                        class="font-sans font-semibold break-all text-[var(--color-text)]"
+                      >{{ personIdentity(person).label }}</span>
+                      <!-- No name and no address: the account is real, our knowledge of
+                           it is not. Says which account it is, so it can be chased. -->
+                      <span v-else class="font-sans font-semibold text-[var(--color-text-muted)]">
+                        {{ t('admin.people.unidentifiedShort', { id: personIdentity(person).shortId }) }}
+                      </span>
 
-                  <span
-                    v-if="person.isYou"
-                    class="rounded-full bg-[var(--color-bg-subtle)] px-2 py-0.5 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]"
-                  >{{ t('admin.people.you') }}</span>
-                  <span
-                    v-if="isOwner(person)"
-                    class="rounded-full bg-[var(--color-accent)] px-2 py-0.5 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-white"
-                  >{{ t('admin.people.role.Owner') }}</span>
+                      <span
+                        v-if="person.isYou"
+                        class="rounded-full bg-[var(--color-bg-subtle)] px-2 py-0.5 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]"
+                      >{{ t('admin.people.you') }}</span>
+                      <span
+                        v-if="isOwner(person)"
+                        class="rounded-full bg-[var(--color-accent)] px-2 py-0.5 font-sans text-[0.65rem] font-semibold uppercase tracking-wider text-white"
+                      >{{ t('admin.people.role.Owner') }}</span>
+                    </div>
+
+                    <p
+                      v-if="personIdentity(person).secondary"
+                      class="mt-0.5 font-sans text-sm break-all text-[var(--color-text-muted)]"
+                    >{{ personIdentity(person).secondary }}</p>
+
+                    <p class="mt-0.5 font-sans text-xs tabular-nums text-[var(--color-text-muted)]">
+                      {{ t('admin.people.sinceDate', { date: new Date(person.createdAt).toLocaleDateString() }) }}
+                    </p>
+                  </div>
+
+                  <!-- Owner is a yes/no, not a rung: it grants every area at once, so the
+                       per-area controls are hidden rather than shown lying. -->
+                  <div class="flex shrink-0 flex-col items-end gap-1">
+                    <button
+                      type="button"
+                      class="rounded-md border px-3 py-1.5 font-sans text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                      :class="isOwner(person)
+                        ? 'border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent-faint)]'
+                        : 'border-[var(--color-border-strong)] text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]'"
+                      :disabled="isLocked(person) || savingId === person.id"
+                      @click="askOwnerChange(person)"
+                    >
+                      {{ isOwner(person) ? t('admin.people.removeOwner') : t('admin.people.makeOwner') }}
+                    </button>
+                    <span v-if="isLocked(person)" class="text-right font-sans text-xs text-[var(--color-text-faint)]">
+                      {{ t('admin.people.cannotChangeOwn') }}
+                    </span>
+                  </div>
                 </div>
-
-                <p
-                  v-if="personIdentity(person).secondary"
-                  class="mt-0.5 font-sans text-sm break-all text-[var(--color-text-muted)]"
-                >{{ personIdentity(person).secondary }}</p>
-
-                <p class="mt-0.5 font-sans text-xs tabular-nums text-[var(--color-text-muted)]">
-                  {{ t('admin.people.sinceDate', { date: new Date(person.createdAt).toLocaleDateString() }) }}
-                </p>
 
                 <p
                   v-if="isUnidentified(person)"
                   class="mt-2 rounded-md bg-[var(--color-bg-subtle)] px-3 py-2 font-sans text-xs text-[var(--color-text-muted)]"
                 >{{ t('admin.people.unidentifiedHint') }}</p>
-
-                <!-- Owner is a yes/no, not a rung: it grants every area at once, so the
-                     per-area controls are hidden rather than shown lying. -->
-                <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-                  <button
-                    type="button"
-                    class="rounded-md border px-3 py-1.5 font-sans text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-                    :class="isOwner(person)
-                      ? 'border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent-faint)]'
-                      : 'border-[var(--color-border-strong)] text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]'"
-                    :disabled="isLocked(person) || savingId === person.id"
-                    @click="askOwnerChange(person)"
-                  >
-                    {{ isOwner(person) ? t('admin.people.removeOwner') : t('admin.people.makeOwner') }}
-                  </button>
-                  <span v-if="isLocked(person)" class="font-sans text-xs text-[var(--color-text-faint)]">
-                    {{ t('admin.people.cannotChangeOwn') }}
-                  </span>
-                </div>
 
                 <p v-if="isOwner(person)" class="mt-2 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ t('admin.people.ownerEverything') }}
@@ -473,8 +506,39 @@ const selectClass
       :cancel-label="t('common.cancel')"
       :tone="pendingIsPromotion ? 'accent' : 'danger'"
       :busy="savingId !== null"
+      :confirm-disabled="!typedNameMatches"
       @confirm="confirmOwnerChange"
-      @cancel="pendingOwnerChange = null"
-    />
+      @cancel="cancelOwnerChange"
+    >
+      <!-- The second lock. The dialog says who; this makes you write it, which is
+           the step that catches the right dialog opened on the wrong row. -->
+      <div class="mt-5">
+        <label :for="typedNameId" class="font-sans text-sm font-medium text-[var(--color-text)]">
+          {{ t('admin.people.confirmOwner.typeToConfirm') }}
+        </label>
+        <p class="mt-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-1.5 font-mono text-sm break-all text-[var(--color-text)] select-all">
+          {{ pendingName }}
+        </p>
+        <input
+          :id="typedNameId"
+          v-model="typedName"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          data-confirm-focus
+          :aria-describedby="`${typedNameId}-hint`"
+          class="mt-2 w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-2 font-sans text-sm text-[var(--color-text)] outline-none focus:border-[var(--color-accent)]"
+        >
+        <p
+          :id="`${typedNameId}-hint`"
+          class="mt-1 font-sans text-xs"
+          :class="typedName && !typedNameMatches ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-faint)]'"
+        >
+          {{ typedName && !typedNameMatches
+            ? t('admin.people.confirmOwner.typeToConfirmMismatch')
+            : t('admin.people.confirmOwner.typeToConfirmHint') }}
+        </p>
+      </div>
+    </ConfirmDialog>
   </section>
 </template>

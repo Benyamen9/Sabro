@@ -896,7 +896,10 @@
         "promoteConfirm": "Ja, zum Eigentümer machen",
         "demoteTitle": "Eigentümerrolle entziehen?",
         "demoteBody": "{name} verliert die Eigentümerrolle und behält nur die unten gewährten Bereiche — keine, sofern Sie keine gewähren. Ist dies der letzte Eigentümer, kann danach niemand mehr Zugriffe verwalten.",
-        "demoteConfirm": "Ja, entziehen"
+        "demoteConfirm": "Ja, entziehen",
+        "typeToConfirm": "Zum Bestätigen den Namen dieser Person eingeben",
+        "typeToConfirmHint": "Groß- und Kleinschreibung sowie umgebende Leerzeichen spielen keine Rolle.",
+        "typeToConfirmMismatch": "Das stimmt noch nicht mit dem Namen oben überein."
       }
     },
     "proposals": {

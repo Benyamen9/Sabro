@@ -896,7 +896,10 @@
         "promoteConfirm": "Yes, make Owner",
         "demoteTitle": "Remove Owner from this person?",
         "demoteBody": "{name} will lose Owner and keep only the areas granted below — none, unless you grant some. If they are the last Owner, nobody will be able to manage access afterwards.",
-        "demoteConfirm": "Yes, remove Owner"
+        "demoteConfirm": "Yes, remove Owner",
+        "typeToConfirm": "Type this person's name to confirm",
+        "typeToConfirmHint": "Capitals and surrounding spaces do not matter.",
+        "typeToConfirmMismatch": "That does not match the name above yet."
       }
     },
     "proposals": {

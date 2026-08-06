@@ -896,7 +896,10 @@
         "promoteConfirm": "Oui, nommer propriétaire",
         "demoteTitle": "Retirer le rôle de propriétaire ?",
         "demoteBody": "{name} perdra le rôle de propriétaire et ne gardera que les domaines accordés ci-dessous — aucun, sauf si vous en accordez. S'il s'agit du dernier propriétaire, plus personne ne pourra gérer les accès.",
-        "demoteConfirm": "Oui, retirer le rôle"
+        "demoteConfirm": "Oui, retirer le rôle",
+        "typeToConfirm": "Saisissez le nom de cette personne pour confirmer",
+        "typeToConfirmHint": "Les majuscules et les espaces autour n'ont pas d'importance.",
+        "typeToConfirmMismatch": "Cela ne correspond pas encore au nom ci-dessus."
       }
     },
     "proposals": {

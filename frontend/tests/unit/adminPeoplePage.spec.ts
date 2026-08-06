@@ -55,7 +55,8 @@ function person(overrides: Partial<PersonDto> = {}): PersonDto {
 const owner = person({ id: 'aaaaaaaa-0000-0000-0000-000000000000', role: 'Owner', name: 'Benyamen' })
 const editor = person({
   id: 'bbbbbbbb-0000-0000-0000-000000000000',
-  name: 'Sara',
+  // Two words on purpose: it makes "Sara" a near miss the retype gate must refuse.
+  name: 'Sara Khoury',
   areas: [{ area: 'Lexicon', access: 'Editor' }],
 })
 // The account this page used to render as "Name unavailable": Logto knows its
@@ -114,19 +115,67 @@ describe('the People page', () => {
     expect(wrapper.find('[role="dialog"]').text()).toContain('Sara')
   })
 
-  it('grants Owner once the confirmation is answered', async () => {
+  it('will not grant Owner until the name is typed back', async () => {
+    // The dialog names the person; this is what makes you write it. It is the
+    // step that catches the right dialog opened on the wrong row.
+    const wrapper = await mountPage([editor])
+
+    await wrapper.findAll('button').find(node => node.text().startsWith('Make Owner'))!.trigger('click')
+    await nextTick()
+
+    const confirmButton = () => wrapper.find('[role="dialog"]').findAll('button')
+      .find(node => node.text() === 'Yes, make Owner')!
+
+    expect(confirmButton().attributes('disabled')).toBeDefined()
+
+    // A near miss — the right first name, the wrong person — stays refused.
+    await wrapper.find('[role="dialog"]').find('input[type="text"]').setValue('Sara')
+    await nextTick()
+    expect(confirmButton().attributes('disabled')).toBeDefined()
+
+    await confirmButton().trigger('click')
+    await nextTick()
+    expect(assignRole).not.toHaveBeenCalled()
+  })
+
+  it('grants Owner once the name matches', async () => {
     assignRole.mockResolvedValue({ ...editor, role: 'Owner' })
     const wrapper = await mountPage([editor])
 
     await wrapper.findAll('button').find(node => node.text().startsWith('Make Owner'))!.trigger('click')
     await nextTick()
 
+    // Capitals and stray spaces do not matter — proving you meant this person does.
+    await wrapper.find('[role="dialog"]').find('input[type="text"]').setValue('  sara khoury ')
+    await nextTick()
+
     const confirm = wrapper.find('[role="dialog"]').findAll('button')
-      .find(node => node.text() === 'Yes, make Owner')
-    await confirm!.trigger('click')
+      .find(node => node.text() === 'Yes, make Owner')!
+    expect(confirm.attributes('disabled')).toBeUndefined()
+    await confirm.trigger('click')
     await nextTick()
 
     expect(assignRole).toHaveBeenCalledWith(editor.id, 'Owner')
+  })
+
+  it('forgets what was typed when the dialog is reopened', async () => {
+    const wrapper = await mountPage([editor])
+    const open = () => wrapper.findAll('button').find(node => node.text().startsWith('Make Owner'))!
+
+    await open().trigger('click')
+    await nextTick()
+    await wrapper.find('[role="dialog"]').find('input[type="text"]').setValue('Sara Khoury')
+    await nextTick()
+    await wrapper.find('[role="dialog"]').findAll('button')
+      .find(node => node.text() === 'Cancel')!.trigger('click')
+    await nextTick()
+
+    await open().trigger('click')
+    await nextTick()
+    const dialog = wrapper.find('[role="dialog"]')
+    expect((dialog.find('input[type="text"]').element as HTMLInputElement).value).toBe('')
+    expect(dialog.findAll('button').find(node => node.text() === 'Yes, make Owner')!
+      .attributes('disabled')).toBeDefined()
   })
 
   it('leaves the role alone when the confirmation is dismissed', async () => {

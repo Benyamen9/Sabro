@@ -896,7 +896,10 @@
         "promoteConfirm": "Ja, eigenaar maken",
         "demoteTitle": "Eigenaarschap intrekken?",
         "demoteBody": "{name} verliest het eigenaarschap en houdt alleen de hieronder toegekende gebieden over — geen, tenzij u die toekent. Als dit de laatste eigenaar is, kan niemand daarna de toegang nog beheren.",
-        "demoteConfirm": "Ja, intrekken"
+        "demoteConfirm": "Ja, intrekken",
+        "typeToConfirm": "Typ de naam van deze persoon om te bevestigen",
+        "typeToConfirmHint": "Hoofdletters en spaties eromheen maken niet uit.",
+        "typeToConfirmMismatch": "Dit komt nog niet overeen met de naam hierboven."
       }
     },
     "proposals": {

@@ -896,7 +896,10 @@
         "promoteConfirm": "Ja, gör till ägare",
         "demoteTitle": "Ta bort ägarskapet?",
         "demoteBody": "{name} förlorar ägarskapet och behåller bara områdena nedan — inga, om du inte ger några. Är detta den sista ägaren kan ingen därefter hantera åtkomst.",
-        "demoteConfirm": "Ja, ta bort"
+        "demoteConfirm": "Ja, ta bort",
+        "typeToConfirm": "Skriv personens namn för att bekräfta",
+        "typeToConfirmHint": "Versaler och omgivande blanksteg spelar ingen roll.",
+        "typeToConfirmMismatch": "Det stämmer ännu inte med namnet ovan."
       }
     },
     "proposals": {
