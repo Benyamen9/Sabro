@@ -4,32 +4,93 @@ name: sabro-cd
 # to GHCR tagged with the commit SHA, then SSH to the VPS to migrate and swap
 # containers. Gated on a green sabro-ci run for the same commit on main — a red
 # CI never triggers a deploy.
+#
+# Two ways in:
+#   * workflow_run — the normal path. CI finishes green on main, this fires.
+#   * workflow_dispatch — the manual path, for when the automatic one did not
+#     happen at all. On 2026-08-06 a GitHub Actions outage meant no workflow run
+#     was ever created for a merge commit, so CD never fired and production sat
+#     behind main with no sanctioned way to catch it up: push events are not
+#     replayed, and there was nothing to re-run. The alternative people reach for
+#     is SSHing to the VPS and running `docker compose up -d` by hand, which is
+#     exactly how prod once served a two-week-old image with health green.
+#
+# The manual path deploys through the same jobs as the automatic one and is held
+# to the same rule — see "Verify CI passed" below. It is a way to re-run a
+# deploy, never a way to skip CI.
 
 on:
   workflow_run:
     workflows: ["sabro-ci"]
     types: [completed]
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Full 40-character commit SHA to deploy. Must be on main and have a green sabro-ci run."
+        required: true
+        type: string
 
 # Only build for a successful CI run; never deploy a red build.
+# `actions: read` is what lets the manual path look up whether CI passed.
 permissions:
   contents: read
   packages: write
+  actions: read
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAMESPACE: ${{ github.repository_owner }}
   # The exact commit that passed CI — both images and deploy pin to it.
-  SHA: ${{ github.event.workflow_run.head_sha }}
+  # workflow_run supplies it; on a manual dispatch that context is empty and the
+  # typed input takes over.
+  SHA: ${{ github.event.workflow_run.head_sha || inputs.sha }}
 
 jobs:
   build-and-push:
     name: Build + push images
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ env.SHA }}
     steps:
+      # The whole safety of the manual path. workflow_run is gated by
+      # definition — it only fires on a green CI run — so this re-establishes the
+      # identical guarantee for a dispatch, before anything is built or shipped.
+      #
+      # "On main" is the part that is easy to get wrong: sabro-ci also runs on
+      # pull requests, so checking only "some green run exists for this SHA"
+      # would make any green feature-branch commit deployable to production.
+      # Only a run whose head_branch is main counts.
+      - name: Verify CI passed for this commit on main
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISPATCH_SHA: ${{ inputs.sha }}
+        run: |
+          set -euo pipefail
+
+          # A short SHA would build and push happily and then fail the
+          # post-deploy /version assertion, which compares the full 40 characters.
+          if ! printf '%s' "$DISPATCH_SHA" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "::error::sha must be a full 40-character lowercase commit SHA, got '$DISPATCH_SHA'."
+            exit 1
+          fi
+
+          runs=$(gh api \
+            "repos/${{ github.repository }}/actions/workflows/sabro-ci.yml/runs?head_sha=$DISPATCH_SHA&per_page=100" \
+            --jq '[.workflow_runs[]
+                   | select(.head_branch == "main" and .conclusion == "success")]
+                  | length')
+
+          if [ "$runs" -eq 0 ]; then
+            echo "::error::No successful sabro-ci run for $DISPATCH_SHA on main. Refusing to deploy."
+            echo "::error::Get CI green for this commit first — this path re-runs a deploy, it does not skip CI."
+            exit 1
+          fi
+
+          echo "Verified: $runs successful sabro-ci run(s) for $DISPATCH_SHA on main."
+
       - name: Checkout tested commit
         uses: actions/checkout@v7
         with:
