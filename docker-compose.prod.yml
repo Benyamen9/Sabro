@@ -214,6 +214,7 @@ services:
       Cors__AllowedOrigins__1: "https://${MELTHO_DOMAIN:-localhost}"
       Cors__AllowedOrigins__2: "https://${MNO_DOMAIN:-localhost}"
       Cors__AllowedOrigins__3: "https://${SHMO_DOMAIN:-localhost}"
+      Cors__AllowedOrigins__4: "https://${NAHLO_DOMAIN:-localhost}"
       # Ship structured logs to the co-located Seq.
       Serilog__WriteTo__1__Args__serverUrl: "http://seq:5341"
     volumes:
@@ -320,6 +321,25 @@ services:
       NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
     networks: [internal]
 
+  nahlo:
+    image: ghcr.io/${GHCR_OWNER:-benyamen9}/nahlo:${NAHLO_IMAGE_TAG:-latest}
+    container_name: sabro-nahlo
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NUXT_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_LOGTO_APP_ID: ${NAHLO_LOGTO_APP_ID:?NAHLO_LOGTO_APP_ID is required}
+      NUXT_LOGTO_APP_SECRET: ${NAHLO_LOGTO_APP_SECRET:?NAHLO_LOGTO_APP_SECRET is required}
+      NUXT_LOGTO_COOKIE_ENCRYPTION_KEY: ${NAHLO_LOGTO_COOKIE_ENCRYPTION_KEY:?NAHLO_LOGTO_COOKIE_ENCRYPTION_KEY is required}
+      NUXT_PUBLIC_LOGTO_ENDPOINT: "https://${LOGTO_DOMAIN}"
+      NUXT_PUBLIC_SABRO_API_RESOURCE: ${SABRO_API_RESOURCE}
+      NUXT_PUBLIC_API_BASE_URL: "https://${SABRO_API_DOMAIN}/api/v1"
+      # Same shared cookie domain as the hub and the other three games — locale
+      # + script preferences carry across every app in the ecosystem.
+      NUXT_PUBLIC_COOKIE_DOMAIN: "${COOKIE_DOMAIN:-.sabro.be}"
+    networks: [internal]
+
   # Nightly logical backups of both databases (30 daily + 12 monthly), with
   # optional off-site sync to a Hetzner Storage Box and a weekly automated
   # restore test. Dumps live in the backup-data volume; off-site sync starts
@@ -393,6 +413,7 @@ services:
       MELTHO_DOMAIN: ${MELTHO_DOMAIN}
       MNO_DOMAIN: ${MNO_DOMAIN}
       SHMO_DOMAIN: ${SHMO_DOMAIN}
+      NAHLO_DOMAIN: ${NAHLO_DOMAIN}
       ANALYTICS_DOMAIN: ${ANALYTICS_DOMAIN}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
