@@ -147,6 +147,85 @@ public class MelthoPuzzleServiceTests
         result.Error!.Code.Should().Be("not_found");
     }
 
+    /// <summary>
+    /// The day number a player reads: "Meltho #51".
+    /// </summary>
+    /// <remarks>
+    /// Asserted as a <b>difference</b> rather than an absolute. The number counts
+    /// from the first Meltho puzzle ever recorded, and these tests share one table,
+    /// so any absolute value would depend on which other test seeded the earliest
+    /// row. The difference is independent of that, and is the property worth
+    /// pinning anyway.
+    /// </remarks>
+    [Fact]
+    public async Task GetTodaysPuzzle_DayNumber_CountsCalendarDaysNotPuzzles()
+    {
+        // The bug this exists for lived in the client: Meltho showed
+        // "distinct past words + 1", which was only true while nothing repeated.
+        // Once the pool was exhausted it fell behind the real day and printed the
+        // same number on consecutive days. The number must track the calendar.
+        var ct = TestContext.Current.CancellationToken;
+        var first = new DateOnly(2171, 6, 15);
+        var later = first.AddDays(10);
+
+        int firstNumber;
+        await using (var ctx = fixture.CreatePlayContext())
+        {
+            var r = await NewService(ctx, PoolReturning(Guid.NewGuid()), first, windowDays: 0).GetTodaysPuzzleAsync(ct);
+            firstNumber = r.Value!.DayNumber;
+        }
+
+        await using var ctx2 = fixture.CreatePlayContext();
+        var second = await NewService(ctx2, PoolReturning(Guid.NewGuid()), later, windowDays: 0).GetTodaysPuzzleAsync(ct);
+
+        // Ten calendar days later reads ten higher — even though only two puzzles
+        // were served between them. Counting rows would have said "+1".
+        second.Value!.DayNumber.Should().Be(firstNumber + 10);
+    }
+
+    [Fact]
+    public async Task GetTodaysPuzzle_DayNumber_IsStableForTheSameDay()
+    {
+        // Two players opening the game on the same day must read the same number,
+        // which is the whole reason this is server-side and not computed client-side.
+        var ct = TestContext.Current.CancellationToken;
+        var today = new DateOnly(2181, 6, 15);
+        var pool = PoolReturning(Guid.NewGuid());
+
+        int first;
+        await using (var ctx = fixture.CreatePlayContext())
+        {
+            first = (await NewService(ctx, pool, today, windowDays: 30).GetTodaysPuzzleAsync(ct)).Value!.DayNumber;
+        }
+
+        await using var ctx2 = fixture.CreatePlayContext();
+        var again = await NewService(ctx2, pool, today, windowDays: 30).GetTodaysPuzzleAsync(ct);
+
+        again.Value!.DayNumber.Should().Be(first);
+    }
+
+    [Fact]
+    public async Task GetTodaysPuzzle_DayNumber_IsUnchangedWhenAWordRepeats()
+    {
+        // A repeat is now the normal case — the launch pool is exhausted — and it
+        // must still advance the counter by exactly one day.
+        var ct = TestContext.Current.CancellationToken;
+        var day = new DateOnly(2191, 6, 15);
+        var onlyWord = Guid.NewGuid();
+
+        int before;
+        await using (var ctx = fixture.CreatePlayContext())
+        {
+            before = (await NewService(ctx, PoolReturning(onlyWord), day, windowDays: 0).GetTodaysPuzzleAsync(ct)).Value!.DayNumber;
+        }
+
+        await using var ctx2 = fixture.CreatePlayContext();
+        var next = await NewService(ctx2, PoolReturning(onlyWord), day.AddDays(1), windowDays: 0).GetTodaysPuzzleAsync(ct);
+
+        next.Value!.LexiconEntryId.Should().Be(onlyWord, "the same word repeats when the pool holds only one");
+        next.Value.DayNumber.Should().Be(before + 1);
+    }
+
     private static MelthoPuzzleService NewService(PlayDbContext ctx, ILexiconPlayablePool pool, DateOnly today, int windowDays) =>
         new(
             ctx,

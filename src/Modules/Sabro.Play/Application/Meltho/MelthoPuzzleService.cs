@@ -118,6 +118,34 @@ internal sealed class MelthoPuzzleService : IMelthoPuzzleService
         return Result<Guid>.Success(picked);
     }
 
+    /// <summary>
+    /// Which numbered day of Meltho this is, counting the first puzzle ever served
+    /// as day 1.
+    /// </summary>
+    /// <remarks>
+    /// Calendar days, not rows. Selection is lazy — a date gets a puzzle only when
+    /// somebody asks for one — so counting puzzles would silently renumber every
+    /// later day if a quiet day ever left a gap. Counting days cannot: it advances
+    /// by one each midnight whatever anybody plays, which is what a player reads
+    /// the number to mean.
+    /// </remarks>
+    private async Task<int> GetDayNumberAsync(DateOnly date, CancellationToken cancellationToken)
+    {
+        var firstDate = await dbContext.MelthoDailyPuzzles
+            .AsNoTracking()
+            .Where(p => p.GameId == Games.Meltho)
+            .MinAsync(p => (DateOnly?)p.Date, cancellationToken);
+
+        // Today's puzzle is written before this runs, so the only way to see no rows
+        // is an empty table — in which case today is day 1 by definition.
+        if (firstDate is null)
+        {
+            return 1;
+        }
+
+        return date.DayNumber - firstDate.Value.DayNumber + 1;
+    }
+
     private async Task<Result<MelthoPuzzleDto>> RenderAsync(DateOnly date, Guid lexiconEntryId, CancellationToken cancellationToken)
     {
         var entry = await playablePool.GetPlayableEntryAsync(lexiconEntryId, cancellationToken);
@@ -132,6 +160,7 @@ internal sealed class MelthoPuzzleService : IMelthoPuzzleService
 
         var dto = new MelthoPuzzleDto(
             date,
+            await GetDayNumberAsync(date, cancellationToken),
             entry.Id,
             entry.SyriacUnvocalized,
             entry.SyriacVocalized,
