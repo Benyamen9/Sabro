@@ -136,8 +136,14 @@ const heroAction = computed(() => {
           <span class="block">{{ t('home.titleLine2') }}</span>
         </h1>
 
+        <!-- scope="global" is required, not decorative: <i18n-t> resolves against
+             its PARENT's i18n scope by default, this page owns no local scope, and
+             since @nuxtjs/i18n v10 that combination warns "Not found parent scope"
+             on every render before falling back to global anyway. Saying so is
+             both the fix and the truth — the app has one locale, app-wide. -->
         <i18n-t
           keypath="home.lede"
+          scope="global"
           tag="p"
           class="mt-6 max-w-xl font-serif text-lg leading-relaxed text-[var(--color-text-muted)] sm:text-xl"
         >

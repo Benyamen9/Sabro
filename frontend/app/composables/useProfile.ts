@@ -28,7 +28,9 @@ const localToApiVariant: Record<ScriptVariant, ApiScriptVariant> = {
  */
 export function useProfile() {
   const { isConfigured, isSignedIn } = useAuth()
-  const { locale, setLocale, locales } = useI18n()
+  // Global scope on purpose — this reads and SETS the app-wide locale. See the
+  // note in usePreferredMeaning: a bare useI18n() here warns under i18n v10.
+  const { locale, setLocale, locales } = useI18n({ useScope: 'global' })
   const { variant, set: setVariant } = useScriptVariant()
   const api = useSabroApi()
 

@@ -89,7 +89,7 @@ jobs:
         # someone updates the spec but forgets to regenerate types.
         run: |
           npm run generate:api-types
-          git diff --exit-code types/api.generated.ts
+          git diff --exit-code app/types/api.generated.ts
 
       - name: Lint
         run: npm run lint
