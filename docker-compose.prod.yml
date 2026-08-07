@@ -69,7 +69,17 @@ services:
   # That database is deliberately NOT in the backup set — analytics is derived,
   # expendable, and not worth the restore surface.
   umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
+    # Pinned, not :latest. An unpinned image changes under you on any
+    # `docker compose pull` — which is how the 2026-07-28 outage happened, when a
+    # new Meilisearch engine refused the existing volume. Verified identical to
+    # what was already running: digest sha256:8edfe4be… on 2026-08-07.
+    #
+    # Umami 3.x dropped the `postgresql-` tag prefix — the postgresql-v* series
+    # stops at 2.20.2, so `postgresql-latest` was silently tracking 3.x. Plain
+    # version tags are the 3.x naming.
+    # To upgrade: pick a newer tag from ghcr.io/umami-software/umami and read the
+    # release notes for schema migrations first.
+    image: ghcr.io/umami-software/umami:3.2.0
     container_name: sabro-umami
     restart: unless-stopped
     depends_on:
@@ -91,7 +101,14 @@ services:
     networks: [internal]
 
   seq:
-    image: datalust/seq:latest
+    # Pinned, not :latest — same reasoning as umami above. Verified identical to
+    # what was already running: digest sha256:91e93ff2… on 2026-08-07, which is
+    # exactly what `latest`, `2026`, and `2026.1` all pointed at.
+    #
+    # NB the container's org.opencontainers.image.version label reads "24.04";
+    # that is the Ubuntu base, NOT Seq's version. Seq's own tags look like
+    # 2026.1.17083. Do not pin from that label.
+    image: datalust/seq:2026.1.17083
     container_name: sabro-seq
     restart: unless-stopped
     environment:
