@@ -481,10 +481,43 @@ truthfully. Keep the two in step if the setup ever changes.
 
 ---
 
+## Bringing a fourth game online (Nahlo)
+
+The compose service, Caddy block, CORS origin and `.env` keys for **Nahlo** are
+in this repo, but the game is **not deployed yet**. The order below is not
+cosmetic: this repo's CD runs `docker compose pull` and `up -d` across the whole
+file, so a `nahlo` service that cannot resolve its image or its required env
+vars fails **Sabro's own deploy**, not just Nahlo's.
+
+1. **Logto** — create a "Traditional Web" app for Nahlo in the shared tenant
+   (same user pool, same API resource, scopes `api:v1:read` + `api:v1:write`).
+   Redirect `https://nahlo.sabro.be/callback` and `http://localhost:3400/callback`;
+   post-sign-out `https://nahlo.sabro.be/` and `http://localhost:3400/`.
+2. **VPS `.env`** — add `NAHLO_DOMAIN`, `NAHLO_LOGTO_APP_ID`,
+   `NAHLO_LOGTO_APP_SECRET` and a fresh `NAHLO_LOGTO_COOKIE_ENCRYPTION_KEY`
+   (`openssl rand -hex 32`). **Do this before merging the compose change** — the
+   three Logto vars use `:?` and compose refuses to run without them.
+3. **DNS** — an A record for `nahlo.sabro.be` pointing at the VPS, so Caddy can
+   get a certificate. Without it the `caddy reload` at the end of a deploy fails.
+4. **A first image** — enable Nahlo's CD (`gh workflow enable nahlo-cd` in the
+   Nahlo repo) and let it build, or the `pull` step has nothing to fetch. Nahlo's
+   own CD only ever touches its own service (`up -d --no-deps nahlo`).
+5. **Merge this repo's Nahlo slot**, then deploy.
+6. **UptimeRobot** — add a sixth monitor for `https://nahlo.sabro.be`.
+7. **Only then** wire the daily circuit (add `nahlo` to `CIRCUIT_GAMES` in the
+   hub and in Meltho/Mno/Shmo). Doing it earlier points players at a hostname
+   that does not resolve.
+
+The game itself renders a "no chant today" screen until the Beth Gazo pool has
+recordings — `GET /play/nahlo/today` answers 409 with an empty pool, by design.
+
+---
+
 ## Monitoring
 
 **UptimeRobot** — live since 2026-07-28. Five HTTP(s) monitors, 5-minute
-interval, email on downtime:
+interval, email on downtime (a sixth for Nahlo joins when it is deployed — see
+above):
 
 | Monitor | URL |
 |---|---|
