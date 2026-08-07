@@ -45,9 +45,10 @@ export default defineNuxtConfig({
     strict: true,
   },
   i18n: {
-    bundle: {
-      optimizeTranslationDirective: false,
-    },
+    // No `bundle.optimizeTranslationDirective` here: it existed in @nuxtjs/i18n
+    // v9 only to silence a deprecation about the v-t directive, and v10 removed
+    // both the directive optimization and the option. Setting it now is a
+    // typecheck error. The three games never set it either.
     defaultLocale: 'en',
     strategy: 'no_prefix',
     locales: [
