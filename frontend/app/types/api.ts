@@ -96,6 +96,7 @@ export type SetPlayableHistoricalFigureRequest = Schemas['SetPlayableHistoricalF
 export type ChantStatus = Schemas['ChantStatus']
 export type ChantDto = Schemas['ChantDto']
 export type BethGazoModeDto = Schemas['BethGazoModeDto']
+export type BethGazoSectionDto = Schemas['BethGazoSectionDto']
 export type CreateChantRequest = Schemas['CreateChantRequest']
 export type UpdateChantRequest = Schemas['UpdateChantRequest']
 export type SetPlayableChantRequest = Schemas['SetPlayableChantRequest']

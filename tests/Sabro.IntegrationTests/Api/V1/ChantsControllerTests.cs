@@ -23,6 +23,9 @@ public class ChantsControllerTests : IDisposable
 {
     private const string Incipit = "ܡܪܝܡ";
 
+    /// <summary>The seeded Farde section — it admits every mode, so any mode is valid here.</summary>
+    private static readonly Guid Farde = Guid.Parse("7a2c4b20-0000-4000-8000-000000000001");
+
     private readonly PostgresFixture postgres;
     private readonly SabroApiFactory factory;
     private readonly HttpClient client;
@@ -181,7 +184,7 @@ public class ChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, transliteration, mode.Id, Shuhlofo: shuhlofo),
+            new CreateChantRequest(Incipit, transliteration, Farde, mode.Id, Shuhlofo: shuhlofo),
             ct);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 

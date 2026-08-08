@@ -17,6 +17,8 @@ public sealed class BethGazoDbContext : DbContext
 
     public DbSet<BethGazoMode> Modes => Set<BethGazoMode>();
 
+    public DbSet<BethGazoSection> Sections => Set<BethGazoSection>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);

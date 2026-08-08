@@ -32,6 +32,16 @@ namespace Sabro.BethGazo.Application.Chants;
 /// rather than playable chants on purpose: narrowing this to the pool would tell the
 /// player the answer is one of these few.
 /// </param>
+/// <param name="Sections">
+/// Every section, in the treasury's order, each carrying the modes it admits.
+/// <b>This is not the forbidden join.</b> The rule above forbids pairing a
+/// <i>melody</i> with its mode, because the recording already gives the melody away
+/// and the pair would then give the mode away with it. A section-to-modes map makes
+/// no claim about any chant — "the farde use nine modes, the madroshe use none" is a
+/// fact about the tradition, and it only narrows anything after the player has
+/// committed to a section, which is itself a guess they can lose. Without it the
+/// round cannot know whether to ask for a mode at all.
+/// </param>
 /// <param name="Modes">
 /// Every mode, in traditional order — including any with no published chant yet.
 /// Trimming it to modes actually in use would narrow the answer space for free.
@@ -42,5 +52,6 @@ namespace Sabro.BethGazo.Application.Chants;
 /// </param>
 public sealed record ChantAnswerOptionsDto(
     IReadOnlyList<string> Melodies,
+    IReadOnlyList<BethGazoSectionDto> Sections,
     IReadOnlyList<BethGazoModeDto> Modes,
     IReadOnlyList<string> Shuhlofe);

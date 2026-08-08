@@ -61,6 +61,7 @@ public sealed class AdminChantsController : ApiControllerBase
     public async Task<ActionResult<PagedResult<ChantDto>>> List(
         [FromQuery] string? search = null,
         [FromQuery] ChantStatus? status = null,
+        [FromQuery] Guid? sectionId = null,
         [FromQuery] Guid? modeId = null,
         [FromQuery] bool? playableInNahlo = null,
         [FromQuery] int page = 1,
@@ -68,7 +69,7 @@ public sealed class AdminChantsController : ApiControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await chantService.ListAsync(
-            search, status, modeId, playableInNahlo, page, pageSize, cancellationToken);
+            search, status, sectionId, modeId, playableInNahlo, page, pageSize, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
     }
 
@@ -82,6 +83,18 @@ public sealed class AdminChantsController : ApiControllerBase
     [ProducesResponseType(typeof(IReadOnlyList<BethGazoModeDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<BethGazoModeDto>>> ListModes(CancellationToken cancellationToken) =>
         Ok(await chantService.ListModesAsync(cancellationToken));
+
+    /// <summary>
+    /// The sections, in the treasury's order, each with the modes it admits. The
+    /// chant form needs this to know which modes to offer — or, for a section that
+    /// admits none, to stop asking for one at all.
+    /// </summary>
+    [Authorize(Policy = AuthPolicies.ChantsView)]
+    [HttpGet("sections")]
+    [ProducesResponseType(typeof(IReadOnlyList<BethGazoSectionDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<BethGazoSectionDto>>> ListSections(
+        CancellationToken cancellationToken) =>
+        Ok(await chantService.ListSectionsAsync(cancellationToken));
 
     [Authorize(Policy = AuthPolicies.ChantsView)]
     [HttpGet("{id:guid}")]

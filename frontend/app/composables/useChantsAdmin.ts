@@ -1,5 +1,5 @@
 import type {
-  BethGazoModeDto,
+  BethGazoModeDto, BethGazoSectionDto,
   ChantDto,
   ChantStatus,
   CreateChantRequest,
@@ -12,6 +12,7 @@ export interface ChantListParams {
   pageSize?: number
   search?: string
   status?: ChantStatus
+  sectionId?: string
   modeId?: string
   playableInNahlo?: boolean
 }
@@ -48,6 +49,7 @@ export function useChantsAdmin() {
         pageSize: params.pageSize ?? 25,
         search: params.search || undefined,
         status: params.status,
+        sectionId: params.sectionId,
         modeId: params.modeId,
         playableInNahlo: params.playableInNahlo,
       },
@@ -75,6 +77,11 @@ export function useChantsAdmin() {
 
   function listModes() {
     return api<BethGazoModeDto[]>('/admin/chants/modes')
+  }
+
+  /** The sections, each with the modes it admits — see BethGazoSectionDto. */
+  function listSections() {
+    return api<BethGazoSectionDto[]>('/admin/chants/sections')
   }
 
   function getById(id: string) {
@@ -122,6 +129,7 @@ export function useChantsAdmin() {
     list,
     listAll,
     listModes,
+    listSections,
     getById,
     create,
     update,
