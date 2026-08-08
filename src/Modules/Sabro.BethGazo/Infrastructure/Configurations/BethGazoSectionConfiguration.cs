@@ -15,6 +15,10 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
     internal const string FardeId = "7a2c4b20-0000-4000-8000-000000000001";
     internal const string MadrosheId = "7a2c4b20-0000-4000-8000-000000000003";
     internal const string QoleShahroyeId = "7a2c4b20-0000-4000-8000-000000000007";
+    internal const string GushmoId = "7a2c4b20-0000-4000-8000-000000000008";
+    internal const string TakhshefthoId = "7a2c4b20-0000-4000-8000-000000000009";
+    internal const string TbortoId = "7a2c4b20-0000-4000-8000-00000000000a";
+    internal const string QuqlionId = "7a2c4b20-0000-4000-8000-00000000000b";
 
     public void Configure(EntityTypeBuilder<BethGazoSection> builder)
     {
@@ -52,6 +56,12 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
     /// </summary>
     /// <remarks>
     /// <para>
+    /// <b>Mahebrone was removed on 2026-08-08</b> at the owner's instruction. It is a real
+    /// liturgical genre (maʿbrone, funeral songs) and appears in the Patriarchate's wider
+    /// 24-category listing, but it is <b>not one of the ten sections of the abridged Beth
+    /// Gazo</b>. Restoring it is one row here plus its mode links.
+    /// </para>
+    /// <para>
     /// <b>This list is his, and it is incomplete.</b> He named these on 2026-08-07
     /// and 2026-08-08 and ended the list with "and more", so treat it as a starting
     /// point an editor extends — never as the closed set. The spellings are his own
@@ -75,7 +85,6 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
             (MadrosheId, "Madroshe", 3),
             ("7a2c4b20-0000-4000-8000-000000000004", "Qonune yaunoye", 4),
             ("7a2c4b20-0000-4000-8000-000000000005", "Tekso d-maurbe", 5),
-            ("7a2c4b20-0000-4000-8000-000000000006", "Mahebrone", 6),
 
             // Owner, 2026-08-08: "zodeq dnehwe, ... are qole shahroyo" — the
             // section every worked example in this module belongs to, and the one
@@ -83,6 +92,14 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
             // in the treasury's real order: Position is a sort key only, so
             // renumbering later is free and never touches a chant's link.
             (QoleShahroyeId, "Qole shahroye", 7),
+
+            // Completing the ten sections Ibrahim & Kiraz enumerate for the
+            // abridged Beth Gazo (Dolabani 1913, the qfiso). Each is given eight
+            // modes by that source in as many words.
+            (GushmoId, "Gushmo", 8),
+            (TakhshefthoId, "Takheshphotho rabuloyotho", 9),
+            (TbortoId, "Tborto", 10),
+            (QuqlionId, "Quqlion", 11),
         };
 
         builder.HasData(sections.Select(section => new
