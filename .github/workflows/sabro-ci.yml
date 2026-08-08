@@ -193,6 +193,7 @@ jobs:
             -e MELTHO_DOMAIN=meltho.sabro.test \
             -e MNO_DOMAIN=mno.sabro.test \
             -e SHMO_DOMAIN=shmo.sabro.test \
+            -e NAHLO_DOMAIN=nahlo.sabro.test \
             -e ANALYTICS_DOMAIN=analytics.sabro.test \
             -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" \
             "$image" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
