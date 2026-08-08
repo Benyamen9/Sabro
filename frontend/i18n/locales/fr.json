@@ -819,13 +819,18 @@
         "mode": "Mode",
         "modeUnset": "Choisir un mode",
         "modeHint": "Un nom de mélodie revient dans plusieurs modes : c’est la paire qui identifie le chant.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Quelle variation est ce chant. Laissez sur « aucune » sauf s’il EN EST une ; certains chants en ont plusieurs, d’où la numérotation.",
         "inheritsMelodyFrom": "Hérite de la mélodie de",
         "inheritsMelodyFromNone": "Aucune — il porte sa propre mélodie",
         "inheritsMelodyFromHint": "À renseigner pour un solqin : un chant qui emprunte la mélodie d’un autre avec ses propres variations.",
         "recordingComesLater": "Enregistrez d’abord le chant, puis téléversez son enregistrement. La publication attend l’audio.",
-        "shuhlofoNone": "Aucune — la forme propre de la mélodie"
+        "variant": "Chant supplémentaire",
+        "variantKind": {
+          "None": "Ni l’un ni l’autre",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Lequel",
+        "variantHint": "Un shuḥlofo est une variation de la mélodie ; un ḥrino est simplement un autre chant dans le même mode. Laissez sur « ni l’un ni l’autre » pour le chant lui-même."
       }
     },
     "people": {

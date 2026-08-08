@@ -5251,8 +5251,9 @@ export interface components {
             /** Format: uuid */
             modeId: null | string;
             modeName: null | string;
+            variantKind: components["schemas"]["ChantVariantKind"];
             /** Format: int32 */
-            shuhlofoNumber: null | number | string;
+            variantNumber: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId: null | string;
             inheritsMelodyFromTransliteration: null | string;
@@ -5266,6 +5267,8 @@ export interface components {
         };
         /** @enum {string} */
         ChantStatus: "Draft" | "Published";
+        /** @enum {string} */
+        ChantVariantKind: "None" | "Shuhlofo" | "Hrino";
         /** @enum {string} */
         ContentArea: "Lexicon" | "Shmo" | "Nahlo";
         CreateAnnotationRequest: {
@@ -5313,8 +5316,9 @@ export interface components {
             /** Format: uuid */
             modeId?: null | string;
             syriacIncipitVocalized?: null | string;
+            variantKind?: components["schemas"]["ChantVariantKind"];
             /** Format: int32 */
-            shuhlofoNumber?: null | number | string;
+            variantNumber?: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId?: null | string;
         };
@@ -5672,8 +5676,9 @@ export interface components {
             transliteration: string;
             sectionName: string;
             modeName: null | string;
+            variantKind: components["schemas"]["ChantVariantKind"];
             /** Format: int32 */
-            shuhlofoNumber: null | number | string;
+            variantNumber: null | number | string;
             syriacIncipit: string;
             syriacIncipitVocalized: null | string;
         };
@@ -6062,8 +6067,9 @@ export interface components {
             /** Format: uuid */
             modeId?: null | string;
             syriacIncipitVocalized?: null | string;
+            variantKind?: components["schemas"]["ChantVariantKind"];
             /** Format: int32 */
-            shuhlofoNumber?: null | number | string;
+            variantNumber?: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId?: null | string;
         };

@@ -1,3 +1,5 @@
+using Sabro.BethGazo.Domain;
+
 namespace Sabro.BethGazo.Public;
 
 /// <summary>
@@ -21,5 +23,6 @@ public sealed record PlayableChant(
     string Transliteration,
     string SectionName,
     string? ModeName,
-    int? ShuhlofoNumber,
+    ChantVariantKind VariantKind,
+    int? VariantNumber,
     string AudioUrl);

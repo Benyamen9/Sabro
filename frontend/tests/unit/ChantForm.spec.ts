@@ -24,7 +24,8 @@ function chant(overrides: Partial<ChantDto> = {}): ChantDto {
     sectionName: 'Farde',
     modeId: 'mode-3',
     modeName: 'Tlithoyo',
-    shuhlofoNumber: null,
+    variantKind: 'None',
+    variantNumber: null,
     inheritsMelodyFromId: null,
     inheritsMelodyFromTransliteration: null,
     audioUrl: null,
@@ -110,7 +111,8 @@ describe('ChantForm', () => {
       transliteration: 'Maryam yoldath Aloho',
       sectionId: 'section-farde',
       modeId: 'mode-3',
-      shuhlofoNumber: null,
+      variantKind: 'None',
+    variantNumber: null,
       inheritsMelodyFromId: null,
     })
   })
@@ -170,11 +172,10 @@ describe('ChantForm', () => {
     expect(wrapper.emitted('submit')?.[0]?.[0]).toMatchObject({ modeId: null })
   })
 
-  it('offers the shuḥlofo as a number, with none as an explicit answer', async () => {
-    // The owner asked for "just yes or no". A boolean cannot work — he also
-    // confirmed some chants have more than one shuḥlofo, and identity is
-    // (melody, section, mode, shuḥlofo), so a boolean makes the second one
-    // unsaveable. A number costs the same single click and keeps them apart.
+  it('asks the kind first, then which one, and sends both', async () => {
+    // Owner, 2026-08-08: "not all the extra chants of a mode are shuhlofe, but
+    // hrone as well." A shuḥlofo varies the melody; a ḥrino is another chant in
+    // the same mode. The kind is part of the chant's identity, so both travel.
     const wrapper = await mountSuspended(ChantForm, {
       props: { modes, sections, submitLabel: 'Create' },
     })
@@ -184,27 +185,63 @@ describe('ChantForm', () => {
     await wrapper.find('#chant-section').setValue('section-farde')
     await wrapper.find('#chant-mode').setValue('mode-1')
 
-    // Defaults to the melody's own form, sent as null rather than 0 or ''.
+    // Neither by default, and no number is even asked for.
+    expect(wrapper.findAll('input[name="chant-variant-number"]')).toHaveLength(0)
     await wrapper.find('form').trigger('submit')
-    expect(wrapper.emitted('submit')?.[0]?.[0]).toMatchObject({ shuhlofoNumber: null })
+    expect(wrapper.emitted('submit')?.[0]?.[0]).toMatchObject({
+      variantKind: 'None',
+      variantNumber: null,
+    })
 
-    // Picking 2 sends the number, so two variations of one chant stay distinct.
-    const radios = wrapper.findAll('input[name="chant-shuhlofo"]')
-    expect(radios.length).toBeGreaterThanOrEqual(4)
-    await radios[2]!.setValue()
+    // Choosing a kind offers the numbers and fills one in, so the pair is never
+    // half-filled — which the domain refuses in both directions.
+    const kinds = wrapper.findAll('input[name="chant-variant-kind"]')
+    await kinds[2]!.setValue()
+    expect(wrapper.findAll('input[name="chant-variant-number"]').length).toBeGreaterThan(0)
     await wrapper.find('form').trigger('submit')
-    expect(wrapper.emitted('submit')?.[1]?.[0]).toMatchObject({ shuhlofoNumber: 2 })
+    expect(wrapper.emitted('submit')?.[1]?.[0]).toMatchObject({
+      variantKind: 'Hrino',
+      variantNumber: 1,
+    })
   })
 
-  it('keeps a shuḥlofo number higher than the offered choices', async () => {
+  it('clears the number when the chant goes back to being neither', async () => {
+    const wrapper = await mountSuspended(ChantForm, {
+      props: {
+        chant: chant({ variantKind: 'Shuhlofo', variantNumber: 2 }),
+        modes,
+        sections,
+        submitLabel: 'Save',
+      },
+    })
+
+    const kinds = wrapper.findAll('input[name="chant-variant-kind"]')
+    await kinds[0]!.setValue()
+    await wrapper.find('form').trigger('submit')
+
+    expect(wrapper.emitted('submit')?.[0]?.[0]).toMatchObject({
+      variantKind: 'None',
+      variantNumber: null,
+    })
+  })
+
+  it('keeps a number higher than the offered choices', async () => {
     // Three is a convenience, not a rule. An existing chant numbered beyond the
     // list must still show its own value rather than silently losing it.
     const wrapper = await mountSuspended(ChantForm, {
-      props: { chant: chant({ shuhlofoNumber: 7 }), modes, sections, submitLabel: 'Save' },
+      props: {
+        chant: chant({ variantKind: 'Hrino', variantNumber: 7 }),
+        modes,
+        sections,
+        submitLabel: 'Save',
+      },
     })
 
     await wrapper.find('form').trigger('submit')
-    expect(wrapper.emitted('submit')?.[0]?.[0]).toMatchObject({ shuhlofoNumber: 7 })
+    expect(wrapper.emitted('submit')?.[0]?.[0]).toMatchObject({
+      variantKind: 'Hrino',
+      variantNumber: 7,
+    })
   })
 
   it('shows a reviewer the values but nothing to change or submit', async () => {

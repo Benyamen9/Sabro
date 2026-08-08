@@ -16,10 +16,14 @@ internal sealed class ChantConfiguration : IEntityTypeConfiguration<Chant>
         builder.Property(e => e.SyriacIncipitVocalized).HasMaxLength(512);
         builder.Property(e => e.Transliteration).HasMaxLength(Chant.MaxTransliterationLength).IsRequired();
 
-        // Which variation this chant is (1, 2, 3 …); null for the melody's own
-        // form. A number rather than a name, and deliberately unbounded — see
-        // Chant.ShuhlofoNumber.
-        builder.Property(e => e.ShuhlofoNumber);
+        // Whether this is a shuḥlofo, a ḥrino, or the chant in its own right.
+        // String-converted like every other enum here: adding a value is an
+        // ordinary migration, renaming one breaks /api/v1/.
+        builder.Property(e => e.VariantKind).HasConversion<string>().HasMaxLength(16).IsRequired();
+
+        // Which one it is (1, 2, 3 …); null exactly when the kind is None.
+        // Deliberately unbounded — see Chant.VariantNumber.
+        builder.Property(e => e.VariantNumber);
         builder.Property(e => e.AudioUrl).HasMaxLength(Chant.MaxAudioUrlLength);
 
         // String-converted enum (house rule): adding values is an ordinary
@@ -79,7 +83,7 @@ internal sealed class ChantConfiguration : IEntityTypeConfiguration<Chant>
         // directly: two rows that are null in the same places are the same row.
         // It is also why no sentinel value stands in for "no mode" — a sentinel
         // would have to be stripped again everywhere the column is read.
-        builder.HasIndex(e => new { e.Transliteration, e.SectionId, e.ModeId, e.ShuhlofoNumber })
+        builder.HasIndex(e => new { e.Transliteration, e.SectionId, e.ModeId, e.VariantKind, e.VariantNumber })
             .IsUnique()
             .AreNullsDistinct(false)
             .HasDatabaseName("ix_chants_identity");
