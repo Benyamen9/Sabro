@@ -69,15 +69,23 @@ internal sealed class BethGazoSectionModeConfiguration : IEntityTypeConfiguratio
         // Madroshe are deliberately absent: no rows means no mode.
 
         // The remaining sections — assumed, see the remarks above.
-        var assumedEight = new[]
+        var eightOrdinalSections = new[]
         {
             "7a2c4b20-0000-4000-8000-000000000002", // Gnize
             "7a2c4b20-0000-4000-8000-000000000004", // Qonune yaunoye
             "7a2c4b20-0000-4000-8000-000000000005", // Tekso d-maurbe
             "7a2c4b20-0000-4000-8000-000000000006", // Mahebrone
+
+            // Qole shahroye. ⚠️ The eight here is INFERRED, not stated: the owner
+            // said only that "zodeq dnehwe, ... are qole shahroyo", and that
+            // melody group demonstrably has at least a qadmoyo and a trayono
+            // member — so the section has modes, and eight is the tradition's
+            // ordinary count. It is not his word for it. Confirm and correct;
+            // once section editing ships, that is a tick-box rather than a deploy.
+            BethGazoSectionConfiguration.QoleShahroyeId,
         };
 
-        foreach (var sectionId in assumedEight)
+        foreach (var sectionId in eightOrdinalSections)
         {
             foreach (var modeId in eightOrdinals)
             {

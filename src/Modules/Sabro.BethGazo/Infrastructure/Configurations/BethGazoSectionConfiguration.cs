@@ -14,6 +14,7 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
     /// </summary>
     internal const string FardeId = "7a2c4b20-0000-4000-8000-000000000001";
     internal const string MadrosheId = "7a2c4b20-0000-4000-8000-000000000003";
+    internal const string QoleShahroyeId = "7a2c4b20-0000-4000-8000-000000000007";
 
     public void Configure(EntityTypeBuilder<BethGazoSection> builder)
     {
@@ -75,6 +76,13 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
             ("7a2c4b20-0000-4000-8000-000000000004", "Qonune yaunoye", 4),
             ("7a2c4b20-0000-4000-8000-000000000005", "Tekso d-maurbe", 5),
             ("7a2c4b20-0000-4000-8000-000000000006", "Mahebrone", 6),
+
+            // Owner, 2026-08-08: "zodeq dnehwe, ... are qole shahroyo" — the
+            // section every worked example in this module belongs to, and the one
+            // the first seed missed entirely. Appended at 7 rather than inserted
+            // in the treasury's real order: Position is a sort key only, so
+            // renumbering later is free and never touches a chant's link.
+            (QoleShahroyeId, "Qole shahroye", 7),
         };
 
         builder.HasData(sections.Select(section => new
