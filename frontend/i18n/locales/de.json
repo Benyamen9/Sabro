@@ -1004,6 +1004,12 @@
       "moveUp": "Nach oben",
       "moveDown": "Nach unten",
       "saveFailed": "Diese Änderung wurde abgelehnt."
+    },
+    "chantModes": {
+      "title": "Modi",
+      "description": "Die Modi, in denen Gesänge gesungen werden. Die Menge wächst — nichts nimmt an, dass sie bei acht endet. Ein Modus kann nicht entfernt werden, solange ein Gesang ihn trägt oder ein Abschnitt ihn zulässt.",
+      "add": "Modus hinzufügen",
+      "namePlaceholder": "Name des Modus"
     }
   },
   "seo": {

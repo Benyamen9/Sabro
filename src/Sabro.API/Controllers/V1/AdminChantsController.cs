@@ -29,11 +29,16 @@ public sealed class AdminChantsController : ApiControllerBase
 
     private readonly IChantService chantService;
     private readonly ISectionService sectionService;
+    private readonly IModeService modeService;
 
-    public AdminChantsController(IChantService chantService, ISectionService sectionService)
+    public AdminChantsController(
+        IChantService chantService,
+        ISectionService sectionService,
+        IModeService modeService)
     {
         this.chantService = chantService;
         this.sectionService = sectionService;
+        this.modeService = modeService;
     }
 
     [Authorize(Policy = AuthPolicies.ChantsEdit)]
@@ -97,6 +102,67 @@ public sealed class AdminChantsController : ApiControllerBase
     public async Task<ActionResult<IReadOnlyList<BethGazoSectionDto>>> ListSections(
         CancellationToken cancellationToken) =>
         Ok(await chantService.ListSectionsAsync(cancellationToken));
+
+    /// <summary>
+    /// Creates a mode, appended after the last. The set grows — the owner said some
+    /// sets run past eight — which is why the modes are a table and not an enum.
+    /// </summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("modes")]
+    [ProducesResponseType(typeof(BethGazoModeDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoModeDto>> CreateMode(
+        [FromBody] ModeRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await modeService.CreateAsync(request, cancellationToken);
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(ListModes), null, result.Value)
+            : FromError(result.Error!);
+    }
+
+    /// <summary>Renames a mode. Chants point at its id, so nothing else moves.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPut("modes/{id:guid}")]
+    [ProducesResponseType(typeof(BethGazoModeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoModeDto>> UpdateMode(
+        Guid id,
+        [FromBody] ModeRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await modeService.UpdateAsync(id, request, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+    }
+
+    /// <summary>Deletes a mode. Refused while a chant carries it or a section admits it.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpDelete("modes/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteMode(Guid id, CancellationToken cancellationToken)
+    {
+        var error = await modeService.DeleteAsync(id, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
+
+    /// <summary>Swaps a mode with its neighbour in the traditional order.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("modes/{id:guid}/move")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> MoveMode(
+        Guid id,
+        [FromQuery] bool up,
+        CancellationToken cancellationToken)
+    {
+        var error = await modeService.MoveAsync(id, up, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
 
     /// <summary>
     /// Creates a section, appended after the last. Position is never sent by the

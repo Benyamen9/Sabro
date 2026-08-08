@@ -1004,6 +1004,12 @@
       "moveUp": "Flytta upp",
       "moveDown": "Flytta ner",
       "saveFailed": "Ändringen avvisades."
+    },
+    "chantModes": {
+      "title": "Modus",
+      "description": "De modus sånger sjungs i. Mängden växer — inget antar att den stannar vid åtta. Ett modus kan inte tas bort medan en sång bär det eller ett avsnitt tillåter det.",
+      "add": "Lägg till modus",
+      "namePlaceholder": "Modusets namn"
     }
   },
   "seo": {

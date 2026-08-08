@@ -32,6 +32,7 @@ public sealed class BethGazoModule : IModuleRegistration
 
         services.AddScoped<IChantService, ChantService>();
         services.AddScoped<ISectionService, SectionService>();
+        services.AddScoped<IModeService, ModeService>();
         services.AddScoped<IPublicChantService, PublicChantService>();
         services.AddScoped<IChantAudioStorage, FileSystemChantAudioStorage>();
         services.AddScoped<IChantPlayablePool, ChantPlayablePool>();

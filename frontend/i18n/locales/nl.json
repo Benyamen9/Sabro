@@ -1004,6 +1004,12 @@
       "moveUp": "Omhoog",
       "moveDown": "Omlaag",
       "saveFailed": "Die wijziging is geweigerd."
+    },
+    "chantModes": {
+      "title": "Modi",
+      "description": "De modi waarin gezangen worden gezongen. De verzameling groeit — niets gaat ervan uit dat ze bij acht stopt. Een modus kan niet weg zolang een gezang hem draagt of een sectie hem toelaat.",
+      "add": "Modus toevoegen",
+      "namePlaceholder": "Naam van de modus"
     }
   },
   "seo": {

@@ -1004,6 +1004,12 @@
       "moveUp": "Move up",
       "moveDown": "Move down",
       "saveFailed": "That change was refused."
+    },
+    "chantModes": {
+      "title": "Modes",
+      "description": "The modes chants are sung in. The set grows — nothing assumes it stops at eight. A mode cannot be removed while a chant carries it or a section admits it.",
+      "add": "Add a mode",
+      "namePlaceholder": "Mode name"
     }
   },
   "seo": {
