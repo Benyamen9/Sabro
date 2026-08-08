@@ -767,7 +767,9 @@
         "playableNo": "Hors du pool",
         "clear": "Effacer les filtres",
         "noResults": "Aucun chant ne correspond à ces filtres.",
-        "pageSizeLabel": "Lignes par page"
+        "pageSizeLabel": "Lignes par page",
+        "sectionLabel": "Section",
+        "sectionAll": "Toutes les sections"
       },
       "actions": {
         "edit": "Modifier",

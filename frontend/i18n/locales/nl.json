@@ -767,7 +767,9 @@
         "playableNo": "Niet in de pool",
         "clear": "Filters wissen",
         "noResults": "Geen gezangen voldoen aan deze filters.",
-        "pageSizeLabel": "Rijen per pagina"
+        "pageSizeLabel": "Rijen per pagina",
+        "sectionLabel": "Sectie",
+        "sectionAll": "Alle secties"
       },
       "actions": {
         "edit": "Bewerken",

@@ -767,7 +767,9 @@
         "playableNo": "Nicht im Pool",
         "clear": "Filter zurücksetzen",
         "noResults": "Keine Gesänge entsprechen diesen Filtern.",
-        "pageSizeLabel": "Zeilen pro Seite"
+        "pageSizeLabel": "Zeilen pro Seite",
+        "sectionLabel": "Abschnitt",
+        "sectionAll": "Alle Abschnitte"
       },
       "actions": {
         "edit": "Bearbeiten",

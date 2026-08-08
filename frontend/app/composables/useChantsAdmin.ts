@@ -12,6 +12,7 @@ export interface ChantListParams {
   pageSize?: number
   search?: string
   status?: ChantStatus
+  sectionId?: string
   modeId?: string
   playableInNahlo?: boolean
 }
@@ -48,6 +49,7 @@ export function useChantsAdmin() {
         pageSize: params.pageSize ?? 25,
         search: params.search || undefined,
         status: params.status,
+        sectionId: params.sectionId,
         modeId: params.modeId,
         playableInNahlo: params.playableInNahlo,
       },

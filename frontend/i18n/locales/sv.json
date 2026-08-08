@@ -767,7 +767,9 @@
         "playableNo": "Inte i poolen",
         "clear": "Rensa filter",
         "noResults": "Inga sånger matchar dessa filter.",
-        "pageSizeLabel": "Rader per sida"
+        "pageSizeLabel": "Rader per sida",
+        "sectionLabel": "Avsnitt",
+        "sectionAll": "Alla avsnitt"
       },
       "actions": {
         "edit": "Redigera",
