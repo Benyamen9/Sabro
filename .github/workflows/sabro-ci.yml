@@ -175,7 +175,7 @@ jobs:
       - name: Deploy-safety inputs cover the files
         run: |
           set -euo pipefail
-          missing_env=$(comm -23             <(grep -oE '\$\{[A-Z_]+:\?' docker-compose.prod.yml | sed 's/\${//; s/:?//' | sort -u)             <(grep -oE '^ +[A-Z_]+=' .env.ci | tr -d ' =' | sort -u))
+          missing_env=$(comm -23             <(grep -oE '\$\{[A-Z_]+:\?' docker-compose.prod.yml | sed 's/\${//; s/:?//' | sort -u)             <(sed 's/^[[:space:]]*//' .env.ci | grep -oE '^[A-Z_]+=' | tr -d '=' | sort -u))
           # SABRO_IMAGE_TAG is supplied inline by the step below, not by .env.ci.
           missing_env=$(echo "$missing_env" | grep -v '^SABRO_IMAGE_TAG$' || true)
           if [ -n "$missing_env" ]; then
