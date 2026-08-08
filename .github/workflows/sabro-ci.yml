@@ -163,6 +163,9 @@ jobs:
           SHMO_LOGTO_APP_ID=x
           SHMO_LOGTO_APP_SECRET=x
           SHMO_LOGTO_COOKIE_ENCRYPTION_KEY=x
+          NAHLO_LOGTO_APP_ID=x
+          NAHLO_LOGTO_APP_SECRET=x
+          NAHLO_LOGTO_COOKIE_ENCRYPTION_KEY=x
           ENV
 
       - name: Prod compose parses with a pinned image tag
