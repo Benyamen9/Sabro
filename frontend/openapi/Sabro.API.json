@@ -8248,8 +8248,7 @@
         "required": [
           "melodies",
           "sections",
-          "modes",
-          "shuhlofe"
+          "modes"
         ],
         "type": "object",
         "properties": {
@@ -8270,12 +8269,6 @@
             "items": {
               "$ref": "#/components/schemas/BethGazoModeDto"
             }
-          },
-          "shuhlofe": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           }
         }
       },
@@ -8289,7 +8282,7 @@
           "sectionName",
           "modeId",
           "modeName",
-          "shuhlofo",
+          "shuhlofoNumber",
           "inheritsMelodyFromId",
           "inheritsMelodyFromTransliteration",
           "audioUrl",
@@ -8336,11 +8329,14 @@
               "string"
             ]
           },
-          "shuhlofo": {
+          "shuhlofoNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
+              "integer",
               "string"
-            ]
+            ],
+            "format": "int32"
           },
           "inheritsMelodyFromId": {
             "type": [
@@ -8583,11 +8579,14 @@
               "string"
             ]
           },
-          "shuhlofo": {
+          "shuhlofoNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
+              "integer",
               "string"
-            ]
+            ],
+            "format": "int32"
           },
           "inheritsMelodyFromId": {
             "type": [
@@ -10119,7 +10118,7 @@
           "transliteration",
           "sectionName",
           "modeName",
-          "shuhlofo",
+          "shuhlofoNumber",
           "syriacIncipit",
           "syriacIncipitVocalized"
         ],
@@ -10148,11 +10147,14 @@
               "string"
             ]
           },
-          "shuhlofo": {
+          "shuhlofoNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
+              "integer",
               "string"
-            ]
+            ],
+            "format": "int32"
           },
           "syriacIncipit": {
             "type": "string"
@@ -11856,11 +11858,14 @@
               "string"
             ]
           },
-          "shuhlofo": {
+          "shuhlofoNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
+              "integer",
               "string"
-            ]
+            ],
+            "format": "int32"
           },
           "inheritsMelodyFromId": {
             "type": [

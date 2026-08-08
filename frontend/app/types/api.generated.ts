@@ -5238,7 +5238,6 @@ export interface components {
             melodies: string[];
             sections: components["schemas"]["BethGazoSectionDto"][];
             modes: components["schemas"]["BethGazoModeDto"][];
-            shuhlofe: string[];
         };
         ChantDto: {
             /** Format: uuid */
@@ -5252,7 +5251,8 @@ export interface components {
             /** Format: uuid */
             modeId: null | string;
             modeName: null | string;
-            shuhlofo: null | string;
+            /** Format: int32 */
+            shuhlofoNumber: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId: null | string;
             inheritsMelodyFromTransliteration: null | string;
@@ -5313,7 +5313,8 @@ export interface components {
             /** Format: uuid */
             modeId?: null | string;
             syriacIncipitVocalized?: null | string;
-            shuhlofo?: null | string;
+            /** Format: int32 */
+            shuhlofoNumber?: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId?: null | string;
         };
@@ -5671,7 +5672,8 @@ export interface components {
             transliteration: string;
             sectionName: string;
             modeName: null | string;
-            shuhlofo: null | string;
+            /** Format: int32 */
+            shuhlofoNumber: null | number | string;
             syriacIncipit: string;
             syriacIncipitVocalized: null | string;
         };
@@ -6060,7 +6062,8 @@ export interface components {
             /** Format: uuid */
             modeId?: null | string;
             syriacIncipitVocalized?: null | string;
-            shuhlofo?: null | string;
+            /** Format: int32 */
+            shuhlofoNumber?: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId?: null | string;
         };

@@ -306,7 +306,7 @@ public class AdminChantsControllerTests : IDisposable
         // fields collided.
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(3, ct);
-        var request = new CreateChantRequest(Incipit, "Duplicate identity melody", Farde, modeId, Shuhlofo: "Qadmoyo");
+        var request = new CreateChantRequest(Incipit, "Duplicate identity melody", Farde, modeId, ShuhlofoNumber: 1);
 
         await CreateAsync(request, ct);
         var second = await client.PostAsJsonAsync("/api/v1/admin/chants", request, ct);
@@ -325,10 +325,10 @@ public class AdminChantsControllerTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(3, ct);
 
-        await CreateAsync(new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, Shuhlofo: "First"), ct);
+        await CreateAsync(new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, ShuhlofoNumber: 1), ct);
         var second = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, Shuhlofo: "Second"),
+            new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, ShuhlofoNumber: 2),
             ct);
 
         second.StatusCode.Should().Be(HttpStatusCode.Created);

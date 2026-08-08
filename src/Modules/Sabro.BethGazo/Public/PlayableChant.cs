@@ -21,5 +21,5 @@ public sealed record PlayableChant(
     string Transliteration,
     string SectionName,
     string? ModeName,
-    string? Shuhlofo,
+    int? ShuhlofoNumber,
     string AudioUrl);

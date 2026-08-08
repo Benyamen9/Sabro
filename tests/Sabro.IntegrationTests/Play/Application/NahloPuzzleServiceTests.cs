@@ -164,7 +164,7 @@ public class NahloPuzzleServiceTests
         result.Value!.AudioUrl.Should().Be("/media/chants/chant.mp3");
         result.Value.Transliteration.Should().Be("Maryam yoldath Aloho");
         result.Value.ModeName.Should().Be("Tlithoyo");
-        result.Value.Shuhlofo.Should().Be("Qadmoyo");
+        result.Value.ShuhlofoNumber.Should().Be(1);
         result.Value.SyriacIncipit.Should().Be("ܡܪܝܡ");
     }
 
@@ -189,7 +189,7 @@ public class NahloPuzzleServiceTests
                 "Maryam yoldath Aloho",
                 "Farde",
                 "Tlithoyo",
-                "Qadmoyo",
+                1,
                 "/media/chants/chant.mp3"));
         return pool;
     }

@@ -10,7 +10,6 @@ public sealed class UpdateChantRequestValidator : AbstractValidator<UpdateChantR
         RuleFor(x => x.SyriacIncipit).NotEmpty().MaximumLength(512);
         RuleFor(x => x.SyriacIncipitVocalized).MaximumLength(512);
         RuleFor(x => x.Transliteration).NotEmpty().MaximumLength(Chant.MaxTransliterationLength);
-        RuleFor(x => x.Shuhlofo).MaximumLength(Chant.MaxShuhlofoLength);
         RuleFor(x => x.SectionId).NotEmpty().WithMessage("A section is required.");
 
         // No rule on ModeId — see CreateChantRequestValidator.

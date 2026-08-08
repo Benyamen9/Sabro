@@ -136,7 +136,7 @@ internal sealed class NahloPuzzleService : INahloPuzzleService
             chant.Transliteration,
             chant.SectionName,
             chant.ModeName,
-            chant.Shuhlofo,
+            chant.ShuhlofoNumber,
             chant.SyriacIncipit,
             chant.SyriacIncipitVocalized);
 

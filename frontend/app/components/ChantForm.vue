@@ -52,7 +52,27 @@ const { t } = useI18n()
 const syriacIncipit = ref(props.chant?.syriacIncipit ?? '')
 const syriacIncipitVocalized = ref(props.chant?.syriacIncipitVocalized ?? '')
 const transliteration = ref(props.chant?.transliteration ?? '')
-const shuhlofo = ref(props.chant?.shuhlofo ?? '')
+/**
+ * Which variation this chant is, as a string for the radio group's sake: '' is
+ * "the melody's own form", '1'..'3' are its variations.
+ *
+ * A number rather than a name (owner, 2026-08-08). He asked for "just yes or no",
+ * which a boolean cannot deliver — he also confirmed some chants have more than
+ * one shuḥlofo, and identity is (melody, section, mode, shuḥlofo), so a boolean
+ * would let a chant hold one variation and make the second one unsaveable.
+ */
+const shuhlofoNumber = ref(props.chant?.shuhlofoNumber?.toString() ?? '')
+
+/**
+ * The choices offered. Three is a convenience, not a rule: the API accepts any
+ * number from 1 up, and an existing chant numbered beyond the list still shows
+ * its own value rather than losing it.
+ */
+const shuhlofoChoices = computed(() => {
+  const offered = ['1', '2', '3']
+  const current = shuhlofoNumber.value
+  return current && !offered.includes(current) ? [...offered, current] : offered
+})
 
 // Empty string is "none": no mode chosen yet on a new chant, and no borrowed
 // melody at all on one that carries its own.
@@ -96,7 +116,6 @@ watch(sectionId, () => {
 // Matches Chant.MaxTransliterationLength / MaxShuhlofoLength on the backend, so
 // the box stops before the server has to.
 const maxTransliterationLength = 256
-const maxShuhlofoLength = 128
 
 /**
  * A chant cannot borrow its own melody — the domain refuses it, and offering it
@@ -132,7 +151,7 @@ const formFields = [
   'transliteration',
   'sectionId',
   'modeId',
-  'shuhlofo',
+  'shuhlofoNumber',
   'inheritsMelodyFromId',
 ] as const
 
@@ -158,7 +177,8 @@ function onSubmit() {
     // Null, not an empty string: for a mode-less section this says "this chant
     // has no mode", which is the answer rather than an unfilled box.
     modeId: sectionHasModes.value ? modeId.value : null,
-    shuhlofo: shuhlofo.value.trim() || null,
+    // Blank is "the melody's own form" — a real answer, not an empty box.
+    shuhlofoNumber: shuhlofoNumber.value ? Number(shuhlofoNumber.value) : null,
     inheritsMelodyFromId: inheritsMelodyFromId.value || null,
   })
 }
@@ -313,22 +333,38 @@ const errorTextClass = 'mt-1 font-sans text-xs font-medium text-[var(--color-acc
         </p>
       </div>
 
-      <div>
-        <label for="chant-shuhlofo" :class="labelClass">{{ t('admin.chants.form.shuhlofo') }}</label>
-        <input
-          id="chant-shuhlofo"
-          v-model="shuhlofo"
-          :maxlength="maxShuhlofoLength"
-          :readonly="readonly"
-          :aria-invalid="errorsFor('shuhlofo').length > 0"
-          :aria-describedby="errorsFor('shuhlofo').length ? 'chant-shuhlofo-error' : undefined"
-          :class="[fieldClass, 'mt-1', errorsFor('shuhlofo').length ? errorFieldClass : '']"
-        >
-        <p v-if="errorsFor('shuhlofo').length" id="chant-shuhlofo-error" role="alert" :class="errorTextClass">
-          {{ errorsFor('shuhlofo').join(' ') }}
+      <fieldset class="min-w-0 border-0 p-0">
+        <legend :class="labelClass">{{ t('admin.chants.form.shuhlofo') }}</legend>
+        <!-- A radio group, not a text box: one click, and "none" is an explicit
+             answer rather than an empty field. -->
+        <div class="mt-1 flex flex-wrap gap-2">
+          <label
+            v-for="choice in ['', ...shuhlofoChoices]"
+            :key="choice || 'none'"
+            class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] px-3 py-2 font-sans text-sm"
+            :class="[
+              shuhlofoNumber === choice
+                ? 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] font-medium text-[var(--color-accent)]'
+                : 'bg-[var(--color-bg-elevated)] text-[var(--color-text)]',
+              readonly ? 'opacity-60' : 'cursor-pointer',
+            ]"
+          >
+            <input
+              v-model="shuhlofoNumber"
+              type="radio"
+              name="chant-shuhlofo"
+              :value="choice"
+              :disabled="readonly"
+              class="accent-[var(--color-accent)]"
+            >
+            {{ choice === '' ? t('admin.chants.form.shuhlofoNone') : choice }}
+          </label>
+        </div>
+        <p v-if="errorsFor('shuhlofoNumber').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('shuhlofoNumber').join(' ') }}
         </p>
         <p :class="hintClass">{{ t('admin.chants.form.shuhlofoHint') }}</p>
-      </div>
+      </fieldset>
     </div>
 
     <!-- Solqin: a chant that borrows another's melody. A relationship, not a
@@ -344,7 +380,7 @@ const errorTextClass = 'mt-1 font-sans text-xs font-medium text-[var(--color-acc
       >
         <option value="">{{ t('admin.chants.form.inheritsMelodyFromNone') }}</option>
         <option v-for="candidate in melodyOptions" :key="candidate.id" :value="candidate.id">
-          {{ candidate.transliteration }} · {{ candidate.modeName }}{{ candidate.shuhlofo ? ` · ${candidate.shuhlofo}` : '' }}
+          {{ candidate.transliteration }} · {{ candidate.modeName }}{{ candidate.shuhlofoNumber ? ` · ${t('admin.chants.form.shuhlofo')} ${candidate.shuhlofoNumber}` : '' }}
         </option>
       </select>
       <p v-if="errorsFor('inheritsMelodyFromId').length" role="alert" :class="errorTextClass">

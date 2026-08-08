@@ -820,11 +820,12 @@
         "modeUnset": "Modus wählen",
         "modeHint": "Ein Melodiename kommt in mehreren Modi vor; erst das Paar bestimmt den Gesang.",
         "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Optional — nur ausfüllen, wenn dieser Gesang selbst eine Variation der Melodie IST, und die Variation benennen. Leer bedeutet, es ist die eigene Form der Melodie. Die Spieler raten, ob der Gesang eine ist.",
+        "shuhlofoHint": "Welche Variation dieser Gesang ist. Auf „keine“ lassen, sofern er nicht selbst eine IST; manche Gesänge haben mehrere, daher die Nummerierung.",
         "inheritsMelodyFrom": "Übernimmt die Melodie von",
         "inheritsMelodyFromNone": "Keine — er trägt seine eigene Melodie",
         "inheritsMelodyFromHint": "Für ein Solqin zu setzen: ein Gesang, der die Melodie eines anderen mit eigenen Variationen übernimmt.",
-        "recordingComesLater": "Speichern Sie zuerst den Gesang und laden Sie dann seine Aufnahme hoch. Die Veröffentlichung wartet auf das Audio."
+        "recordingComesLater": "Speichern Sie zuerst den Gesang und laden Sie dann seine Aufnahme hoch. Die Veröffentlichung wartet auf das Audio.",
+        "shuhlofoNone": "Keine — die eigene Form der Melodie"
       }
     },
     "people": {

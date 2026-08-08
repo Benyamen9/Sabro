@@ -13,5 +13,5 @@ public sealed record UpdateChantRequest(
     Guid SectionId,
     Guid? ModeId = null,
     string? SyriacIncipitVocalized = null,
-    string? Shuhlofo = null,
+    int? ShuhlofoNumber = null,
     Guid? InheritsMelodyFromId = null);
