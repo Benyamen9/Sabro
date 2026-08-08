@@ -28,10 +28,12 @@ public sealed class AdminChantsController : ApiControllerBase
     private const long MaxChantAudioBytes = 15 * 1024 * 1024;
 
     private readonly IChantService chantService;
+    private readonly ISectionService sectionService;
 
-    public AdminChantsController(IChantService chantService)
+    public AdminChantsController(IChantService chantService, ISectionService sectionService)
     {
         this.chantService = chantService;
+        this.sectionService = sectionService;
     }
 
     [Authorize(Policy = AuthPolicies.ChantsEdit)]
@@ -95,6 +97,67 @@ public sealed class AdminChantsController : ApiControllerBase
     public async Task<ActionResult<IReadOnlyList<BethGazoSectionDto>>> ListSections(
         CancellationToken cancellationToken) =>
         Ok(await chantService.ListSectionsAsync(cancellationToken));
+
+    /// <summary>
+    /// Creates a section, appended after the last. Position is never sent by the
+    /// client — see <see cref="ISectionService"/>.
+    /// </summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("sections")]
+    [ProducesResponseType(typeof(BethGazoSectionDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoSectionDto>> CreateSection(
+        [FromBody] SectionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await sectionService.CreateAsync(request, cancellationToken);
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(ListSections), null, result.Value)
+            : FromError(result.Error!);
+    }
+
+    /// <summary>Renames a section and replaces the modes it admits.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPut("sections/{id:guid}")]
+    [ProducesResponseType(typeof(BethGazoSectionDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoSectionDto>> UpdateSection(
+        Guid id,
+        [FromBody] SectionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await sectionService.UpdateAsync(id, request, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+    }
+
+    /// <summary>Deletes a section. Refused while chants still belong to it.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpDelete("sections/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteSection(Guid id, CancellationToken cancellationToken)
+    {
+        var error = await sectionService.DeleteAsync(id, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
+
+    /// <summary>Swaps a section with its neighbour in the treasury's order.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("sections/{id:guid}/move")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> MoveSection(
+        Guid id,
+        [FromQuery] bool up,
+        CancellationToken cancellationToken)
+    {
+        var error = await sectionService.MoveAsync(id, up, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
 
     [Authorize(Policy = AuthPolicies.ChantsView)]
     [HttpGet("{id:guid}")]

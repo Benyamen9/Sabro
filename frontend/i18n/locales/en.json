@@ -985,6 +985,25 @@
       },
       "applying": "Applying a proposal: one field has been filled with the proposed value. Review it, then save — nothing is written until you do.",
       "applyFailed": "That proposal could not be applied here. The entry is shown unchanged."
+    },
+    "chantSections": {
+      "title": "Sections",
+      "description": "The sections of the treasury, and which modes each admits. New sections are added to the end; use the arrows to change the order.",
+      "add": "Add a section",
+      "namePlaceholder": "Section name",
+      "modes": "Modes it admits",
+      "allModes": "All",
+      "noModes": "None",
+      "modesHint": "Leave none selected for a section with no modes, like the madroshe. Chants there are never asked for one.",
+      "hasNoModes": "No modes",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "remove": "Remove",
+      "confirmRemove": "Really remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "saveFailed": "That change was refused."
     }
   },
   "seo": {

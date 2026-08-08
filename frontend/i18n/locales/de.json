@@ -985,6 +985,25 @@
       },
       "applying": "Ein Vorschlag wird angewendet: ein Feld wurde mit dem vorgeschlagenen Wert gefüllt. Prüfen Sie ihn und speichern Sie dann — vorher wird nichts geschrieben.",
       "applyFailed": "Dieser Vorschlag konnte hier nicht angewendet werden. Der Eintrag wird unverändert angezeigt."
+    },
+    "chantSections": {
+      "title": "Abschnitte",
+      "description": "Die Abschnitte des Schatzes und welche Modi jeder zulässt. Neue Abschnitte werden angehängt; die Pfeile ändern die Reihenfolge.",
+      "add": "Abschnitt hinzufügen",
+      "namePlaceholder": "Name des Abschnitts",
+      "modes": "Zugelassene Modi",
+      "allModes": "Alle",
+      "noModes": "Keine",
+      "modesHint": "Keinen auswählen für einen Abschnitt ohne Modi, wie die Madroshe. Gesänge dort werden nie danach gefragt.",
+      "hasNoModes": "Keine Modi",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "remove": "Entfernen",
+      "confirmRemove": "Wirklich entfernen",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "saveFailed": "Diese Änderung wurde abgelehnt."
     }
   },
   "seo": {

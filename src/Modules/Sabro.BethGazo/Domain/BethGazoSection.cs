@@ -111,6 +111,22 @@ public sealed class BethGazoSection : Entity<Guid>, IAggregateRoot
         return Result<BethGazoSection>.Success(new BethGazoSection(trimmed, position));
     }
 
+    /// <summary>
+    /// Moves the section to another slot in the treasury's order.
+    /// </summary>
+    /// <remarks>
+    /// Takes the position rather than validating it, because a reorder is a swap and
+    /// the intermediate step deliberately parks a section outside the valid range —
+    /// <see cref="Position"/> is uniquely indexed, so one of the two has to step
+    /// aside before the other can take its slot. The application layer owns that
+    /// dance; the domain's job here is only to record where it ended up.
+    /// </remarks>
+    public void MoveTo(int position)
+    {
+        Position = position;
+        Touch();
+    }
+
     public Error? Rename(string name)
     {
         var trimmed = (name ?? string.Empty).Trim();
