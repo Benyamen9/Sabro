@@ -42,6 +42,12 @@ internal sealed class ChantService : IChantService
             return Result<ChantDto>.Failure(Error.Validation(fields));
         }
 
+        var sectionResult = await LoadSectionAsync(request.SectionId, cancellationToken);
+        if (!sectionResult.IsSuccess)
+        {
+            return Result<ChantDto>.Failure(sectionResult.Error!);
+        }
+
         var referenceError = await CheckReferencesAsync(request.ModeId, request.InheritsMelodyFromId, cancellationToken);
         if (referenceError is not null)
         {
@@ -51,6 +57,7 @@ internal sealed class ChantService : IChantService
         var domainResult = Chant.Create(
             request.SyriacIncipit,
             request.Transliteration,
+            sectionResult.Value!,
             request.ModeId,
             request.SyriacIncipitVocalized,
             request.Shuhlofo,
@@ -97,6 +104,12 @@ internal sealed class ChantService : IChantService
             return Result<ChantDto>.Failure(Error.NotFound("Chant not found."));
         }
 
+        var sectionResult = await LoadSectionAsync(request.SectionId, cancellationToken);
+        if (!sectionResult.IsSuccess)
+        {
+            return Result<ChantDto>.Failure(sectionResult.Error!);
+        }
+
         var referenceError = await CheckReferencesAsync(request.ModeId, request.InheritsMelodyFromId, cancellationToken);
         if (referenceError is not null)
         {
@@ -106,6 +119,7 @@ internal sealed class ChantService : IChantService
         var error = chant.Update(
             request.SyriacIncipit,
             request.Transliteration,
+            sectionResult.Value!,
             request.ModeId,
             request.SyriacIncipitVocalized,
             request.Shuhlofo,
@@ -246,6 +260,7 @@ internal sealed class ChantService : IChantService
     public async Task<Result<PagedResult<ChantDto>>> ListAsync(
         string? search,
         ChantStatus? status,
+        Guid? sectionId,
         Guid? modeId,
         bool? playableInNahlo,
         int page,
@@ -281,6 +296,11 @@ internal sealed class ChantService : IChantService
             query = query.Where(e => e.Status == status.Value);
         }
 
+        if (sectionId.HasValue)
+        {
+            query = query.Where(e => e.SectionId == sectionId.Value);
+        }
+
         if (modeId.HasValue)
         {
             query = query.Where(e => e.ModeId == modeId.Value);
@@ -308,13 +328,47 @@ internal sealed class ChantService : IChantService
             .Select(m => new BethGazoModeDto(m.Id, m.Name, m.Position))
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<BethGazoSectionDto>> ListSectionsAsync(CancellationToken cancellationToken) =>
+        await dbContext.Sections
+            .AsNoTracking()
+            .OrderBy(s => s.Position)
+            .Select(s => new BethGazoSectionDto(
+                s.Id,
+                s.Name,
+                s.Position,
+                s.AllowedModes.Select(m => m.ModeId).ToList()))
+            .ToListAsync(cancellationToken);
+
+    /// <summary>
+    /// Loads the section <b>with its allowed modes</b>, which is the whole point:
+    /// the domain asks it whether the chant's mode is permitted, so a section
+    /// fetched without that collection would report every mode as disallowed.
+    /// </summary>
+    private async Task<Result<BethGazoSection>> LoadSectionAsync(Guid sectionId, CancellationToken cancellationToken)
+    {
+        if (sectionId == Guid.Empty)
+        {
+            return Result<BethGazoSection>.Failure(Error.Validation("A section is required."));
+        }
+
+        var section = await dbContext.Sections
+            .Include(s => s.AllowedModes)
+            .FirstOrDefaultAsync(s => s.Id == sectionId, cancellationToken);
+
+        return section is null
+            ? Result<BethGazoSection>.Failure(Error.Validation("That section does not exist."))
+            : Result<BethGazoSection>.Success(section);
+    }
+
     /// <summary>
     /// Checks the two foreign keys before the domain runs, so a bad id comes back as
     /// a field error rather than as a database constraint violation.
     /// </summary>
-    private async Task<Error?> CheckReferencesAsync(Guid modeId, Guid? parentId, CancellationToken cancellationToken)
+    private async Task<Error?> CheckReferencesAsync(Guid? modeId, Guid? parentId, CancellationToken cancellationToken)
     {
-        if (modeId != Guid.Empty && !await dbContext.Modes.AnyAsync(m => m.Id == modeId, cancellationToken))
+        if (modeId.HasValue
+            && modeId.Value != Guid.Empty
+            && !await dbContext.Modes.AnyAsync(m => m.Id == modeId.Value, cancellationToken))
         {
             return Error.Validation("That mode does not exist.");
         }
@@ -346,7 +400,7 @@ internal sealed class ChantService : IChantService
         {
             logger.LogWarning("Chant save rejected by the identity constraint.");
             return Error.Conflict(
-                "A chant with that melody name, mode and shuḥlofo already exists.");
+                "A chant with that melody name, section, mode and shuḥlofo already exists.");
         }
     }
 
@@ -384,9 +438,18 @@ internal sealed class ChantService : IChantService
             : Result<ChantDto>.Success(dto);
     }
 
+    /// <remarks>
+    /// The mode is joined with <c>DefaultIfEmpty</c> — a LEFT join — and that is
+    /// load-bearing, not tidiness. It used to be an inner join, which was correct
+    /// only while every chant had a mode. Now that the madroshe have none, an inner
+    /// join would drop every one of them from the backoffice list and from
+    /// <c>GetById</c>: they would look deleted rather than mode-less.
+    /// </remarks>
     private IQueryable<ChantDto> Project(IQueryable<Chant> query) =>
         from chant in query
-        join mode in dbContext.Modes.AsNoTracking() on chant.ModeId equals mode.Id
+        join section in dbContext.Sections.AsNoTracking() on chant.SectionId equals section.Id
+        join mode in dbContext.Modes.AsNoTracking() on chant.ModeId equals mode.Id into modes
+        from mode in modes.DefaultIfEmpty()
         join parent in dbContext.Chants.AsNoTracking()
             on chant.InheritsMelodyFromId equals parent.Id into parents
         from parent in parents.DefaultIfEmpty()
@@ -395,8 +458,10 @@ internal sealed class ChantService : IChantService
             chant.SyriacIncipit,
             chant.SyriacIncipitVocalized,
             chant.Transliteration,
+            chant.SectionId,
+            section.Name,
             chant.ModeId,
-            mode.Name,
+            mode != null ? mode.Name : null,
             chant.Shuhlofo,
             chant.InheritsMelodyFromId,
             parent != null ? parent.Transliteration : null,

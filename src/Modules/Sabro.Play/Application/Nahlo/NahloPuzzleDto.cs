@@ -18,16 +18,21 @@ namespace Sabro.Play.Application.Nahlo;
 /// does.
 /// </para>
 /// </remarks>
+/// <param name="SectionName">The section of the treasury this chant belongs to — an answer part,
+/// and what decides whether <paramref name="ModeName"/> exists at all.</param>
 /// <param name="ModeName">The mode's name, not its id: the client shows the name, and the mode
-/// list is a reference table Play has no business resolving.</param>
+/// list is a reference table Play has no business resolving. <b>Null when the section has no
+/// modes</b> — the madroshe — in which case the round scores three parts, not four. Null here
+/// never means "not recorded".</param>
 /// <param name="Shuhlofo">Null when this melody has no variation — which is most of them. A
-/// round's third answer part is then simply absent rather than empty.</param>
+/// round's last answer part is then simply absent rather than empty.</param>
 public sealed record NahloPuzzleDto(
     DateOnly Date,
     Guid ChantId,
     string AudioUrl,
     string Transliteration,
-    string ModeName,
+    string SectionName,
+    string? ModeName,
     string? Shuhlofo,
     string SyriacIncipit,
     string? SyriacIncipitVocalized);

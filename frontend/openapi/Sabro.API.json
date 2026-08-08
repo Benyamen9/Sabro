@@ -93,6 +93,14 @@
             }
           },
           {
+            "name": "sectionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
             "name": "modeId",
             "in": "query",
             "schema": {
@@ -208,6 +216,44 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/BethGazoModeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/chants/sections": {
+      "get": {
+        "tags": [
+          "AdminChants"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BethGazoSectionDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BethGazoSectionDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BethGazoSectionDto"
                   }
                 }
               }
@@ -7999,6 +8045,39 @@
           }
         }
       },
+      "BethGazoSectionDto": {
+        "required": [
+          "id",
+          "name",
+          "position",
+          "allowedModeIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "allowedModeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
       "BiblicalBookDto": {
         "required": [
           "id",
@@ -8168,6 +8247,7 @@
       "ChantAnswerOptionsDto": {
         "required": [
           "melodies",
+          "sections",
           "modes",
           "shuhlofe"
         ],
@@ -8177,6 +8257,12 @@
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BethGazoSectionDto"
             }
           },
           "modes": {
@@ -8199,6 +8285,8 @@
           "syriacIncipit",
           "syriacIncipitVocalized",
           "transliteration",
+          "sectionId",
+          "sectionName",
           "modeId",
           "modeName",
           "shuhlofo",
@@ -8228,12 +8316,25 @@
           "transliteration": {
             "type": "string"
           },
-          "modeId": {
+          "sectionId": {
             "type": "string",
             "format": "uuid"
           },
-          "modeName": {
+          "sectionName": {
             "type": "string"
+          },
+          "modeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "modeName": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "shuhlofo": {
             "type": [
@@ -8455,7 +8556,7 @@
         "required": [
           "syriacIncipit",
           "transliteration",
-          "modeId"
+          "sectionId"
         ],
         "type": "object",
         "properties": {
@@ -8465,8 +8566,15 @@
           "transliteration": {
             "type": "string"
           },
-          "modeId": {
+          "sectionId": {
             "type": "string",
+            "format": "uuid"
+          },
+          "modeId": {
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "syriacIncipitVocalized": {
@@ -10009,6 +10117,7 @@
           "chantId",
           "audioUrl",
           "transliteration",
+          "sectionName",
           "modeName",
           "shuhlofo",
           "syriacIncipit",
@@ -10030,8 +10139,14 @@
           "transliteration": {
             "type": "string"
           },
-          "modeName": {
+          "sectionName": {
             "type": "string"
+          },
+          "modeName": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "shuhlofo": {
             "type": [
@@ -11714,7 +11829,7 @@
         "required": [
           "syriacIncipit",
           "transliteration",
-          "modeId"
+          "sectionId"
         ],
         "type": "object",
         "properties": {
@@ -11724,8 +11839,15 @@
           "transliteration": {
             "type": "string"
           },
-          "modeId": {
+          "sectionId": {
             "type": "string",
+            "format": "uuid"
+          },
+          "modeId": {
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "uuid"
           },
           "syriacIncipitVocalized": {

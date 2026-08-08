@@ -187,6 +187,7 @@ public class NahloPuzzleServiceTests
                 "ܡܪܝܡ",
                 null,
                 "Maryam yoldath Aloho",
+                "Farde",
                 "Tlithoyo",
                 "Qadmoyo",
                 "/media/chants/chant.mp3"));

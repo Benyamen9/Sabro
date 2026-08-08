@@ -9,12 +9,20 @@ namespace Sabro.BethGazo.Domain;
 /// </summary>
 /// <remarks>
 /// <para>
-/// <b>A chant is identified by three things, not one:</b> its melody name, its
-/// mode, and — where it has one — its <i>shuḥlofo</i>. A melody name recurs across
-/// modes, so "Maryam yoldath Aloho" names a family rather than a chant; only
-/// "Maryam yoldath Aloho, Tlithoyo" picks one out. That is the whole reason the
-/// game works: were the mode derivable from the name, naming the melody would
-/// hand the player the mode for free.
+/// <b>A chant is identified by four things, not one:</b> its melody name, its
+/// section, its mode where the section has one, and — where it has one — its
+/// <i>shuḥlofo</i>. A melody name recurs across modes, so "Maryam yoldath Aloho"
+/// names a family rather than a chant; only "Maryam yoldath Aloho, Tlithoyo" picks
+/// one out. That is the whole reason the game works: were the mode derivable from
+/// the name, naming the melody would hand the player the mode for free.
+/// </para>
+/// <para>
+/// <b>The section joined the identity on 2026-08-08</b>, when the owner gave two
+/// rules that only a section can express: the madroshe have no mode at all, and the
+/// mshaḥelfotho belongs to the farde alone. Both are carried by
+/// <see cref="BethGazoSection.AllowedModes"/> — a section that admits no mode
+/// cannot be asked one. <see cref="ModeId"/> is therefore nullable, and its null
+/// means "this section has no modes", never "nobody has filled it in yet".
 /// </para>
 /// <para>
 /// <b>On the identity columns.</b> The plan called for wrapping them in a
@@ -60,8 +68,23 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     /// </summary>
     public string Transliteration { get; private set; } = string.Empty;
 
-    /// <summary>The mode. A row in <see cref="BethGazoMode"/>, never an enum — see that type.</summary>
-    public Guid ModeId { get; private set; }
+    /// <summary>
+    /// The section of the treasury this chant belongs to. A row in
+    /// <see cref="BethGazoSection"/>, and required: it decides whether the chant has
+    /// a mode at all, so a chant without one has an unanswerable shape.
+    /// </summary>
+    public Guid SectionId { get; private set; }
+
+    /// <summary>
+    /// The mode. A row in <see cref="BethGazoMode"/>, never an enum — see that type.
+    /// </summary>
+    /// <remarks>
+    /// <b>Null is meaningful.</b> It means the section has no modes — the madroshe —
+    /// and not that the field is unfilled. The domain refuses a null here for a
+    /// section that does have modes, and refuses a value for one that does not, so
+    /// the two cases can never be confused by looking at the column alone.
+    /// </remarks>
+    public Guid? ModeId { get; private set; }
 
     /// <summary>
     /// The variation, where this chant is one. Null for a melody that has none —
@@ -94,10 +117,17 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     /// <summary>Editorial opt-in to the Nahlo rotation. Only a published chant may carry it.</summary>
     public bool PlayableInNahlo { get; private set; }
 
+    /// <param name="section">
+    /// The section entity rather than its id, because it is what knows whether
+    /// <paramref name="modeId"/> is allowed. Handing the domain the id alone would
+    /// push that rule up into the application layer, where it would have to be
+    /// repeated for create and for update.
+    /// </param>
     public static Result<Chant> Create(
         string syriacIncipit,
         string transliteration,
-        Guid modeId,
+        BethGazoSection section,
+        Guid? modeId,
         string? syriacIncipitVocalized = null,
         string? shuhlofo = null,
         Guid? inheritsMelodyFromId = null)
@@ -105,6 +135,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         var normalized = Normalize(
             syriacIncipit,
             transliteration,
+            section,
             modeId,
             syriacIncipitVocalized,
             shuhlofo,
@@ -126,7 +157,8 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     public Error? Update(
         string syriacIncipit,
         string transliteration,
-        Guid modeId,
+        BethGazoSection section,
+        Guid? modeId,
         string? syriacIncipitVocalized = null,
         string? shuhlofo = null,
         Guid? inheritsMelodyFromId = null)
@@ -134,6 +166,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         var normalized = Normalize(
             syriacIncipit,
             transliteration,
+            section,
             modeId,
             syriacIncipitVocalized,
             shuhlofo,
@@ -241,11 +274,17 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     private static Result<NormalizedFields> Normalize(
         string syriacIncipit,
         string transliteration,
-        Guid modeId,
+        BethGazoSection section,
+        Guid? modeId,
         string? syriacIncipitVocalized,
         string? shuhlofo,
         Guid? inheritsMelodyFromId)
     {
+        if (section is null)
+        {
+            return Result<NormalizedFields>.Failure(Error.Validation("A section is required."));
+        }
+
         var incipit = NormalizeSyriacRequired(syriacIncipit, "SyriacIncipit");
         if (!incipit.IsSuccess)
         {
@@ -277,9 +316,15 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
                 Error.Validation($"Transliteration must be at most {MaxTransliterationLength} characters."));
         }
 
-        if (modeId == Guid.Empty)
+        // The section owns this rule, both directions of it: a mode is required
+        // where the section has modes, and refused where it has none. Asking the
+        // section rather than testing for Guid.Empty is what keeps "the madroshe
+        // have no mode" from becoming a special case anywhere else.
+        var normalizedModeId = modeId == Guid.Empty ? null : modeId;
+        var modeError = section.ValidateMode(normalizedModeId);
+        if (modeError is not null)
         {
-            return Result<NormalizedFields>.Failure(Error.Validation("A mode is required."));
+            return Result<NormalizedFields>.Failure(modeError);
         }
 
         string? trimmedShuhlofo = null;
@@ -303,7 +348,8 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
             incipit.Value!,
             vocalized,
             trimmedTransliteration,
-            modeId,
+            section.Id,
+            normalizedModeId,
             trimmedShuhlofo,
             inheritsMelodyFromId));
     }
@@ -331,6 +377,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         SyriacIncipit = fields.SyriacIncipit;
         SyriacIncipitVocalized = fields.SyriacIncipitVocalized;
         Transliteration = fields.Transliteration;
+        SectionId = fields.SectionId;
         ModeId = fields.ModeId;
         Shuhlofo = fields.Shuhlofo;
         InheritsMelodyFromId = fields.InheritsMelodyFromId;
@@ -342,7 +389,8 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         string SyriacIncipit,
         string? SyriacIncipitVocalized,
         string Transliteration,
-        Guid ModeId,
+        Guid SectionId,
+        Guid? ModeId,
         string? Shuhlofo,
         Guid? InheritsMelodyFromId);
 }

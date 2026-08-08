@@ -22,10 +22,21 @@ internal sealed class ChantConfiguration : IEntityTypeConfiguration<Chant>
         // migration; renaming existing ones is a breaking /api/v1/ change.
         builder.Property(e => e.Status).HasConversion<string>().HasMaxLength(16).IsRequired();
 
-        builder.Property(e => e.ModeId).IsRequired();
+        builder.Property(e => e.SectionId).IsRequired();
+
+        // Nullable on purpose: null means "this section has no modes" (the
+        // madroshe), never "not filled in yet". Chant.Normalize refuses either
+        // reading of the column from being ambiguous.
+        builder.Property(e => e.ModeId);
+
         builder.Property(e => e.PlayableInNahlo).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.UpdatedAt).IsRequired();
+
+        builder.HasOne<BethGazoSection>()
+            .WithMany()
+            .HasForeignKey(e => e.SectionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<BethGazoMode>()
             .WithMany()
@@ -44,24 +55,29 @@ internal sealed class ChantConfiguration : IEntityTypeConfiguration<Chant>
         // Serves the Nahlo eligible-pool query (Published + playable).
         builder.HasIndex(e => new { e.Status, e.PlayableInNahlo });
 
-        // Identity: a melody name recurs across modes, and within a mode it may
-        // recur across shuḥlofe — so the chant is the triple, and only the triple.
-        //
-        // Two indexes rather than one, because Postgres treats NULLs as distinct
-        // in a unique index: a single index over the three columns would happily
-        // accept "Maryam yoldath Aloho / Tlithoyo / NULL" twice, which is exactly
-        // the duplicate this is meant to stop. The filtered pair covers both
-        // cases without resorting to a sentinel string standing in for "no
-        // variation" — a sentinel would then have to be stripped everywhere the
-        // value is read.
-        builder.HasIndex(e => new { e.Transliteration, e.ModeId, e.Shuhlofo })
-            .IsUnique()
-            .HasFilter("shuhlofo IS NOT NULL")
-            .HasDatabaseName("ix_chants_identity_with_shuhlofo");
+        // Serves the section pickers and the "may this section drop its modes"
+        // check in ChantService.
+        builder.HasIndex(e => e.SectionId);
 
-        builder.HasIndex(e => new { e.Transliteration, e.ModeId })
+        // Identity: a melody name recurs across sections and across modes, and
+        // within a mode it may recur across shuḥlofe — so the chant is the
+        // quadruple, and only the quadruple.
+        //
+        // ONE index, not the filtered pair this used to be. Postgres treats NULLs
+        // as distinct in a unique index by default, so a plain index here would
+        // happily accept "Maryam yoldath Aloho / Madroshe / NULL / NULL" twice —
+        // exactly the duplicate this exists to stop. That used to need two
+        // filtered indexes covering shuhlofo IS NULL and IS NOT NULL; with a
+        // second nullable column (mode) that approach needs FOUR, one per
+        // combination, and a fifth the day a third nullable joins the identity.
+        //
+        // NULLS NOT DISTINCT (Postgres 15+, and we run 17) states the intent
+        // directly: two rows that are null in the same places are the same row.
+        // It is also why no sentinel value stands in for "no mode" — a sentinel
+        // would have to be stripped again everywhere the column is read.
+        builder.HasIndex(e => new { e.Transliteration, e.SectionId, e.ModeId, e.Shuhlofo })
             .IsUnique()
-            .HasFilter("shuhlofo IS NULL")
-            .HasDatabaseName("ix_chants_identity_without_shuhlofo");
+            .AreNullsDistinct(false)
+            .HasDatabaseName("ix_chants_identity");
     }
 }
