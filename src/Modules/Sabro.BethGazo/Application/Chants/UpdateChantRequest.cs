@@ -1,9 +1,12 @@
 namespace Sabro.BethGazo.Application.Chants;
 
-/// <param name="ModeId">
-/// Omitted for a section that has no modes — the madroshe. See
+/// <summary>
+/// An edit to a chant's fields, as the backoffice submits it.
+/// </summary>
+/// <remarks>
+/// <c>ModeId</c> is omitted for a section that has no modes — the madroshe. See
 /// <see cref="CreateChantRequest"/>.
-/// </param>
+/// </remarks>
 public sealed record UpdateChantRequest(
     string SyriacIncipit,
     string Transliteration,

@@ -117,12 +117,15 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     /// <summary>Editorial opt-in to the Nahlo rotation. Only a published chant may carry it.</summary>
     public bool PlayableInNahlo { get; private set; }
 
-    /// <param name="section">
-    /// The section entity rather than its id, because it is what knows whether
-    /// <paramref name="modeId"/> is allowed. Handing the domain the id alone would
-    /// push that rule up into the application layer, where it would have to be
-    /// repeated for create and for update.
-    /// </param>
+    /// <summary>
+    /// Creates a draft chant.
+    /// </summary>
+    /// <remarks>
+    /// Takes the section entity rather than its id, because the section is what
+    /// knows whether the mode is allowed. Handing the domain the id alone would push
+    /// that rule up into the application layer, where it would have to be repeated
+    /// for create and for update.
+    /// </remarks>
     public static Result<Chant> Create(
         string syriacIncipit,
         string transliteration,
