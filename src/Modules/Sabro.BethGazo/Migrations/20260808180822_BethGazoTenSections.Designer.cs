@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sabro.BethGazo.Infrastructure;
@@ -11,9 +12,11 @@ using Sabro.BethGazo.Infrastructure;
 namespace Sabro.BethGazo.Migrations
 {
     [DbContext(typeof(BethGazoDbContext))]
-    partial class BethGazoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260808180822_BethGazoTenSections")]
+    partial class BethGazoTenSections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
