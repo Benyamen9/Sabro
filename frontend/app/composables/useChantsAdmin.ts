@@ -1,5 +1,5 @@
 import type {
-  BethGazoModeDto,
+  BethGazoModeDto, BethGazoSectionDto,
   ChantDto,
   ChantStatus,
   CreateChantRequest,
@@ -77,6 +77,11 @@ export function useChantsAdmin() {
     return api<BethGazoModeDto[]>('/admin/chants/modes')
   }
 
+  /** The sections, each with the modes it admits — see BethGazoSectionDto. */
+  function listSections() {
+    return api<BethGazoSectionDto[]>('/admin/chants/sections')
+  }
+
   function getById(id: string) {
     return api<ChantDto>(`/admin/chants/${id}`)
   }
@@ -122,6 +127,7 @@ export function useChantsAdmin() {
     list,
     listAll,
     listModes,
+    listSections,
     getById,
     create,
     update,

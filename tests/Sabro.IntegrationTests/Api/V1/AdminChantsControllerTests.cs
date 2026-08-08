@@ -278,7 +278,7 @@ public class AdminChantsControllerTests : IDisposable
             new CreateChantRequest("ܩܘܩܝܐ", "Listed madrosho", Madroshe, ModeId: null), ct);
 
         var page = await client.GetFromJsonAsync<PagedResult<ChantDto>>(
-            "/api/v1/admin/chants?search=Listed madrosho", ct);
+            "/api/v1/admin/chants?search=Listed madrosho", SabroApiFactory.JsonOptions, ct);
 
         page!.Items.Should().ContainSingle(c => c.Id == created.Id);
     }
@@ -289,7 +289,7 @@ public class AdminChantsControllerTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
 
         var sections = await client.GetFromJsonAsync<IReadOnlyList<BethGazoSectionDto>>(
-            "/api/v1/admin/chants/sections", ct);
+            "/api/v1/admin/chants/sections", SabroApiFactory.JsonOptions, ct);
 
         sections.Should().NotBeNull();
         sections!.Single(s => s.Id == Madroshe).AllowedModeIds.Should().BeEmpty(

@@ -7,7 +7,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { canEdit, refresh: refreshAccess } = useMyAccess()
-const { create, listModes, listAll } = useChantsAdmin()
+const { create, listModes, listSections, listAll } = useChantsAdmin()
 const router = useRouter()
 
 await refreshAdmin()
@@ -20,6 +20,14 @@ const mayEdit = computed(() => canEdit('Nahlo'))
 const { data: modes } = await useAsyncData(
   'admin-chant-modes',
   () => listModes(),
+  { lazy: true, default: () => [], immediate: isAdmin.value === true },
+)
+
+// The sections, and with them which modes each admits — the form needs this to
+// know whether to ask for a mode at all.
+const { data: sections } = await useAsyncData(
+  'admin-chant-sections-new',
+  () => listSections(),
   { lazy: true, default: () => [], immediate: isAdmin.value === true },
 )
 
@@ -98,6 +106,7 @@ async function onSubmit(payload: CreateChantRequest) {
 
       <ChantForm
         :modes="modes"
+        :sections="sections"
         :melody-sources="melodySources"
         :submitting="submitting"
         :field-errors="fieldErrors"

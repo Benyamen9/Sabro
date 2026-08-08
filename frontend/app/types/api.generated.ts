@@ -16,6 +16,7 @@ export interface paths {
                 query?: {
                     search?: string;
                     status?: components["schemas"]["ChantStatus"];
+                    sectionId?: string;
                     modeId?: string;
                     playableInNahlo?: boolean;
                     page?: number | string;
@@ -122,6 +123,43 @@ export interface paths {
                         "text/plain": components["schemas"]["BethGazoModeDto"][];
                         "application/json": components["schemas"]["BethGazoModeDto"][];
                         "text/json": components["schemas"]["BethGazoModeDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/chants/sections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["BethGazoSectionDto"][];
+                        "application/json": components["schemas"]["BethGazoSectionDto"][];
+                        "text/json": components["schemas"]["BethGazoSectionDto"][];
                     };
                 };
             };
@@ -5142,6 +5180,14 @@ export interface components {
             /** Format: int32 */
             position: number | string;
         };
+        BethGazoSectionDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** Format: int32 */
+            position: number | string;
+            allowedModeIds: string[];
+        };
         BiblicalBookDto: {
             /** Format: uuid */
             id: string;
@@ -5190,6 +5236,7 @@ export interface components {
         };
         ChantAnswerOptionsDto: {
             melodies: string[];
+            sections: components["schemas"]["BethGazoSectionDto"][];
             modes: components["schemas"]["BethGazoModeDto"][];
             shuhlofe: string[];
         };
@@ -5200,8 +5247,11 @@ export interface components {
             syriacIncipitVocalized: null | string;
             transliteration: string;
             /** Format: uuid */
-            modeId: string;
-            modeName: string;
+            sectionId: string;
+            sectionName: string;
+            /** Format: uuid */
+            modeId: null | string;
+            modeName: null | string;
             shuhlofo: null | string;
             /** Format: uuid */
             inheritsMelodyFromId: null | string;
@@ -5259,7 +5309,9 @@ export interface components {
             syriacIncipit: string;
             transliteration: string;
             /** Format: uuid */
-            modeId: string;
+            sectionId: string;
+            /** Format: uuid */
+            modeId?: null | string;
             syriacIncipitVocalized?: null | string;
             shuhlofo?: null | string;
             /** Format: uuid */
@@ -5617,7 +5669,8 @@ export interface components {
             chantId: string;
             audioUrl: string;
             transliteration: string;
-            modeName: string;
+            sectionName: string;
+            modeName: null | string;
             shuhlofo: null | string;
             syriacIncipit: string;
             syriacIncipitVocalized: null | string;
@@ -6003,7 +6056,9 @@ export interface components {
             syriacIncipit: string;
             transliteration: string;
             /** Format: uuid */
-            modeId: string;
+            sectionId: string;
+            /** Format: uuid */
+            modeId?: null | string;
             syriacIncipitVocalized?: null | string;
             shuhlofo?: null | string;
             /** Format: uuid */
