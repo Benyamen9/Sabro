@@ -1004,6 +1004,12 @@
       "moveUp": "Monter",
       "moveDown": "Descendre",
       "saveFailed": "Cette modification a été refusée."
+    },
+    "chantModes": {
+      "title": "Modes",
+      "description": "Les modes dans lesquels les chants sont chantés. L’ensemble s’agrandit — rien ne suppose qu’il s’arrête à huit. Un mode ne peut être supprimé tant qu’un chant le porte ou qu’une section l’admet.",
+      "add": "Ajouter un mode",
+      "namePlaceholder": "Nom du mode"
     }
   },
   "seo": {

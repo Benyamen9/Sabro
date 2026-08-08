@@ -1,5 +1,5 @@
 import type {
-  BethGazoModeDto, BethGazoSectionDto, SectionRequest,
+  BethGazoModeDto, BethGazoSectionDto, ModeRequest, SectionRequest,
   ChantDto,
   ChantStatus,
   CreateChantRequest,
@@ -84,6 +84,25 @@ export function useChantsAdmin() {
     return api<BethGazoSectionDto[]>('/admin/chants/sections')
   }
 
+  /** Position is never sent: a new mode is appended. See IModeService. */
+  function createMode(body: ModeRequest) {
+    return api<BethGazoModeDto>('/admin/chants/modes', { method: 'POST', body })
+  }
+
+  /** Safe at any time: chants point at the id, never the name. */
+  function updateMode(id: string, body: ModeRequest) {
+    return api<BethGazoModeDto>(`/admin/chants/modes/${id}`, { method: 'PUT', body })
+  }
+
+  /** Refused while a chant carries it or a section admits it. */
+  function deleteMode(id: string) {
+    return api(`/admin/chants/modes/${id}`, { method: 'DELETE' })
+  }
+
+  function moveMode(id: string, up: boolean) {
+    return api(`/admin/chants/modes/${id}/move`, { method: 'POST', query: { up } })
+  }
+
   /** Position is never sent: a new section is appended. See ISectionService. */
   function createSection(body: SectionRequest) {
     return api<BethGazoSectionDto>('/admin/chants/sections', { method: 'POST', body })
@@ -149,6 +168,10 @@ export function useChantsAdmin() {
     listAll,
     listModes,
     listSections,
+    createMode,
+    updateMode,
+    deleteMode,
+    moveMode,
     createSection,
     updateSection,
     deleteSection,

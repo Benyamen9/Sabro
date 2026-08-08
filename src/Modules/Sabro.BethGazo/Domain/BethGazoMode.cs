@@ -70,6 +70,21 @@ public sealed class BethGazoMode : Entity<Guid>, IAggregateRoot
         return Result<BethGazoMode>.Success(new BethGazoMode(trimmed, position));
     }
 
+    /// <summary>
+    /// Moves the mode to another slot in the traditional order.
+    /// </summary>
+    /// <remarks>
+    /// Takes the position rather than validating it, because a reorder is a swap and
+    /// the intermediate step deliberately parks a mode outside the valid range —
+    /// <see cref="Position"/> is uniquely indexed, so one of the two has to step aside
+    /// before the other can take its slot. The application layer owns that dance.
+    /// </remarks>
+    public void MoveTo(int position)
+    {
+        Position = position;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public Error? Rename(string name)
     {
         var trimmed = (name ?? string.Empty).Trim();

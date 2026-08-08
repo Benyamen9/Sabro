@@ -30,6 +30,10 @@ const {
   updateSection,
   deleteSection,
   moveSection,
+  createMode,
+  updateMode,
+  deleteMode,
+  moveMode,
 } = useChantsAdmin()
 
 await refreshAdmin()
@@ -40,7 +44,7 @@ await refreshAccess()
 const mayEdit = computed(() => canEdit('Nahlo'))
 const mayView = computed(() => canViewBackoffice('Nahlo'))
 
-const { data: modes } = await useAsyncData(
+const { data: modes, refresh: refreshModes } = await useAsyncData(
   'admin-section-editor-modes',
   () => listModes(),
   { lazy: true, default: () => [], immediate: isAdmin.value === true },
@@ -163,6 +167,84 @@ function modeNames(ids: readonly string[]): string {
     .sort((a, b) => Number(a!.position) - Number(b!.position))
     .map(m => m!.name)
     .join(' · ')
+}
+
+const orderedModes = computed(() => [...(modes.value ?? [])].sort((a, b) => Number(a.position) - Number(b.position)))
+
+/**
+ * The modes, edited on the same page as the sections because they are edited
+ * together: a section's whole definition is which of these it admits.
+ *
+ * Deleting one is guarded from two directions — a chant carrying it, and a
+ * section admitting it. The second matters more than it looks: that link is
+ * Cascade, so without the guard the row would vanish without a word and the
+ * section would quietly stop offering a mode it is supposed to have.
+ */
+const editingMode = ref<string | null>(null)
+const modeName = ref('')
+
+function startNewMode() {
+  editingMode.value = 'new'
+  modeName.value = ''
+  error.value = ''
+}
+
+function startEditMode(id: string, name: string) {
+  editingMode.value = id
+  modeName.value = name
+  error.value = ''
+}
+
+async function saveMode() {
+  if (!modeName.value.trim() || busy.value) return
+  busy.value = true
+  error.value = ''
+  try {
+    const body = { name: modeName.value.trim() }
+    if (editingMode.value === 'new') await createMode(body)
+    else if (editingMode.value) await updateMode(editingMode.value, body)
+    await refreshModes()
+    editingMode.value = null
+  }
+  catch (e) {
+    error.value = messageFor(e)
+  }
+  finally {
+    busy.value = false
+  }
+}
+
+const confirmingMode = ref<string | null>(null)
+
+async function removeMode(id: string) {
+  busy.value = true
+  error.value = ''
+  try {
+    await deleteMode(id)
+    await refreshModes()
+    confirmingMode.value = null
+  }
+  catch (e) {
+    error.value = messageFor(e)
+  }
+  finally {
+    busy.value = false
+  }
+}
+
+async function shiftMode(id: string, up: boolean) {
+  busy.value = true
+  error.value = ''
+  try {
+    await moveMode(id, up)
+    await refreshModes()
+  }
+  catch (e) {
+    error.value = messageFor(e)
+  }
+  finally {
+    busy.value = false
+  }
 }
 
 const fieldClass
@@ -339,6 +421,84 @@ const fieldClass
           </div>
         </li>
       </ul>
+
+      <!-- The modes, on the same page because a section's whole definition is
+           which of these it admits. -->
+      <section class="mt-4 border-t border-[var(--color-border)] pt-6">
+        <div class="flex flex-wrap items-baseline justify-between gap-3">
+          <div>
+            <h2 class="font-sans text-base font-semibold">{{ t('admin.chantModes.title') }}</h2>
+            <p class="mt-0.5 max-w-prose font-sans text-sm text-[var(--color-text-muted)]">
+              {{ t('admin.chantModes.description') }}
+            </p>
+          </div>
+          <button v-if="mayEdit && editingMode !== 'new'" class="btn btn-ghost" @click="startNewMode">
+            {{ t('admin.chantModes.add') }}
+          </button>
+        </div>
+
+        <div v-if="editingMode === 'new'" class="mt-3 flex flex-wrap gap-2">
+          <input v-model="modeName" :placeholder="t('admin.chantModes.namePlaceholder')" :class="[fieldClass, 'max-w-xs']">
+          <button class="btn btn-primary" :disabled="!modeName.trim() || busy" @click="saveMode">
+            {{ t('admin.chantSections.save') }}
+          </button>
+          <button class="btn btn-ghost" @click="editingMode = null">{{ t('admin.chantSections.cancel') }}</button>
+        </div>
+
+        <ul class="mt-3 flex flex-col gap-1.5">
+          <li
+            v-for="(mode, index) in orderedModes"
+            :key="mode.id"
+            class="flex flex-wrap items-center justify-between gap-2 rounded-md border border-[var(--color-border)] px-3 py-2"
+          >
+            <div v-if="editingMode === mode.id" class="flex flex-wrap items-center gap-2">
+              <input v-model="modeName" :class="[fieldClass, 'max-w-xs']">
+              <button class="btn btn-primary" :disabled="!modeName.trim() || busy" @click="saveMode">
+                {{ t('admin.chantSections.save') }}
+              </button>
+              <button class="btn btn-ghost" @click="editingMode = null">{{ t('admin.chantSections.cancel') }}</button>
+            </div>
+
+            <template v-else>
+              <span class="font-sans text-sm">
+                <span class="text-[var(--color-text-faint)]">{{ mode.position }}</span> · {{ mode.name }}
+              </span>
+              <div v-if="mayEdit" class="flex shrink-0 items-center gap-1">
+                <button
+                  class="rounded px-2 py-1 font-sans text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] disabled:opacity-40"
+                  :disabled="index === 0 || busy"
+                  :aria-label="t('admin.chantSections.moveUp')"
+                  @click="shiftMode(mode.id, true)"
+                >↑</button>
+                <button
+                  class="rounded px-2 py-1 font-sans text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)] disabled:opacity-40"
+                  :disabled="index === orderedModes.length - 1 || busy"
+                  :aria-label="t('admin.chantSections.moveDown')"
+                  @click="shiftMode(mode.id, false)"
+                >↓</button>
+                <button class="rounded px-2 py-1 font-sans text-xs text-[var(--color-accent)]" @click="startEditMode(mode.id, mode.name)">
+                  {{ t('admin.chantSections.edit') }}
+                </button>
+                <button
+                  v-if="confirmingMode !== mode.id"
+                  class="rounded px-2 py-1 font-sans text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent)]"
+                  @click="confirmingMode = mode.id"
+                >
+                  {{ t('admin.chantSections.remove') }}
+                </button>
+                <template v-else>
+                  <button class="rounded px-2 py-1 font-sans text-xs font-semibold text-[var(--color-accent)]" :disabled="busy" @click="removeMode(mode.id)">
+                    {{ t('admin.chantSections.confirmRemove') }}
+                  </button>
+                  <button class="rounded px-2 py-1 font-sans text-xs text-[var(--color-text-muted)]" @click="confirmingMode = null">
+                    {{ t('admin.chantSections.cancel') }}
+                  </button>
+                </template>
+              </div>
+            </template>
+          </li>
+        </ul>
+      </section>
     </template>
   </div>
 </template>
