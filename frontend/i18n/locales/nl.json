@@ -819,13 +819,18 @@
         "mode": "Modus",
         "modeUnset": "Kies een modus",
         "modeHint": "Een melodienaam komt in meerdere modi voor; het paar identificeert het gezang.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Welke variatie dit gezang is. Laat op “geen” staan tenzij het er één IS; sommige gezangen hebben er meerdere, daarom zijn ze genummerd.",
         "inheritsMelodyFrom": "Erft de melodie van",
         "inheritsMelodyFromNone": "Geen — het heeft een eigen melodie",
         "inheritsMelodyFromHint": "Vul dit in voor een solqin: een gezang dat de melodie van een ander leent met eigen variaties.",
         "recordingComesLater": "Sla het gezang eerst op en upload daarna de opname. Publicatie wacht op de audio.",
-        "shuhlofoNone": "Geen — de eigen vorm van de melodie"
+        "variant": "Extra gezang",
+        "variantKind": {
+          "None": "Geen van beide",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Welke",
+        "variantHint": "Een shuḥlofo is een variatie van de melodie; een ḥrino is gewoon een ander gezang in dezelfde modus. Laat op “geen van beide” voor het gezang zelf."
       }
     },
     "people": {

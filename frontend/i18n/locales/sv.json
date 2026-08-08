@@ -819,13 +819,18 @@
         "mode": "Modus",
         "modeUnset": "Välj ett modus",
         "modeHint": "Ett melodinamn återkommer i flera modus, så det är paret som identifierar sången.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Vilken variation den här sången är. Lämna på ”ingen” om den inte SJÄLV är en; vissa sånger har flera, därför numreras de.",
         "inheritsMelodyFrom": "Ärver sin melodi från",
         "inheritsMelodyFromNone": "Ingen — den bär sin egen melodi",
         "inheritsMelodyFromHint": "Anges för en solqin: en sång som lånar en annans melodi med egna variationer.",
         "recordingComesLater": "Spara sången först och ladda sedan upp dess inspelning. Publiceringen väntar på ljudet.",
-        "shuhlofoNone": "Ingen — melodins egen form"
+        "variant": "Extra sång",
+        "variantKind": {
+          "None": "Ingetdera",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Vilken",
+        "variantHint": "En shuḥlofo varierar melodin; en ḥrino är helt enkelt en annan sång i samma modus. Lämna på ”ingetdera” för sången själv."
       }
     },
     "people": {

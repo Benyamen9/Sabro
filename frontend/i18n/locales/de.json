@@ -819,13 +819,18 @@
         "mode": "Modus",
         "modeUnset": "Modus wählen",
         "modeHint": "Ein Melodiename kommt in mehreren Modi vor; erst das Paar bestimmt den Gesang.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Welche Variation dieser Gesang ist. Auf „keine“ lassen, sofern er nicht selbst eine IST; manche Gesänge haben mehrere, daher die Nummerierung.",
         "inheritsMelodyFrom": "Übernimmt die Melodie von",
         "inheritsMelodyFromNone": "Keine — er trägt seine eigene Melodie",
         "inheritsMelodyFromHint": "Für ein Solqin zu setzen: ein Gesang, der die Melodie eines anderen mit eigenen Variationen übernimmt.",
         "recordingComesLater": "Speichern Sie zuerst den Gesang und laden Sie dann seine Aufnahme hoch. Die Veröffentlichung wartet auf das Audio.",
-        "shuhlofoNone": "Keine — die eigene Form der Melodie"
+        "variant": "Zusätzlicher Gesang",
+        "variantKind": {
+          "None": "Keines von beiden",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Welcher",
+        "variantHint": "Ein Shuḥlofo variiert die Melodie; ein Ḥrino ist schlicht ein weiterer Gesang im selben Modus. Für den Gesang selbst auf „keines von beiden“ lassen."
       }
     },
     "people": {

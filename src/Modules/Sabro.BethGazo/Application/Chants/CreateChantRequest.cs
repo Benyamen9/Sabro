@@ -1,3 +1,5 @@
+using Sabro.BethGazo.Domain;
+
 namespace Sabro.BethGazo.Application.Chants;
 
 /// <summary>
@@ -14,5 +16,6 @@ public sealed record CreateChantRequest(
     Guid SectionId,
     Guid? ModeId = null,
     string? SyriacIncipitVocalized = null,
-    int? ShuhlofoNumber = null,
+    ChantVariantKind VariantKind = ChantVariantKind.None,
+    int? VariantNumber = null,
     Guid? InheritsMelodyFromId = null);

@@ -299,6 +299,63 @@ public class AdminChantsControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Post_AShuhlofoAndAHrinoWithTheSameNumber_BothSave()
+    {
+        // The reason the kind is part of the identity. Owner, 2026-08-08: "not all
+        // the extra chants of a mode are shuhlofe, but hrone as well." A shuḥlofo 1
+        // and a ḥrino 1 under one melody and mode are different chants; if the kind
+        // were dropped from the key they would be the same four values and the second
+        // would 409.
+        var ct = TestContext.Current.CancellationToken;
+        var modeId = await ModeIdAsync(4, ct);
+
+        await CreateAsync(
+            new CreateChantRequest(
+                Incipit,
+                "Kind-distinguished melody",
+                Farde,
+                modeId,
+                VariantKind: ChantVariantKind.Shuhlofo,
+                VariantNumber: 1),
+            ct);
+
+        var second = await client.PostAsJsonAsync(
+            "/api/v1/admin/chants",
+            new CreateChantRequest(
+                Incipit,
+                "Kind-distinguished melody",
+                Farde,
+                modeId,
+                VariantKind: ChantVariantKind.Hrino,
+                VariantNumber: 1),
+            ct);
+
+        second.StatusCode.Should().Be(
+            HttpStatusCode.Created,
+            "a shuḥlofo and a ḥrino are different chants even at the same number");
+    }
+
+    [Fact]
+    public async Task Post_TwoHroneWithTheSameNumber_Returns409()
+    {
+        // The other half: within one kind the number still has to be unique.
+        var ct = TestContext.Current.CancellationToken;
+        var modeId = await ModeIdAsync(5, ct);
+        var request = new CreateChantRequest(
+            Incipit,
+            "Twin hrino melody",
+            Farde,
+            modeId,
+            VariantKind: ChantVariantKind.Hrino,
+            VariantNumber: 1);
+
+        await CreateAsync(request, ct);
+        var second = await client.PostAsJsonAsync("/api/v1/admin/chants", request, ct);
+
+        second.StatusCode.Should().Be(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
     public async Task Post_SameMelodyAndModeAndShuhlofo_Returns409()
     {
         // The reason the constraint exists, and the reason the service catches it
@@ -306,7 +363,7 @@ public class AdminChantsControllerTests : IDisposable
         // fields collided.
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(3, ct);
-        var request = new CreateChantRequest(Incipit, "Duplicate identity melody", Farde, modeId, ShuhlofoNumber: 1);
+        var request = new CreateChantRequest(Incipit, "Duplicate identity melody", Farde, modeId, VariantKind: ChantVariantKind.Shuhlofo, VariantNumber: 1);
 
         await CreateAsync(request, ct);
         var second = await client.PostAsJsonAsync("/api/v1/admin/chants", request, ct);
@@ -325,10 +382,10 @@ public class AdminChantsControllerTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(3, ct);
 
-        await CreateAsync(new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, ShuhlofoNumber: 1), ct);
+        await CreateAsync(new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, VariantKind: ChantVariantKind.Shuhlofo, VariantNumber: 1), ct);
         var second = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, ShuhlofoNumber: 2),
+            new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, VariantKind: ChantVariantKind.Shuhlofo, VariantNumber: 2),
             ct);
 
         second.StatusCode.Should().Be(HttpStatusCode.Created);

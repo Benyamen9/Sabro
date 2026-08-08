@@ -56,22 +56,34 @@ const transliteration = ref(props.chant?.transliteration ?? '')
  * Which variation this chant is, as a string for the radio group's sake: '' is
  * "the melody's own form", '1'..'3' are its variations.
  *
- * A number rather than a name (owner, 2026-08-08). He asked for "just yes or no",
- * which a boolean cannot deliver — he also confirmed some chants have more than
- * one shuḥlofo, and identity is (melody, section, mode, shuḥlofo), so a boolean
- * would let a chant hold one variation and make the second one unsaveable.
+ * A KIND plus a number (owner, 2026-08-08): "not all the extra chants of a mode
+ * are shuhlofe, but hrone as well." A shuḥlofo varies the melody; a ḥrino is
+ * simply another chant standing in the same mode. Both are numbered, and the kind
+ * is part of the chant's identity — without it a shuḥlofo 1 and a ḥrino 1 under
+ * one melody and mode collide and the second cannot be saved.
  */
-const shuhlofoNumber = ref(props.chant?.shuhlofoNumber?.toString() ?? '')
+const variantKind = ref<'None' | 'Shuhlofo' | 'Hrino'>(props.chant?.variantKind ?? 'None')
+const variantNumber = ref(props.chant?.variantNumber?.toString() ?? '')
+
+/** No number is asked for, or sent, when the chant is neither. */
+const isVariant = computed(() => variantKind.value !== 'None')
 
 /**
- * The choices offered. Three is a convenience, not a rule: the API accepts any
+ * The numbers offered. Three is a convenience, not a rule: the API accepts any
  * number from 1 up, and an existing chant numbered beyond the list still shows
  * its own value rather than losing it.
  */
-const shuhlofoChoices = computed(() => {
+const variantChoices = computed(() => {
   const offered = ['1', '2', '3']
-  const current = shuhlofoNumber.value
+  const current = variantNumber.value
   return current && !offered.includes(current) ? [...offered, current] : offered
+})
+
+// Choosing a kind gives it a number straight away, and choosing "neither" clears
+// it — so the pair is never half-filled, which the domain refuses in both
+// directions.
+watch(variantKind, (kind) => {
+  variantNumber.value = kind === 'None' ? '' : (variantNumber.value || '1')
 })
 
 // Empty string is "none": no mode chosen yet on a new chant, and no borrowed
@@ -151,7 +163,8 @@ const formFields = [
   'transliteration',
   'sectionId',
   'modeId',
-  'shuhlofoNumber',
+  'variantKind',
+  'variantNumber',
   'inheritsMelodyFromId',
 ] as const
 
@@ -177,8 +190,9 @@ function onSubmit() {
     // Null, not an empty string: for a mode-less section this says "this chant
     // has no mode", which is the answer rather than an unfilled box.
     modeId: sectionHasModes.value ? modeId.value : null,
-    // Blank is "the melody's own form" — a real answer, not an empty box.
-    shuhlofoNumber: shuhlofoNumber.value ? Number(shuhlofoNumber.value) : null,
+    // "Neither" is a real answer, not an empty box — and it carries no number.
+    variantKind: variantKind.value,
+    variantNumber: isVariant.value && variantNumber.value ? Number(variantNumber.value) : null,
     inheritsMelodyFromId: inheritsMelodyFromId.value || null,
   })
 }
@@ -334,36 +348,66 @@ const errorTextClass = 'mt-1 font-sans text-xs font-medium text-[var(--color-acc
       </div>
 
       <fieldset class="min-w-0 border-0 p-0">
-        <legend :class="labelClass">{{ t('admin.chants.form.shuhlofo') }}</legend>
-        <!-- A radio group, not a text box: one click, and "none" is an explicit
-             answer rather than an empty field. -->
+        <legend :class="labelClass">{{ t('admin.chants.form.variant') }}</legend>
+        <!-- Kind first, then which one. A ḥrino is not a shuḥlofo: one varies the
+             melody, the other is simply another chant in the same mode. -->
         <div class="mt-1 flex flex-wrap gap-2">
           <label
-            v-for="choice in ['', ...shuhlofoChoices]"
-            :key="choice || 'none'"
+            v-for="kind in (['None', 'Shuhlofo', 'Hrino'] as const)"
+            :key="kind"
             class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] px-3 py-2 font-sans text-sm"
             :class="[
-              shuhlofoNumber === choice
+              variantKind === kind
                 ? 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] font-medium text-[var(--color-accent)]'
                 : 'bg-[var(--color-bg-elevated)] text-[var(--color-text)]',
               readonly ? 'opacity-60' : 'cursor-pointer',
             ]"
           >
             <input
-              v-model="shuhlofoNumber"
+              v-model="variantKind"
               type="radio"
-              name="chant-shuhlofo"
+              name="chant-variant-kind"
+              :value="kind"
+              :disabled="readonly"
+              class="accent-[var(--color-accent)]"
+            >
+            {{ t(`admin.chants.form.variantKind.${kind}`) }}
+          </label>
+        </div>
+
+        <!-- Hidden rather than disabled when it is neither: a number would be
+             meaningless, and the domain refuses one. -->
+        <div v-if="isVariant" class="mt-2 flex flex-wrap items-center gap-2">
+          <span class="font-sans text-xs text-[var(--color-text-faint)]">
+            {{ t('admin.chants.form.variantWhich') }}
+          </span>
+          <label
+            v-for="choice in variantChoices"
+            :key="choice"
+            class="inline-flex items-center gap-2 rounded-md border border-[var(--color-border-strong)] px-3 py-2 font-sans text-sm"
+            :class="[
+              variantNumber === choice
+                ? 'border-[var(--color-accent)] bg-[var(--color-accent-faint)] font-medium text-[var(--color-accent)]'
+                : 'bg-[var(--color-bg-elevated)] text-[var(--color-text)]',
+              readonly ? 'opacity-60' : 'cursor-pointer',
+            ]"
+          >
+            <input
+              v-model="variantNumber"
+              type="radio"
+              name="chant-variant-number"
               :value="choice"
               :disabled="readonly"
               class="accent-[var(--color-accent)]"
             >
-            {{ choice === '' ? t('admin.chants.form.shuhlofoNone') : choice }}
+            {{ choice }}
           </label>
         </div>
-        <p v-if="errorsFor('shuhlofoNumber').length" role="alert" :class="errorTextClass">
-          {{ errorsFor('shuhlofoNumber').join(' ') }}
+
+        <p v-if="errorsFor('variantKind').length || errorsFor('variantNumber').length" role="alert" :class="errorTextClass">
+          {{ [...errorsFor('variantKind'), ...errorsFor('variantNumber')].join(' ') }}
         </p>
-        <p :class="hintClass">{{ t('admin.chants.form.shuhlofoHint') }}</p>
+        <p :class="hintClass">{{ t('admin.chants.form.variantHint') }}</p>
       </fieldset>
     </div>
 
@@ -380,7 +424,7 @@ const errorTextClass = 'mt-1 font-sans text-xs font-medium text-[var(--color-acc
       >
         <option value="">{{ t('admin.chants.form.inheritsMelodyFromNone') }}</option>
         <option v-for="candidate in melodyOptions" :key="candidate.id" :value="candidate.id">
-          {{ candidate.transliteration }} · {{ candidate.modeName }}{{ candidate.shuhlofoNumber ? ` · ${t('admin.chants.form.shuhlofo')} ${candidate.shuhlofoNumber}` : '' }}
+          {{ candidate.transliteration }} · {{ candidate.modeName }}{{ candidate.variantNumber ? ` · ${t(`admin.chants.form.variantKind.${candidate.variantKind}`)} ${candidate.variantNumber}` : '' }}
         </option>
       </select>
       <p v-if="errorsFor('inheritsMelodyFromId').length" role="alert" :class="errorTextClass">

@@ -8282,7 +8282,8 @@
           "sectionName",
           "modeId",
           "modeName",
-          "shuhlofoNumber",
+          "variantKind",
+          "variantNumber",
           "inheritsMelodyFromId",
           "inheritsMelodyFromTransliteration",
           "audioUrl",
@@ -8329,7 +8330,10 @@
               "string"
             ]
           },
-          "shuhlofoNumber": {
+          "variantKind": {
+            "$ref": "#/components/schemas/ChantVariantKind"
+          },
+          "variantNumber": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
@@ -8377,6 +8381,14 @@
         "enum": [
           "Draft",
           "Published"
+        ],
+        "type": "string"
+      },
+      "ChantVariantKind": {
+        "enum": [
+          "None",
+          "Shuhlofo",
+          "Hrino"
         ],
         "type": "string"
       },
@@ -8579,7 +8591,10 @@
               "string"
             ]
           },
-          "shuhlofoNumber": {
+          "variantKind": {
+            "$ref": "#/components/schemas/ChantVariantKind"
+          },
+          "variantNumber": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
@@ -10118,7 +10133,8 @@
           "transliteration",
           "sectionName",
           "modeName",
-          "shuhlofoNumber",
+          "variantKind",
+          "variantNumber",
           "syriacIncipit",
           "syriacIncipitVocalized"
         ],
@@ -10147,7 +10163,10 @@
               "string"
             ]
           },
-          "shuhlofoNumber": {
+          "variantKind": {
+            "$ref": "#/components/schemas/ChantVariantKind"
+          },
+          "variantNumber": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
@@ -11858,7 +11877,10 @@
               "string"
             ]
           },
-          "shuhlofoNumber": {
+          "variantKind": {
+            "$ref": "#/components/schemas/ChantVariantKind"
+          },
+          "variantNumber": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",

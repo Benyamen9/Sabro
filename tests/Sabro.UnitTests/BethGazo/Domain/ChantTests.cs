@@ -151,32 +151,74 @@ public class ChantTests
     }
 
     [Fact]
-    public void Create_LeavesTheShuhlofoNumberNullForTheMelodysOwnForm()
+    public void Create_LeavesTheVariantNullForAChantInItsOwnRight()
     {
-        // Absent is a real state, not a blank: most chants are the melody's own
-        // form rather than a variation of it.
-        CreateChant().ShuhlofoNumber.Should().BeNull();
-        CreateChant(shuhlofoNumber: 2).ShuhlofoNumber.Should().Be(2);
+        // Absent is a real state, not a blank: most chants are the principal entry
+        // rather than an extra standing beside it.
+        var principal = CreateChant();
+        principal.VariantKind.Should().Be(ChantVariantKind.None);
+        principal.VariantNumber.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData(ChantVariantKind.Shuhlofo)]
+    [InlineData(ChantVariantKind.Hrino)]
+    public void Create_KeepsTheKindAndNumberTogether(ChantVariantKind kind)
+    {
+        // Owner, 2026-08-08: "not all the extra chants of a mode are shuhlofe, but
+        // hrone as well." A shuḥlofo varies the melody; a ḥrino is simply another
+        // chant in the same mode. Both are numbered, and both must be distinguishable.
+        var chant = CreateChant(variantKind: kind, variantNumber: 2);
+        chant.VariantKind.Should().Be(kind);
+        chant.VariantNumber.Should().Be(2);
+    }
+
+    [Fact]
+    public void Create_WithAKindButNoNumber_Fails()
+    {
+        var result = Chant.Create(
+            Incipit, "Maryam yoldath Aloho", Farde, Tlithoyo, variantKind: ChantVariantKind.Hrino);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Message.Should().Contain("needs a number");
+    }
+
+    [Fact]
+    public void Create_WithANumberButNoKind_Fails()
+    {
+        // A number with no kind does not say what it is one of.
+        var result = Chant.Create(
+            Incipit, "Maryam yoldath Aloho", Farde, Tlithoyo, variantNumber: 2);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Message.Should().Contain("carries no number");
     }
 
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void Create_WithAShuhlofoNumberBelowOne_Fails(int number)
+    public void Create_WithANumberBelowOne_Fails(int number)
     {
-        var result = Chant.Create(Incipit, "Maryam yoldath Aloho", Farde, Tlithoyo, shuhlofoNumber: number);
+        var result = Chant.Create(
+            Incipit,
+            "Maryam yoldath Aloho",
+            Farde,
+            Tlithoyo,
+            variantKind: ChantVariantKind.Shuhlofo,
+            variantNumber: number);
 
         result.IsSuccess.Should().BeFalse();
         result.Error!.Message.Should().Contain("1 or greater");
     }
 
     [Fact]
-    public void Create_AcceptsAShuhlofoNumberPastAnyExpectedCount()
+    public void Create_AcceptsANumberPastAnyExpectedCount()
     {
-        // No upper bound, on purpose. The owner said some chants have more than one
-        // variation and never said how many at most — capping it here would be the
-        // same mistake as assuming eight modes.
-        CreateChant(shuhlofoNumber: 12).ShuhlofoNumber.Should().Be(12);
+        // No upper bound, on purpose. He said some chants have more than one and
+        // never said how many at most — capping it would be the same mistake as
+        // assuming eight modes.
+        CreateChant(variantKind: ChantVariantKind.Shuhlofo, variantNumber: 12)
+            .VariantNumber.Should().Be(12);
     }
 
     [Fact]
@@ -296,10 +338,16 @@ public class ChantTests
         string transliteration = "Maryam yoldath Aloho",
         BethGazoSection? section = null,
         Guid? modeId = null,
-        int? shuhlofoNumber = null)
+        ChantVariantKind variantKind = ChantVariantKind.None,
+        int? variantNumber = null)
     {
         var result = Chant.Create(
-            incipit, transliteration, section ?? Farde, modeId ?? Tlithoyo, shuhlofoNumber: shuhlofoNumber);
+            incipit,
+            transliteration,
+            section ?? Farde,
+            modeId ?? Tlithoyo,
+            variantKind: variantKind,
+            variantNumber: variantNumber);
         result.IsSuccess.Should().BeTrue(result.Error?.Message);
         return result.Value!;
     }

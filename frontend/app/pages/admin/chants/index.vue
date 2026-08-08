@@ -317,7 +317,7 @@ const selectClass
                   {{ chant.modeName }}
                 </td>
                 <td class="hidden md:table-cell px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
-                  {{ chant.shuhlofoNumber ?? '—' }}
+                  {{ chant.variantNumber ? `${t(`admin.chants.form.variantKind.${chant.variantKind}`)} ${chant.variantNumber}` : '—' }}
                 </td>
                 <td class="hidden md:table-cell px-4 py-3 font-sans text-sm">
                   <span v-if="chant.audioUrl" :title="t('admin.chants.recording.present')">✓</span>

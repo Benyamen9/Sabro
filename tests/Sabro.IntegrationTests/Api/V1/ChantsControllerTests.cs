@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.BethGazo.Application.Chants;
+using Sabro.BethGazo.Domain;
 using Sabro.IntegrationTests.Api;
 
 namespace Sabro.IntegrationTests.Api.V1;
@@ -182,7 +183,13 @@ public class ChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, transliteration, Farde, mode.Id, ShuhlofoNumber: shuhlofoNumber),
+            new CreateChantRequest(
+                Incipit,
+                transliteration,
+                Farde,
+                mode.Id,
+                VariantKind: shuhlofoNumber is null ? ChantVariantKind.None : ChantVariantKind.Shuhlofo,
+                VariantNumber: shuhlofoNumber),
             ct);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
