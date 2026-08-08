@@ -818,7 +818,7 @@
         "modeUnset": "Choisir un mode",
         "modeHint": "Un nom de mélodie revient dans plusieurs modes : c’est la paire qui identifie le chant.",
         "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Facultatif — seules certaines mélodies ont une variation. Les joueurs la devinent comme une partie à part de la réponse.",
+        "shuhlofoHint": "Facultatif — à remplir seulement si ce chant EST une variation de la mélodie ; indiquez laquelle. Vide signifie qu’il s’agit de la forme propre de la mélodie. Les joueurs devinent si le chant en est une.",
         "inheritsMelodyFrom": "Hérite de la mélodie de",
         "inheritsMelodyFromNone": "Aucune — il porte sa propre mélodie",
         "inheritsMelodyFromHint": "À renseigner pour un solqin : un chant qui emprunte la mélodie d’un autre avec ses propres variations.",

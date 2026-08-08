@@ -38,15 +38,16 @@ internal sealed class BethGazoSectionModeConfiguration : IEntityTypeConfiguratio
     /// whole mechanism.
     /// </para>
     /// <para>
-    /// ⚠️ <b>The other four sections carry the eight as an assumption, not as his
-    /// instruction.</b> He told us only the two rules above. Giving gnize, qonune
-    /// yaunoye, tekso d-maurbe and mahebrone the eight ordinals follows the
-    /// tradition's ordinary shape, but it has not been confirmed — and it is the
-    /// kind of claim that becomes a wrong answer in a game where every attribute is
-    /// the answer. Both failure directions are real: a section wrongly given the
-    /// eight asks a question with no right answer, and a section wrongly left empty
-    /// never asks one that mattered. Correct these in the backoffice rather than
-    /// assuming the seed is authoritative.
+    /// <b>The other four are owner-confirmed too, 2026-08-08:</b> "yaunoye 8. Maurbe
+    /// 8. Gnize 8, multiple chants for 7. mahebrone 8" — and, again, "Madrosche does
+    /// not have modes, just multiple chants". So every row below is his, not an
+    /// inference. The note about gnize mode 7 carrying several chants is a fact
+    /// about content rather than about this table: chants sharing a section and a
+    /// mode are already distinguished by melody name in the identity index.
+    /// </para>
+    /// <para>
+    /// Still not a closed set — he adds sections as he works through the treasury,
+    /// so nothing may assume this list is complete.
     /// </para>
     /// </remarks>
     private static void Seed(EntityTypeBuilder<BethGazoSectionMode> builder)

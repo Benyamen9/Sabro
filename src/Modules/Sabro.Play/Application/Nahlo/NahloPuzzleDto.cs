@@ -24,8 +24,10 @@ namespace Sabro.Play.Application.Nahlo;
 /// list is a reference table Play has no business resolving. <b>Null when the section has no
 /// modes</b> — the madroshe — in which case the round scores three parts, not four. Null here
 /// never means "not recorded".</param>
-/// <param name="Shuhlofo">Null when this melody has no variation — which is most of them. A
-/// round's last answer part is then simply absent rather than empty.</param>
+/// <param name="Shuhlofo">The variation this chant <b>is</b>, or null when it is the melody's
+/// own form — which is most of them. The round asks whether the chant is a shuḥlofo, not whether
+/// its melody has one (owner, 2026-08-08): the first can be answered by listening, the second
+/// cannot. The name travels anyway because the reveal names the variation.</param>
 public sealed record NahloPuzzleDto(
     DateOnly Date,
     Guid ChantId,

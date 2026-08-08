@@ -55,7 +55,8 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
     /// and 2026-08-08 and ended the list with "and more", so treat it as a starting
     /// point an editor extends — never as the closed set. The spellings are his own
     /// rather than verified SBL, and they are the labels a player will read, so they
-    /// want his correction the same way the qfiso transliterations do.
+    /// want his correction the same way the qfiso transliterations do. (His own
+    /// spelling wavers too — "Madrosche" once, "madroshe" elsewhere.)
     /// </para>
     /// <para>
     /// Seeded because the table is a foreign key target and every chant needs one:

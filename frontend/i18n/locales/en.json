@@ -818,7 +818,7 @@
         "modeUnset": "Choose a mode",
         "modeHint": "A melody name recurs across modes, so it is the pair that identifies the chant.",
         "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Optional — only some melodies have a variation. Players guess it as its own part of the answer.",
+        "shuhlofoHint": "Optional — fill it in only when this chant IS a variation of the melody, and name the variation. Left empty means it is the melody's own form. Players guess whether the chant is one.",
         "inheritsMelodyFrom": "Inherits its melody from",
         "inheritsMelodyFromNone": "None — it carries its own melody",
         "inheritsMelodyFromHint": "Set this for a solqin: a chant that borrows another’s melody with variations of its own.",

@@ -818,7 +818,7 @@
         "modeUnset": "Välj ett modus",
         "modeHint": "Ett melodinamn återkommer i flera modus, så det är paret som identifierar sången.",
         "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Valfritt — bara vissa melodier har en variation. Spelarna gissar den som en egen del av svaret.",
+        "shuhlofoHint": "Valfritt — fyll i endast om sången själv ÄR en variation av melodin, och namnge variationen. Tomt betyder att det är melodins egen form. Spelarna gissar om sången är en sådan.",
         "inheritsMelodyFrom": "Ärver sin melodi från",
         "inheritsMelodyFromNone": "Ingen — den bär sin egen melodi",
         "inheritsMelodyFromHint": "Anges för en solqin: en sång som lånar en annans melodi med egna variationer.",
