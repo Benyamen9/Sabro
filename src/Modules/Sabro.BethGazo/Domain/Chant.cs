@@ -55,17 +55,56 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     {
     }
 
-    /// <summary>The opening words in Syriac, unvocalized and NFC-normalized. Required.</summary>
+    /// <summary>
+    /// <b>This chant's own</b> opening words in Syriac, unvocalized and
+    /// NFC-normalized. Required.
+    /// </summary>
+    /// <remarks>
+    /// Its own, not its group's: the chants under one melody name open with
+    /// different words in each mode. It may coincide with the melody name, but
+    /// nothing guarantees that for any given mode — see
+    /// <see cref="Transliteration"/>.
+    /// </remarks>
     public string SyriacIncipit { get; private set; } = string.Empty;
 
     /// <summary>Vocalized form. Optional enrichment, as in the Lexicon — it never gates publication.</summary>
     public string? SyriacIncipitVocalized { get; private set; }
 
     /// <summary>
-    /// The melody name in SBL transliteration, e.g. "Maryam yoldath Aloho". This is
-    /// what a player types, so it is required rather than optional enrichment —
-    /// unlike the Lexicon, where transliteration is a search aid.
+    /// The melody name in SBL transliteration, e.g. "Zodeq dnehwe". This is what a
+    /// player types, so it is required rather than optional enrichment — unlike the
+    /// Lexicon, where transliteration is a search aid.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// ⚠️ <b>This is NOT the romanisation of <see cref="SyriacIncipit"/>.</b> The
+    /// two are different values and the difference is the whole structure of the
+    /// treasury. A melody name heads a <i>group</i> of chants that runs across the
+    /// modes, and each mode's chant inside that group has its own, different opening
+    /// words. The owner's example, 2026-08-08:
+    /// </para>
+    /// <list type="bullet">
+    ///   <item><description>
+    ///   <c>Zodeq dnehwe</c> · Qadmoyo — opens <i>"zodeq dnehwe, duchrono dmaryam…"</i>
+    ///   </description></item>
+    ///   <item><description>
+    ///   <c>Zodeq dnehwe</c> · Trayono — opens <i>"To Abrohom, badeq lan…"</i>
+    ///   </description></item>
+    /// </list>
+    /// <para>
+    /// Both carry the melody name "Zodeq dnehwe"; the first happens to begin with
+    /// those words and the second does not. <b>Do not read a rule into that.</b> The
+    /// owner corrected exactly this inference on 2026-08-08: a group does not
+    /// necessarily take its name from its qadmoyo member, or from any member. Treat
+    /// the melody name as its own datum — never derive it from an incipit, never
+    /// derive an incipit from it, and never assume which mode, if any, will match.
+    /// </para>
+    /// <para>
+    /// This is exactly what the identity index encodes — the chant is
+    /// (melody, section, mode, shuḥlofo), because the melody name alone names a
+    /// group rather than a chant.
+    /// </para>
+    /// </remarks>
     public string Transliteration { get; private set; } = string.Empty;
 
     /// <summary>

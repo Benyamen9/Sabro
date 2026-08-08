@@ -805,11 +805,11 @@
       "form": {
         "createTitle": "Nouveau chant",
         "syriacIncipit": "Incipit syriaque",
-        "syriacIncipitHint": "Les premiers mots, sans vocalisation. Caractères syriaques uniquement.",
+        "syriacIncipitHint": "Les premiers mots PROPRES à ce chant, sans vocalisation. Ils diffèrent selon le mode et ne correspondent donc souvent pas au nom de la mélodie ci-dessus. Caractères syriaques uniquement.",
         "syriacIncipitVocalized": "Incipit vocalisé",
         "syriacIncipitVocalizedHint": "Enrichissement facultatif. Ne conditionne jamais la publication.",
         "transliteration": "Mélodie",
-        "transliterationHint": "Le nom de la mélodie en translittération SBL — c’est ce que les joueurs saisissent, p. ex. « Maryam yoldath Aloho ».",
+        "transliterationHint": "Le nom de la mélodie — l’intitulé du groupe qui court à travers les modes, p. ex. « Zodeq dnehwe ». C’est un nom en propre, non déduit des premiers mots d’un chant ; il peut coïncider avec l’un d’eux, souvent avec aucun. C’est ce que tapent les joueurs.",
         "section": "Section",
         "sectionUnset": "Choisir une section",
         "sectionHint": "La section détermine si ce chant a un mode.",

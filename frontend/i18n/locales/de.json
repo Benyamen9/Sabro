@@ -805,11 +805,11 @@
       "form": {
         "createTitle": "Neuer Gesang",
         "syriacIncipit": "Syrisches Incipit",
-        "syriacIncipitHint": "Die Anfangsworte, unvokalisiert. Nur syrische Zeichen.",
+        "syriacIncipitHint": "Die EIGENEN Anfangsworte dieses Gesangs, unvokalisiert. Sie unterscheiden sich je Modus und stimmen daher oft nicht mit dem Melodienamen oben überein. Nur syrische Zeichen.",
         "syriacIncipitVocalized": "Vokalisiertes Incipit",
         "syriacIncipitVocalizedHint": "Optionale Ergänzung. Sie ist nie Voraussetzung für die Veröffentlichung.",
         "transliteration": "Melodie",
-        "transliterationHint": "Der Melodiename in SBL-Umschrift — genau das tippen die Spielenden, z. B. „Maryam yoldath Aloho“.",
+        "transliterationHint": "Der Melodiename — die Gruppenüberschrift, die durch die Modi läuft, z. B. „Zodeq dnehwe“. Ein eigener Name, nicht aus den Anfangsworten eines Gesangs abgeleitet; er kann mit einem übereinstimmen, oft mit keinem. Das tippen die Spieler.",
         "section": "Abschnitt",
         "sectionUnset": "Abschnitt wählen",
         "sectionHint": "Der Abschnitt entscheidet, ob dieser Gesang überhaupt einen Modus hat.",

@@ -805,11 +805,11 @@
       "form": {
         "createTitle": "New chant",
         "syriacIncipit": "Syriac incipit",
-        "syriacIncipitHint": "The opening words, unvocalized. Syriac characters only.",
+        "syriacIncipitHint": "This chant's OWN opening words, unvocalized. Different in each mode, so they often do not match the melody name above. Syriac characters only.",
         "syriacIncipitVocalized": "Vocalized incipit",
         "syriacIncipitVocalizedHint": "Optional enrichment. It never gates publication.",
         "transliteration": "Melody",
-        "transliterationHint": "The melody name in SBL transliteration — this is what players type, e.g. “Maryam yoldath Aloho”.",
+        "transliterationHint": "The melody name — the group heading that runs across the modes, e.g. “Zodeq dnehwe”. It is its own name, not derived from any chant's opening words; it may happen to match one, and often matches none. This is what players type.",
         "section": "Section",
         "sectionUnset": "Choose a section",
         "sectionHint": "The section decides whether this chant has a mode at all.",

@@ -805,11 +805,11 @@
       "form": {
         "createTitle": "Nieuw gezang",
         "syriacIncipit": "Syrisch incipit",
-        "syriacIncipitHint": "De openingswoorden, zonder klinkertekens. Alleen Syrische tekens.",
+        "syriacIncipitHint": "De EIGEN beginwoorden van dit gezang, zonder vocalisatie. Ze verschillen per modus en komen dus vaak niet overeen met de melodienaam hierboven. Alleen Syrische tekens.",
         "syriacIncipitVocalized": "Gevocaliseerd incipit",
         "syriacIncipitVocalizedHint": "Optionele verrijking. Bepaalt nooit of publicatie mogelijk is.",
         "transliteration": "Melodie",
-        "transliterationHint": "De naam van de melodie in SBL-transliteratie — dit typen spelers in, bv. “Maryam yoldath Aloho”.",
+        "transliterationHint": "De melodienaam — de groepskop die door de modi heen loopt, bijv. “Zodeq dnehwe”. Het is een eigen naam, niet afgeleid van de beginwoorden van een gezang; hij kan toevallig met één samenvallen, vaak met geen enkele. Dit typen spelers in.",
         "section": "Sectie",
         "sectionUnset": "Kies een sectie",
         "sectionHint": "De sectie bepaalt of dit gezang überhaupt een modus heeft.",

@@ -805,11 +805,11 @@
       "form": {
         "createTitle": "Ny sång",
         "syriacIncipit": "Syriskt incipit",
-        "syriacIncipitHint": "De inledande orden, utan vokaltecken. Endast syriska tecken.",
+        "syriacIncipitHint": "Den här sångens EGNA inledningsord, ovokaliserade. De skiljer sig åt per modus och stämmer därför ofta inte med melodinamnet ovan. Endast syriska tecken.",
         "syriacIncipitVocalized": "Vokaliserat incipit",
         "syriacIncipitVocalizedHint": "Valfri komplettering. Den styr aldrig om publicering är möjlig.",
         "transliteration": "Melodi",
-        "transliterationHint": "Melodins namn i SBL-translitterering — det är detta spelarna skriver, t.ex. ”Maryam yoldath Aloho”.",
+        "transliterationHint": "Melodinamnet — grupprubriken som löper genom modusen, t.ex. ”Zodeq dnehwe”. Det är ett eget namn, inte härlett ur någon sångs inledningsord; det kan råka stämma med ett, ofta med inget. Det är detta spelarna skriver.",
         "section": "Avsnitt",
         "sectionUnset": "Välj ett avsnitt",
         "sectionHint": "Avsnittet avgör om sången alls har ett modus.",
