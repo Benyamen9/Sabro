@@ -985,6 +985,25 @@
       },
       "applying": "Een voorstel toepassen: één veld is gevuld met de voorgestelde waarde. Controleer het en sla dan op — er wordt niets geschreven tot u dat doet.",
       "applyFailed": "Dat voorstel kon hier niet worden toegepast. Het item wordt ongewijzigd getoond."
+    },
+    "chantSections": {
+      "title": "Secties",
+      "description": "De secties van de schatkamer en welke modi elk toelaat. Nieuwe secties komen achteraan; gebruik de pijlen om de volgorde te wijzigen.",
+      "add": "Sectie toevoegen",
+      "namePlaceholder": "Naam van de sectie",
+      "modes": "Toegelaten modi",
+      "allModes": "Alle",
+      "noModes": "Geen",
+      "modesHint": "Selecteer er geen voor een sectie zonder modi, zoals de madroshe. Gezangen daar wordt er nooit om gevraagd.",
+      "hasNoModes": "Geen modi",
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "edit": "Bewerken",
+      "remove": "Verwijderen",
+      "confirmRemove": "Echt verwijderen",
+      "moveUp": "Omhoog",
+      "moveDown": "Omlaag",
+      "saveFailed": "Die wijziging is geweigerd."
     }
   },
   "seo": {

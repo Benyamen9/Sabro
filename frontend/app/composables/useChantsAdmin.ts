@@ -1,5 +1,5 @@
 import type {
-  BethGazoModeDto, BethGazoSectionDto,
+  BethGazoModeDto, BethGazoSectionDto, SectionRequest,
   ChantDto,
   ChantStatus,
   CreateChantRequest,
@@ -84,6 +84,25 @@ export function useChantsAdmin() {
     return api<BethGazoSectionDto[]>('/admin/chants/sections')
   }
 
+  /** Position is never sent: a new section is appended. See ISectionService. */
+  function createSection(body: SectionRequest) {
+    return api<BethGazoSectionDto>('/admin/chants/sections', { method: 'POST', body })
+  }
+
+  function updateSection(id: string, body: SectionRequest) {
+    return api<BethGazoSectionDto>(`/admin/chants/sections/${id}`, { method: 'PUT', body })
+  }
+
+  /** Refused by the API while any chant still belongs to the section. */
+  function deleteSection(id: string) {
+    return api(`/admin/chants/sections/${id}`, { method: 'DELETE' })
+  }
+
+  /** Swaps the section with its neighbour; a no-op at either end. */
+  function moveSection(id: string, up: boolean) {
+    return api(`/admin/chants/sections/${id}/move`, { method: 'POST', query: { up } })
+  }
+
   function getById(id: string) {
     return api<ChantDto>(`/admin/chants/${id}`)
   }
@@ -130,6 +149,10 @@ export function useChantsAdmin() {
     listAll,
     listModes,
     listSections,
+    createSection,
+    updateSection,
+    deleteSection,
+    moveSection,
     getById,
     create,
     update,

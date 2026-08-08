@@ -985,6 +985,25 @@
       },
       "applying": "Tillämpar ett förslag: ett fält har fyllts med det föreslagna värdet. Granska det och spara sedan — inget skrivs förrän du gör det.",
       "applyFailed": "Förslaget kunde inte tillämpas här. Posten visas oförändrad."
+    },
+    "chantSections": {
+      "title": "Avsnitt",
+      "description": "Skattkammarens avsnitt och vilka modus vart och ett tillåter. Nya avsnitt läggs sist; använd pilarna för att ändra ordningen.",
+      "add": "Lägg till avsnitt",
+      "namePlaceholder": "Avsnittets namn",
+      "modes": "Tillåtna modus",
+      "allModes": "Alla",
+      "noModes": "Inga",
+      "modesHint": "Välj inget för ett avsnitt utan modus, som madroshe. Sånger där tillfrågas aldrig om det.",
+      "hasNoModes": "Inga modus",
+      "save": "Spara",
+      "cancel": "Avbryt",
+      "edit": "Redigera",
+      "remove": "Ta bort",
+      "confirmRemove": "Ta bort på riktigt",
+      "moveUp": "Flytta upp",
+      "moveDown": "Flytta ner",
+      "saveFailed": "Ändringen avvisades."
     }
   },
   "seo": {

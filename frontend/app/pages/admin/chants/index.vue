@@ -178,6 +178,14 @@ const selectClass
         >
           <span aria-hidden="true">+</span> {{ t('admin.chants.newChant') }}
         </NuxtLink>
+        <!-- The sections are editable now rather than a deploy. Reachable from
+             here because that is where an editor notices one is missing. -->
+        <NuxtLink
+          to="/admin/chants/sections"
+          class="inline-flex items-center rounded-md border border-[var(--color-border-strong)] px-4 py-2 font-sans text-sm text-[var(--color-text)] no-underline transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          {{ t('admin.chantSections.title') }}
+        </NuxtLink>
       </template>
     </AdminPageHeader>
 

@@ -985,6 +985,25 @@
       },
       "applying": "Application d’une proposition : un champ a été rempli avec la valeur proposée. Vérifiez-la, puis enregistrez — rien n’est écrit avant.",
       "applyFailed": "Cette proposition n’a pas pu être appliquée ici. L’entrée est affichée inchangée."
+    },
+    "chantSections": {
+      "title": "Sections",
+      "description": "Les sections du trésor et les modes que chacune admet. Les nouvelles sections sont ajoutées à la fin ; utilisez les flèches pour changer l’ordre.",
+      "add": "Ajouter une section",
+      "namePlaceholder": "Nom de la section",
+      "modes": "Modes admis",
+      "allModes": "Tous",
+      "noModes": "Aucun",
+      "modesHint": "N’en sélectionnez aucun pour une section sans modes, comme les madroshe. On n’en demande jamais aux chants qui s’y trouvent.",
+      "hasNoModes": "Aucun mode",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "edit": "Modifier",
+      "remove": "Supprimer",
+      "confirmRemove": "Confirmer",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "saveFailed": "Cette modification a été refusée."
     }
   },
   "seo": {
