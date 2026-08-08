@@ -63,7 +63,7 @@ internal sealed class ChantPlayablePool : IChantPlayablePool
             chant.Transliteration,
             projection.SectionName,
             projection.ModeName,
-            chant.Shuhlofo,
+            chant.ShuhlofoNumber,
             chant.AudioUrl);
     }
 }

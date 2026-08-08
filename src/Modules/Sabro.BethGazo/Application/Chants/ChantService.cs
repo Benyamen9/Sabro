@@ -60,7 +60,7 @@ internal sealed class ChantService : IChantService
             sectionResult.Value!,
             request.ModeId,
             request.SyriacIncipitVocalized,
-            request.Shuhlofo,
+            request.ShuhlofoNumber,
             request.InheritsMelodyFromId);
         if (!domainResult.IsSuccess)
         {
@@ -122,7 +122,7 @@ internal sealed class ChantService : IChantService
             sectionResult.Value!,
             request.ModeId,
             request.SyriacIncipitVocalized,
-            request.Shuhlofo,
+            request.ShuhlofoNumber,
             request.InheritsMelodyFromId);
         if (error is not null)
         {
@@ -462,7 +462,7 @@ internal sealed class ChantService : IChantService
             section.Name,
             chant.ModeId,
             mode != null ? mode.Name : null,
-            chant.Shuhlofo,
+            chant.ShuhlofoNumber,
             chant.InheritsMelodyFromId,
             parent != null ? parent.Transliteration : null,
             chant.AudioUrl,

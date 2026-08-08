@@ -14,8 +14,6 @@ public sealed class CreateChantRequestValidator : AbstractValidator<CreateChantR
         // types, not a search aid.
         RuleFor(x => x.Transliteration).NotEmpty().MaximumLength(Chant.MaxTransliterationLength);
 
-        RuleFor(x => x.Shuhlofo).MaximumLength(Chant.MaxShuhlofoLength);
-
         RuleFor(x => x.SectionId).NotEmpty().WithMessage("A section is required.");
 
         // Deliberately NOT NotEmpty: whether a mode is required depends on the

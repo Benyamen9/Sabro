@@ -25,14 +25,6 @@ internal sealed class PublicChantService : IPublicChantService
             .OrderBy(t => t)
             .ToListAsync(cancellationToken);
 
-        var shuhlofe = await dbContext.Chants
-            .AsNoTracking()
-            .Where(c => c.Status == ChantStatus.Published && c.Shuhlofo != null)
-            .Select(c => c.Shuhlofo!)
-            .Distinct()
-            .OrderBy(s => s)
-            .ToListAsync(cancellationToken);
-
         // Every mode, not only the ones a published chant currently uses: trimming
         // this would narrow the answer space for free.
         var modes = await dbContext.Modes
@@ -54,6 +46,6 @@ internal sealed class PublicChantService : IPublicChantService
                 s.AllowedModes.Select(m => m.ModeId).ToList()))
             .ToListAsync(cancellationToken);
 
-        return new ChantAnswerOptionsDto(melodies, sections, modes, shuhlofe);
+        return new ChantAnswerOptionsDto(melodies, sections, modes);
     }
 }

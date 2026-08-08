@@ -260,7 +260,7 @@ const actionButtonClass
         {{ chant.transliteration }}
       </h1>
       <p class="mb-2 font-sans text-sm text-[var(--color-text-muted)]">
-        {{ chant.modeName }}<span v-if="chant.shuhlofo"> · {{ chant.shuhlofo }}</span>
+        {{ chant.modeName }}<span v-if="chant.shuhlofoNumber"> · {{ t('admin.chants.form.shuhlofo') }} {{ chant.shuhlofoNumber }}</span>
       </p>
       <p class="mb-6">
         <SyriacText :text="chant.syriacIncipit" class="!text-2xl" />

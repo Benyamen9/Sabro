@@ -820,11 +820,12 @@
         "modeUnset": "Välj ett modus",
         "modeHint": "Ett melodinamn återkommer i flera modus, så det är paret som identifierar sången.",
         "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Valfritt — fyll i endast om sången själv ÄR en variation av melodin, och namnge variationen. Tomt betyder att det är melodins egen form. Spelarna gissar om sången är en sådan.",
+        "shuhlofoHint": "Vilken variation den här sången är. Lämna på ”ingen” om den inte SJÄLV är en; vissa sånger har flera, därför numreras de.",
         "inheritsMelodyFrom": "Ärver sin melodi från",
         "inheritsMelodyFromNone": "Ingen — den bär sin egen melodi",
         "inheritsMelodyFromHint": "Anges för en solqin: en sång som lånar en annans melodi med egna variationer.",
-        "recordingComesLater": "Spara sången först och ladda sedan upp dess inspelning. Publiceringen väntar på ljudet."
+        "recordingComesLater": "Spara sången först och ladda sedan upp dess inspelning. Publiceringen väntar på ljudet.",
+        "shuhlofoNone": "Ingen — melodins egen form"
       }
     },
     "people": {

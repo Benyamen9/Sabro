@@ -151,12 +151,32 @@ public class ChantTests
     }
 
     [Fact]
-    public void Create_LeavesTheShuhlofoNullWhenThereIsNone()
+    public void Create_LeavesTheShuhlofoNumberNullForTheMelodysOwnForm()
     {
-        // Only some melodies have one, so absent is a real state rather than a blank.
-        CreateChant().Shuhlofo.Should().BeNull();
-        CreateChant(shuhlofo: "   ").Shuhlofo.Should().BeNull();
-        CreateChant(shuhlofo: "  second  ").Shuhlofo.Should().Be("second");
+        // Absent is a real state, not a blank: most chants are the melody's own
+        // form rather than a variation of it.
+        CreateChant().ShuhlofoNumber.Should().BeNull();
+        CreateChant(shuhlofoNumber: 2).ShuhlofoNumber.Should().Be(2);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Create_WithAShuhlofoNumberBelowOne_Fails(int number)
+    {
+        var result = Chant.Create(Incipit, "Maryam yoldath Aloho", Farde, Tlithoyo, shuhlofoNumber: number);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error!.Message.Should().Contain("1 or greater");
+    }
+
+    [Fact]
+    public void Create_AcceptsAShuhlofoNumberPastAnyExpectedCount()
+    {
+        // No upper bound, on purpose. The owner said some chants have more than one
+        // variation and never said how many at most — capping it here would be the
+        // same mistake as assuming eight modes.
+        CreateChant(shuhlofoNumber: 12).ShuhlofoNumber.Should().Be(12);
     }
 
     [Fact]
@@ -276,9 +296,10 @@ public class ChantTests
         string transliteration = "Maryam yoldath Aloho",
         BethGazoSection? section = null,
         Guid? modeId = null,
-        string? shuhlofo = null)
+        int? shuhlofoNumber = null)
     {
-        var result = Chant.Create(incipit, transliteration, section ?? Farde, modeId ?? Tlithoyo, shuhlofo: shuhlofo);
+        var result = Chant.Create(
+            incipit, transliteration, section ?? Farde, modeId ?? Tlithoyo, shuhlofoNumber: shuhlofoNumber);
         result.IsSuccess.Should().BeTrue(result.Error?.Message);
         return result.Value!;
     }

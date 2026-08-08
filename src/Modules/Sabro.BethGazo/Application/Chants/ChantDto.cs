@@ -21,7 +21,7 @@ public sealed record ChantDto(
     string SectionName,
     Guid? ModeId,
     string? ModeName,
-    string? Shuhlofo,
+    int? ShuhlofoNumber,
     Guid? InheritsMelodyFromId,
     string? InheritsMelodyFromTransliteration,
     string? AudioUrl,

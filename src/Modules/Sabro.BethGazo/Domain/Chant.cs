@@ -37,7 +37,6 @@ namespace Sabro.BethGazo.Domain;
 public sealed class Chant : Entity<Guid>, IAggregateRoot
 {
     public const int MaxTransliterationLength = 256;
-    public const int MaxShuhlofoLength = 128;
     public const int MaxAudioUrlLength = 512;
 
     private Chant(NormalizedFields fields)
@@ -126,10 +125,31 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     public Guid? ModeId { get; private set; }
 
     /// <summary>
-    /// The variation, where this chant is one. Null for a melody that has none —
-    /// only some do, which is why this is nullable rather than defaulted.
+    /// Which variation this chant is: 1, 2, 3 … Null when the chant is the
+    /// melody's own form rather than a variation of it.
     /// </summary>
-    public string? Shuhlofo { get; private set; }
+    /// <remarks>
+    /// <para>
+    /// A <b>number, not a name</b> (owner, 2026-08-08). He asked for the field to
+    /// be "just yes or no", which a boolean cannot deliver: he also confirmed that
+    /// <b>some chants have more than one shuḥlofo</b>, and identity is
+    /// (melody, section, mode, shuḥlofo) — so a boolean lets a chant hold exactly
+    /// one variation and makes the second collide with it, unenterable rather than
+    /// merely unnamed. An ordinal costs him the same single click and keeps them
+    /// apart.
+    /// </para>
+    /// <para>
+    /// <b>No upper bound.</b> The domain accepts any number from 1 up; the
+    /// backoffice offers a short list purely as a convenience. Capping it here
+    /// would be the same mistake as assuming eight modes.
+    /// </para>
+    /// <para>
+    /// The game never asks which variation — only whether the chant is one at all
+    /// (owner, 2026-08-07) — so this travels outward as presence. The reveal can
+    /// still say "variation 2", which is what the earlier name field was for.
+    /// </para>
+    /// </remarks>
+    public int? ShuhlofoNumber { get; private set; }
 
     /// <summary>
     /// Set when this chant is a <i>solqin</i>: it inherits the melody of the chant
@@ -171,7 +191,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         BethGazoSection section,
         Guid? modeId,
         string? syriacIncipitVocalized = null,
-        string? shuhlofo = null,
+        int? shuhlofoNumber = null,
         Guid? inheritsMelodyFromId = null)
     {
         var normalized = Normalize(
@@ -180,7 +200,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
             section,
             modeId,
             syriacIncipitVocalized,
-            shuhlofo,
+            shuhlofoNumber,
             inheritsMelodyFromId);
         if (!normalized.IsSuccess)
         {
@@ -202,7 +222,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         BethGazoSection section,
         Guid? modeId,
         string? syriacIncipitVocalized = null,
-        string? shuhlofo = null,
+        int? shuhlofoNumber = null,
         Guid? inheritsMelodyFromId = null)
     {
         var normalized = Normalize(
@@ -211,7 +231,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
             section,
             modeId,
             syriacIncipitVocalized,
-            shuhlofo,
+            shuhlofoNumber,
             inheritsMelodyFromId);
         if (!normalized.IsSuccess)
         {
@@ -319,7 +339,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         BethGazoSection section,
         Guid? modeId,
         string? syriacIncipitVocalized,
-        string? shuhlofo,
+        int? shuhlofoNumber,
         Guid? inheritsMelodyFromId)
     {
         if (section is null)
@@ -369,15 +389,10 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
             return Result<NormalizedFields>.Failure(modeError);
         }
 
-        string? trimmedShuhlofo = null;
-        if (!string.IsNullOrWhiteSpace(shuhlofo))
+        if (shuhlofoNumber is not null && shuhlofoNumber < 1)
         {
-            trimmedShuhlofo = shuhlofo.Trim();
-            if (trimmedShuhlofo.Length > MaxShuhlofoLength)
-            {
-                return Result<NormalizedFields>.Failure(
-                    Error.Validation($"Shuhlofo must be at most {MaxShuhlofoLength} characters."));
-            }
+            return Result<NormalizedFields>.Failure(
+                Error.Validation("Shuhlofo number must be 1 or greater, or absent for the melody's own form."));
         }
 
         if (inheritsMelodyFromId == Guid.Empty)
@@ -392,7 +407,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
             trimmedTransliteration,
             section.Id,
             normalizedModeId,
-            trimmedShuhlofo,
+            shuhlofoNumber,
             inheritsMelodyFromId));
     }
 
@@ -421,7 +436,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         Transliteration = fields.Transliteration;
         SectionId = fields.SectionId;
         ModeId = fields.ModeId;
-        Shuhlofo = fields.Shuhlofo;
+        ShuhlofoNumber = fields.ShuhlofoNumber;
         InheritsMelodyFromId = fields.InheritsMelodyFromId;
     }
 
@@ -433,6 +448,6 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         string Transliteration,
         Guid SectionId,
         Guid? ModeId,
-        string? Shuhlofo,
+        int? ShuhlofoNumber,
         Guid? InheritsMelodyFromId);
 }

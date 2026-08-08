@@ -1,8 +1,15 @@
 namespace Sabro.BethGazo.Application.Chants;
 
 /// <summary>
-/// What a player may answer with: the three parts of a Nahlo round, each as its
-/// own list.
+/// What a player may answer with.
+/// </summary>
+/// <remarks>
+/// <para>
+/// <b>There is no shuḥlofo list.</b> There used to be, when the variation was a
+/// name a player typed. It is a number now and the round only asks whether the
+/// chant is a variation at all, so nothing outside needs the values — and
+/// publishing them would say how many variations exist, which is a hint the game
+/// never intended to give.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -46,12 +53,7 @@ namespace Sabro.BethGazo.Application.Chants;
 /// Every mode, in traditional order — including any with no published chant yet.
 /// Trimming it to modes actually in use would narrow the answer space for free.
 /// </param>
-/// <param name="Shuhlofe">
-/// Distinct variations across published chants, alphabetical. Most melodies have
-/// none, so this is the shortest list and often empty.
-/// </param>
 public sealed record ChantAnswerOptionsDto(
     IReadOnlyList<string> Melodies,
     IReadOnlyList<BethGazoSectionDto> Sections,
-    IReadOnlyList<BethGazoModeDto> Modes,
-    IReadOnlyList<string> Shuhlofe);
+    IReadOnlyList<BethGazoModeDto> Modes);
