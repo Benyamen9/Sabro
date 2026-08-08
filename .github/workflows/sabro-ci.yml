@@ -165,6 +165,32 @@ jobs:
           SHMO_LOGTO_COOKIE_ENCRYPTION_KEY=x
           ENV
 
+      # The dummy env above and the -e flags below are hand-kept lists, and a new
+      # service is added by editing the compose file or the Caddyfile — not them.
+      # That gap has already cost two red builds on one branch: a `:?` variable
+      # aborts compose at PARSE time (taking the whole file, not one service), and
+      # an unset Caddy domain silently becomes a keyless block that Caddy reads as
+      # global config. Assert the lists cover what the files actually require, so
+      # the next omission is named rather than debugged.
+      - name: Deploy-safety inputs cover the files
+        run: |
+          set -euo pipefail
+          missing_env=$(comm -23             <(grep -oE '\$\{[A-Z_]+:\?' docker-compose.prod.yml | sed 's/\${//; s/:?//' | sort -u)             <(sed 's/^[[:space:]]*//' .env.ci | grep -oE '^[A-Z_]+=' | tr -d '=' | sort -u))
+          # SABRO_IMAGE_TAG is supplied inline by the step below, not by .env.ci.
+          missing_env=$(echo "$missing_env" | grep -v '^SABRO_IMAGE_TAG$' || true)
+          if [ -n "$missing_env" ]; then
+            echo "::error::Required compose variables missing from the CI env: $missing_env"
+            exit 1
+          fi
+          missing_domain=$(comm -23             <(grep -oE '^\{\$[A-Z_]+\}' Caddyfile | tr -d '{$}' | sort -u)             <(grep -oE '\-e [A-Z_]+_DOMAIN=' "$GITHUB_WORKFLOW_REF_FILE" | sed 's/-e //; s/=//' | sort -u))
+          if [ -n "$missing_domain" ]; then
+            echo "::error::Caddy site blocks with no domain in the validate step: $missing_domain"
+            exit 1
+          fi
+          echo "OK: every required compose variable and Caddy domain is covered."
+        env:
+          GITHUB_WORKFLOW_REF_FILE: .github/workflows/sabro-ci.yml
+
       - name: Prod compose parses with a pinned image tag
         run: |
           set -euo pipefail
@@ -172,10 +198,11 @@ jobs:
             docker compose --env-file .env.ci -f docker-compose.prod.yml config >/dev/null
           echo "OK: docker-compose.prod.yml parses."
 
-      # A Caddyfile typo takes down every hostname in the ecosystem at once, and
-      # unlike the compose file the Caddyfile is NOT shipped by CD — it is copied
-      # to the VPS by hand, so nothing else stands between an edit and the live
-      # reverse proxy. Validate it with the same Caddy image the stack runs.
+      # A Caddyfile typo takes down every hostname in the ecosystem at once.
+      # CD *does* ship the Caddyfile (scp + `caddy reload`), so a bad edit reaches
+      # the live reverse proxy on merge — `caddy reload` keeps the old config if
+      # the new one is invalid, but this step is what stops it getting that far.
+      # Validate with the same Caddy image the stack runs.
       - name: Caddyfile is valid
         run: |
           set -euo pipefail
