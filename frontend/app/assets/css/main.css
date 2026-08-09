@@ -37,6 +37,9 @@
   --color-shmo: #587b5a;
   --color-shmo-dark: #46644a;
   --color-shmo-faint: #eaf0e8;
+  --color-nahlo: #6d4b9e;
+  --color-nahlo-dark: #57397f;
+  --color-nahlo-faint: #efe9f7;
 
   /* Nahlo's purple (musical family) — same status as Shmo: colour decided,
      game not built, currently only on the home page's second tease. */
@@ -73,6 +76,9 @@
     --color-shmo: #94bc95;
     --color-shmo-dark: #74996f;
     --color-shmo-faint: #19251c;
+    --color-nahlo: #a98bd6;
+    --color-nahlo-dark: #8b6bc0;
+    --color-nahlo-faint: #1e1830;
 
     --color-nahlo: #a98bd6;
     --color-nahlo-faint: #241c31;
@@ -112,6 +118,9 @@
   --color-shmo: #587b5a;
   --color-shmo-dark: #46644a;
   --color-shmo-faint: #eaf0e8;
+  --color-nahlo: #6d4b9e;
+  --color-nahlo-dark: #57397f;
+  --color-nahlo-faint: #efe9f7;
 
   --color-nahlo: #6d4b9e;
   --color-nahlo-faint: #f0eaf8;
@@ -145,6 +154,9 @@
   --color-shmo: #94bc95;
   --color-shmo-dark: #74996f;
   --color-shmo-faint: #19251c;
+  --color-nahlo: #6d4b9e;
+  --color-nahlo-dark: #57397f;
+  --color-nahlo-faint: #efe9f7;
 
   --color-nahlo: #a98bd6;
   --color-nahlo-faint: #241c31;
