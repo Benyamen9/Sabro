@@ -207,6 +207,13 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         }
 
         logger.LogInformation("LexiconEntry pronunciation uploaded. Id={EntryId}", id);
+
+        // The index carries HasPronunciationAudio, which the backoffice list filters
+        // and displays on. Skipping this leaves the list reporting "no recording" for
+        // words that have one — the data is right and the screen is wrong, which is
+        // the hardest kind of bug to believe.
+        await ReindexAsync(entry, cancellationToken);
+
         return Result<LexiconEntryDto>.Success(Map(entry));
     }
 
@@ -228,6 +235,9 @@ internal sealed class LexiconEntryService : ILexiconEntryService
         }
 
         logger.LogInformation("LexiconEntry pronunciation removed. Id={EntryId}", id);
+
+        await ReindexAsync(entry, cancellationToken);
+
         return Result<LexiconEntryDto>.Success(Map(entry));
     }
 
