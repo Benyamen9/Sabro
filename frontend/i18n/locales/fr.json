@@ -331,7 +331,8 @@
     },
     "pronunciation": {
       "listen": "Écouter",
-      "pause": "Pause"
+      "pause": "Pause",
+      "none": "Aucun enregistrement pour l’instant."
     },
     "letters": {
       "Alaph": "Olaf",
