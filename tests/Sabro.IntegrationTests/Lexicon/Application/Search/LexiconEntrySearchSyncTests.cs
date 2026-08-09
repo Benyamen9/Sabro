@@ -153,6 +153,63 @@ public class LexiconEntrySearchSyncTests
     }
 
     [Fact]
+    public async Task UploadAndRemovePronunciation_UpdatesAudioFieldsInDocument()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var client = meili.CreateClient();
+        var descriptor = new LexiconEntryIndexDescriptor();
+        await EnsureIndexAsync(client, descriptor, ct);
+
+        var audioUrl = $"/media/pronunciations/{Guid.NewGuid():D}.m4a";
+        var storage = Substitute.For<IPronunciationAudioStorage>();
+        storage.SaveAsync(Arg.Any<Guid>(), Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(audioUrl);
+
+        var searchIndex = NewSearchIndex(client, descriptor);
+        await using var ctx = postgres.CreateLexiconContext();
+        var service = new LexiconEntryService(
+            ctx,
+            new CreateLexiconEntryRequestValidator(),
+            new UpdateLexiconEntryRequestValidator(),
+            searchIndex,
+            storage,
+            Options.Create(new SupportedLanguagesOptions()),
+            NullLogger<LexiconEntryService>.Instance);
+
+        var created = await service.CreateAsync(
+            new CreateLexiconEntryRequest(
+                SyriacUnvocalized: KtbUnvocalized,
+                SblTransliteration: $"sbl-{Guid.NewGuid():N}",
+                GrammaticalCategory: GrammaticalCategory.Verb),
+            ct);
+        created.IsSuccess.Should().BeTrue();
+        var id = created.Value!.Id;
+
+        // The document exists before the upload, and carries no audio — so the
+        // assertion below can only pass if the upload itself reindexed. Uploading
+        // wrote Postgres and skipped the index, which is invisible to every
+        // by-id read and only shows on the backoffice list.
+        (await WaitForDocumentAsync(client, descriptor.IndexName, id.ToString("D"), ct))
+            .Should().NotBeNull().And.Subject.As<LexiconEntrySearchDocument>()
+            .HasPronunciationAudio.Should().BeFalse();
+
+        using var content = new MemoryStream([1, 2, 3]);
+        (await service.UploadPronunciationAudioAsync(id, content, ".m4a", ct)).IsSuccess.Should().BeTrue();
+
+        var withAudio = await WaitForAudioAsync(client, descriptor.IndexName, id.ToString("D"), expected: true, ct);
+        withAudio.Should().NotBeNull();
+        withAudio!.HasPronunciationAudio.Should().BeTrue();
+        withAudio.PronunciationAudioUrl.Should().Be(audioUrl);
+
+        (await service.RemovePronunciationAudioAsync(id, ct)).IsSuccess.Should().BeTrue();
+
+        var withoutAudio = await WaitForAudioAsync(client, descriptor.IndexName, id.ToString("D"), expected: false, ct);
+        withoutAudio.Should().NotBeNull();
+        withoutAudio!.HasPronunciationAudio.Should().BeFalse();
+        withoutAudio.PronunciationAudioUrl.Should().BeNull();
+    }
+
+    [Fact]
     public async Task UpsertAsync_WithWaitForTasks_HasReadAfterWriteConsistency()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -229,6 +286,31 @@ public class LexiconEntrySearchSyncTests
         }
 
         return null;
+    }
+
+    private static async Task<LexiconEntrySearchDocument?> WaitForAudioAsync(
+        MeilisearchClient client, string indexName, string documentId, bool expected, CancellationToken ct)
+    {
+        var deadline = DateTimeOffset.UtcNow.AddSeconds(10);
+        LexiconEntrySearchDocument? doc = null;
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            try
+            {
+                doc = await client.Index(indexName).GetDocumentAsync<LexiconEntrySearchDocument>(documentId, cancellationToken: ct);
+                if (doc is not null && doc.HasPronunciationAudio == expected)
+                {
+                    return doc;
+                }
+            }
+            catch (MeilisearchApiError)
+            {
+            }
+
+            await Task.Delay(150, ct);
+        }
+
+        return doc;
     }
 
     private static async Task<LexiconEntrySearchDocument?> WaitForPlayablePublishedAsync(
