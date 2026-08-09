@@ -95,15 +95,6 @@ function categoryLabel(category: string | undefined) {
   return label === key ? category : label
 }
 
-const pronunciationAudio = ref<HTMLAudioElement | null>(null)
-const isPlayingPronunciation = ref(false)
-
-function togglePronunciation() {
-  const audio = pronunciationAudio.value
-  if (!audio) return
-  if (audio.paused) audio.play()
-  else audio.pause()
-}
 </script>
 
 <template>
@@ -137,33 +128,15 @@ function togglePronunciation() {
            senses in one composed block — not a metadata grid. -->
       <article class="mt-5 overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] shadow-[var(--shadow-soft)]">
         <div class="px-5 pb-7 pt-9 text-center sm:px-9">
-          <SyriacText :text="heroForm" class="!text-[3.1rem] leading-[1.4] text-[var(--color-accent)] sm:!text-[4.25rem]" />
+          <!-- The word is the control: pressing it plays the recording and the
+               strip beneath fills, right to left, like the word itself. A word
+               with no recording keeps the same strip, flat and dimmed. -->
+          <PronunciationWord :src="data.pronunciationAudioUrl ? mediaUrl(data.pronunciationAudioUrl) : null">
+            <SyriacText :text="heroForm" class="!text-[3.1rem] leading-[1.4] text-[var(--color-accent)] sm:!text-[4.25rem]" />
+          </PronunciationWord>
           <p v-if="data.sblTransliteration" class="mt-1.5 font-serif text-[21px] text-[var(--color-text-muted)] italic">
             {{ data.sblTransliteration }}
           </p>
-          <!-- Always shown, so the entry has one stable anatomy whether or not a
-               recording exists yet; disabled and muted when there is none, with
-               the reason on the button rather than in a vanished control. -->
-          <button
-            type="button"
-            :disabled="!data.pronunciationAudioUrl"
-            :title="data.pronunciationAudioUrl ? undefined : t('library.pronunciation.none')"
-            :aria-label="data.pronunciationAudioUrl ? undefined : t('library.pronunciation.none')"
-            class="mt-3 inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-4 py-1.5 font-sans text-[13px] text-[var(--color-text-muted)] transition-colors enabled:hover:border-[var(--color-accent)] enabled:hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:border-dashed disabled:bg-transparent disabled:text-[var(--color-text-faint)]"
-            @click="togglePronunciation"
-          >
-            <span aria-hidden="true">{{ isPlayingPronunciation ? '⏸' : '▶' }}</span>
-            {{ isPlayingPronunciation ? t('library.pronunciation.pause') : t('library.pronunciation.listen') }}
-          </button>
-          <audio
-            v-if="data.pronunciationAudioUrl"
-            ref="pronunciationAudio"
-            class="hidden"
-            :src="mediaUrl(data.pronunciationAudioUrl)"
-            @play="isPlayingPronunciation = true"
-            @pause="isPlayingPronunciation = false"
-            @ended="isPlayingPronunciation = false"
-          />
           <div class="mt-4 flex flex-wrap items-center justify-center gap-2 font-sans text-[12.5px]">
             <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-1 text-[var(--color-text-muted)]">
               {{ categoryLabel(data.grammaticalCategory) }}
