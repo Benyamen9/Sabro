@@ -8,7 +8,7 @@
  * doors and point the primary CTA at the next unplayed game. Mirrors the
  * useDailyCircuit composables in Meltho, Mno and Shmo — keep the shape in sync.
  */
-export const CIRCUIT_GAMES = ['meltho', 'mno', 'shmo'] as const
+export const CIRCUIT_GAMES = ['meltho', 'mno', 'shmo', 'nahlo'] as const
 export type CircuitGame = (typeof CIRCUIT_GAMES)[number]
 
 interface CircuitState {

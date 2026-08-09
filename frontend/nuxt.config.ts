@@ -141,6 +141,7 @@ export default defineNuxtConfig({
       mnoUrl: 'https://mno.sabro.be',
       // Shmo, the historical-figure game, same convention (NUXT_PUBLIC_SHMO_URL).
       shmoUrl: 'https://shmo.sabro.be',
+      nahloUrl: 'https://nahlo.sabro.be',
       // Self-hosted Umami analytics. Cookieless and storing no personal data,
       // so it needs no consent banner — which is the reason it was chosen over
       // GA4. Both values empty (the default) disables analytics entirely: no
