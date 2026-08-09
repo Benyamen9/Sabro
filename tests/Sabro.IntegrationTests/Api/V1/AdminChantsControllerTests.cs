@@ -46,6 +46,14 @@ public class AdminChantsControllerTests : IDisposable
 {
     private const string Incipit = "ܡܪܝܡ";
 
+    /// <summary>
+    /// The seeded sections, by their fixed ids. Literals rather than a lookup
+    /// because the seed pins them — and because a test that looked them up by name
+    /// would pass even if the seed stopped running.
+    /// </summary>
+    private static readonly Guid Farde = Guid.Parse("7a2c4b20-0000-4000-8000-000000000001");
+    private static readonly Guid Madroshe = Guid.Parse("7a2c4b20-0000-4000-8000-000000000003");
+
     private readonly PostgresFixture postgres;
     private readonly SabroApiFactory factory;
     private readonly HttpClient client;
@@ -91,7 +99,7 @@ public class AdminChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, "Minimal payload melody", modeId),
+            new CreateChantRequest(Incipit, "Minimal payload melody", Farde, modeId),
             ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -117,7 +125,7 @@ public class AdminChantsControllerTests : IDisposable
         var modeId = await ModeIdAsync(1, ct);
         var decomposed = "ܡܪܝܡ̈";
 
-        var dto = await CreateAsync(new CreateChantRequest(decomposed, "NFC melody", modeId), ct);
+        var dto = await CreateAsync(new CreateChantRequest(decomposed, "NFC melody", Farde, modeId), ct);
 
         dto.SyriacIncipit.Should().Be(decomposed.Normalize(NormalizationForm.FormC));
     }
@@ -131,7 +139,7 @@ public class AdminChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, "Unknown mode melody", Guid.NewGuid()),
+            new CreateChantRequest(Incipit, "Unknown mode melody", Farde, Guid.NewGuid()),
             ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -145,7 +153,7 @@ public class AdminChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, "Orphan solqin", modeId, InheritsMelodyFromId: Guid.NewGuid()),
+            new CreateChantRequest(Incipit, "Orphan solqin", Farde, modeId, InheritsMelodyFromId: Guid.NewGuid()),
             ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -159,7 +167,7 @@ public class AdminChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest("Maryam", "Latin incipit melody", modeId),
+            new CreateChantRequest("Maryam", "Latin incipit melody", Farde, modeId),
             ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -173,12 +181,178 @@ public class AdminChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, string.Empty, modeId),
+            new CreateChantRequest(Incipit, string.Empty, Farde, modeId),
             ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(ct);
         problem!.Errors.Should().ContainKey("transliteration");
+    }
+
+    [Fact]
+    public async Task Post_InAModelessSection_WithoutAMode_Succeeds()
+    {
+        // The owner's rule: "when you choose madroshe, there is no mode for them."
+        var ct = TestContext.Current.CancellationToken;
+
+        var dto = await CreateAsync(
+            new CreateChantRequest(Incipit, "A madrosho", Madroshe, ModeId: null), ct);
+
+        dto.ModeId.Should().BeNull();
+        dto.ModeName.Should().BeNull();
+        dto.SectionName.Should().Be("Madroshe");
+    }
+
+    [Fact]
+    public async Task Post_InAModelessSection_WithAMode_Returns400()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var modeId = await ModeIdAsync(1, ct);
+
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/admin/chants",
+            new CreateChantRequest(Incipit, "Wrongly moded madrosho", Madroshe, modeId),
+            ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Post_WithTheMshahelfothoOutsideTheFarde_Returns400()
+    {
+        // The mshaḥelfotho belongs to the farde alone. Gnize is seeded with the
+        // eight ordinals and not it.
+        var ct = TestContext.Current.CancellationToken;
+        var mshahelfotho = await ModeIdAsync(9, ct);
+        var gnize = Guid.Parse("7a2c4b20-0000-4000-8000-000000000002");
+
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/admin/chants",
+            new CreateChantRequest(Incipit, "Gnizo melody", gnize, mshahelfotho),
+            ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Post_TwoModelessChantsWithTheSameMelody_Returns409()
+    {
+        // The subtle one, and the reason the identity index uses NULLS NOT
+        // DISTINCT. Postgres treats NULLs as distinct by default, so two madroshe
+        // that are null in BOTH mode and shuḥlofo would otherwise both insert —
+        // a duplicate the constraint exists to stop. If this test starts returning
+        // 201, the index has silently lost that annotation.
+        var ct = TestContext.Current.CancellationToken;
+        var request = new CreateChantRequest(Incipit, "Twin madrosho", Madroshe, ModeId: null);
+
+        await CreateAsync(request, ct);
+        var second = await client.PostAsJsonAsync("/api/v1/admin/chants", request, ct);
+
+        second.StatusCode.Should().Be(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task Post_SameMelodyInDifferentSections_IsAllowed()
+    {
+        // The section is part of the identity, so one name may sit in two sections.
+        var ct = TestContext.Current.CancellationToken;
+        var modeId = await ModeIdAsync(1, ct);
+
+        await CreateAsync(new CreateChantRequest(Incipit, "Cross-section melody", Farde, modeId), ct);
+        var second = await client.PostAsJsonAsync(
+            "/api/v1/admin/chants",
+            new CreateChantRequest(Incipit, "Cross-section melody", Madroshe, ModeId: null),
+            ct);
+
+        second.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task Get_ListIncludesModelessChants()
+    {
+        // Regression guard for the projection: the mode used to be an INNER join,
+        // which was correct only while every chant had a mode. Left as-is, every
+        // madrosho would vanish from the backoffice list and look deleted.
+        var ct = TestContext.Current.CancellationToken;
+        var created = await CreateAsync(
+            new CreateChantRequest("ܩܘܩܝܐ", "Listed madrosho", Madroshe, ModeId: null), ct);
+
+        var page = await client.GetFromJsonAsync<PagedResult<ChantDto>>(
+            "/api/v1/admin/chants?search=Listed madrosho", SabroApiFactory.JsonOptions, ct);
+
+        page!.Items.Should().ContainSingle(c => c.Id == created.Id);
+    }
+
+    [Fact]
+    public async Task Get_Sections_ReturnsMadrosheWithNoModesAndFardeWithNine()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var sections = await client.GetFromJsonAsync<IReadOnlyList<BethGazoSectionDto>>(
+            "/api/v1/admin/chants/sections", SabroApiFactory.JsonOptions, ct);
+
+        sections.Should().NotBeNull();
+        sections!.Single(s => s.Id == Madroshe).AllowedModeIds.Should().BeEmpty(
+            "the madroshe have no mode, and that is expressed as an empty set");
+        sections.Single(s => s.Id == Farde).AllowedModeIds.Should().HaveCount(
+            9, "the farde admit the eight ordinals plus the mshaḥelfotho");
+    }
+
+    [Fact]
+    public async Task Post_AShuhlofoAndAHrinoWithTheSameNumber_BothSave()
+    {
+        // The reason the kind is part of the identity. Owner, 2026-08-08: "not all
+        // the extra chants of a mode are shuhlofe, but hrone as well." A shuḥlofo 1
+        // and a ḥrino 1 under one melody and mode are different chants; if the kind
+        // were dropped from the key they would be the same four values and the second
+        // would 409.
+        var ct = TestContext.Current.CancellationToken;
+        var modeId = await ModeIdAsync(4, ct);
+
+        await CreateAsync(
+            new CreateChantRequest(
+                Incipit,
+                "Kind-distinguished melody",
+                Farde,
+                modeId,
+                VariantKind: ChantVariantKind.Shuhlofo,
+                VariantNumber: 1),
+            ct);
+
+        var second = await client.PostAsJsonAsync(
+            "/api/v1/admin/chants",
+            new CreateChantRequest(
+                Incipit,
+                "Kind-distinguished melody",
+                Farde,
+                modeId,
+                VariantKind: ChantVariantKind.Hrino,
+                VariantNumber: 1),
+            ct);
+
+        second.StatusCode.Should().Be(
+            HttpStatusCode.Created,
+            "a shuḥlofo and a ḥrino are different chants even at the same number");
+    }
+
+    [Fact]
+    public async Task Post_TwoHroneWithTheSameNumber_Returns409()
+    {
+        // The other half: within one kind the number still has to be unique.
+        var ct = TestContext.Current.CancellationToken;
+        var modeId = await ModeIdAsync(5, ct);
+        var request = new CreateChantRequest(
+            Incipit,
+            "Twin hrino melody",
+            Farde,
+            modeId,
+            VariantKind: ChantVariantKind.Hrino,
+            VariantNumber: 1);
+
+        await CreateAsync(request, ct);
+        var second = await client.PostAsJsonAsync("/api/v1/admin/chants", request, ct);
+
+        second.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 
     [Fact]
@@ -189,7 +363,7 @@ public class AdminChantsControllerTests : IDisposable
         // fields collided.
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(3, ct);
-        var request = new CreateChantRequest(Incipit, "Duplicate identity melody", modeId, Shuhlofo: "Qadmoyo");
+        var request = new CreateChantRequest(Incipit, "Duplicate identity melody", Farde, modeId, VariantKind: ChantVariantKind.Shuhlofo, VariantNumber: 1);
 
         await CreateAsync(request, ct);
         var second = await client.PostAsJsonAsync("/api/v1/admin/chants", request, ct);
@@ -208,10 +382,10 @@ public class AdminChantsControllerTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(3, ct);
 
-        await CreateAsync(new CreateChantRequest(Incipit, "Shuhlofo pair melody", modeId, Shuhlofo: "First"), ct);
+        await CreateAsync(new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, VariantKind: ChantVariantKind.Shuhlofo, VariantNumber: 1), ct);
         var second = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, "Shuhlofo pair melody", modeId, Shuhlofo: "Second"),
+            new CreateChantRequest(Incipit, "Shuhlofo pair melody", Farde, modeId, VariantKind: ChantVariantKind.Shuhlofo, VariantNumber: 2),
             ct);
 
         second.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -224,10 +398,10 @@ public class AdminChantsControllerTests : IDisposable
         // naming the melody must not hand the player the mode.
         var ct = TestContext.Current.CancellationToken;
 
-        await CreateAsync(new CreateChantRequest(Incipit, "Recurring melody", await ModeIdAsync(1, ct)), ct);
+        await CreateAsync(new CreateChantRequest(Incipit, "Recurring melody", Farde, await ModeIdAsync(1, ct)), ct);
         var second = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, "Recurring melody", await ModeIdAsync(2, ct)),
+            new CreateChantRequest(Incipit, "Recurring melody", Farde, await ModeIdAsync(2, ct)),
             ct);
 
         second.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -238,12 +412,12 @@ public class AdminChantsControllerTests : IDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(4, ct);
-        await CreateAsync(new CreateChantRequest(Incipit, "Update target melody", modeId), ct);
-        var mover = await CreateAsync(new CreateChantRequest(Incipit, "Update mover melody", modeId), ct);
+        await CreateAsync(new CreateChantRequest(Incipit, "Update target melody", Farde, modeId), ct);
+        var mover = await CreateAsync(new CreateChantRequest(Incipit, "Update mover melody", Farde, modeId), ct);
 
         var response = await client.PutAsJsonAsync(
             $"/api/v1/admin/chants/{mover.Id}",
-            new UpdateChantRequest(Incipit, "Update target melody", modeId),
+            new UpdateChantRequest(Incipit, "Update target melody", Farde, modeId),
             ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
@@ -257,9 +431,9 @@ public class AdminChantsControllerTests : IDisposable
         // query proves it compiles.
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(5, ct);
-        var parent = await CreateAsync(new CreateChantRequest(Incipit, "Parent melody", modeId), ct);
+        var parent = await CreateAsync(new CreateChantRequest(Incipit, "Parent melody", Farde, modeId), ct);
         var solqin = await CreateAsync(
-            new CreateChantRequest(Incipit, "Solqin melody", modeId, InheritsMelodyFromId: parent.Id),
+            new CreateChantRequest(Incipit, "Solqin melody", Farde, modeId, InheritsMelodyFromId: parent.Id),
             ct);
 
         solqin.InheritsMelodyFromId.Should().Be(parent.Id);
@@ -276,7 +450,7 @@ public class AdminChantsControllerTests : IDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(6, ct);
-        var created = await CreateAsync(new CreateChantRequest("ܩܘܩܝܐ", "Searchable melody", modeId), ct);
+        var created = await CreateAsync(new CreateChantRequest("ܩܘܩܝܐ", "Searchable melody", Farde, modeId), ct);
 
         // Case-insensitive, and on either form — an editor searches with whichever
         // is to hand.
@@ -292,7 +466,7 @@ public class AdminChantsControllerTests : IDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(7, ct);
-        var created = await CreateAsync(new CreateChantRequest(Incipit, "Filtered melody", modeId), ct);
+        var created = await CreateAsync(new CreateChantRequest(Incipit, "Filtered melody", Farde, modeId), ct);
 
         var drafts = await ListAsync($"?status=Draft&modeId={modeId}&search=Filtered", ct);
         drafts.Items.Should().Contain(c => c.Id == created.Id);
@@ -335,7 +509,7 @@ public class AdminChantsControllerTests : IDisposable
     {
         // The publish gate: a chant with no audio is not a puzzle.
         var ct = TestContext.Current.CancellationToken;
-        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Unrecorded melody", await ModeIdAsync(1, ct)), ct);
+        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Unrecorded melody", Farde, await ModeIdAsync(1, ct)), ct);
 
         var response = await client.PostAsync($"/api/v1/admin/chants/{chant.Id}/publish", null, ct);
 
@@ -346,7 +520,7 @@ public class AdminChantsControllerTests : IDisposable
     public async Task Publish_WithARecording_Succeeds()
     {
         var ct = TestContext.Current.CancellationToken;
-        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Recorded melody", await ModeIdAsync(2, ct)), ct);
+        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Recorded melody", Farde, await ModeIdAsync(2, ct)), ct);
         await UploadAudioAsync(chant.Id, ct);
 
         var response = await client.PostAsync($"/api/v1/admin/chants/{chant.Id}/publish", null, ct);
@@ -360,7 +534,7 @@ public class AdminChantsControllerTests : IDisposable
     public async Task SetPlayable_OnADraft_Returns409()
     {
         var ct = TestContext.Current.CancellationToken;
-        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Draft playable melody", await ModeIdAsync(3, ct)), ct);
+        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Draft playable melody", Farde, await ModeIdAsync(3, ct)), ct);
 
         var response = await client.PutAsJsonAsync(
             $"/api/v1/admin/chants/{chant.Id}/playable",
@@ -376,7 +550,7 @@ public class AdminChantsControllerTests : IDisposable
         // A draft can never be playable, so returning one to draft must take it out
         // of the pool rather than leaving a draft flagged for the daily selection.
         var ct = TestContext.Current.CancellationToken;
-        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Round trip melody", await ModeIdAsync(4, ct)), ct);
+        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Round trip melody", Farde, await ModeIdAsync(4, ct)), ct);
         await UploadAudioAsync(chant.Id, ct);
         await client.PostAsync($"/api/v1/admin/chants/{chant.Id}/publish", null, ct);
         await client.PutAsJsonAsync($"/api/v1/admin/chants/{chant.Id}/playable", new SetPlayableChantRequest(true), ct);
@@ -395,7 +569,7 @@ public class AdminChantsControllerTests : IDisposable
         // A published chant without audio would sit in the pool as an unplayable
         // puzzle, so the domain refuses the removal outright.
         var ct = TestContext.Current.CancellationToken;
-        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Published audio melody", await ModeIdAsync(5, ct)), ct);
+        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Published audio melody", Farde, await ModeIdAsync(5, ct)), ct);
         await UploadAudioAsync(chant.Id, ct);
         await client.PostAsync($"/api/v1/admin/chants/{chant.Id}/publish", null, ct);
 
@@ -412,7 +586,7 @@ public class AdminChantsControllerTests : IDisposable
     public async Task UploadAudio_WithAnUnsupportedType_Returns400()
     {
         var ct = TestContext.Current.CancellationToken;
-        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Bad upload melody", await ModeIdAsync(6, ct)), ct);
+        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Bad upload melody", Farde, await ModeIdAsync(6, ct)), ct);
 
         using var content = new MultipartFormDataContent();
         var file = new ByteArrayContent(new byte[] { 1, 2, 3 });
@@ -432,8 +606,8 @@ public class AdminChantsControllerTests : IDisposable
         // than surfacing a foreign-key violation.
         var ct = TestContext.Current.CancellationToken;
         var modeId = await ModeIdAsync(7, ct);
-        var parent = await CreateAsync(new CreateChantRequest(Incipit, "Undeletable parent melody", modeId), ct);
-        await CreateAsync(new CreateChantRequest(Incipit, "Dependent solqin melody", modeId, InheritsMelodyFromId: parent.Id), ct);
+        var parent = await CreateAsync(new CreateChantRequest(Incipit, "Undeletable parent melody", Farde, modeId), ct);
+        await CreateAsync(new CreateChantRequest(Incipit, "Dependent solqin melody", Farde, modeId, InheritsMelodyFromId: parent.Id), ct);
 
         var response = await client.DeleteAsync($"/api/v1/admin/chants/{parent.Id}", ct);
 
@@ -444,7 +618,7 @@ public class AdminChantsControllerTests : IDisposable
     public async Task Delete_WithNothingPointingAtIt_Returns204()
     {
         var ct = TestContext.Current.CancellationToken;
-        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Deletable melody", await ModeIdAsync(8, ct)), ct);
+        var chant = await CreateAsync(new CreateChantRequest(Incipit, "Deletable melody", Farde, await ModeIdAsync(8, ct)), ct);
 
         var response = await client.DeleteAsync($"/api/v1/admin/chants/{chant.Id}", ct);
 

@@ -767,7 +767,9 @@
         "playableNo": "Not in the pool",
         "clear": "Clear filters",
         "noResults": "No chants match these filters.",
-        "pageSizeLabel": "Rows per page"
+        "pageSizeLabel": "Rows per page",
+        "sectionLabel": "Section",
+        "sectionAll": "All sections"
       },
       "actions": {
         "edit": "Edit",
@@ -805,20 +807,30 @@
       "form": {
         "createTitle": "New chant",
         "syriacIncipit": "Syriac incipit",
-        "syriacIncipitHint": "The opening words, unvocalized. Syriac characters only.",
+        "syriacIncipitHint": "This chant's OWN opening words, unvocalized. Different in each mode, so they often do not match the melody name above. Syriac characters only.",
         "syriacIncipitVocalized": "Vocalized incipit",
         "syriacIncipitVocalizedHint": "Optional enrichment. It never gates publication.",
         "transliteration": "Melody",
-        "transliterationHint": "The melody name in SBL transliteration — this is what players type, e.g. “Maryam yoldath Aloho”.",
+        "transliterationHint": "The melody name — the group heading that runs across the modes, e.g. “Zodeq dnehwe”. It is its own name, not derived from any chant's opening words; it may happen to match one, and often matches none. This is what players type.",
+        "section": "Section",
+        "sectionUnset": "Choose a section",
+        "sectionHint": "The section decides whether this chant has a mode at all.",
+        "sectionHasNoModes": "Chants in {section} have no mode, so none is asked for.",
         "mode": "Mode",
         "modeUnset": "Choose a mode",
         "modeHint": "A melody name recurs across modes, so it is the pair that identifies the chant.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Optional — only some melodies have a variation. Players guess it as its own part of the answer.",
         "inheritsMelodyFrom": "Inherits its melody from",
         "inheritsMelodyFromNone": "None — it carries its own melody",
         "inheritsMelodyFromHint": "Set this for a solqin: a chant that borrows another’s melody with variations of its own.",
-        "recordingComesLater": "Save the chant first, then upload its recording. Publishing waits on the audio."
+        "recordingComesLater": "Save the chant first, then upload its recording. Publishing waits on the audio.",
+        "variant": "Extra chant",
+        "variantKind": {
+          "None": "Neither",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Which one",
+        "variantHint": "A shuḥlofo varies the melody; a ḥrino is simply another chant standing in the same mode. Leave on “neither” for the chant in its own right."
       }
     },
     "people": {
@@ -973,6 +985,31 @@
       },
       "applying": "Applying a proposal: one field has been filled with the proposed value. Review it, then save — nothing is written until you do.",
       "applyFailed": "That proposal could not be applied here. The entry is shown unchanged."
+    },
+    "chantSections": {
+      "title": "Sections",
+      "description": "The sections of the treasury, and which modes each admits. New sections are added to the end; use the arrows to change the order.",
+      "add": "Add a section",
+      "namePlaceholder": "Section name",
+      "modes": "Modes it admits",
+      "allModes": "All",
+      "noModes": "None",
+      "modesHint": "Leave none selected for a section with no modes, like the madroshe. Chants there are never asked for one.",
+      "hasNoModes": "No modes",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "remove": "Remove",
+      "confirmRemove": "Really remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "saveFailed": "That change was refused."
+    },
+    "chantModes": {
+      "title": "Modes",
+      "description": "The modes chants are sung in. The set grows — nothing assumes it stops at eight. A mode cannot be removed while a chant carries it or a section admits it.",
+      "add": "Add a mode",
+      "namePlaceholder": "Mode name"
     }
   },
   "seo": {

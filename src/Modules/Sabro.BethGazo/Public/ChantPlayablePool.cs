@@ -24,16 +24,20 @@ internal sealed class ChantPlayablePool : IChantPlayablePool
 
     public async Task<PlayableChant?> GetPlayableChantAsync(Guid id, CancellationToken cancellationToken)
     {
-        // Joined to the mode table rather than carrying the id outward: Play
-        // should not have to know this module has a reference table at all.
-        var projection = await dbContext.Chants
-            .AsNoTracking()
-            .Where(e => e.Id == id)
-            .Join(
-                dbContext.Modes.AsNoTracking(),
-                chant => chant.ModeId,
-                mode => mode.Id,
-                (chant, mode) => new { chant, mode.Name })
+        // Joined to the reference tables rather than carrying ids outward: Play
+        // should not have to know this module has reference tables at all.
+        //
+        // The mode join is a LEFT join (GroupJoin + DefaultIfEmpty). An inner join
+        // was right while every chant had a mode; now that the madroshe have none,
+        // it would return null here for every one of them — and null is this
+        // method's "cannot render", so the daily puzzle would 409 on any madrosho
+        // as though the pool were empty.
+        var projection = await (
+            from row in dbContext.Chants.AsNoTracking().Where(e => e.Id == id)
+            join section in dbContext.Sections.AsNoTracking() on row.SectionId equals section.Id
+            join mode in dbContext.Modes.AsNoTracking() on row.ModeId equals mode.Id into modes
+            from mode in modes.DefaultIfEmpty()
+            select new { chant = row, SectionName = section.Name, ModeName = mode != null ? mode.Name : null })
             .FirstOrDefaultAsync(cancellationToken);
 
         if (projection is null)
@@ -57,8 +61,10 @@ internal sealed class ChantPlayablePool : IChantPlayablePool
             chant.SyriacIncipit,
             chant.SyriacIncipitVocalized,
             chant.Transliteration,
-            projection.Name,
-            chant.Shuhlofo,
+            projection.SectionName,
+            projection.ModeName,
+            chant.VariantKind,
+            chant.VariantNumber,
             chant.AudioUrl);
     }
 }

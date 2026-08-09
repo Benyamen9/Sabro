@@ -767,7 +767,9 @@
         "playableNo": "Nicht im Pool",
         "clear": "Filter zurücksetzen",
         "noResults": "Keine Gesänge entsprechen diesen Filtern.",
-        "pageSizeLabel": "Zeilen pro Seite"
+        "pageSizeLabel": "Zeilen pro Seite",
+        "sectionLabel": "Abschnitt",
+        "sectionAll": "Alle Abschnitte"
       },
       "actions": {
         "edit": "Bearbeiten",
@@ -805,20 +807,30 @@
       "form": {
         "createTitle": "Neuer Gesang",
         "syriacIncipit": "Syrisches Incipit",
-        "syriacIncipitHint": "Die Anfangsworte, unvokalisiert. Nur syrische Zeichen.",
+        "syriacIncipitHint": "Die EIGENEN Anfangsworte dieses Gesangs, unvokalisiert. Sie unterscheiden sich je Modus und stimmen daher oft nicht mit dem Melodienamen oben überein. Nur syrische Zeichen.",
         "syriacIncipitVocalized": "Vokalisiertes Incipit",
         "syriacIncipitVocalizedHint": "Optionale Ergänzung. Sie ist nie Voraussetzung für die Veröffentlichung.",
         "transliteration": "Melodie",
-        "transliterationHint": "Der Melodiename in SBL-Umschrift — genau das tippen die Spielenden, z. B. „Maryam yoldath Aloho“.",
+        "transliterationHint": "Der Melodiename — die Gruppenüberschrift, die durch die Modi läuft, z. B. „Zodeq dnehwe“. Ein eigener Name, nicht aus den Anfangsworten eines Gesangs abgeleitet; er kann mit einem übereinstimmen, oft mit keinem. Das tippen die Spieler.",
+        "section": "Abschnitt",
+        "sectionUnset": "Abschnitt wählen",
+        "sectionHint": "Der Abschnitt entscheidet, ob dieser Gesang überhaupt einen Modus hat.",
+        "sectionHasNoModes": "Gesänge in {section} haben keinen Modus, daher wird keiner abgefragt.",
         "mode": "Modus",
         "modeUnset": "Modus wählen",
         "modeHint": "Ein Melodiename kommt in mehreren Modi vor; erst das Paar bestimmt den Gesang.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Optional — nur manche Melodien haben eine Variation. Die Spielenden raten sie als eigenen Teil der Antwort.",
         "inheritsMelodyFrom": "Übernimmt die Melodie von",
         "inheritsMelodyFromNone": "Keine — er trägt seine eigene Melodie",
         "inheritsMelodyFromHint": "Für ein Solqin zu setzen: ein Gesang, der die Melodie eines anderen mit eigenen Variationen übernimmt.",
-        "recordingComesLater": "Speichern Sie zuerst den Gesang und laden Sie dann seine Aufnahme hoch. Die Veröffentlichung wartet auf das Audio."
+        "recordingComesLater": "Speichern Sie zuerst den Gesang und laden Sie dann seine Aufnahme hoch. Die Veröffentlichung wartet auf das Audio.",
+        "variant": "Zusätzlicher Gesang",
+        "variantKind": {
+          "None": "Keines von beiden",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Welcher",
+        "variantHint": "Ein Shuḥlofo variiert die Melodie; ein Ḥrino ist schlicht ein weiterer Gesang im selben Modus. Für den Gesang selbst auf „keines von beiden“ lassen."
       }
     },
     "people": {
@@ -973,6 +985,31 @@
       },
       "applying": "Ein Vorschlag wird angewendet: ein Feld wurde mit dem vorgeschlagenen Wert gefüllt. Prüfen Sie ihn und speichern Sie dann — vorher wird nichts geschrieben.",
       "applyFailed": "Dieser Vorschlag konnte hier nicht angewendet werden. Der Eintrag wird unverändert angezeigt."
+    },
+    "chantSections": {
+      "title": "Abschnitte",
+      "description": "Die Abschnitte des Schatzes und welche Modi jeder zulässt. Neue Abschnitte werden angehängt; die Pfeile ändern die Reihenfolge.",
+      "add": "Abschnitt hinzufügen",
+      "namePlaceholder": "Name des Abschnitts",
+      "modes": "Zugelassene Modi",
+      "allModes": "Alle",
+      "noModes": "Keine",
+      "modesHint": "Keinen auswählen für einen Abschnitt ohne Modi, wie die Madroshe. Gesänge dort werden nie danach gefragt.",
+      "hasNoModes": "Keine Modi",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "remove": "Entfernen",
+      "confirmRemove": "Wirklich entfernen",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "saveFailed": "Diese Änderung wurde abgelehnt."
+    },
+    "chantModes": {
+      "title": "Modi",
+      "description": "Die Modi, in denen Gesänge gesungen werden. Die Menge wächst — nichts nimmt an, dass sie bei acht endet. Ein Modus kann nicht entfernt werden, solange ein Gesang ihn trägt oder ein Abschnitt ihn zulässt.",
+      "add": "Modus hinzufügen",
+      "namePlaceholder": "Name des Modus"
     }
   },
   "seo": {

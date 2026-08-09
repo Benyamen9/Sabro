@@ -28,10 +28,17 @@ public sealed class AdminChantsController : ApiControllerBase
     private const long MaxChantAudioBytes = 15 * 1024 * 1024;
 
     private readonly IChantService chantService;
+    private readonly ISectionService sectionService;
+    private readonly IModeService modeService;
 
-    public AdminChantsController(IChantService chantService)
+    public AdminChantsController(
+        IChantService chantService,
+        ISectionService sectionService,
+        IModeService modeService)
     {
         this.chantService = chantService;
+        this.sectionService = sectionService;
+        this.modeService = modeService;
     }
 
     [Authorize(Policy = AuthPolicies.ChantsEdit)]
@@ -61,6 +68,7 @@ public sealed class AdminChantsController : ApiControllerBase
     public async Task<ActionResult<PagedResult<ChantDto>>> List(
         [FromQuery] string? search = null,
         [FromQuery] ChantStatus? status = null,
+        [FromQuery] Guid? sectionId = null,
         [FromQuery] Guid? modeId = null,
         [FromQuery] bool? playableInNahlo = null,
         [FromQuery] int page = 1,
@@ -68,7 +76,7 @@ public sealed class AdminChantsController : ApiControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await chantService.ListAsync(
-            search, status, modeId, playableInNahlo, page, pageSize, cancellationToken);
+            search, status, sectionId, modeId, playableInNahlo, page, pageSize, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
     }
 
@@ -82,6 +90,140 @@ public sealed class AdminChantsController : ApiControllerBase
     [ProducesResponseType(typeof(IReadOnlyList<BethGazoModeDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<BethGazoModeDto>>> ListModes(CancellationToken cancellationToken) =>
         Ok(await chantService.ListModesAsync(cancellationToken));
+
+    /// <summary>
+    /// The sections, in the treasury's order, each with the modes it admits. The
+    /// chant form needs this to know which modes to offer — or, for a section that
+    /// admits none, to stop asking for one at all.
+    /// </summary>
+    [Authorize(Policy = AuthPolicies.ChantsView)]
+    [HttpGet("sections")]
+    [ProducesResponseType(typeof(IReadOnlyList<BethGazoSectionDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<BethGazoSectionDto>>> ListSections(
+        CancellationToken cancellationToken) =>
+        Ok(await chantService.ListSectionsAsync(cancellationToken));
+
+    /// <summary>
+    /// Creates a mode, appended after the last. The set grows — the owner said some
+    /// sets run past eight — which is why the modes are a table and not an enum.
+    /// </summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("modes")]
+    [ProducesResponseType(typeof(BethGazoModeDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoModeDto>> CreateMode(
+        [FromBody] ModeRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await modeService.CreateAsync(request, cancellationToken);
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(ListModes), null, result.Value)
+            : FromError(result.Error!);
+    }
+
+    /// <summary>Renames a mode. Chants point at its id, so nothing else moves.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPut("modes/{id:guid}")]
+    [ProducesResponseType(typeof(BethGazoModeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoModeDto>> UpdateMode(
+        Guid id,
+        [FromBody] ModeRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await modeService.UpdateAsync(id, request, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+    }
+
+    /// <summary>Deletes a mode. Refused while a chant carries it or a section admits it.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpDelete("modes/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteMode(Guid id, CancellationToken cancellationToken)
+    {
+        var error = await modeService.DeleteAsync(id, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
+
+    /// <summary>Swaps a mode with its neighbour in the traditional order.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("modes/{id:guid}/move")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> MoveMode(
+        Guid id,
+        [FromQuery] bool up,
+        CancellationToken cancellationToken)
+    {
+        var error = await modeService.MoveAsync(id, up, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
+
+    /// <summary>
+    /// Creates a section, appended after the last. Position is never sent by the
+    /// client — see <see cref="ISectionService"/>.
+    /// </summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("sections")]
+    [ProducesResponseType(typeof(BethGazoSectionDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoSectionDto>> CreateSection(
+        [FromBody] SectionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await sectionService.CreateAsync(request, cancellationToken);
+        return result.IsSuccess
+            ? CreatedAtAction(nameof(ListSections), null, result.Value)
+            : FromError(result.Error!);
+    }
+
+    /// <summary>Renames a section and replaces the modes it admits.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPut("sections/{id:guid}")]
+    [ProducesResponseType(typeof(BethGazoSectionDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<BethGazoSectionDto>> UpdateSection(
+        Guid id,
+        [FromBody] SectionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await sectionService.UpdateAsync(id, request, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : FromError(result.Error!);
+    }
+
+    /// <summary>Deletes a section. Refused while chants still belong to it.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpDelete("sections/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DeleteSection(Guid id, CancellationToken cancellationToken)
+    {
+        var error = await sectionService.DeleteAsync(id, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
+
+    /// <summary>Swaps a section with its neighbour in the treasury's order.</summary>
+    [Authorize(Policy = AuthPolicies.ChantsEdit)]
+    [HttpPost("sections/{id:guid}/move")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> MoveSection(
+        Guid id,
+        [FromQuery] bool up,
+        CancellationToken cancellationToken)
+    {
+        var error = await sectionService.MoveAsync(id, up, cancellationToken);
+        return error is null ? NoContent() : FromError(error);
+    }
 
     [Authorize(Policy = AuthPolicies.ChantsView)]
     [HttpGet("{id:guid}")]

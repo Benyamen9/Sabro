@@ -25,14 +25,6 @@ internal sealed class PublicChantService : IPublicChantService
             .OrderBy(t => t)
             .ToListAsync(cancellationToken);
 
-        var shuhlofe = await dbContext.Chants
-            .AsNoTracking()
-            .Where(c => c.Status == ChantStatus.Published && c.Shuhlofo != null)
-            .Select(c => c.Shuhlofo!)
-            .Distinct()
-            .OrderBy(s => s)
-            .ToListAsync(cancellationToken);
-
         // Every mode, not only the ones a published chant currently uses: trimming
         // this would narrow the answer space for free.
         var modes = await dbContext.Modes
@@ -41,6 +33,19 @@ internal sealed class PublicChantService : IPublicChantService
             .Select(m => new BethGazoModeDto(m.Id, m.Name, m.Position))
             .ToListAsync(cancellationToken);
 
-        return new ChantAnswerOptionsDto(melodies, modes, shuhlofe);
+        // Likewise every section, used or not. Each carries the modes it admits so
+        // the round knows whether to ask for one — see BethGazoSectionDto for why
+        // that is not the join the melodies are protected from.
+        var sections = await dbContext.Sections
+            .AsNoTracking()
+            .OrderBy(s => s.Position)
+            .Select(s => new BethGazoSectionDto(
+                s.Id,
+                s.Name,
+                s.Position,
+                s.AllowedModes.Select(m => m.ModeId).ToList()))
+            .ToListAsync(cancellationToken);
+
+        return new ChantAnswerOptionsDto(melodies, sections, modes);
     }
 }

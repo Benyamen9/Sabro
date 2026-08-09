@@ -1,5 +1,5 @@
 import type {
-  BethGazoModeDto,
+  BethGazoModeDto, BethGazoSectionDto, ModeRequest, SectionRequest,
   ChantDto,
   ChantStatus,
   CreateChantRequest,
@@ -12,6 +12,7 @@ export interface ChantListParams {
   pageSize?: number
   search?: string
   status?: ChantStatus
+  sectionId?: string
   modeId?: string
   playableInNahlo?: boolean
 }
@@ -48,6 +49,7 @@ export function useChantsAdmin() {
         pageSize: params.pageSize ?? 25,
         search: params.search || undefined,
         status: params.status,
+        sectionId: params.sectionId,
         modeId: params.modeId,
         playableInNahlo: params.playableInNahlo,
       },
@@ -75,6 +77,49 @@ export function useChantsAdmin() {
 
   function listModes() {
     return api<BethGazoModeDto[]>('/admin/chants/modes')
+  }
+
+  /** The sections, each with the modes it admits — see BethGazoSectionDto. */
+  function listSections() {
+    return api<BethGazoSectionDto[]>('/admin/chants/sections')
+  }
+
+  /** Position is never sent: a new mode is appended. See IModeService. */
+  function createMode(body: ModeRequest) {
+    return api<BethGazoModeDto>('/admin/chants/modes', { method: 'POST', body })
+  }
+
+  /** Safe at any time: chants point at the id, never the name. */
+  function updateMode(id: string, body: ModeRequest) {
+    return api<BethGazoModeDto>(`/admin/chants/modes/${id}`, { method: 'PUT', body })
+  }
+
+  /** Refused while a chant carries it or a section admits it. */
+  function deleteMode(id: string) {
+    return api(`/admin/chants/modes/${id}`, { method: 'DELETE' })
+  }
+
+  function moveMode(id: string, up: boolean) {
+    return api(`/admin/chants/modes/${id}/move`, { method: 'POST', query: { up } })
+  }
+
+  /** Position is never sent: a new section is appended. See ISectionService. */
+  function createSection(body: SectionRequest) {
+    return api<BethGazoSectionDto>('/admin/chants/sections', { method: 'POST', body })
+  }
+
+  function updateSection(id: string, body: SectionRequest) {
+    return api<BethGazoSectionDto>(`/admin/chants/sections/${id}`, { method: 'PUT', body })
+  }
+
+  /** Refused by the API while any chant still belongs to the section. */
+  function deleteSection(id: string) {
+    return api(`/admin/chants/sections/${id}`, { method: 'DELETE' })
+  }
+
+  /** Swaps the section with its neighbour; a no-op at either end. */
+  function moveSection(id: string, up: boolean) {
+    return api(`/admin/chants/sections/${id}/move`, { method: 'POST', query: { up } })
   }
 
   function getById(id: string) {
@@ -122,6 +167,15 @@ export function useChantsAdmin() {
     list,
     listAll,
     listModes,
+    listSections,
+    createMode,
+    updateMode,
+    deleteMode,
+    moveMode,
+    createSection,
+    updateSection,
+    deleteSection,
+    moveSection,
     getById,
     create,
     update,

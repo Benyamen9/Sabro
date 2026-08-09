@@ -28,16 +28,28 @@ internal sealed class BethGazoModeConfiguration : IEntityTypeConfiguration<BethG
     }
 
     /// <summary>
-    /// The eight modes of the Beth Gazo, owner-confirmed 2026-08-04. Seeded because
-    /// the table is a foreign key target: without rows, no chant can be created at
-    /// all, and the first editor would have to invent them before doing any work.
+    /// The modes of the Beth Gazo, owner-confirmed 2026-08-04 and extended 2026-08-07.
+    /// Seeded because the table is a foreign key target: without rows, no chant can be
+    /// created at all, and the first editor would have to invent them before doing any
+    /// work.
     /// </summary>
     /// <remarks>
-    /// These are a starting point, not the closed set — the owner has sets with more
-    /// than eight, and adding one is a row rather than a deploy. Ids and timestamps
-    /// are fixed literals because <c>HasData</c> is compared against the model on
-    /// every <c>migrations add</c>: generated values would produce a spurious
-    /// migration each time.
+    /// <para>
+    /// <b>There are nine rows, not eight, and the count is not a fact to rely on.</b>
+    /// The eight ordinals are the modes proper; <c>Mshaḥelfotho</c> is the ninth
+    /// section the farde carry — printed after Farde 1–8 as <i>farde mshaḥelfotho</i>,
+    /// the varied ones (bethgazo.com prints the same slot as "Aqafto dfarde"). It is a
+    /// section of the treasury rather than a ninth ordinal, and it lives here because a
+    /// chant in it still needs something to point at: the alternative was a nullable
+    /// mode, which would have made "no mode recorded yet" and "belongs to the varied
+    /// farde" the same value.
+    /// </para>
+    /// <para>
+    /// Adding another is a row rather than a deploy. Ids and timestamps are fixed
+    /// literals because <c>HasData</c> is compared against the model on every
+    /// <c>migrations add</c>: generated values would produce a spurious migration each
+    /// time.
+    /// </para>
     /// </remarks>
     private static void Seed(EntityTypeBuilder<BethGazoMode> builder)
     {
@@ -53,6 +65,11 @@ internal sealed class BethGazoModeConfiguration : IEntityTypeConfiguration<BethG
             ("6f9b1a10-0000-4000-8000-000000000006", "Shtithoyo", 6),
             ("6f9b1a10-0000-4000-8000-000000000007", "Shbiʿoyo", 7),
             ("6f9b1a10-0000-4000-8000-000000000008", "Tminoyo", 8),
+
+            // Owner, 2026-08-07: "there are 9 modes of farde as well, 1-8 and
+            // mshahelfe … and it's farde mshahelfotho". Position 9 keeps it last in
+            // the traditional sequence, where the section is printed.
+            ("6f9b1a10-0000-4000-8000-000000000009", "Mshaḥelfotho", 9),
         };
 
         builder.HasData(modes.Select(mode => new

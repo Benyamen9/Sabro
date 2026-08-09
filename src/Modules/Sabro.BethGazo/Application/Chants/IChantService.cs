@@ -42,6 +42,7 @@ public interface IChantService
     Task<Result<PagedResult<ChantDto>>> ListAsync(
         string? search,
         ChantStatus? status,
+        Guid? sectionId,
         Guid? modeId,
         bool? playableInNahlo,
         int page,
@@ -50,4 +51,10 @@ public interface IChantService
 
     /// <summary>The modes, in traditional order, for the pickers.</summary>
     Task<IReadOnlyList<BethGazoModeDto>> ListModesAsync(CancellationToken cancellationToken);
+
+    /// <summary>
+    /// The sections, in the treasury's order, each carrying the modes it admits —
+    /// which is what lets a picker offer the right modes, or none at all.
+    /// </summary>
+    Task<IReadOnlyList<BethGazoSectionDto>> ListSectionsAsync(CancellationToken cancellationToken);
 }

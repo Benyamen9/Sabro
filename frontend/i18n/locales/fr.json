@@ -767,7 +767,9 @@
         "playableNo": "Hors du pool",
         "clear": "Effacer les filtres",
         "noResults": "Aucun chant ne correspond à ces filtres.",
-        "pageSizeLabel": "Lignes par page"
+        "pageSizeLabel": "Lignes par page",
+        "sectionLabel": "Section",
+        "sectionAll": "Toutes les sections"
       },
       "actions": {
         "edit": "Modifier",
@@ -805,20 +807,30 @@
       "form": {
         "createTitle": "Nouveau chant",
         "syriacIncipit": "Incipit syriaque",
-        "syriacIncipitHint": "Les premiers mots, sans vocalisation. Caractères syriaques uniquement.",
+        "syriacIncipitHint": "Les premiers mots PROPRES à ce chant, sans vocalisation. Ils diffèrent selon le mode et ne correspondent donc souvent pas au nom de la mélodie ci-dessus. Caractères syriaques uniquement.",
         "syriacIncipitVocalized": "Incipit vocalisé",
         "syriacIncipitVocalizedHint": "Enrichissement facultatif. Ne conditionne jamais la publication.",
         "transliteration": "Mélodie",
-        "transliterationHint": "Le nom de la mélodie en translittération SBL — c’est ce que les joueurs saisissent, p. ex. « Maryam yoldath Aloho ».",
+        "transliterationHint": "Le nom de la mélodie — l’intitulé du groupe qui court à travers les modes, p. ex. « Zodeq dnehwe ». C’est un nom en propre, non déduit des premiers mots d’un chant ; il peut coïncider avec l’un d’eux, souvent avec aucun. C’est ce que tapent les joueurs.",
+        "section": "Section",
+        "sectionUnset": "Choisir une section",
+        "sectionHint": "La section détermine si ce chant a un mode.",
+        "sectionHasNoModes": "Les chants de {section} n’ont pas de mode ; aucun n’est demandé.",
         "mode": "Mode",
         "modeUnset": "Choisir un mode",
         "modeHint": "Un nom de mélodie revient dans plusieurs modes : c’est la paire qui identifie le chant.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Facultatif — seules certaines mélodies ont une variation. Les joueurs la devinent comme une partie à part de la réponse.",
         "inheritsMelodyFrom": "Hérite de la mélodie de",
         "inheritsMelodyFromNone": "Aucune — il porte sa propre mélodie",
         "inheritsMelodyFromHint": "À renseigner pour un solqin : un chant qui emprunte la mélodie d’un autre avec ses propres variations.",
-        "recordingComesLater": "Enregistrez d’abord le chant, puis téléversez son enregistrement. La publication attend l’audio."
+        "recordingComesLater": "Enregistrez d’abord le chant, puis téléversez son enregistrement. La publication attend l’audio.",
+        "variant": "Chant supplémentaire",
+        "variantKind": {
+          "None": "Ni l’un ni l’autre",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Lequel",
+        "variantHint": "Un shuḥlofo est une variation de la mélodie ; un ḥrino est simplement un autre chant dans le même mode. Laissez sur « ni l’un ni l’autre » pour le chant lui-même."
       }
     },
     "people": {
@@ -973,6 +985,31 @@
       },
       "applying": "Application d’une proposition : un champ a été rempli avec la valeur proposée. Vérifiez-la, puis enregistrez — rien n’est écrit avant.",
       "applyFailed": "Cette proposition n’a pas pu être appliquée ici. L’entrée est affichée inchangée."
+    },
+    "chantSections": {
+      "title": "Sections",
+      "description": "Les sections du trésor et les modes que chacune admet. Les nouvelles sections sont ajoutées à la fin ; utilisez les flèches pour changer l’ordre.",
+      "add": "Ajouter une section",
+      "namePlaceholder": "Nom de la section",
+      "modes": "Modes admis",
+      "allModes": "Tous",
+      "noModes": "Aucun",
+      "modesHint": "N’en sélectionnez aucun pour une section sans modes, comme les madroshe. On n’en demande jamais aux chants qui s’y trouvent.",
+      "hasNoModes": "Aucun mode",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "edit": "Modifier",
+      "remove": "Supprimer",
+      "confirmRemove": "Confirmer",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "saveFailed": "Cette modification a été refusée."
+    },
+    "chantModes": {
+      "title": "Modes",
+      "description": "Les modes dans lesquels les chants sont chantés. L’ensemble s’agrandit — rien ne suppose qu’il s’arrête à huit. Un mode ne peut être supprimé tant qu’un chant le porte ou qu’une section l’admet.",
+      "add": "Ajouter un mode",
+      "namePlaceholder": "Nom du mode"
     }
   },
   "seo": {

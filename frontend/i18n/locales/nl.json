@@ -767,7 +767,9 @@
         "playableNo": "Niet in de pool",
         "clear": "Filters wissen",
         "noResults": "Geen gezangen voldoen aan deze filters.",
-        "pageSizeLabel": "Rijen per pagina"
+        "pageSizeLabel": "Rijen per pagina",
+        "sectionLabel": "Sectie",
+        "sectionAll": "Alle secties"
       },
       "actions": {
         "edit": "Bewerken",
@@ -805,20 +807,30 @@
       "form": {
         "createTitle": "Nieuw gezang",
         "syriacIncipit": "Syrisch incipit",
-        "syriacIncipitHint": "De openingswoorden, zonder klinkertekens. Alleen Syrische tekens.",
+        "syriacIncipitHint": "De EIGEN beginwoorden van dit gezang, zonder vocalisatie. Ze verschillen per modus en komen dus vaak niet overeen met de melodienaam hierboven. Alleen Syrische tekens.",
         "syriacIncipitVocalized": "Gevocaliseerd incipit",
         "syriacIncipitVocalizedHint": "Optionele verrijking. Bepaalt nooit of publicatie mogelijk is.",
         "transliteration": "Melodie",
-        "transliterationHint": "De naam van de melodie in SBL-transliteratie — dit typen spelers in, bv. “Maryam yoldath Aloho”.",
+        "transliterationHint": "De melodienaam — de groepskop die door de modi heen loopt, bijv. “Zodeq dnehwe”. Het is een eigen naam, niet afgeleid van de beginwoorden van een gezang; hij kan toevallig met één samenvallen, vaak met geen enkele. Dit typen spelers in.",
+        "section": "Sectie",
+        "sectionUnset": "Kies een sectie",
+        "sectionHint": "De sectie bepaalt of dit gezang überhaupt een modus heeft.",
+        "sectionHasNoModes": "Gezangen in {section} hebben geen modus, dus er wordt er geen gevraagd.",
         "mode": "Modus",
         "modeUnset": "Kies een modus",
         "modeHint": "Een melodienaam komt in meerdere modi voor; het paar identificeert het gezang.",
-        "shuhlofo": "Shuḥlofo",
-        "shuhlofoHint": "Optioneel — slechts sommige melodieën hebben een variatie. Spelers raden die als een apart deel van het antwoord.",
         "inheritsMelodyFrom": "Erft de melodie van",
         "inheritsMelodyFromNone": "Geen — het heeft een eigen melodie",
         "inheritsMelodyFromHint": "Vul dit in voor een solqin: een gezang dat de melodie van een ander leent met eigen variaties.",
-        "recordingComesLater": "Sla het gezang eerst op en upload daarna de opname. Publicatie wacht op de audio."
+        "recordingComesLater": "Sla het gezang eerst op en upload daarna de opname. Publicatie wacht op de audio.",
+        "variant": "Extra gezang",
+        "variantKind": {
+          "None": "Geen van beide",
+          "Shuhlofo": "Shuḥlofo",
+          "Hrino": "Ḥrino"
+        },
+        "variantWhich": "Welke",
+        "variantHint": "Een shuḥlofo is een variatie van de melodie; een ḥrino is gewoon een ander gezang in dezelfde modus. Laat op “geen van beide” voor het gezang zelf."
       }
     },
     "people": {
@@ -973,6 +985,31 @@
       },
       "applying": "Een voorstel toepassen: één veld is gevuld met de voorgestelde waarde. Controleer het en sla dan op — er wordt niets geschreven tot u dat doet.",
       "applyFailed": "Dat voorstel kon hier niet worden toegepast. Het item wordt ongewijzigd getoond."
+    },
+    "chantSections": {
+      "title": "Secties",
+      "description": "De secties van de schatkamer en welke modi elk toelaat. Nieuwe secties komen achteraan; gebruik de pijlen om de volgorde te wijzigen.",
+      "add": "Sectie toevoegen",
+      "namePlaceholder": "Naam van de sectie",
+      "modes": "Toegelaten modi",
+      "allModes": "Alle",
+      "noModes": "Geen",
+      "modesHint": "Selecteer er geen voor een sectie zonder modi, zoals de madroshe. Gezangen daar wordt er nooit om gevraagd.",
+      "hasNoModes": "Geen modi",
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "edit": "Bewerken",
+      "remove": "Verwijderen",
+      "confirmRemove": "Echt verwijderen",
+      "moveUp": "Omhoog",
+      "moveDown": "Omlaag",
+      "saveFailed": "Die wijziging is geweigerd."
+    },
+    "chantModes": {
+      "title": "Modi",
+      "description": "De modi waarin gezangen worden gezongen. De verzameling groeit — niets gaat ervan uit dat ze bij acht stopt. Een modus kan niet weg zolang een gezang hem draagt of een sectie hem toelaat.",
+      "add": "Modus toevoegen",
+      "namePlaceholder": "Naam van de modus"
     }
   },
   "seo": {

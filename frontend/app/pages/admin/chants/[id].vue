@@ -10,6 +10,7 @@ const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const {
   getById,
   listModes,
+  listSections,
   listAll,
   update,
   remove,
@@ -45,6 +46,14 @@ const { data: chant, pending, error, refresh } = await useAsyncData(
 const { data: modes } = await useAsyncData(
   'admin-chant-modes',
   () => listModes(),
+  { lazy: true, default: () => [], immediate: isAdmin.value === true },
+)
+
+// The sections, and with them which modes each admits — the form needs this to
+// know whether to ask for a mode at all.
+const { data: sections } = await useAsyncData(
+  'admin-chant-sections-detail',
+  () => listSections(),
   { lazy: true, default: () => [], immediate: isAdmin.value === true },
 )
 
@@ -251,7 +260,7 @@ const actionButtonClass
         {{ chant.transliteration }}
       </h1>
       <p class="mb-2 font-sans text-sm text-[var(--color-text-muted)]">
-        {{ chant.modeName }}<span v-if="chant.shuhlofo"> · {{ chant.shuhlofo }}</span>
+        {{ chant.modeName }}<span v-if="chant.variantNumber"> · {{ t(`admin.chants.form.variantKind.${chant.variantKind}`) }} {{ chant.variantNumber }}</span>
       </p>
       <p class="mb-6">
         <SyriacText :text="chant.syriacIncipit" class="!text-2xl" />
@@ -274,6 +283,7 @@ const actionButtonClass
         :key="chant.updatedAt"
         :chant="chant"
         :modes="modes"
+        :sections="sections"
         :melody-sources="melodySources"
         :submitting="submitting"
         :readonly="!mayEdit"

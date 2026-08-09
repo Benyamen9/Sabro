@@ -46,6 +46,11 @@ export function useAuth() {
 
   function signOut() {
     if (!isConfigured.value) return
+    // Drop the ecosystem hint before leaving, so the other apps stop offering
+    // to sign in an account the player is in the middle of leaving. Only the
+    // sign-out path clears it — a merely signed-out app must never clear it,
+    // or visiting one game anonymously would erase the hint for all of them.
+    useEcosystemAccount().forget()
     window.location.href = '/sign-out'
   }
 

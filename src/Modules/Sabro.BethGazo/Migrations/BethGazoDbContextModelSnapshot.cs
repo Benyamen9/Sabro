@@ -18,7 +18,7 @@ namespace Sabro.BethGazo.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("beth_gazo")
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -125,6 +125,521 @@ namespace Sabro.BethGazo.Migrations
                             Name = "Tminoyo",
                             Position = 8,
                             UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("6f9b1a10-0000-4000-8000-000000000009"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Mshaḥelfotho",
+                            Position = 9,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
+            modelBuilder.Entity("Sabro.BethGazo.Domain.BethGazoSection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_beth_gazo_sections");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_beth_gazo_sections_name");
+
+                    b.HasIndex("Position")
+                        .IsUnique()
+                        .HasDatabaseName("ix_beth_gazo_sections_position");
+
+                    b.ToTable("beth_gazo_sections", "beth_gazo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Farde",
+                            Position = 1,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Gnize",
+                            Position = 2,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000003"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Madroshe",
+                            Position = 3,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Qonune yaunoye",
+                            Position = 4,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Tekso d-maurbe",
+                            Position = 5,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Qole shahroye",
+                            Position = 7,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Gushmo",
+                            Position = 8,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Takheshphotho rabuloyotho",
+                            Position = 9,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Tborto",
+                            Position = 10,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        },
+                        new
+                        {
+                            Id = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            CreatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Quqlion",
+                            Position = 11,
+                            UpdatedAt = new DateTimeOffset(new DateTime(2026, 8, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
+            modelBuilder.Entity("Sabro.BethGazo.Domain.BethGazoSectionMode", b =>
+                {
+                    b.Property<Guid>("SectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("section_id");
+
+                    b.Property<Guid>("ModeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("mode_id");
+
+                    b.HasKey("SectionId", "ModeId")
+                        .HasName("pk_beth_gazo_section_modes");
+
+                    b.HasIndex("ModeId")
+                        .HasDatabaseName("ix_beth_gazo_section_modes_mode_id");
+
+                    b.ToTable("beth_gazo_section_modes", "beth_gazo");
+
+                    b.HasData(
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000001"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000009")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000002"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000004"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000005"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000007"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000008"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-000000000009"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000a"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000001")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000002")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000003")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000004")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000005")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000006")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000007")
+                        },
+                        new
+                        {
+                            SectionId = new Guid("7a2c4b20-0000-4000-8000-00000000000b"),
+                            ModeId = new Guid("6f9b1a10-0000-4000-8000-000000000008")
                         });
                 });
 
@@ -148,7 +663,7 @@ namespace Sabro.BethGazo.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("inherits_melody_from_id");
 
-                    b.Property<Guid>("ModeId")
+                    b.Property<Guid?>("ModeId")
                         .HasColumnType("uuid")
                         .HasColumnName("mode_id");
 
@@ -156,10 +671,9 @@ namespace Sabro.BethGazo.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("playable_in_nahlo");
 
-                    b.Property<string>("Shuhlofo")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("shuhlofo");
+                    b.Property<Guid>("SectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("section_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -188,6 +702,16 @@ namespace Sabro.BethGazo.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<string>("VariantKind")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("variant_kind");
+
+                    b.Property<int?>("VariantNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("variant_number");
+
                     b.HasKey("Id")
                         .HasName("pk_chants");
 
@@ -197,23 +721,39 @@ namespace Sabro.BethGazo.Migrations
                     b.HasIndex("ModeId")
                         .HasDatabaseName("ix_chants_mode_id");
 
+                    b.HasIndex("SectionId")
+                        .HasDatabaseName("ix_chants_section_id");
+
                     b.HasIndex("Transliteration")
                         .HasDatabaseName("ix_chants_transliteration");
 
                     b.HasIndex("Status", "PlayableInNahlo")
                         .HasDatabaseName("ix_chants_status_playable_in_nahlo");
 
-                    b.HasIndex("Transliteration", "ModeId")
+                    b.HasIndex("Transliteration", "SectionId", "ModeId", "VariantKind", "VariantNumber")
                         .IsUnique()
-                        .HasDatabaseName("ix_chants_identity_without_shuhlofo")
-                        .HasFilter("shuhlofo IS NULL");
+                        .HasDatabaseName("ix_chants_identity");
 
-                    b.HasIndex("Transliteration", "ModeId", "Shuhlofo")
-                        .IsUnique()
-                        .HasDatabaseName("ix_chants_identity_with_shuhlofo")
-                        .HasFilter("shuhlofo IS NOT NULL");
+                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("Transliteration", "SectionId", "ModeId", "VariantKind", "VariantNumber"), false);
 
                     b.ToTable("chants", "beth_gazo");
+                });
+
+            modelBuilder.Entity("Sabro.BethGazo.Domain.BethGazoSectionMode", b =>
+                {
+                    b.HasOne("Sabro.BethGazo.Domain.BethGazoMode", null)
+                        .WithMany()
+                        .HasForeignKey("ModeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_beth_gazo_section_modes_beth_gazo_modes_mode_id");
+
+                    b.HasOne("Sabro.BethGazo.Domain.BethGazoSection", null)
+                        .WithMany("AllowedModes")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_beth_gazo_section_modes_beth_gazo_sections_section_id");
                 });
 
             modelBuilder.Entity("Sabro.BethGazo.Domain.Chant", b =>
@@ -228,8 +768,19 @@ namespace Sabro.BethGazo.Migrations
                         .WithMany()
                         .HasForeignKey("ModeId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
                         .HasConstraintName("fk_chants_beth_gazo_modes_mode_id");
+
+                    b.HasOne("Sabro.BethGazo.Domain.BethGazoSection", null)
+                        .WithMany()
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_chants_beth_gazo_sections_section_id");
+                });
+
+            modelBuilder.Entity("Sabro.BethGazo.Domain.BethGazoSection", b =>
+                {
+                    b.Navigation("AllowedModes");
                 });
 #pragma warning restore 612, 618
         }

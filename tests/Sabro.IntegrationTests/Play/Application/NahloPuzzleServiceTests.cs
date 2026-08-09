@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Sabro.BethGazo.Domain;
 using Sabro.BethGazo.Public;
 using Sabro.Play.Application.Nahlo;
 using Sabro.Play.Domain;
@@ -164,7 +165,8 @@ public class NahloPuzzleServiceTests
         result.Value!.AudioUrl.Should().Be("/media/chants/chant.mp3");
         result.Value.Transliteration.Should().Be("Maryam yoldath Aloho");
         result.Value.ModeName.Should().Be("Tlithoyo");
-        result.Value.Shuhlofo.Should().Be("Qadmoyo");
+        result.Value.VariantKind.Should().Be(ChantVariantKind.Shuhlofo);
+        result.Value.VariantNumber.Should().Be(1);
         result.Value.SyriacIncipit.Should().Be("ܡܪܝܡ");
     }
 
@@ -187,8 +189,10 @@ public class NahloPuzzleServiceTests
                 "ܡܪܝܡ",
                 null,
                 "Maryam yoldath Aloho",
+                "Farde",
                 "Tlithoyo",
-                "Qadmoyo",
+                ChantVariantKind.Shuhlofo,
+                1,
                 "/media/chants/chant.mp3"));
         return pool;
     }

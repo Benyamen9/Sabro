@@ -1,8 +1,15 @@
 namespace Sabro.BethGazo.Application.Chants;
 
 /// <summary>
-/// What a player may answer with: the three parts of a Nahlo round, each as its
-/// own list.
+/// What a player may answer with.
+/// </summary>
+/// <remarks>
+/// <para>
+/// <b>There is no shuḥlofo list.</b> There used to be, when the variation was a
+/// name a player typed. It is a number now and the round only asks whether the
+/// chant is a variation at all, so nothing outside needs the values — and
+/// publishing them would say how many variations exist, which is a hint the game
+/// never intended to give.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -32,15 +39,21 @@ namespace Sabro.BethGazo.Application.Chants;
 /// rather than playable chants on purpose: narrowing this to the pool would tell the
 /// player the answer is one of these few.
 /// </param>
+/// <param name="Sections">
+/// Every section, in the treasury's order, each carrying the modes it admits.
+/// <b>This is not the forbidden join.</b> The rule above forbids pairing a
+/// <i>melody</i> with its mode, because the recording already gives the melody away
+/// and the pair would then give the mode away with it. A section-to-modes map makes
+/// no claim about any chant — "the farde use nine modes, the madroshe use none" is a
+/// fact about the tradition, and it only narrows anything after the player has
+/// committed to a section, which is itself a guess they can lose. Without it the
+/// round cannot know whether to ask for a mode at all.
+/// </param>
 /// <param name="Modes">
 /// Every mode, in traditional order — including any with no published chant yet.
 /// Trimming it to modes actually in use would narrow the answer space for free.
 /// </param>
-/// <param name="Shuhlofe">
-/// Distinct variations across published chants, alphabetical. Most melodies have
-/// none, so this is the shortest list and often empty.
-/// </param>
 public sealed record ChantAnswerOptionsDto(
     IReadOnlyList<string> Melodies,
-    IReadOnlyList<BethGazoModeDto> Modes,
-    IReadOnlyList<string> Shuhlofe);
+    IReadOnlyList<BethGazoSectionDto> Sections,
+    IReadOnlyList<BethGazoModeDto> Modes);

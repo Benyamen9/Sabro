@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Sabro.BethGazo.Application.Chants;
+using Sabro.BethGazo.Domain;
 using Sabro.IntegrationTests.Api;
 
 namespace Sabro.IntegrationTests.Api.V1;
@@ -22,6 +23,9 @@ namespace Sabro.IntegrationTests.Api.V1;
 public class ChantsControllerTests : IDisposable
 {
     private const string Incipit = "ܡܪܝܡ";
+
+    /// <summary>The seeded Farde section — it admits every mode, so any mode is valid here.</summary>
+    private static readonly Guid Farde = Guid.Parse("7a2c4b20-0000-4000-8000-000000000001");
 
     private readonly PostgresFixture postgres;
     private readonly SabroApiFactory factory;
@@ -90,12 +94,11 @@ public class ChantsControllerTests : IDisposable
     public async Task AnswerOptions_IncludeAPublishedMelody()
     {
         var ct = TestContext.Current.CancellationToken;
-        await PublishAsync("Answer option melody", shuhlofo: "Answer option variation", ct);
+        await PublishAsync("Answer option melody", shuhlofoNumber: 1, ct);
 
         var options = await AnswerOptionsAsync(ct);
 
         options.Melodies.Should().Contain("Answer option melody");
-        options.Shuhlofe.Should().Contain("Answer option variation");
     }
 
     [Fact]
@@ -104,12 +107,11 @@ public class ChantsControllerTests : IDisposable
         // A draft is unfinished editorial data. Publishing is what makes a melody
         // part of the public answer space.
         var ct = TestContext.Current.CancellationToken;
-        await CreateDraftAsync("Draft only melody", shuhlofo: "Draft only variation", ct);
+        await CreateDraftAsync("Draft only melody", shuhlofoNumber: 1, ct);
 
         var options = await AnswerOptionsAsync(ct);
 
         options.Melodies.Should().NotContain("Draft only melody");
-        options.Shuhlofe.Should().NotContain("Draft only variation");
     }
 
     [Fact]
@@ -119,7 +121,7 @@ public class ChantsControllerTests : IDisposable
         // it would tell the player the answer is one of these few — the endpoint
         // would become a way of narrowing the round instead of answering it.
         var ct = TestContext.Current.CancellationToken;
-        await PublishAsync("Published unplayable melody", shuhlofo: null, ct);
+        await PublishAsync("Published unplayable melody", shuhlofoNumber: null, ct);
 
         var options = await AnswerOptionsAsync(ct);
 
@@ -134,7 +136,7 @@ public class ChantsControllerTests : IDisposable
         // The property the whole endpoint exists to preserve: three lists, no rows.
         // A player who recognises the text must still have to know the mode.
         var ct = TestContext.Current.CancellationToken;
-        await PublishAsync("Unpaired melody", shuhlofo: null, ct);
+        await PublishAsync("Unpaired melody", shuhlofoNumber: null, ct);
 
         var response = await client.GetAsync("/api/v1/chants/answer-options", ct);
         var json = await response.Content.ReadAsStringAsync(ct);
@@ -154,8 +156,8 @@ public class ChantsControllerTests : IDisposable
         // A melody name recurs across modes, so the same name is several chants. The
         // count of entries would otherwise hint at how many modes it appears in.
         var ct = TestContext.Current.CancellationToken;
-        await PublishAsync("Repeated melody", shuhlofo: null, ct, modePosition: 1);
-        await PublishAsync("Repeated melody", shuhlofo: null, ct, modePosition: 2);
+        await PublishAsync("Repeated melody", shuhlofoNumber: null, ct, modePosition: 1);
+        await PublishAsync("Repeated melody", shuhlofoNumber: null, ct, modePosition: 2);
 
         var options = await AnswerOptionsAsync(ct);
 
@@ -172,7 +174,7 @@ public class ChantsControllerTests : IDisposable
 
     private async Task<Guid> CreateDraftAsync(
         string transliteration,
-        string? shuhlofo,
+        int? shuhlofoNumber,
         CancellationToken ct,
         int modePosition = 1)
     {
@@ -181,7 +183,13 @@ public class ChantsControllerTests : IDisposable
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
-            new CreateChantRequest(Incipit, transliteration, mode.Id, Shuhlofo: shuhlofo),
+            new CreateChantRequest(
+                Incipit,
+                transliteration,
+                Farde,
+                mode.Id,
+                VariantKind: shuhlofoNumber is null ? ChantVariantKind.None : ChantVariantKind.Shuhlofo,
+                VariantNumber: shuhlofoNumber),
             ct);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -196,11 +204,11 @@ public class ChantsControllerTests : IDisposable
     /// </summary>
     private async Task PublishAsync(
         string transliteration,
-        string? shuhlofo,
+        int? shuhlofoNumber,
         CancellationToken ct,
         int modePosition = 1)
     {
-        var id = await CreateDraftAsync(transliteration, shuhlofo, ct, modePosition);
+        var id = await CreateDraftAsync(transliteration, shuhlofoNumber, ct, modePosition);
 
         using var content = new MultipartFormDataContent();
         var file = new ByteArrayContent(new byte[] { 0x53, 0x41, 0x42, 0x52, 0x4F });

@@ -8,7 +8,7 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 const { t } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { canEdit, canViewBackoffice, refresh: refreshAccess } = useMyAccess()
-const { list, listModes } = useChantsAdmin()
+const { list, listModes, listSections } = useChantsAdmin()
 
 const route = useRoute()
 const router = useRouter()
@@ -42,6 +42,7 @@ const searchInput = ref(initialSearch)
 const search = ref(initialSearch.trim())
 
 const status = ref<ChantStatus | ''>(queryString('status') as ChantStatus | '')
+const sectionId = ref(queryString('section'))
 const modeId = ref(queryString('mode'))
 const playableInNahlo = ref<'' | 'true' | 'false'>(
   queryString('playable') === 'true' || queryString('playable') === 'false'
@@ -51,6 +52,12 @@ const playableInNahlo = ref<'' | 'true' | 'false'>(
 
 // The modes come from the API rather than a client-side constant: the set grows
 // as the owner works through the tradition, and some sets run past eight.
+const { data: sections } = await useAsyncData(
+  'admin-chant-filter-sections',
+  () => listSections(),
+  { lazy: true, default: () => [], immediate: isAdmin.value === true },
+)
+
 const { data: modes } = await useAsyncData(
   'admin-chant-modes',
   () => listModes(),
@@ -64,11 +71,12 @@ const { data, pending, error, refresh } = await useAsyncData(
     pageSize: pageSize.value,
     search: search.value || undefined,
     status: status.value || undefined,
+    sectionId: sectionId.value || undefined,
     modeId: modeId.value || undefined,
     playableInNahlo: playableInNahlo.value === '' ? undefined : playableInNahlo.value === 'true',
   }),
   {
-    watch: [page, pageSize, search, status, modeId, playableInNahlo],
+    watch: [page, pageSize, search, status, sectionId, modeId, playableInNahlo],
     lazy: true,
     default: () => null,
     immediate: isAdmin.value === true,
@@ -76,7 +84,7 @@ const { data, pending, error, refresh } = await useAsyncData(
 )
 
 const hasActiveFilters = computed(() =>
-  Boolean(search.value || status.value || modeId.value || playableInNahlo.value))
+  Boolean(search.value || status.value || sectionId.value || modeId.value || playableInNahlo.value))
 
 const total = computed(() => data.value?.total ?? 0)
 
@@ -102,6 +110,7 @@ function syncQueryString() {
   if (pageSize.value !== 25) query.pageSize = String(pageSize.value)
   if (search.value) query.q = search.value
   if (status.value) query.status = status.value
+  if (sectionId.value) query.section = sectionId.value
   if (modeId.value) query.mode = modeId.value
   if (playableInNahlo.value) query.playable = playableInNahlo.value
   router.replace({ query })
@@ -142,6 +151,7 @@ function clearSearch() {
 function clearFilters() {
   clearSearch()
   status.value = ''
+  sectionId.value = ''
   modeId.value = ''
   playableInNahlo.value = ''
   onFilterChange()
@@ -167,6 +177,14 @@ const selectClass
           class="inline-flex items-center gap-2 rounded-md bg-[var(--color-accent)] px-4 py-2 font-sans text-sm font-medium text-white no-underline shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-accent-hover)]"
         >
           <span aria-hidden="true">+</span> {{ t('admin.chants.newChant') }}
+        </NuxtLink>
+        <!-- The sections are editable now rather than a deploy. Reachable from
+             here because that is where an editor notices one is missing. -->
+        <NuxtLink
+          to="/admin/chants/sections"
+          class="inline-flex items-center rounded-md border border-[var(--color-border-strong)] px-4 py-2 font-sans text-sm text-[var(--color-text)] no-underline transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          {{ t('admin.chantSections.title') }}
         </NuxtLink>
       </template>
     </AdminPageHeader>
@@ -218,6 +236,16 @@ const selectClass
             <option value="">{{ t('admin.chants.filters.statusAll') }}</option>
             <option value="Draft">{{ t('admin.chants.status.Draft') }}</option>
             <option value="Published">{{ t('admin.chants.status.Published') }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="filter-section" class="sr-only">{{ t('admin.chants.filters.sectionLabel') }}</label>
+          <select id="filter-section" v-model="sectionId" :class="selectClass" @change="onFilterChange">
+            <option value="">{{ t('admin.chants.filters.sectionAll') }}</option>
+            <option v-for="option in sections" :key="option.id" :value="option.id">
+              {{ option.name }}
+            </option>
           </select>
         </div>
 
@@ -297,7 +325,7 @@ const selectClass
                   {{ chant.modeName }}
                 </td>
                 <td class="hidden md:table-cell px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
-                  {{ chant.shuhlofo || '—' }}
+                  {{ chant.variantNumber ? `${t(`admin.chants.form.variantKind.${chant.variantKind}`)} ${chant.variantNumber}` : '—' }}
                 </td>
                 <td class="hidden md:table-cell px-4 py-3 font-sans text-sm">
                   <span v-if="chant.audioUrl" :title="t('admin.chants.recording.present')">✓</span>

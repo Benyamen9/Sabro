@@ -16,6 +16,7 @@ export interface paths {
                 query?: {
                     search?: string;
                     status?: components["schemas"]["ChantStatus"];
+                    sectionId?: string;
                     modeId?: string;
                     playableInNahlo?: boolean;
                     page?: number | string;
@@ -127,7 +128,476 @@ export interface paths {
             };
         };
         put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ModeRequest"];
+                    "text/json": components["schemas"]["ModeRequest"];
+                    "application/*+json": components["schemas"]["ModeRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["BethGazoModeDto"];
+                        "application/json": components["schemas"]["BethGazoModeDto"];
+                        "text/json": components["schemas"]["BethGazoModeDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/chants/sections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["BethGazoSectionDto"][];
+                        "application/json": components["schemas"]["BethGazoSectionDto"][];
+                        "text/json": components["schemas"]["BethGazoSectionDto"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SectionRequest"];
+                    "text/json": components["schemas"]["SectionRequest"];
+                    "application/*+json": components["schemas"]["SectionRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["BethGazoSectionDto"];
+                        "application/json": components["schemas"]["BethGazoSectionDto"];
+                        "text/json": components["schemas"]["BethGazoSectionDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/chants/modes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ModeRequest"];
+                    "text/json": components["schemas"]["ModeRequest"];
+                    "application/*+json": components["schemas"]["ModeRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["BethGazoModeDto"];
+                        "application/json": components["schemas"]["BethGazoModeDto"];
+                        "text/json": components["schemas"]["BethGazoModeDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
         post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/chants/modes/{id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: {
+                    up?: boolean;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/chants/sections/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SectionRequest"];
+                    "text/json": components["schemas"]["SectionRequest"];
+                    "application/*+json": components["schemas"]["SectionRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["BethGazoSectionDto"];
+                        "application/json": components["schemas"]["BethGazoSectionDto"];
+                        "text/json": components["schemas"]["BethGazoSectionDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/chants/sections/{id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: {
+                    up?: boolean;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -5142,6 +5612,14 @@ export interface components {
             /** Format: int32 */
             position: number | string;
         };
+        BethGazoSectionDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** Format: int32 */
+            position: number | string;
+            allowedModeIds: string[];
+        };
         BiblicalBookDto: {
             /** Format: uuid */
             id: string;
@@ -5190,8 +5668,8 @@ export interface components {
         };
         ChantAnswerOptionsDto: {
             melodies: string[];
+            sections: components["schemas"]["BethGazoSectionDto"][];
             modes: components["schemas"]["BethGazoModeDto"][];
-            shuhlofe: string[];
         };
         ChantDto: {
             /** Format: uuid */
@@ -5200,9 +5678,14 @@ export interface components {
             syriacIncipitVocalized: null | string;
             transliteration: string;
             /** Format: uuid */
-            modeId: string;
-            modeName: string;
-            shuhlofo: null | string;
+            sectionId: string;
+            sectionName: string;
+            /** Format: uuid */
+            modeId: null | string;
+            modeName: null | string;
+            variantKind: components["schemas"]["ChantVariantKind"];
+            /** Format: int32 */
+            variantNumber: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId: null | string;
             inheritsMelodyFromTransliteration: null | string;
@@ -5216,6 +5699,8 @@ export interface components {
         };
         /** @enum {string} */
         ChantStatus: "Draft" | "Published";
+        /** @enum {string} */
+        ChantVariantKind: "None" | "Shuhlofo" | "Hrino";
         /** @enum {string} */
         ContentArea: "Lexicon" | "Shmo" | "Nahlo";
         CreateAnnotationRequest: {
@@ -5259,9 +5744,13 @@ export interface components {
             syriacIncipit: string;
             transliteration: string;
             /** Format: uuid */
-            modeId: string;
+            sectionId: string;
+            /** Format: uuid */
+            modeId?: null | string;
             syriacIncipitVocalized?: null | string;
-            shuhlofo?: null | string;
+            variantKind?: components["schemas"]["ChantVariantKind"];
+            /** Format: int32 */
+            variantNumber?: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId?: null | string;
         };
@@ -5610,6 +6099,9 @@ export interface components {
             expression: string;
             tileForm: string;
         };
+        ModeRequest: {
+            name: string;
+        };
         NahloPuzzleDto: {
             /** Format: date */
             date: string;
@@ -5617,8 +6109,11 @@ export interface components {
             chantId: string;
             audioUrl: string;
             transliteration: string;
-            modeName: string;
-            shuhlofo: null | string;
+            sectionName: string;
+            modeName: null | string;
+            variantKind: components["schemas"]["ChantVariantKind"];
+            /** Format: int32 */
+            variantNumber: null | number | string;
             syriacIncipit: string;
             syriacIncipitVocalized: null | string;
         };
@@ -5861,6 +6356,10 @@ export interface components {
             documentCount: number | string;
             elapsed: string;
         };
+        SectionRequest: {
+            name: string;
+            allowedModeIds: string[];
+        };
         SegmentDto: {
             /** Format: uuid */
             id: string;
@@ -6003,9 +6502,13 @@ export interface components {
             syriacIncipit: string;
             transliteration: string;
             /** Format: uuid */
-            modeId: string;
+            sectionId: string;
+            /** Format: uuid */
+            modeId?: null | string;
             syriacIncipitVocalized?: null | string;
-            shuhlofo?: null | string;
+            variantKind?: components["schemas"]["ChantVariantKind"];
+            /** Format: int32 */
+            variantNumber?: null | number | string;
             /** Format: uuid */
             inheritsMelodyFromId?: null | string;
         };
