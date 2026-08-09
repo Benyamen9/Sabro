@@ -11,6 +11,22 @@
 export const CIRCUIT_GAMES = ['meltho', 'mno', 'shmo', 'nahlo'] as const
 export type CircuitGame = (typeof CIRCUIT_GAMES)[number]
 
+/**
+ * The games currently offered as a hand-off destination.
+ *
+ * Nahlo is deployed and reachable, but its treasury holds no recordings yet, so
+ * `/play/nahlo/today` answers 409 and the game cannot serve a puzzle. Handing a
+ * player there ends their circuit on a closed door, so it is not offered.
+ *
+ * It deliberately stays a `CircuitGame`: Nahlo still marks itself played, and
+ * nothing about the cookie's vocabulary changes. This is a temporary omission,
+ * not a removal.
+ *
+ * ⚠️ Put 'nahlo' back here — in EVERY copy of this file (five: Sabro, Meltho,
+ * Mno, Shmo, Nahlo) — as soon as the recordings land.
+ */
+const CIRCUIT_HANDOFF: readonly CircuitGame[] = ['meltho', 'mno', 'shmo']
+
 interface CircuitState {
   d: string
   g: string[]
@@ -45,7 +61,7 @@ export function useDailyCircuit() {
   /** The first circuit game not yet played on `date`, or null when the day is done. */
   function nextUnplayed(date: string = circuitToday()): CircuitGame | null {
     const games = playedOn(date)
-    return CIRCUIT_GAMES.find((g) => !games.includes(g)) ?? null
+    return CIRCUIT_HANDOFF.find((g) => !games.includes(g)) ?? null
   }
 
   return { hasPlayed, nextUnplayed }
