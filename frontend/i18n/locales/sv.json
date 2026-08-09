@@ -331,7 +331,8 @@
     },
     "pronunciation": {
       "listen": "Lyssna",
-      "pause": "Pausa"
+      "pause": "Pausa",
+      "none": "Ingen inspelning ännu."
     },
     "letters": {
       "Alaph": "Olaf",

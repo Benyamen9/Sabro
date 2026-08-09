@@ -331,7 +331,8 @@
     },
     "pronunciation": {
       "listen": "Luisteren",
-      "pause": "Pauzeren"
+      "pause": "Pauzeren",
+      "none": "Nog geen opname."
     },
     "letters": {
       "Alaph": "Olaf",
