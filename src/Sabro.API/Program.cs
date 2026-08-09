@@ -192,6 +192,14 @@ try
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
 
+    // BEFORE UseStaticFiles, deliberately. CORS only decorates responses produced by
+    // middleware that runs after it, so with static files first, /media/* answered with
+    // no Access-Control-Allow-Origin. An <audio> element does not care — it loads
+    // cross-origin without CORS — so playback worked and hid this. But fetch() does
+    // care, and the word pages read the recording with fetch() to draw its waveform.
+    // The symptom was a flat strip on every word, with nothing failing anywhere.
+    app.UseCors("frontend");
+
     // Serves wwwroot/media (bibliography images, pronunciation recordings) — no auth,
     // matching "clients read content through validated URLs" for static assets.
     // The custom provider corrects the framework's IIS-derived defaults, which label
@@ -200,7 +208,6 @@ try
     {
         ContentTypeProvider = PronunciationAudioFormats.CreateContentTypeProvider(),
     });
-    app.UseCors("frontend");
     app.UseRateLimiter();
     app.UseAuthentication();
     app.UseAuthorization();

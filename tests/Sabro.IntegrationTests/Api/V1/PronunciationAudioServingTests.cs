@@ -71,6 +71,30 @@ public class PronunciationAudioServingTests : IDisposable
     }
 
     [Fact]
+    public async Task ServedRecording_CarriesCorsHeaders_SoTheWaveformCanBeDrawn()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var entryId = await CreateEntryAsync(ct);
+        var url = await UploadAsync(entryId, "audio/mp4", ct);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Add("Origin", "http://localhost:3100");
+        var fetched = await client.SendAsync(request, ct);
+
+        fetched.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        // The word pages draw the recording as a waveform, which means reading it with
+        // fetch() + decodeAudioData — and fetch() is subject to CORS. An <audio> element
+        // is not, so playback keeps working with or without this header: the only symptom
+        // of losing it is a flat strip on every word, with nothing failing anywhere.
+        // This asserts middleware ORDER — UseCors must run before UseStaticFiles, or
+        // static responses are never decorated.
+        fetched.Headers.Should().ContainKey("Access-Control-Allow-Origin");
+        fetched.Headers.GetValues("Access-Control-Allow-Origin")
+            .Should().ContainSingle().Which.Should().Be("http://localhost:3100");
+    }
+
+    [Fact]
     public async Task UploadedRecording_KeepsItsBytes()
     {
         var ct = TestContext.Current.CancellationToken;
