@@ -128,6 +128,17 @@
 	reverse_proxy shmo:3000
 }
 
+# Nahlo — Beth Gazo chant game (own repo, own container), sharing Sabro's API +
+# database behind this same Caddy on its own hostname. It streams audio from
+# the API's media volume rather than serving any itself, so nothing extra is
+# proxied here.
+{$NAHLO_DOMAIN} {
+	import accesslog
+	import security_headers
+	encode zstd gzip
+	reverse_proxy nahlo:3000
+}
+
 # Umami — self-hosted, cookieless analytics. Its own hostname so the tracker
 # script and the collect endpoint are first-party to the ecosystem rather than a
 # third party, which is the whole point of self-hosting it. The dashboard behind
