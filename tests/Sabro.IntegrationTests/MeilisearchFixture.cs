@@ -14,8 +14,7 @@ public sealed class MeilisearchFixture : IAsyncLifetime
 {
     private const string MasterKey = "test-master-key";
 
-    private readonly IContainer container = new ContainerBuilder()
-        .WithImage("getmeili/meilisearch:v1.13")
+    private readonly IContainer container = new ContainerBuilder("getmeili/meilisearch:v1.13")
         .WithPortBinding(7700, true)
         .WithEnvironment("MEILI_MASTER_KEY", MasterKey)
         .WithEnvironment("MEILI_NO_ANALYTICS", "true")
