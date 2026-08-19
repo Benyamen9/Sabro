@@ -35,7 +35,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 | Markdown | Markdig |
 | i18n | @nuxtjs/i18n — **EN, FR, NL, DE, SV in every frontend**, hub and clients alike |
 | Logging | Serilog + Seq |
-| Monitoring | Health check endpoint (live) + UptimeRobot (**not set up yet**) |
+| Monitoring | Health check endpoint (live) + UptimeRobot (live since 2026-07-28) |
 | Backups | pgBackRest (point-in-time recovery) |
 
 **Development environment:** Windows + Visual Studio
@@ -443,6 +443,12 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   | Mno | `https://mno.sabro.be` |
   | Shmo | `https://shmo.sabro.be` |
 
+  > ⚠️ **Nahlo is not monitored.** Caddy serves `{$NAHLO_DOMAIN}` and the container
+  > is deployed, but no UptimeRobot monitor watches it — the five above predate
+  > Nahlo's deployment slot (#199, 2026-08-09). Add a sixth monitor on
+  > `https://nahlo.sabro.be` when the recordings land and the game opens; until
+  > then its downtime is invisible. `analytics.sabro.be` is likewise unwatched.
+
   Alerts go to the **Owner's personal mailbox directly**, deliberately *not* via
   `contact@sabro.be` — that address forwards to Hotmail and Microsoft drops the
   forwarded mail silently, which would give detection with no delivery.
@@ -533,6 +539,20 @@ Test pyramid with TDD-first approach for Domain and Application layers.
 - **Testcontainers** — real PostgreSQL + Meilisearch in Docker for integration tests
 - **Playwright** — E2E tests against the Nuxt frontend
 - **Vitest** — Nuxt-side unit tests (composables, components)
+
+> ⚠️ **The integration fixtures do not run the production versions.** As of
+> 2026-08-19 `PostgresFixture` pins `postgres:16-alpine` while both compose files
+> run `postgres:17-alpine`, and `MeilisearchFixture` pins
+> `getmeili/meilisearch:v1.13` while production runs `v1.51`. Migrations and
+> index behaviour are therefore verified against a different major Postgres and a
+> far older Meilisearch than they meet in production. Raise both to match, and
+> keep them matched when the compose pins move.
+
+**Testcontainers version note.** `Testcontainers` 4.14.0 obsoletes the
+parameterless `ContainerBuilder()` / `PostgreSqlBuilder()` constructors in favour
+of ones taking the image, and `TreatWarningsAsErrors` turns that CS0618 into a
+build failure — so the image goes in the constructor, not in a following
+`WithImage` call.
 
 ### Coverage Targets
 - Domain + Application: **80–90%**
