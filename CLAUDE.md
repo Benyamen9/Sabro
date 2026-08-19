@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications (starting with Meltho, a Syriac Wordle game). Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
+Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications — **four at present: Meltho (words), Mno (numerals), Shmo (figures) and Nahlo (chants)**, each in its own repository. Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
 
 The long-term scope includes translating the entire Bible (Peshitta) and works of various Syriac Church Fathers.
 
@@ -12,14 +12,13 @@ The long-term scope includes translating the entire Bible (Peshitta) and works o
 
 The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build order has been re-sequenced. Translation work is set aside for now; the immediate goal is a launched, living ecosystem.
 
-1. Ship Sabro as the ecosystem hub + API: **Lexicon**, **Identity/Profile**, **Play**, the `/api/v1/` contract, Logto, and a lean hub frontend.
-2. Launch **Meltho** first, against that API.
-3. **Translations and Biblical are deferred** to after Meltho's launch — fully specified below, but not on the launch critical path. Meltho depends only on the Lexicon, never on translated content. **Reviews is now partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
+1. ✅ Sabro shipped as the ecosystem hub + API: **Lexicon**, **Identity/Profile**, **Play**, the `/api/v1/` contract, Logto, and the hub frontend.
+2. ✅ **Meltho** launched against that API, then **Mno**, **Shmo** and **Nahlo** followed on the same foundation — the multi-game model held, with no rework.
+3. **Translations and Biblical remain deferred** — fully specified below, but not on any current critical path. No game depends on translated content. **Reviews is partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
-**Launch critical path:**
-Sabro deployed (Lexicon + Identity/Profile + Play + API + Logto) → backoffice (word CRUD) → populate a small launch pool (~30–50 published, playable words is enough to launch; the full 500–600 is a growth target, not a launch gate) → Meltho frontend (game + login + raw profile stats).
+**Current state.** Four games are deployed behind Caddy and watched by UptimeRobot. Three are in the daily circuit; **Nahlo is deployed but not yet offered** — its treasury holds no recordings, so `GET /play/nahlo/today` answers 409 and handing a player there would end their circuit on a closed door. See *Ecosystem Clients* for the standing instruction that unblocks it.
 
-**Hub philosophy — wide model, narrow surface.** The data foundation is built to see far (multi-game results, profile, cross-project shape), but the launch UI stays lean: login + profile + raw Meltho stats. The rich dashboard, leaderboards, and any Shmo surface grow later on the same foundation, with no model rework.
+**Hub philosophy — wide model, narrow surface.** The data foundation was built to see far (multi-game results, profile, cross-project shape) while the launch UI stayed lean. That bet paid: three further games landed on the same `GameResult` shape without a migration. Keep new surfaces additive for the same reason.
 
 ---
 
@@ -30,11 +29,11 @@ Sabro deployed (Lexicon + Identity/Profile + Play + API + Logto) → backoffice 
 | Backend | ASP.NET Core 10 (LTS) |
 | Database | PostgreSQL (via Entity Framework Core) — single shared database for the whole ecosystem |
 | Search | Meilisearch (typo-tolerant, dedicated service) |
-| Frontend | Nuxt (Vue 3 + TypeScript) |
+| Frontend | Nuxt 4 (Vue 3 + TypeScript strict) — the hub and all four game clients; Tailwind v4 in the clients |
 | Auth | Logto (self-hosted IDP, OIDC) |
 | Validation | FluentValidation |
 | Markdown | Markdig |
-| i18n | @nuxtjs/i18n (EN at MVP, FR + NL prepared) |
+| i18n | @nuxtjs/i18n — **EN, FR, NL, DE, SV in every frontend**, hub and clients alike |
 | Logging | Serilog + Seq |
 | Monitoring | Health check endpoint (live) + UptimeRobot (**not set up yet**) |
 | Backups | pgBackRest (point-in-time recovery) |
@@ -48,7 +47,7 @@ Sabro deployed (Lexicon + Identity/Profile + Play + API + Logto) → backoffice 
 ### System Level
 Sabro exposes a versioned REST API (`/api/v1/`) consumed directly by client applications. There is no API gateway or hub component — clients call Sabro's API directly. Authentication is delegated to a self-hosted Logto instance shared across all applications in the ecosystem.
 
-**Single source of truth.** There is **one shared PostgreSQL database** for the entire ecosystem, owned by Sabro. Client applications (Meltho, future apps) do **not** have their own application database and never connect to PostgreSQL directly. They read content and write their own play data exclusively through Sabro's API. (Logto keeps its own internal store for auth — that is infrastructure, not ecosystem application data.)
+**Single source of truth.** There is **one shared PostgreSQL database** for the entire ecosystem, owned by Sabro. Client applications (Meltho, Mno, Shmo, Nahlo, and any future app) do **not** have their own application database and never connect to PostgreSQL directly. They read content and write their own play data exclusively through Sabro's API. (Logto keeps its own internal store for auth — that is infrastructure, not ecosystem application data.)
 
 ```
         ┌─────────────────────────┐
@@ -56,17 +55,20 @@ Sabro exposes a versioned REST API (`/api/v1/`) consumed directly by client appl
         │   self-hosted, OIDC     │
         └────────────┬────────────┘
                      │ JWT validated via JWKS
-        ┌────────────┼────────────┐
-        ▼            ▼            ▼
-     [Sabro]      [Meltho]    [Future clients]
-        │            │            │
-        │   reads content / writes play results
-        │            │            │
-        └──────► /api/v1/ ◄───────┘
+     ┌──────────┬─────────┼─────────┬──────────┐
+     ▼          ▼         ▼         ▼          ▼
+ [Sabro hub] [Meltho]   [Mno]    [Shmo]    [Nahlo]
+     │          │         │         │          │
+     └──────────┴─────────┴─────────┴──────────┘
+         reads content / writes play results
                      │
                      ▼
         ┌─────────────────────────┐
-        │  PostgreSQL (single DB)  │  ← Sabro is the only writer of record
+        │    /api/v1/  (Sabro)    │
+        └────────────┬────────────┘
+                     ▼
+        ┌─────────────────────────┐
+        │ PostgreSQL (single DB)  │  ← Sabro is the only writer of record
         └─────────────────────────┘
 ```
 
@@ -82,8 +84,10 @@ Sabro/
 │   ├── Sabro.Shared/               ← Shared types, interfaces, base classes
 │   └── Modules/
 │       ├── Sabro.Lexicon/          ← Words, roots, morphology, transliteration, playable pool
-│       ├── Sabro.Identity/         ← User profiles, roles (Logto integration)
-│       ├── Sabro.Play/             ← Cross-game results + Meltho daily-puzzle state
+│       ├── Sabro.Identity/         ← User profiles, area grants (Logto integration)
+│       ├── Sabro.Historical/       ← Historical figures and their attributes (feeds Shmo)
+│       ├── Sabro.BethGazo/         ← Chants, modes, sections, recordings (feeds Nahlo)
+│       ├── Sabro.Play/             ← Cross-game results + the four daily-puzzle states
 │       ├── Sabro.Translations/     ← Translations, versioning, multilingual content (DEFERRED)
 │       ├── Sabro.Reviews/          ← Field proposals (ACTIVE); peer review 3 levels (DEFERRED)
 │       └── Sabro.Biblical/         ← Biblical passages (Peshitta), cross-references (DEFERRED)
@@ -141,18 +145,51 @@ Owns **who the user is**. Authentication itself is delegated to Logto via OIDC; 
 The hub's "my profile" surface reads from this module. Play history (what the user played) lives in the **Play** module, not here — Identity is identity, Play is activity. The dashboard composes both.
 
 ### Play
-Owns **ecosystem play data**: cross-game results and Meltho's daily-puzzle state. This module exists because, with a single shared database and no per-client database, shared play state must live in Sabro. It is deliberately lean and is built multi-game from day one so Shmo can reuse it without rework.
+Owns **ecosystem play data**: cross-game results and the daily-puzzle state of all four games. This module exists because, with a single shared database and no per-client database, shared play state must live in Sabro. It was built multi-game from day one, and that has now been proved three times over — Mno, Shmo and Nahlo each landed on the same `GameResult` shape without a model change.
 
-**`GameResult` — generic, multi-game.** Keyed by Logto user ID + a `GameId` string discriminator (`meltho`, later `shmo`, …). Fields: `PlayedOn` (date), `Solved` (bool), `Attempts` (int), and an optional `DetailJson` for game-specific extras. Unique constraint on (`LogtoUserId`, `GameId`, `PlayedOn`) — one result per user, per game, per day. Streaks and aggregates are **derived** from results, not stored. This generic shape is the cross-project equivalent of the savant/ludic split used elsewhere: do not model a Meltho-specific scores table.
+**`GameResult` — generic, multi-game.** Keyed by Logto user ID + a `GameId` string discriminator. The identifiers are constants on `Sabro.Play.Domain.Games` — `meltho`, `mno`, `shmo`, `nahlo` — never string literals at call sites. Fields: `PlayedOn` (date), `Solved` (bool), `Attempts` (int), and an optional `DetailJson` for game-specific extras. Unique constraint on (`LogtoUserId`, `GameId`, `PlayedOn`) — one result per user, per game, per day. Streaks and aggregates are **derived** from results, not stored. This generic shape is the cross-project equivalent of the savant/ludic split used elsewhere: do not model a Meltho-specific scores table.
 
-**Meltho daily puzzle — shared server state.** Records which Lexicon entry was served on which day (`GameId`, `Date`, `LexiconEntryId`). Selection is **get-or-create per date** (idempotent): the first request for a given day picks, records, and returns that day's word; subsequent requests return the recorded one, so every player gets the same puzzle. Selection draws from the eligible pool and excludes any word served within the **anti-repetition window**.
+**Four daily puzzles — shared server state.** One entity per game (`MelthoDailyPuzzle`, `MnoDailyPuzzle`, `ShmoDailyPuzzle`, `NahloDailyPuzzle`), each recording what was served on which day. Selection is **get-or-create per date** (idempotent): the first request for a given day picks, records, and returns it; subsequent requests return the recorded one, so every player gets the same puzzle.
 
-**Anti-repetition window — configurable, never hardcoded.** A configuration value (`Meltho:AntiRepetitionWindowDays`). Start it low so a small launch pool (~30–50 words) never starves, and raise it toward 365 as the pool grows past that size. A hardcoded 365 with a 40-word pool would leave the selector with no eligible word after 40 days and break the game — this must remain a config value.
+Three of the four draw from a curated pool and exclude anything served inside the **anti-repetition window**. **Mno is the exception** — its equations are *generated* (`MnoEquationGenerator`), so there is no pool to exhaust and it carries no window option at all.
 
-**Boundary with Meltho.** Sabro answers *"what is today's word"* (shared state, single DB, central anti-repetition). Meltho owns the actual **game mechanics**: guess evaluation, hint coloring (green/yellow/grey), attempt UI, and result sharing. The daily-word selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
+**Anti-repetition window — per game, configurable, never hardcoded.** Each pool-backed game owns its own options class and its own config key, because the pools are different sizes:
+
+| Game | Config key | Default | Why |
+|---|---|---|---|
+| Meltho | `Meltho:AntiRepetitionWindowDays` | 30 | Pool grown past launch size |
+| Shmo | `Shmo:AntiRepetitionWindowDays` | 30 | Same |
+| Nahlo | `Nahlo:AntiRepetitionWindowDays` | **7** | The chant treasury starts at zero — a 30-day window would starve it immediately |
+| Mno | *(none)* | — | Generated, not drawn from a pool |
+
+Start a window low so a small pool never starves, and raise it as the pool grows. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
+
+**Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro never learns what a player guessed, only whether they solved it and in how many attempts. Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
+
+**Beyond the puzzle.** Play also serves `meltho/library` (past words, public and anonymous — today's word is never included, it would spoil the live puzzle) and `meltho/leaderboard` (signed-in only, ranked by longest streak; appearing in it requires an explicit opt-in on the player's profile, while the caller's own standing is always shown).
+
+### Historical
+Owns the roster of **historical figures** — biblical figures through the Syriac Church Fathers and beyond — and is the content behind **Shmo**. Each figure carries the attributes Shmo scores a guess on: `Category`, `Era` (a numeric year, diffed as higher/lower with near/far tiers), `Period` (a chronological but non-numeric enum, diffed by position in the declared sequence), `Role`, `Region`, `Tradition` (nullable), and `Gender`.
+
+Same lifecycle as the Lexicon: `Draft` → `Published`, plus a manual `PlayableInShmo` editorial flag that only a published figure may carry.
+
+> **The enum order is a contract.** `HistoricalPeriod` is diffed *by ordinal position*, so reordering its members silently changes every near/far verdict in Shmo. Append new periods; never reorder. Shmo hand-copies these enums into `app/types/figure.ts` and guards the copy with `test/figure.test.ts` — see *Ecosystem Clients*.
+
+### BethGazo
+Owns the **Beth Gazo** — the treasury of chants — and is the content behind **Nahlo**.
+
+**A chant is identified by four things, not one:** its melody name, its section, its mode where the section has one, and its variant. A melody name recurs across modes, so "Maryam yoldath Aloho" names a family rather than a chant; only "Maryam yoldath Aloho, Tlithoyo" picks one out. That is the whole reason the game works — were the mode derivable from the name, naming the melody would hand the player the mode for free.
+
+**Sections and modes are reference tables**, editable by the Owner, not hardcoded sets. There are ten sections and nine modes (the farde 1–8 *plus* mshaḥelfotho). `Chant.ModeId` is **nullable**, and its null means *"this section has no modes"* — never *"nobody has filled it in yet"*: the madroshe have no mode at all, and mshaḥelfotho belongs to the farde alone. Both rules are carried by `BethGazoSection.AllowedModes`.
+
+> **Never hardcode eight modes.** The list is served in full by `GET /chants/answer-options` and can grow again. Nothing in Sabro or in Nahlo counts modes, and nothing should.
+
+**`ChantVariantKind` distinguishes two things the book prints.** A **shuḥlofo** is a variation *of the melody itself* — the same qolo sung another way. A **ḥrino** (ܐܚܪܢܐ, "another"; pl. *ḥrone*) is simply another chant standing in the same mode, not a variant of anything. They must be told apart or a *shuḥlofo 1* and a *ḥrino 1* under one melody and mode collide on the same four values, making the second unsaveable. A string-converted enum, per the house rule.
+
+Recordings are uploaded through the backoffice and stored via `IChantAudioStorage` (`FileSystemChantAudioStorage` at this scale). Lifecycle mirrors the Lexicon: `Draft` → `Published` + a manual `PlayableInNahlo` flag.
 
 ### Translations
-**Status: deferred (post-Meltho-launch). Spec retained, not built first.**
+**Status: deferred. Spec retained, not built first.**
 
 Manages original English translations of biblical books (Peshitta) and patristic works (starting with Dionysios bar Ṣalibi's commentaries). All content is added progressively (chapter by chapter, verse by verse). Every change creates a new version — full history is preserved. Content is authored in Markdown (rendered via Markdig). The schema supports multilingual content from day one (EN at MVP, FR + NL planned).
 
@@ -174,7 +211,7 @@ Three-level peer review system *(deferred)*:
 Includes a suggested edits workflow: invited expert reviewers propose corrections; the translator (Owner) accepts or rejects each suggestion. Suggestions never modify content directly.
 
 ### Biblical
-**Status: deferred (post-Meltho-launch). Spec retained, not built first.**
+**Status: deferred. Spec retained, not built first.**
 
 Manages Syriac biblical passages from the Peshitta. Stores passage references and links them to lexicon entries and translation annotations.
 
@@ -197,21 +234,61 @@ For MVP: biblical cross-references only. Patristic and external citations deferr
 
 ---
 
+## Ecosystem Clients
+
+Four game clients consume Sabro's API, each in **its own repository**, each its own OIDC application in the shared Logto tenant, each its own container behind Caddy. All four are Nuxt 4 + Tailwind v4 + Vitest, and all four ship **EN, FR, NL, DE and SV**.
+
+| App | Repo | Game | Dev port | Sabro content behind it |
+|---|---|---|---|---|
+| **Meltho** (ܡܠܬܐ, "word") | `Benyamen9/Meltho` | Wordle on Syriac words; 6 guesses, green/yellow/grey | 3100 | Lexicon |
+| **Mno** (ܡܢܐ, "he counted") | `Benyamen9/Mno` | Mathler on additive Syriac alphabetic numerals; 6 guesses | 3200 | *(generated)* |
+| **Shmo** (ܫܡܐ, "name") | `Benyamen9/Shmo` | Pokédle on historical figures; **unlimited guesses, no losing state** | 3300 | Historical |
+| **Nahlo** (ܢܚܠܐ) | `Benyamen9/Nahlo` | Name the chant — melody + mode + shuḥlofo (yes/no); 6 guesses, green/grey only | 3400 | BethGazo |
+
+The hub runs on :3000 and Logto on :3001/:3002.
+
+> **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
+
+### This file is the ecosystem's memory — fold changes back into it
+
+The four client repos carry no `CLAUDE.md`. Their **`README.md` is each app's memory**, and it records Owner rulings and reasoning that exist nowhere else. Sabro's `CLAUDE.md` is the only file loaded automatically, so:
+
+**When anything in a client README changes — a rule, an Owner ruling, a port, a config default, a language — fold it into this file in the same change.** Each client README carries a matching pointer back here. A fact that lives only in a client repo is a fact this file will eventually contradict.
+
+### Mirrored contracts — duplicated across repo boundaries
+
+Four pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only one has a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
+
+| Mirror | Sabro side | Client side | Guard |
+|---|---|---|---|
+| Historical enums | `Sabro.Historical.Domain` | Shmo `app/types/figure.ts` | ✅ `test/figure.test.ts` |
+| Syriac letter counting | `playableLength` | Meltho `app/utils/syriac.ts` | ❌ none |
+| Numeral speller | Sabro's C# speller | Mno `app/utils/numerals.ts` | ❌ none |
+| Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** client | ❌ comment only |
+
+**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies; `CIRCUIT_HANDOFF` currently omits `nahlo`, because handing a player to a game that answers 409 ends their circuit on a closed door.
+
+> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
+
 ## Backoffice (Editorial Admin)
 
-The editorial write surface for Sabro's own content. It is **part of Sabro, not a client** — the "clients are read-only consumers" rule does not apply to it. It is the first content-write surface in the ecosystem and sits on the launch critical path (populating the word pool depends on it).
+The editorial write surface for Sabro's own content. It is **part of Sabro, not a client** — the "clients are read-only consumers" rule does not apply to it. It is the content-write surface for the whole ecosystem: every game's pool is populated here.
 
-**Placement.** Admin routes inside the existing Sabro Nuxt frontend (e.g. `/admin/lexicon`), gated by an admin role from Logto. No separate admin app — separation is by authorization, not by deployment.
+**Placement.** Admin routes inside the existing Sabro Nuxt frontend (`/admin/...`), gated by an area grant from Logto. No separate admin app — separation is by authorization, not by deployment.
 
 **Write path.** All writes go through the same Application layer and FluentValidation as the rest of Sabro, via admin-scope API endpoints. No parallel, unvalidated write path.
 
-**v1 scope (to launch Meltho): Lexicon word CRUD only.**
-- Create / edit / delete a Lexicon entry: unvocalized + optional vocalized Syriac (NFC on input), optional SBL transliteration, a gloss per configured language (EN + FR + NL + DE + SV).
-- `Draft` ↔ `Published` lifecycle (publish gated on a gloss in every configured language).
-- `PlayableInMeltho` toggle (only on `Published` entries).
-- Computed playable length shown read-only.
+**Current surface** — one section per content type, each following the same shape (list → edit, `Draft` ↔ `Published`, a playable toggle only on published rows):
 
-**Deferred (model kept ready, no UI at launch):** liturgical calendar / manual daily-word pinning; reviewer moderation; player statistics dashboards. None of these block Meltho's launch.
+| Section | Feeds | Notes |
+|---|---|---|
+| `/admin/lexicon` | Meltho | Unvocalized + optional vocalized Syriac (NFC on input), optional SBL transliteration, a gloss per configured language. Publish gated on a gloss in **every** configured language; computed playable length shown read-only |
+| `/admin/historical-figures` | Shmo | The scoreable attributes; `PlayableInShmo` |
+| `/admin/chants` | Nahlo | Melody, section, mode, variant + **recording upload**; `PlayableInNahlo`. `/admin/chants/sections` edits the sections and their allowed modes |
+| `/admin/proposals` | — | Field proposals from area reviewers; the Owner accepts (applying the change) or rejects |
+| `/admin/people` | — | Area grants; owner changes require a confirmation step |
+
+**Still deferred (model kept ready, no UI):** liturgical calendar / manual daily-puzzle pinning; player statistics dashboards.
 
 ---
 
@@ -228,13 +305,22 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 - Rate limiting applied to all public endpoints
 - OpenAPI/Swagger documentation generated automatically (used to generate TypeScript types for the frontend)
 
-### Key endpoints (launch set)
+### Key endpoints
 
 **Content (read):**
 - `GET /api/v1/lexicon/...` — published lexicon reads.
 
-**Meltho puzzle (read, shared state):**
-- `GET /api/v1/play/meltho/today` — returns today's puzzle for Meltho (get-or-create per date; identical for all players; respects the anti-repetition window).
+**Daily puzzles (read, shared state)** — get-or-create per date, identical for all players, each respecting its own anti-repetition window:
+- `GET /api/v1/play/meltho/today`
+- `GET /api/v1/play/mno/today`
+- `GET /api/v1/play/shmo/today`
+- `GET /api/v1/play/nahlo/today` — **answers `409` when no chant is eligible** (empty pool, or one too small for the window). That is a normal state, not an error: clients render it as "no chant today".
+
+**Client support reads:**
+- `GET /api/v1/chants/answer-options` — Nahlo's three suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
+- `GET /api/v1/historical-figures` — Shmo's published roster, fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
+- `GET /api/v1/play/meltho/library` — past Meltho words, public and anonymous. Today's word is never included.
+- `GET /api/v1/play/meltho/leaderboard` (`api:v1:write`) — signed-in only, ranked by longest streak; appearing requires an opt-in on the profile, the caller's own standing is always shown.
 
 **Play results (authenticated user writes / reads):**
 - `POST /api/v1/play/results` (`api:v1:write`) — the authenticated user records their result; one per user/game/day (idempotent on the unique key).
@@ -251,8 +337,10 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 
 ## Search (Meilisearch)
 
-Meilisearch indexes are kept in sync with PostgreSQL. At launch, only the **`lexicon`** index is active; the others come online with their (deferred) modules:
-- `lexicon` — Syriac words, roots, transliterations, meanings **(active at launch)**
+Meilisearch indexes are kept in sync with PostgreSQL. Three are active; the rest come online with their (deferred) modules:
+- `lexicon` — Syriac words, roots, transliterations, meanings **(active)**
+- `chants` — Beth Gazo melodies, sections, modes **(active)**
+- `historical_figures` — the Shmo roster **(active)**
 - `translations` — English translation text (FR/NL when available) *(with Translations module)*
 - `annotations` — inline annotations with denormalized parent (source/chapter/verse) coordinates *(with Reviews/Translations)*
 - `biblical_passages` — Peshitta passages with metadata *(with Biblical module)*
@@ -305,6 +393,8 @@ Provisional standard: **SBL** (Society of Biblical Literature). Stored alongside
 ### UI
 All interface strings in `@nuxtjs/i18n` from day one. **Five** locale files (`en.json`, `fr.json`, `nl.json`, `de.json`, `sv.json`) — a new string must be added to all five or the build ships a missing key. No hardcoded UI strings anywhere — everything goes through `$t('key')`.
 
+**This holds in all five frontends** — the hub and every game client — and it is already true in the code: each ships all five locale files with matching key counts. Earlier client READMEs claimed narrower coverage ("EN at launch, FR + NL prepared"); that was documentation lagging the code, corrected on 2026-08-19. **Five, everywhere, is the rule** — a new client starts with all five.
+
 ### Content
 Schema is multilingual from day one (`language` column on `Translation` and `LexiconMeaning` tables). Lexicon meanings require a gloss in every configured language to publish — currently EN + FR + NL + DE + SV (see Lexicon). For deferred translation content, only English exists at first, with a "coming soon" message for the others. Adding new languages later requires no migration — just new content rows.
 
@@ -312,7 +402,7 @@ Schema is multilingual from day one (`language` column on `Translation` and `Lex
 
 ## Authentication (Logto)
 
-Each application in the ecosystem (Sabro, Meltho, future apps) is declared as a separate OIDC application in the central Logto instance. Sabro's API validates JWT bearer tokens via Logto's JWKS endpoint using the standard `Microsoft.AspNetCore.Authentication.JwtBearer` middleware — no Logto-specific SDK needed on the backend.
+Each application in the ecosystem (Sabro, Meltho, Mno, Shmo, Nahlo, and any future app) is declared as a separate OIDC application in the central Logto instance. Sabro's API validates JWT bearer tokens via Logto's JWKS endpoint using the standard `Microsoft.AspNetCore.Authentication.JwtBearer` middleware — no Logto-specific SDK needed on the backend.
 
 The admin role used to gate the backoffice is carried in the token (Logto role / scope mapped to `api:v1:admin`).
 
@@ -554,7 +644,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 - Suggested edits from reviewers create pending proposals — they never modify content directly *(Reviews module)*
 - Only the Owner accepts or rejects proposals; only the Owner edits the Lexicon and publishes entries
 - A Lexicon entry is publishable only with a meaning in every configured language (`SupportedLanguages:Codes`, currently five); only published entries can be marked playable or served to clients
-- **Client read/write rule.** Client applications (Meltho, future apps) are **read-only consumers of Sabro's content** — they never edit curated content and never connect to the database directly. They **may write their own play data** (game results) through controlled, authenticated API endpoints. All writes — content and play — go exclusively through Sabro's validated API.
+- **Client read/write rule.** Client applications (Meltho, Mno, Shmo, Nahlo, and any future app) are **read-only consumers of Sabro's content** — they never edit curated content and never connect to the database directly. They **may write their own play data** (game results) through controlled, authenticated API endpoints. All writes — content and play — go exclusively through Sabro's validated API.
 - Bibliography images are stored locally under `wwwroot/media/` — small volume, no S3 needed at this scale
 
 ---
@@ -568,7 +658,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 5. Clone the repo and open `Sabro.slnx` in Visual Studio
 6. Copy `appsettings.Development.example.json` to `appsettings.Development.json` and fill in connection strings, Logto config, Meilisearch URL, and `Meltho:AntiRepetitionWindowDays`
 7. Start auxiliary services: `docker-compose up -d` (Meilisearch + Seq + Logto)
-8. Run migrations for the active modules — **Lexicon, Identity, Historical, Play, Reviews** — e.g. `dotnet ef database update --project src/Modules/Sabro.Lexicon --startup-project src/Sabro.API --context LexiconDbContext` (repeat per module). The authoritative list is `scripts/apply-migrations.sh`, which is what CD runs; a module missing from it works locally and fails in production. `ModuleMigrationCoverageTests` fails the build if that list and the modules disagree.
+8. Run migrations for the active modules — **Lexicon, Identity, Historical, BethGazo, Play, Reviews** — e.g. `dotnet ef database update --project src/Modules/Sabro.Lexicon --startup-project src/Sabro.API --context LexiconDbContext` (repeat per module). The authoritative list is `scripts/apply-migrations.sh`, which is what CD runs; a module missing from it works locally and fails in production. `ModuleMigrationCoverageTests` fails the build if that list and the modules disagree.
 9. Start the API: F5 in Visual Studio
 10. Start the frontend: `cd frontend && npm install && npm run dev`
 
@@ -579,7 +669,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 - Not a CMS — content is scholarly and curated, not crowdsourced
 - Not a social platform — user features are personal and private (notes, favorites, game profile)
 - Not a microservices architecture — it is a modular monolith; do not split modules into separate deployable services unless a clear scaling need arises
-- Not responsible for client game logic — Meltho's **guess evaluation, hint coloring, and presentation** live in Meltho, not in Sabro. (Sabro owns only the shared daily-word selection, because that state must be identical for all players and persisted in the single database.)
+- Not responsible for client game logic — **guess evaluation, feedback colouring, and presentation** live in each client, not in Sabro. The full answer ships with the puzzle and Sabro never learns what a player guessed. (Sabro owns only the shared daily selection, because that state must be identical for all players and persisted.)
 - Not federated with academic identity providers (eduGAIN/Shibboleth) — this is a personal project, not affiliated with an institution
 
 ---
@@ -587,9 +677,9 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 ## Deferred Decisions
 
 These decisions are intentionally deferred and will be made when relevant:
-- **Translations and Biblical modules** — deferred to post-Meltho-launch. Specs retained above; not on the launch critical path. (Reviews is no longer on this list: its field-proposal half is live.)
+- **Translations and Biblical modules** — still deferred. Specs retained above; not on any current critical path. (Reviews is no longer on this list: its field-proposal half is live.)
 - **Liturgical calendar / manual daily-word pinning** — data model kept ready (a scheduled date → word override); no backoffice UI at launch. Algorithmic get-or-create selection with the anti-repetition window covers launch.
-- **Leaderboard, aggregate player stats, score sharing** — deferred; launch surface is profile + raw Meltho stats only.
+- **Cross-game aggregate stats** — still deferred. *(No longer deferred: Meltho's opt-in streak leaderboard and the clients' share cards/share text both shipped.)*
 - **Rich cross-project dashboard** — deferred; the `GameResult` model is already multi-game, so this is additive UI, not a model change.
 - **Daily-puzzle selection trigger** — lazy get-or-create on first request at launch; may move to a small scheduled job if/when an async job queue (Hangfire or similar) is introduced.
 - **Bibliography page covers** — copyright vs pragmatic display, decided at page creation time
