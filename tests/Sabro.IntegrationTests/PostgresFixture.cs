@@ -20,8 +20,7 @@ public sealed class PostgresFixture : IAsyncLifetime
     /// </summary>
     public const string DefaultTestUser = "integration-test-user";
 
-    private readonly PostgreSqlContainer container = new PostgreSqlBuilder()
-        .WithImage("postgres:16-alpine")
+    private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:16-alpine")
         .WithDatabase("sabro_test")
         .WithUsername("sabro")
         .WithPassword("sabro")
