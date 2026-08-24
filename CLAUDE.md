@@ -41,17 +41,22 @@ Ordered by what unblocks most. Items 1 and 2 need a human; 3 and 4 do not.
 
 ### 1. Meilisearch v1.53 — needs a maintenance window ⚠️ **Decide**
 
-Dependabot PR **#216** bumps `getmeili/meilisearch` v1.51 → v1.53 in both compose
-files. Backend, frontend and Conventional Commits pass; **Deploy safety fails, and
-it is right to fail**:
+Dependabot PR **#216** raised this bump and was **closed unmerged on 2026-08-24**:
+a version bump alone cannot carry it, because the upgrade needs a planned rollout.
+Redo it as a deliberate change, in a maintenance window, rather than reopening
+that PR.
+
+The bump moves `getmeili/meilisearch` v1.51 → v1.53 in **both** compose files.
+Backend, frontend and Conventional Commits passed on it; **Deploy safety failed,
+and it was right to fail**:
 
 ```
 Your database version (1.51.0) is incompatible with your current engine version (1.53.1).
 ```
 
 The gate's own message: this bump *"will take production down on deploy (the
-api/frontend swap aborts on the unhealthy dependency)"*. **Do not merge #216 to get
-a green tick.** Two routes, both live-data decisions:
+api/frontend swap aborts on the unhealthy dependency)"*. **Never merge this bump
+just to get a green tick.** Two routes, both live-data decisions:
 
 - **Wipe and rebuild** — the documented ritual. Stop the stack, delete the
   Meilisearch volume, deploy v1.53, then rebuild via
@@ -64,6 +69,12 @@ a green tick.** Two routes, both live-data decisions:
 
 Search is a read-optimisation layer and Postgres is the source of truth, so a
 wipe loses nothing permanently — only the window it takes to reindex.
+
+> **Closing #216 means Dependabot will not offer v1.53 again.** It treats a manual
+> close as "not this version". It will still raise a PR for v1.54 and later — which
+> will hit the same data-directory wall, since the incompatibility is with the
+> v1.51 data on disk, not with v1.53 specifically. Whoever picks this up drives the
+> version themselves; do not wait for a bot to re-suggest it.
 
 ### 2. Nahlo and analytics are unmonitored ⚠️ **Decide** (external service)
 
