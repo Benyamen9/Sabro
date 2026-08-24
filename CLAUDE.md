@@ -39,41 +39,50 @@ Ordered by what unblocks most. Items 1 and 2 need a human; 3 and 4 do not.
 
 ---
 
-### 1. Meilisearch v1.53 — needs a maintenance window ⚠️ **Decide**
+### 1. Meilisearch v1.53 — in flight as PR #223, two deploys ⚠️ **ordering matters**
 
-Dependabot PR **#216** raised this bump and was **closed unmerged on 2026-08-24**:
-a version bump alone cannot carry it, because the upgrade needs a planned rollout.
-Redo it as a deliberate change, in a maintenance window, rather than reopening
-that PR.
+Dependabot PR **#216** raised this bump and was **closed unmerged on 2026-08-24**.
+It is redone as **PR #223** (`chore/meilisearch-153`), which supersedes it: v1.51 →
+v1.53 in both compose files, carried by the **in-place** route rather than a wipe.
+All four checks green. Opened as a fresh branch because pushing to a Dependabot PR
+makes you the actor, the pr-validation skip lapses, and Dependabot then refuses to
+rebase it.
 
-The bump moves `getmeili/meilisearch` v1.51 → v1.53 in **both** compose files.
-Backend, frontend and Conventional Commits passed on it; **Deploy safety failed,
-and it was right to fail**:
+**The route chosen is one boot with the flag, then remove it — so this is two
+deploys, in order.** Do not collapse them.
 
-```
-Your database version (1.51.0) is incompatible with your current engine version (1.53.1).
-```
+1. **Snapshot the Meilisearch volume first.** The flag migrates production data in
+   place; there is no undo.
+2. Merge **#223** (sets `MEILI_UPGRADE_DB: "true"`). CD deploys v1.53, the engine
+   migrates the volume on that boot.
+3. **Verify before step 4** — `docker logs sabro-meilisearch` shows a clean start,
+   and `/version` on `api.sabro.be` matches `main`. Let this CD finish; overlapping
+   CDs are last-wins.
+4. Merge the follow-up that **removes the flag from `docker-compose.prod.yml`**.
+   The volume is already v1.53 by then, so it starts clean without it.
 
-The gate's own message: this bump *"will take production down on deploy (the
-api/frontend swap aborts on the unhealthy dependency)"*. **Never merge this bump
-just to get a green tick.** Two routes, both live-data decisions:
+Verified in CI against a real v1.51 volume, not assumed:
+`OK: meilisearch:v1.53 migrated a :v1.51 data directory in place.`
 
-- **Wipe and rebuild** — the documented ritual. Stop the stack, delete the
-  Meilisearch volume, deploy v1.53, then rebuild via
-  `POST /api/v1/admin/search/rebuild/{index}`.
-  > ⚠️ **Three indexes now, not one:** `lexicon`, `chants`, `historical_figures`.
-  > Older notes that say "rebuild lexicon" predate Shmo and Nahlo.
-- **In-place** — `MEILI_UPGRADE_DB=true` (or `--upgrade-db`) for one boot, then
-  remove it. Shorter, but it migrates production data in place; take a volume
-  snapshot first.
+> **Why the flag must not stay.** The deploy-safety gate now reads
+> `MEILI_UPGRADE_DB` out of the prod compose and passes it through — so while it is
+> set, the engine self-migrates and **the gate goes green on every future bump**.
+> It prints a `::notice::` saying that is why it passed. Leaving the flag on trades
+> away the only check that catches this class of break. Hence step 4.
 
-Search is a read-optimisation layer and Postgres is the source of truth, so a
-wipe loses nothing permanently — only the window it takes to reindex.
+The **dev** compose keeps the flag permanently and deliberately: dev volumes are
+disposable, and the gate only ever reads the prod file, so it costs no coverage.
+
+Fallback if the in-place route ever fails: wipe the volume and rebuild via
+`POST /api/v1/admin/search/rebuild/lexicon`. Search is a read-optimisation layer
+and Postgres is the source of truth, so a wipe loses nothing permanently — only
+the window it takes to reindex. **`lexicon` is the only index that exists**; see
+the Search section.
 
 > **Closing #216 means Dependabot will not offer v1.53 again.** It treats a manual
 > close as "not this version". It will still raise a PR for v1.54 and later — which
 > will hit the same data-directory wall, since the incompatibility is with the
-> v1.51 data on disk, not with v1.53 specifically. Whoever picks this up drives the
+> on-disk data, not with v1.53 specifically. Whoever picks this up drives the
 > version themselves; do not wait for a bot to re-suggest it.
 
 ### 2. Nahlo and analytics are unmonitored ⚠️ **Decide** (external service)
@@ -119,8 +128,10 @@ finding about production, not a test problem.
 `Microsoft.Extensions.*` set, `Microsoft.AspNetCore.Authentication.JwtBearer`,
 `Microsoft.AspNetCore.OpenApi`, `Microsoft.Extensions.ApiDescription.Server`,
 `System.Security.Cryptography.Xml`, the three `Microsoft.EntityFrameworkCore*`,
-`Microsoft.AspNetCore.Mvc.Testing`), plus `coverlet.collector` 10.0.0 → 10.0.1 and
-`FluentAssertions` 8.9.0 → 8.10.0.
+`Microsoft.AspNetCore.Mvc.Testing`), plus `coverlet.collector` 10.0.0 → 10.0.1,
+`FluentAssertions` 8.9.0 → 8.10.0 and `Microsoft.NET.Test.Sdk` 18.5.1 → 18.9.0
+(both test projects; missed by the first pass of this list, re-verified
+2026-08-24 with `dotnet list package --outdated`).
 
 **4b — majors, one PR each, in this order.** `Markdig` 1.1.3 → 1.3.2 ·
 `Meilisearch` 0.18.0 → 0.20.0 · `NSubstitute` 5.3.0 → 6.2.0 · `Serilog.AspNetCore`
@@ -465,13 +476,19 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 
 ## Search (Meilisearch)
 
-Meilisearch indexes are kept in sync with PostgreSQL. Three are active; the rest come online with their (deferred) modules:
-- `lexicon` — Syriac words, roots, transliterations, meanings **(active)**
-- `chants` — Beth Gazo melodies, sections, modes **(active)**
-- `historical_figures` — the Shmo roster **(active)**
+Meilisearch indexes are kept in sync with PostgreSQL. **Exactly one is active — `lexicon`.** The rest come online with their (deferred) modules:
+- `lexicon` — Syriac words, roots, transliterations, meanings **(active — the only one)**
 - `translations` — English translation text (FR/NL when available) *(with Translations module)*
 - `annotations` — inline annotations with denormalized parent (source/chapter/verse) coordinates *(with Reviews/Translations)*
 - `biblical_passages` — Peshitta passages with metadata *(with Biblical module)*
+
+> **Shmo and Nahlo do not use Meilisearch at all.** `Sabro.Historical` and
+> `Sabro.BethGazo` contain no search code and register no `ISearchRebuilder` —
+> they query Postgres directly. There is no `chants` or `historical_figures`
+> index, and `POST /admin/search/rebuild/chants` answers
+> `404 "Search index 'chants' is not registered."` The rebuild dispatcher matches
+> on the `IndexName` of a *registered* rebuilder, so the only name that does
+> anything today is `lexicon`.
 
 **Synchronization strategy:** synchronous at MVP — every write to PostgreSQL triggers a Meilisearch update in the same operation. May be moved to async (queue-based) if write volume grows.
 

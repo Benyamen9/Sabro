@@ -27,8 +27,10 @@ services:
     environment:
       MEILI_MASTER_KEY: sabro_dev_master_key
       MEILI_ENV: development
-      # Match production: migrate an older data directory in place rather than
-      # refusing to start. Without this a bump strands every dev volume too.
+      # Permanent here, unlike prod (where it is temporary — see that file).
+      # Dev volumes are disposable and everyone bumps at a different time, so
+      # self-migrating beats making each dev wipe by hand. It costs no coverage:
+      # the deploy-safety gate only ever reads docker-compose.prod.yml.
       MEILI_UPGRADE_DB: "true"
     ports:
       - "7700:7700"
