@@ -22,6 +22,123 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 
 ---
 
+## Outstanding Worklist
+
+Live handoff list, accurate as of **2026-08-24**. Each item is written to be
+executed cold — context, exact change, how to verify, and what needs a human
+decision. **Delete an item from this file the moment it lands**; a worklist that
+outlives its work is the same drift this file exists to prevent.
+
+To pick this up in a fresh session, paste:
+
+> Read the *Outstanding Worklist* in CLAUDE.md and start with item N. Follow the
+> "Do" steps, run the "Verify" checks before pushing, and stop and ask me on
+> anything the item marks **Decide**. One PR per item unless it says otherwise.
+
+Ordered by what unblocks most. Items 1 and 2 need a human; 3 and 4 do not.
+
+---
+
+### 1. Meilisearch v1.53 — needs a maintenance window ⚠️ **Decide**
+
+Dependabot PR **#216** bumps `getmeili/meilisearch` v1.51 → v1.53 in both compose
+files. Backend, frontend and Conventional Commits pass; **Deploy safety fails, and
+it is right to fail**:
+
+```
+Your database version (1.51.0) is incompatible with your current engine version (1.53.1).
+```
+
+The gate's own message: this bump *"will take production down on deploy (the
+api/frontend swap aborts on the unhealthy dependency)"*. **Do not merge #216 to get
+a green tick.** Two routes, both live-data decisions:
+
+- **Wipe and rebuild** — the documented ritual. Stop the stack, delete the
+  Meilisearch volume, deploy v1.53, then rebuild via
+  `POST /api/v1/admin/search/rebuild/{index}`.
+  > ⚠️ **Three indexes now, not one:** `lexicon`, `chants`, `historical_figures`.
+  > Older notes that say "rebuild lexicon" predate Shmo and Nahlo.
+- **In-place** — `MEILI_UPGRADE_DB=true` (or `--upgrade-db`) for one boot, then
+  remove it. Shorter, but it migrates production data in place; take a volume
+  snapshot first.
+
+Search is a read-optimisation layer and Postgres is the source of truth, so a
+wipe loses nothing permanently — only the window it takes to reindex.
+
+### 2. Nahlo and analytics are unmonitored ⚠️ **Decide** (external service)
+
+Caddy serves `{$NAHLO_DOMAIN}` and the container is deployed, but the five
+UptimeRobot monitors predate Nahlo's slot (#199), so its downtime is invisible.
+`analytics.sabro.be` likewise. Add a sixth monitor on `https://nahlo.sabro.be`
+(HTTP(s), 5-minute interval, alerting to the Owner's personal mailbox — **not**
+`contact@sabro.be`, which forwards to Hotmail and is dropped silently).
+
+Cannot be done from a Claude Code session: UptimeRobot is an external service with
+no credentials in the repo, and `*.sabro.be` is unreachable from the sandboxed web
+environment. Desktop or the UptimeRobot console only.
+
+### 3. The integration fixtures do not run the production versions
+
+The suite signs off migrations and index behaviour against software production
+does not run:
+
+| Fixture | Pins | Production runs |
+|---|---|---|
+| `PostgresFixture` | `postgres:16-alpine` | `postgres:17-alpine` |
+| `MeilisearchFixture` | `getmeili/meilisearch:v1.13` | `v1.51` |
+
+**Do — two separate PRs, Postgres first.** If something breaks you want to know
+which bump did it.
+
+1. `tests/Sabro.IntegrationTests/PostgresFixture.cs` → `new PostgreSqlBuilder("postgres:17-alpine")`
+2. `tests/Sabro.IntegrationTests/MeilisearchFixture.cs` → `new ContainerBuilder("getmeili/meilisearch:v1.51")`
+
+Hold the Meilisearch one at **v1.51** to match production today; if item 1 lands
+first, go to v1.53 instead and move them together from then on.
+
+**Verify.** `dotnet test` locally — this is the one item that genuinely needs the
+real suite, since the point is to find behaviour that differs between versions.
+The Postgres bump exercises every module's migrations; a failure here is a real
+finding about production, not a test problem.
+
+### 4. NuGet drift
+
+**4a — patch bumps, mechanical, one PR.** Fifteen packages sit one patch behind in
+`Directory.Packages.props`: everything pinned `10.0.10` → `10.0.11` (the
+`Microsoft.Extensions.*` set, `Microsoft.AspNetCore.Authentication.JwtBearer`,
+`Microsoft.AspNetCore.OpenApi`, `Microsoft.Extensions.ApiDescription.Server`,
+`System.Security.Cryptography.Xml`, the three `Microsoft.EntityFrameworkCore*`,
+`Microsoft.AspNetCore.Mvc.Testing`), plus `coverlet.collector` 10.0.0 → 10.0.1 and
+`FluentAssertions` 8.9.0 → 8.10.0.
+
+**4b — majors, one PR each, in this order.** `Markdig` 1.1.3 → 1.3.2 ·
+`Meilisearch` 0.18.0 → 0.20.0 · `NSubstitute` 5.3.0 → 6.2.0 · `Serilog.AspNetCore`
+9.0.0 → 10.0.0 · `xunit.v3` 3.2.2 → 4.0.0 with `xunit.runner.visualstudio`
+3.1.5 → 4.0.0 (together) · `Asp.Versioning.Mvc` + `.ApiExplorer` 8.1.0 → 10.2.1
+(together, two majors — expect real work).
+
+> **`Microsoft.OpenApi` stays at 2.9.0.** Deliberate, and the comment above it says
+> why: the 2.x line is what `Microsoft.AspNetCore.OpenApi` 10.0.0 is compatible
+> with. Do not "fix" it to 3.x.
+
+Remember `TreatWarningsAsErrors` is on: a new obsoletion in any of these becomes a
+build failure, exactly as Testcontainers 4.14.0's builder constructors did (#218).
+
+### 5. When the chant recordings land
+
+Not a code task on its own, but it is the keystone — it opens Nahlo and unblocks
+items 2 and the circuit note. In one pass:
+
+1. Upload recordings via `/admin/chants`, publish, set `PlayableInNahlo`.
+2. Confirm `GET /api/v1/play/nahlo/today` stops answering 409.
+3. Put `'nahlo'` back into `CIRCUIT_HANDOFF` in **all five** copies of
+   `useDailyCircuit.ts` — Sabro hub, Meltho, Mno, Shmo, Nahlo.
+4. Add the UptimeRobot monitor from item 2.
+5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
+   30 as the treasury grows.
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -268,7 +385,7 @@ Four pieces of logic are deliberately implemented twice, on either side of a rep
 
 **The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies; `CIRCUIT_HANDOFF` currently omits `nahlo`, because handing a player to a game that answers 409 ends their circuit on a closed door.
 
-> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
+> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 5 of the Outstanding Worklist.*
 
 ## Backoffice (Editorial Admin)
 
@@ -448,6 +565,7 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   > Nahlo's deployment slot (#199, 2026-08-09). Add a sixth monitor on
   > `https://nahlo.sabro.be` when the recordings land and the game opens; until
   > then its downtime is invisible. `analytics.sabro.be` is likewise unwatched.
+  > *Tracked as item 2 of the Outstanding Worklist.*
 
   Alerts go to the **Owner's personal mailbox directly**, deliberately *not* via
   `contact@sabro.be` — that address forwards to Hotmail and Microsoft drops the
@@ -546,7 +664,8 @@ Test pyramid with TDD-first approach for Domain and Application layers.
 > `getmeili/meilisearch:v1.13` while production runs `v1.51`. Migrations and
 > index behaviour are therefore verified against a different major Postgres and a
 > far older Meilisearch than they meet in production. Raise both to match, and
-> keep them matched when the compose pins move.
+> keep them matched when the compose pins move. *Tracked as item 3 of the
+> Outstanding Worklist.*
 
 **Testcontainers version note.** `Testcontainers` 4.14.0 obsoletes the
 parameterless `ContainerBuilder()` / `PostgreSqlBuilder()` constructors in favour
