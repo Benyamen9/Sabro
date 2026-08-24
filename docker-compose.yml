@@ -21,12 +21,15 @@ services:
       retries: 5
 
   meilisearch:
-    image: getmeili/meilisearch:v1.51
+    image: getmeili/meilisearch:v1.53
     container_name: sabro-meilisearch
     restart: unless-stopped
     environment:
       MEILI_MASTER_KEY: sabro_dev_master_key
       MEILI_ENV: development
+      # Match production: migrate an older data directory in place rather than
+      # refusing to start. Without this a bump strands every dev volume too.
+      MEILI_UPGRADE_DB: "true"
     ports:
       - "7700:7700"
     volumes:

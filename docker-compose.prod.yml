@@ -41,12 +41,23 @@ services:
     networks: [internal]
 
   meilisearch:
-    image: getmeili/meilisearch:v1.51
+    image: getmeili/meilisearch:v1.53
     container_name: sabro-meilisearch
     restart: unless-stopped
     environment:
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?MEILI_MASTER_KEY is required}
       MEILI_ENV: production
+      # A new engine refuses a data directory written by an older one and exits
+      # (2026-07-28: v1.51 on a v1.49 volume took search down). This migrates the
+      # volume in place on startup instead, so a bump no longer needs the wipe-and-
+      # rebuild ritual — which matters because the rebuild endpoint is gated on
+      # role=Owner in identity.user_profiles, so an admin token alone cannot drive it.
+      #
+      # Trade-off, deliberate: with this set the deploy-safety gate will pass every
+      # future meilisearch bump, because the engine self-migrates rather than
+      # refusing. The gate prints that this is WHY it passed — read its output
+      # rather than trusting the green tick.
+      MEILI_UPGRADE_DB: "true"
     volumes:
       - meilisearch-data:/meili_data
     healthcheck:
