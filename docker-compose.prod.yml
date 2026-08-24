@@ -79,7 +79,7 @@ services:
     # version tags are the 3.x naming.
     # To upgrade: pick a newer tag from ghcr.io/umami-software/umami and read the
     # release notes for schema migrations first.
-    image: ghcr.io/umami-software/umami:3.3.0
+    image: ghcr.io/umami-software/umami:3.3.1
     container_name: sabro-umami
     restart: unless-stopped
     depends_on:
