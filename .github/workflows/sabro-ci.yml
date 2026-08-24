@@ -334,14 +334,32 @@ jobs:
           sleep 3
           docker stop meili-old >/dev/null
 
+          # Pass through what the PR's prod compose actually sets, rather than a
+          # hardcoded flag list beside the file it is meant to guard. That drift is
+          # the #209 lesson: hardcoding MEILI_UPGRADE_DB=off here while production
+          # sets it on would red-flag a bump that deploys perfectly well, and the
+          # reverse would wave through one that strands the volume.
+          upgrade=$(sed -n '/^  meilisearch:/,/^  [a-z]/p' docker-compose.prod.yml \
+            | sed -n 's|.*MEILI_UPGRADE_DB: *"\{0,1\}\([^"]*\)"\{0,1\}.*|\1|p' | head -1)
+          upgrade_args=""
+          if [ -n "$upgrade" ]; then
+            echo "Prod compose sets MEILI_UPGRADE_DB=$upgrade — testing the in-place upgrade path."
+            upgrade_args="-e MEILI_UPGRADE_DB=$upgrade"
+          fi
+
           docker run -d --name meili-new -v meili-upgrade-test:/meili_data \
-            -e MEILI_MASTER_KEY="$KEY" -e MEILI_ENV=production \
+            -e MEILI_MASTER_KEY="$KEY" -e MEILI_ENV=production $upgrade_args \
             "getmeili/meilisearch:$new" >/dev/null
           if wait_healthy meili-new; then
-            echo "OK: meilisearch:$new starts cleanly on a :$old data directory."
+            if [ -n "$upgrade" ]; then
+              echo "OK: meilisearch:$new migrated a :$old data directory in place."
+              echo "::notice::This bump passed BECAUSE MEILI_UPGRADE_DB is set, not because the on-disk formats match. The engine self-migrates, so from here this gate can no longer be the thing that red-flags an incompatible meilisearch bump. Judge those on the release notes."
+            else
+              echo "OK: meilisearch:$new starts cleanly on a :$old data directory."
+            fi
             exit 0
           fi
 
-          echo "::error::meilisearch:$new refuses the :$old data directory, so this bump will take production down on deploy (the api/frontend swap aborts on the unhealthy dependency). Plan the rollout: wipe the meilisearch volume during the deploy window and rebuild indexes from Postgres via /api/v1/admin/search/rebuild/lexicon, which is the documented ritual. See the 2026-07-28 incident."
+          echo "::error::meilisearch:$new refuses the :$old data directory. Blast radius is SEARCH ONLY — the authenticated lexicon search and the admin backoffice list go dark; api and frontend still come up, because depends_on has been service_started since PR #140. It will not 502 the site the way 2026-07-28 did. Two ways out: set MEILI_UPGRADE_DB in the meilisearch service to migrate the volume in place, or wipe the volume during the deploy window and rebuild from Postgres via /api/v1/admin/search/rebuild/lexicon."
           docker logs meili-new 2>&1 | tail -20
           exit 1
