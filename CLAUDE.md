@@ -35,57 +35,12 @@ To pick this up in a fresh session, paste:
 > "Do" steps, run the "Verify" checks before pushing, and stop and ask me on
 > anything the item marks **Decide**. One PR per item unless it says otherwise.
 
-Ordered by what unblocks most. Items 1 and 2 need a human; 3 and 4 do not.
+Ordered by what unblocks most. Item 1 needs a human and an external service; 2 and
+3 do not; 4 waits on the recordings themselves.
 
 ---
 
-### 1. Meilisearch v1.53 — in flight as PR #223, two deploys ⚠️ **ordering matters**
-
-Dependabot PR **#216** raised this bump and was **closed unmerged on 2026-08-24**.
-It is redone as **PR #223** (`chore/meilisearch-153`), which supersedes it: v1.51 →
-v1.53 in both compose files, carried by the **in-place** route rather than a wipe.
-All four checks green. Opened as a fresh branch because pushing to a Dependabot PR
-makes you the actor, the pr-validation skip lapses, and Dependabot then refuses to
-rebase it.
-
-**The route chosen is one boot with the flag, then remove it — so this is two
-deploys, in order.** Do not collapse them.
-
-1. **Snapshot the Meilisearch volume first.** The flag migrates production data in
-   place; there is no undo.
-2. Merge **#223** (sets `MEILI_UPGRADE_DB: "true"`). CD deploys v1.53, the engine
-   migrates the volume on that boot.
-3. **Verify before step 4** — `docker logs sabro-meilisearch` shows a clean start,
-   and `/version` on `api.sabro.be` matches `main`. Let this CD finish; overlapping
-   CDs are last-wins.
-4. Merge the follow-up that **removes the flag from `docker-compose.prod.yml`**.
-   The volume is already v1.53 by then, so it starts clean without it.
-
-Verified in CI against a real v1.51 volume, not assumed:
-`OK: meilisearch:v1.53 migrated a :v1.51 data directory in place.`
-
-> **Why the flag must not stay.** The deploy-safety gate now reads
-> `MEILI_UPGRADE_DB` out of the prod compose and passes it through — so while it is
-> set, the engine self-migrates and **the gate goes green on every future bump**.
-> It prints a `::notice::` saying that is why it passed. Leaving the flag on trades
-> away the only check that catches this class of break. Hence step 4.
-
-The **dev** compose keeps the flag permanently and deliberately: dev volumes are
-disposable, and the gate only ever reads the prod file, so it costs no coverage.
-
-Fallback if the in-place route ever fails: wipe the volume and rebuild via
-`POST /api/v1/admin/search/rebuild/lexicon`. Search is a read-optimisation layer
-and Postgres is the source of truth, so a wipe loses nothing permanently — only
-the window it takes to reindex. **`lexicon` is the only index that exists**; see
-the Search section.
-
-> **Closing #216 means Dependabot will not offer v1.53 again.** It treats a manual
-> close as "not this version". It will still raise a PR for v1.54 and later — which
-> will hit the same data-directory wall, since the incompatibility is with the
-> on-disk data, not with v1.53 specifically. Whoever picks this up drives the
-> version themselves; do not wait for a bot to re-suggest it.
-
-### 2. Nahlo and analytics are unmonitored ⚠️ **Decide** (external service)
+### 1. Nahlo and analytics are unmonitored ⚠️ **Decide** (external service)
 
 Caddy serves `{$NAHLO_DOMAIN}` and the container is deployed, but the five
 UptimeRobot monitors predate Nahlo's slot (#199), so its downtime is invisible.
@@ -97,7 +52,7 @@ Cannot be done from a Claude Code session: UptimeRobot is an external service wi
 no credentials in the repo, and `*.sabro.be` is unreachable from the sandboxed web
 environment. Desktop or the UptimeRobot console only.
 
-### 3. The integration fixtures do not run the production versions
+### 2. The integration fixtures do not run the production versions
 
 The suite signs off migrations and index behaviour against software production
 does not run:
@@ -105,25 +60,25 @@ does not run:
 | Fixture | Pins | Production runs |
 |---|---|---|
 | `PostgresFixture` | `postgres:16-alpine` | `postgres:17-alpine` |
-| `MeilisearchFixture` | `getmeili/meilisearch:v1.13` | `v1.51` |
+| `MeilisearchFixture` | `getmeili/meilisearch:v1.13` | `v1.53` |
 
 **Do — two separate PRs, Postgres first.** If something breaks you want to know
 which bump did it.
 
 1. `tests/Sabro.IntegrationTests/PostgresFixture.cs` → `new PostgreSqlBuilder("postgres:17-alpine")`
-2. `tests/Sabro.IntegrationTests/MeilisearchFixture.cs` → `new ContainerBuilder("getmeili/meilisearch:v1.51")`
+2. `tests/Sabro.IntegrationTests/MeilisearchFixture.cs` → `new ContainerBuilder("getmeili/meilisearch:v1.53")`
 
-Hold the Meilisearch one at **v1.51** to match production today; if item 1 lands
-first, go to v1.53 instead and move them together from then on.
+**v1.53**, not v1.51 — production moved on 2026-08-24 (#223). Keep the fixture and
+the compose pin moving together from here.
 
 **Verify.** `dotnet test` locally — this is the one item that genuinely needs the
 real suite, since the point is to find behaviour that differs between versions.
 The Postgres bump exercises every module's migrations; a failure here is a real
 finding about production, not a test problem.
 
-### 4. NuGet drift
+### 3. NuGet drift
 
-**4a — patch bumps, mechanical, one PR.** Fifteen packages sit one patch behind in
+**3a — patch bumps, mechanical, one PR. In flight as PR #224.** Sixteen packages sit one patch behind in
 `Directory.Packages.props`: everything pinned `10.0.10` → `10.0.11` (the
 `Microsoft.Extensions.*` set, `Microsoft.AspNetCore.Authentication.JwtBearer`,
 `Microsoft.AspNetCore.OpenApi`, `Microsoft.Extensions.ApiDescription.Server`,
@@ -133,7 +88,7 @@ finding about production, not a test problem.
 (both test projects; missed by the first pass of this list, re-verified
 2026-08-24 with `dotnet list package --outdated`).
 
-**4b — majors, one PR each, in this order.** `Markdig` 1.1.3 → 1.3.2 ·
+**3b — majors, one PR each, in this order.** `Markdig` 1.1.3 → 1.3.2 ·
 `Meilisearch` 0.18.0 → 0.20.0 · `NSubstitute` 5.3.0 → 6.2.0 · `Serilog.AspNetCore`
 9.0.0 → 10.0.0 · `xunit.v3` 3.2.2 → 4.0.0 with `xunit.runner.visualstudio`
 3.1.5 → 4.0.0 (together) · `Asp.Versioning.Mvc` + `.ApiExplorer` 8.1.0 → 10.2.1
@@ -146,16 +101,16 @@ finding about production, not a test problem.
 Remember `TreatWarningsAsErrors` is on: a new obsoletion in any of these becomes a
 build failure, exactly as Testcontainers 4.14.0's builder constructors did (#218).
 
-### 5. When the chant recordings land
+### 4. When the chant recordings land
 
 Not a code task on its own, but it is the keystone — it opens Nahlo and unblocks
-items 2 and the circuit note. In one pass:
+item 1 and the circuit note. In one pass:
 
 1. Upload recordings via `/admin/chants`, publish, set `PlayableInNahlo`.
 2. Confirm `GET /api/v1/play/nahlo/today` stops answering 409.
 3. Put `'nahlo'` back into `CIRCUIT_HANDOFF` in **all five** copies of
    `useDailyCircuit.ts` — Sabro hub, Meltho, Mno, Shmo, Nahlo.
-4. Add the UptimeRobot monitor from item 2.
+4. Add the UptimeRobot monitor from item 1.
 5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
    30 as the treasury grows.
 
@@ -407,7 +362,7 @@ Four pieces of logic are deliberately implemented twice, on either side of a rep
 
 **The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies; `CIRCUIT_HANDOFF` currently omits `nahlo`, because handing a player to a game that answers 409 ends their circuit on a closed door.
 
-> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 5 of the Outstanding Worklist.*
+> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 4 of the Outstanding Worklist.*
 
 ## Backoffice (Editorial Admin)
 
@@ -593,7 +548,7 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   > Nahlo's deployment slot (#199, 2026-08-09). Add a sixth monitor on
   > `https://nahlo.sabro.be` when the recordings land and the game opens; until
   > then its downtime is invisible. `analytics.sabro.be` is likewise unwatched.
-  > *Tracked as item 2 of the Outstanding Worklist.*
+  > *Tracked as item 1 of the Outstanding Worklist.*
 
   Alerts go to the **Owner's personal mailbox directly**, deliberately *not* via
   `contact@sabro.be` — that address forwards to Hotmail and Microsoft drops the
@@ -689,10 +644,10 @@ Test pyramid with TDD-first approach for Domain and Application layers.
 > ⚠️ **The integration fixtures do not run the production versions.** As of
 > 2026-08-19 `PostgresFixture` pins `postgres:16-alpine` while both compose files
 > run `postgres:17-alpine`, and `MeilisearchFixture` pins
-> `getmeili/meilisearch:v1.13` while production runs `v1.51`. Migrations and
+> `getmeili/meilisearch:v1.13` while production runs `v1.53`. Migrations and
 > index behaviour are therefore verified against a different major Postgres and a
 > far older Meilisearch than they meet in production. Raise both to match, and
-> keep them matched when the compose pins move. *Tracked as item 3 of the
+> keep them matched when the compose pins move. *Tracked as item 2 of the
 > Outstanding Worklist.*
 
 **Testcontainers version note.** `Testcontainers` 4.14.0 obsoletes the

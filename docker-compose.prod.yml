@@ -47,20 +47,16 @@ services:
     environment:
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?MEILI_MASTER_KEY is required}
       MEILI_ENV: production
-      # ⚠️ TEMPORARY — REMOVE THIS AFTER THE v1.53 DEPLOY HAS BEEN VERIFIED.
+      # No MEILI_UPGRADE_DB here, deliberately. It was set for exactly one boot to
+      # migrate the volume from the v1.51 format to v1.53 (2026-08-24, #223), and
+      # removed again as soon as that boot was verified. Leaving it set would make
+      # the deploy-safety gate pass EVERY future meilisearch bump — the gate reads
+      # this service's env and passes it through, so a self-migrating engine never
+      # gives it anything to catch. Off is what keeps the gate honest.
       #
-      # A new engine refuses a data directory written by an older one and exits
-      # (2026-07-28: v1.51 on a v1.49 volume took search down). This migrates the
-      # volume in place on the next boot instead, so the bump needs no wipe-and-
-      # rebuild — which matters because the rebuild endpoint is gated on
-      # role=Owner in identity.user_profiles, so an admin token alone cannot drive it.
-      #
-      # It must not stay. The deploy-safety gate reads this very line and passes it
-      # to the candidate container, so while it is set the engine self-migrates and
-      # the gate goes green on EVERY future meilisearch bump — trading away the one
-      # check that catches this class of break. One boot migrates the volume; after
-      # that v1.53 starts clean without it. See Outstanding Worklist item 1.
-      MEILI_UPGRADE_DB: "true"
+      # For the next bump: set it, deploy, verify, remove it again in a follow-up.
+      # The dev compose keeps it permanently; dev volumes are disposable and the
+      # gate only ever reads this file.
     volumes:
       - meilisearch-data:/meili_data
     healthcheck:
