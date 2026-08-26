@@ -1,6 +1,12 @@
-# Dependabot watches pinned Docker image tags and opens a PR when a newer tag
-# exists — updates stay deliberate (PRs are reviewed and merged by hand, never
-# auto-merged). Two images need their runbook on merge:
+# Dependabot watches Docker image tags, GitHub Actions, NuGet and npm, and opens
+# a PR when something newer exists — updates stay deliberate (PRs are reviewed and
+# merged by hand, **never auto-merged**; that rule was broken once, on the
+# Meilisearch bump #132, and it took the whole site down).
+#
+# Routine minor/patch moves are grouped into one PR per ecosystem per week.
+# Majors are left ungrouped so each arrives on its own and gets its own decision.
+#
+# Two images need their runbook on merge:
 #   - svhd/logto: bump the tag, then run `npm run alteration deploy` on the VPS
 #     before restarting (see the Logto upgrade notes in docker-compose.prod.yml).
 #   - getmeili/meilisearch: after rollout, rebuild indexes from Postgres via the
@@ -53,3 +59,44 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
+
+  # NuGet, via Central Package Management — every version lives in
+  # Directory.Packages.props, so that one file is what Dependabot edits.
+  #
+  # Until 2026-08-25 nothing watched NuGet or npm here, which is why the drift in
+  # the worklist accumulated by hand rather than arriving as PRs.
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      # One PR a week for the routine moves. The Microsoft.Extensions/EF Core set
+      # is sixteen packages that always release together on the same patch — as
+      # separate PRs that is sixteen builds and sixteen merges for one decision.
+      # Majors stay ungrouped on purpose: each is its own migration.
+      dotnet-minor-and-patch:
+        update-types: ["minor", "patch"]
+    ignore:
+      # Pinned to 2.x deliberately: that is the line Microsoft.AspNetCore.OpenApi
+      # 10.0.0 is compatible with. 3.x is not an upgrade we can take on its own,
+      # so a major PR here would be reopened and rejected every release.
+      - dependency-name: "Microsoft.OpenApi"
+        update-types: ["version-update:semver-major"]
+
+  # The hub frontend. TreatWarningsAsErrors has no npm equivalent, but CI runs
+  # typecheck, Vitest and Playwright, so a bad bump surfaces there.
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      dev-minor-and-patch:
+        update-types: ["minor", "patch"]
