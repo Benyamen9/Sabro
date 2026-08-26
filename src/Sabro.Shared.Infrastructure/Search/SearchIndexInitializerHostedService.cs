@@ -47,7 +47,16 @@ internal sealed class SearchIndexInitializerHostedService : IHostedService
 
         if (source.FilterableAttributes.Count > 0)
         {
-            meili.FilterableAttributes = source.FilterableAttributes.ToArray();
+            // Meilisearch 0.20 changed this from string[] to
+            // IEnumerable<FilterableAttribute>. The client defines an implicit
+            // string -> FilterableAttribute conversion, but that does not lift
+            // to the collection (a string[] is not an IEnumerable<Filterable-
+            // Attribute>), so project each name explicitly. A plain name is
+            // still the whole attribute — the new type's pattern and feature
+            // options are left at their defaults, which is what 0.18 did.
+            meili.FilterableAttributes = source.FilterableAttributes
+                .Select(attribute => (FilterableAttribute)attribute)
+                .ToArray();
         }
 
         if (source.Synonyms.Count > 0)

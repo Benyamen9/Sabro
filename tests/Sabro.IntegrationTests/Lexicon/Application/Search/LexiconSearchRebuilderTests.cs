@@ -210,7 +210,15 @@ public class LexiconSearchRebuilderTests
             try
             {
                 var settings = await client.Index(indexName).GetSettingsAsync(ct);
-                if (settings.FilterableAttributes is not null && settings.FilterableAttributes.Contains(attribute))
+
+                // Match on the name, not on the element. Meilisearch 0.20 made
+                // this IEnumerable<FilterableAttribute>, and the client's
+                // implicit string conversion means Contains(attribute) still
+                // COMPILES — it just builds a throwaway FilterableAttribute and
+                // compares by reference, so it never matches and the wait fails
+                // as a timeout rather than as a type error.
+                if (settings.FilterableAttributes is not null &&
+                    settings.FilterableAttributes.Any(f => f.Attribute == attribute))
                 {
                     return;
                 }
