@@ -49,6 +49,17 @@ updates:
       # server by a major, but keeping them in lockstep removes the question).
       - dependency-name: "postgres"
         update-types: ["version-update:semver-major"]
+      # Node majors are NOT safe to take from a tag PR. Dependabot offers the
+      # newest tag, which is whatever `node:<n>` exists — including odd-numbered
+      # releases that never become LTS. It offered 22 -> 25 on 2026-08-26 (#227,
+      # closed): Node 25 is odd, so it was never LTS, and its support had already
+      # ended on 2026-06-01 — a bump straight onto an unsupported runtime.
+      #
+      # CLAUDE.md specifies Node LTS. Take these deliberately: 22 is supported to
+      # 2027-04-30, 24 to 2028-04-30, and 26 becomes LTS on 2026-10-28. Minor and
+      # patch bumps within the pinned major still arrive as normal.
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
 
   # Action pins in the CI/CD workflows.
   - package-ecosystem: "github-actions"
