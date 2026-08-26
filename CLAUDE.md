@@ -36,7 +36,7 @@ To pick this up in a fresh session, paste:
 > anything the item marks **Decide**. One PR per item unless it says otherwise.
 
 Ordered by what unblocks most. Item 1 needs a human and an external service; 2 and
-3 do not; 4 waits on the recordings themselves.
+3 do not; 4 waits on the recordings themselves; 5 is two decisions, not a task.
 
 ---
 
@@ -76,27 +76,46 @@ real suite, since the point is to find behaviour that differs between versions.
 The Postgres bump exercises every module's migrations; a failure here is a real
 finding about production, not a test problem.
 
-### 3. NuGet drift
+### 3. NuGet drift — mostly cleared, two blocked
 
-**3a — patch bumps, mechanical, one PR. In flight as PR #224.** Sixteen packages sit one patch behind in
-`Directory.Packages.props`: everything pinned `10.0.10` → `10.0.11` (the
-`Microsoft.Extensions.*` set, `Microsoft.AspNetCore.Authentication.JwtBearer`,
-`Microsoft.AspNetCore.OpenApi`, `Microsoft.Extensions.ApiDescription.Server`,
-`System.Security.Cryptography.Xml`, the three `Microsoft.EntityFrameworkCore*`,
-`Microsoft.AspNetCore.Mvc.Testing`), plus `coverlet.collector` 10.0.0 → 10.0.1,
-`FluentAssertions` 8.9.0 → 8.10.0 and `Microsoft.NET.Test.Sdk` 18.5.1 → 18.9.0
-(both test projects; missed by the first pass of this list, re-verified
-2026-08-24 with `dotnet list package --outdated`).
+Dependabot now watches NuGet and npm (#226), so this list stops being hand-kept.
+Routine minor/patch arrives grouped, one PR a week; majors arrive one at a time.
 
-**3b — majors, one PR each, in this order.** `Markdig` 1.1.3 → 1.3.2 ·
-`Meilisearch` 0.18.0 → 0.20.0 · `NSubstitute` 5.3.0 → 6.2.0 · `Serilog.AspNetCore`
-9.0.0 → 10.0.0 · `xunit.v3` 3.2.2 → 4.0.0 with `xunit.runner.visualstudio`
-3.1.5 → 4.0.0 (together) · `Asp.Versioning.Mvc` + `.ApiExplorer` 8.1.0 → 10.2.1
-(together, two majors — expect real work).
+**Landed 2026-08-26:** the patch pass (#224) · `NSubstitute` 6.2.0 (#235) ·
+`Serilog.AspNetCore` 10.0.0 (#236) · `Asp.Versioning` 8.1.1 and `Microsoft.OpenApi`
+2.12.2 (#239) · `Meilisearch` client 0.20.0 (#242).
 
-> **`Microsoft.OpenApi` stays at 2.9.0.** Deliberate, and the comment above it says
-> why: the 2.x line is what `Microsoft.AspNetCore.OpenApi` 10.0.0 is compatible
-> with. Do not "fix" it to 3.x.
+**Still open, in this order:**
+
+- `Markdig` 1.1.3 → 1.3.2 — untouched. Excluded from the group (see below), so it
+  arrives as its own PR.
+- `Asp.Versioning.Mvc` + `.ApiExplorer` 8.1.1 → **10.2.1**, together. Two majors;
+  expect real work. Only the 8.1.1 patch has been taken.
+
+**Blocked, with the reason found rather than guessed:**
+
+- `xunit.v3` 3.2.2 → 4.0.0 with `xunit.runner.visualstudio` 3.1.5 → 4.0.0. **Not a
+  bump — a test-platform migration.** 4.0.0 pulls `Microsoft.Testing.Platform`
+  2.3.3, which drops VSTest on the .NET 10 SDK: the build succeeds and then
+  `dotnet test` refuses outright with *"Testing with VSTest target is no longer
+  supported … opt-in to the new dotnet test experience"*
+  (<https://aka.ms/dotnet-test-mtp-error>). Taking it means migrating how both test
+  projects and the CI job invoke tests, and re-proving that coverlet still reports
+  so the Domain/Application coverage gate holds. Runner-alone passes CI but banks a
+  skew, so #237 was closed. Nothing is urgent: 3.2.2 works and 653 unit tests pass.
+
+> **Two packages are excluded from the grouped update** (#238): `Meilisearch` and
+> `Markdig`. Meilisearch is `0.x`, where **minor is the breaking channel** — 0.18 →
+> 0.20 changed `Settings.FilterableAttributes` from `string[]` to
+> `IEnumerable<FilterableAttribute>` and failed the build on behalf of four
+> unrelated Microsoft patches. Markdig 1.1 → 1.3 is the same shape. A breaking
+> change is at its worst hiding inside a batch that gives no clue where the failure
+> came from.
+
+> **`Microsoft.OpenApi` stays in the 2.x line.** Deliberate: 2.x is what
+> `Microsoft.AspNetCore.OpenApi` 10.0.0 is compatible with, so **majors are ignored
+> in `dependabot.yml`** and it will report as outdated forever. Minors within 2.x
+> are fine and 2.12.2 is current. Do not "fix" it to 3.x.
 
 Remember `TreatWarningsAsErrors` is on: a new obsoletion in any of these becomes a
 build failure, exactly as Testcontainers 4.14.0's builder constructors did (#218).
@@ -113,6 +132,32 @@ item 1 and the circuit note. In one pass:
 4. Add the UptimeRobot monitor from item 1.
 5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
    30 as the treasury grows.
+
+### 5. The frontends disagree about TypeScript, and the types outrun the runtime
+
+Two open decisions, both surfaced on 2026-08-26 when Dependabot first ran.
+
+**TypeScript is split: the hub is on 5.9, the four game clients on 6.** The hub is
+pinned by `openapi-typescript@7.13.0`, which drives the TypeScript **compiler
+factory API** to generate `app/types/api.generated.ts`. On TS 7 the generator
+crashes outright — `TypeError: Cannot read properties of undefined (reading
+'createKeywordTypeNode')` — so this is a hard break, not a peer-range warning.
+7.13.0 is the current latest, so there is nothing to upgrade into. Either wait for
+upstream TS 7 support, or replace the generator. Until then the hub cannot follow
+the clients, and the gap widens with each TS release.
+
+**`@types/node` is running ahead of the runtime.** Every frontend container is
+`node:22-bookworm-slim`, while `@types/node` sits at **25.x** in all five repos;
+Dependabot offered 26. The failure mode is quiet: the types describe APIs the
+runtime does not have, so `nuxt typecheck` accepts code that dies at run time, and
+CI passing proves only that nothing *currently written* trips over it. The tidy fix
+is to align `@types/node` to the **22.x** line across all five repos to match the
+Dockerfiles. That is a deliberate change, not a bump — the 26 PRs were closed
+rather than merged (Sabro #229 and one per game repo).
+
+Related, and the reason both of these are worth acting on rather than drifting: the
+same "newest is not best" trap already produced an **end-of-life** proposal — see
+the `node` majors ignore in `.github/dependabot.yml`.
 
 ---
 
