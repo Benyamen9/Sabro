@@ -18,8 +18,14 @@ jobs:
       # (the job itself still runs, keeping the required check green). Ritual
       # when merging one: retitle it lowercase first, so the squash commit on
       # main keeps the convention.
+      #
+      # Keyed on the BRANCH, not github.actor. Main is protected with `strict`,
+      # so every Dependabot PR needs a branch update once main moves — and an
+      # update makes the updater the actor, which silently un-skipped these
+      # checks and failed them on Dependabot's own capital "Bump" (#235). The
+      # head_ref stays dependabot/* no matter who pushed, so the skip holds.
       - name: Validate PR title
-        if: github.actor != 'dependabot[bot]'
+        if: ${{ !startsWith(github.head_ref, 'dependabot/') }}
         uses: amannn/action-semantic-pull-request@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +47,7 @@ jobs:
             The subject "{subject}" must start with a lowercase letter.
 
       - name: Validate commit messages
-        if: github.actor != 'dependabot[bot]'
+        if: ${{ !startsWith(github.head_ref, 'dependabot/') }}
         uses: wagoid/commitlint-github-action@v6
         with:
           configFile: .commitlintrc.json
