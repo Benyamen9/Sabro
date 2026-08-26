@@ -45,7 +45,7 @@
     <PackageVersion Include="Meilisearch" Version="0.20.0" />
   </ItemGroup>
   <ItemGroup Label="Logging">
-    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="Serilog.Sinks.Seq" Version="9.1.0" />
     <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
   </ItemGroup>
