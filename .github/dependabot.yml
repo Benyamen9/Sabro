@@ -49,6 +49,17 @@ updates:
       # server by a major, but keeping them in lockstep removes the question).
       - dependency-name: "postgres"
         update-types: ["version-update:semver-major"]
+      # Node majors are NOT safe to take from a tag PR. Dependabot offers the
+      # newest tag, which is whatever `node:<n>` exists — including odd-numbered
+      # releases that never become LTS. It offered 22 -> 25 on 2026-08-26 (#227,
+      # closed): Node 25 is odd, so it was never LTS, and its support had already
+      # ended on 2026-06-01 — a bump straight onto an unsupported runtime.
+      #
+      # CLAUDE.md specifies Node LTS. Take these deliberately: 22 is supported to
+      # 2027-04-30, 24 to 2028-04-30, and 26 becomes LTS on 2026-10-28. Minor and
+      # patch bumps within the pinned major still arrive as normal.
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
 
   # Action pins in the CI/CD workflows.
   - package-ecosystem: "github-actions"
@@ -80,6 +91,18 @@ updates:
       # Majors stay ungrouped on purpose: each is its own migration.
       dotnet-minor-and-patch:
         update-types: ["minor", "patch"]
+        # Kept out of the group because "minor" lies for these two, and a
+        # breaking change hidden inside a batch of Microsoft patches is the
+        # worst place to meet it.
+        #
+        # Meilisearch is 0.x, where minor IS the breaking channel: 0.18 -> 0.20
+        # changed Settings.FilterableAttributes from string[] to
+        # IEnumerable<FilterableAttribute> and failed the build (#232). Markdig
+        # 1.1 -> 1.3 is likewise a real API move, not a patch. Both are already
+        # listed in the worklist as wanting a PR of their own.
+        exclude-patterns:
+          - "Meilisearch"
+          - "Markdig"
     ignore:
       # Pinned to 2.x deliberately: that is the line Microsoft.AspNetCore.OpenApi
       # 10.0.0 is compatible with. 3.x is not an upgrade we can take on its own,
