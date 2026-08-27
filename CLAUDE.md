@@ -133,31 +133,32 @@ item 1 and the circuit note. In one pass:
 5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
    30 as the treasury grows.
 
-### 5. The frontends disagree about TypeScript, and the types outrun the runtime
+### 5. TypeScript is split across the frontends ⚠️ **Decide**
 
-Two open decisions, both surfaced on 2026-08-26 when Dependabot first ran.
+**The hub is on TypeScript 5.9; the four game clients are on 6.** The hub is held
+back by `openapi-typescript@7.13.0`, which drives the TypeScript **compiler factory
+API** to generate `app/types/api.generated.ts`. On TS 7 the generator crashes
+outright — `TypeError: Cannot read properties of undefined (reading
+'createKeywordTypeNode')` — so this is a hard break in codegen, not a peer-range
+warning. 7.13.0 is the current latest, so there is nothing to upgrade into.
 
-**TypeScript is split: the hub is on 5.9, the four game clients on 6.** The hub is
-pinned by `openapi-typescript@7.13.0`, which drives the TypeScript **compiler
-factory API** to generate `app/types/api.generated.ts`. On TS 7 the generator
-crashes outright — `TypeError: Cannot read properties of undefined (reading
-'createKeywordTypeNode')` — so this is a hard break, not a peer-range warning.
-7.13.0 is the current latest, so there is nothing to upgrade into. Either wait for
-upstream TS 7 support, or replace the generator. Until then the hub cannot follow
-the clients, and the gap widens with each TS release.
+Two ways out, both deliberate: wait for upstream TS 7 support, or replace the
+generator. Until one happens the hub cannot follow the clients, and the gap widens
+with every TS release. Dependabot will keep offering TS 7 — closing those PRs is
+the expected outcome, not a to-do.
 
-**`@types/node` is running ahead of the runtime.** Every frontend container is
-`node:22-bookworm-slim`, while `@types/node` sits at **25.x** in all five repos;
-Dependabot offered 26. The failure mode is quiet: the types describe APIs the
-runtime does not have, so `nuxt typecheck` accepts code that dies at run time, and
-CI passing proves only that nothing *currently written* trips over it. The tidy fix
-is to align `@types/node` to the **22.x** line across all five repos to match the
-Dockerfiles. That is a deliberate change, not a bump — the 26 PRs were closed
-rather than merged (Sabro #229 and one per game repo).
+> **`@types/node` is no longer part of this — settled 2026-08-27.** It had drifted
+> to 25.x while every container runs `node:22-bookworm-slim`, and Dependabot
+> offered 26. Now pinned to `^22.20.1` in all five repos so the types match the
+> runtime (Sabro #244, Meltho #76, Mno #36, Nahlo #17, Shmo #24). Verified with a
+> real install rather than assumed: `nuxt typecheck` exits 0 and the unit tests
+> pass on the downgrade. **Keep it on the 22.x line while the Dockerfiles say 22** —
+> it moves when the node image moves, not before. Note `@types/node` and the
+> TypeScript compiler version are independent; this did not affect the split above.
 
-Related, and the reason both of these are worth acting on rather than drifting: the
-same "newest is not best" trap already produced an **end-of-life** proposal — see
-the `node` majors ignore in `.github/dependabot.yml`.
+Related, and the reason this is worth acting on rather than drifting: the same
+"newest is not best" trap already produced an **end-of-life** proposal — see the
+`node` majors ignore in `.github/dependabot.yml`.
 
 ---
 
