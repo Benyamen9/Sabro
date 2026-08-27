@@ -14,7 +14,14 @@ public sealed class MeilisearchFixture : IAsyncLifetime
 {
     private const string MasterKey = "test-master-key";
 
-    private readonly IContainer container = new ContainerBuilder("getmeili/meilisearch:v1.13")
+    // Matches docker-compose.prod.yml. It sat on v1.13 while production moved to
+    // v1.53, so index behaviour — settings, filterable attributes, synonyms — was
+    // verified against an engine forty minor versions behind the one that serves
+    // it. Keep this in step whenever the compose pin moves.
+    //
+    // Each run gets a fresh container and no volume, so this never meets the
+    // data-directory incompatibility that governs a production upgrade.
+    private readonly IContainer container = new ContainerBuilder("getmeili/meilisearch:v1.53")
         .WithPortBinding(7700, true)
         .WithEnvironment("MEILI_MASTER_KEY", MasterKey)
         .WithEnvironment("MEILI_NO_ANALYTICS", "true")
