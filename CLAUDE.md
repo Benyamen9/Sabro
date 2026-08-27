@@ -76,7 +76,7 @@ real suite, since the point is to find behaviour that differs between versions.
 The Postgres bump exercises every module's migrations; a failure here is a real
 finding about production, not a test problem.
 
-### 3. NuGet drift — mostly cleared, two blocked
+### 3. NuGet drift — cleared except xunit
 
 Dependabot now watches NuGet and npm (#226), so this list stops being hand-kept.
 Routine minor/patch arrives grouped, one PR a week; majors arrive one at a time.
@@ -84,13 +84,25 @@ Routine minor/patch arrives grouped, one PR a week; majors arrive one at a time.
 **Landed 2026-08-26:** the patch pass (#224) · `NSubstitute` 6.2.0 (#235) ·
 `Serilog.AspNetCore` 10.0.0 (#236) · `Asp.Versioning` 8.1.1 and `Microsoft.OpenApi`
 2.12.2 (#239) · `Meilisearch` client 0.20.0 (#242).
+**2026-08-27:** `Markdig` 1.3.2 (#246) · **`Asp.Versioning` 10.2.1** (#247).
 
-**Still open, in this order:**
-
-- `Markdig` 1.1.3 → 1.3.2 — untouched. Excluded from the group (see below), so it
-  arrives as its own PR.
-- `Asp.Versioning.Mvc` + `.ApiExplorer` 8.1.1 → **10.2.1**, together. Two majors;
-  expect real work. Only the 8.1.1 patch has been taken.
+> **Asp.Versioning 10 was a migration, and it is worth knowing what it changed.**
+> Version 10 makes explicit what 8.x inferred, and enforces it with analysers:
+> `AddMvc()` (AV0013), `AddApiVersioning().AddOpenApi()` **instead of** a standalone
+> `Services.AddOpenApi()` (AV0029), and `MapOpenApi().WithDocumentPerVersion()`
+> (AV0030). `AddOpenApi()` comes from a **third package**, `Asp.Versioning.OpenApi`,
+> which must stay pinned to the same version as the other two.
+>
+> Two things in `Program.cs` exist because of it. The `StringEnumSchemaTransformer`
+> now hangs off `VersionedOpenApiOptions.Document` — AV0029 deleted the call it used
+> to live on, and losing it would silently turn every enum in the contract back into
+> an integer. And the OpenAPI **document title is pinned by hand**: once versioning
+> owned the registration the title was inferred from the entry assembly, which at
+> build time is the generator, so the committed spec became
+> `"GetDocument.Insider | v1"`. Do not "simplify" either back.
+>
+> `frontend/openapi/Sabro.API.json` came out byte-identical, so the contract and the
+> generated TypeScript types did not move.
 
 **Blocked, with the reason found rather than guessed:**
 
