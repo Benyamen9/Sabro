@@ -52,19 +52,47 @@ try
         options.ReportApiVersions = true;
         options.ApiVersionReader = new UrlSegmentApiVersionReader();
     })
+
+    // AddMvc, AddApiExplorer and AddOpenApi are each required by Asp.Versioning
+    // 10 and enforced by its analysers (AV0013, AV0029). In 8.x, AddApiExplorer
+    // alone was enough — versioning MVC controllers and describing versions to
+    // OpenAPI were implicit. They are explicit now, and AddOpenApi lives in the
+    // separate Asp.Versioning.OpenApi package.
+    .AddMvc()
     .AddApiExplorer(options =>
     {
         options.GroupNameFormat = "'v'VVV";
         options.SubstituteApiVersionInUrl = true;
-    });
-
-    builder.Services.AddOpenApi("v1", options =>
+    })
+    .AddOpenApi(options =>
     {
         // Force enum schemas to be emitted as JSON strings with their member
         // names, matching the runtime JsonStringEnumConverter configured on the
         // MVC pipeline. Without this Microsoft.AspNetCore.OpenApi defaults to
         // the enum's underlying numeric type.
-        options.AddSchemaTransformer<StringEnumSchemaTransformer>();
+        //
+        // This used to be a standalone builder.Services.AddOpenApi("v1", …).
+        // Asp.Versioning 10 forbids that (AV0029): its versioned registration
+        // supersedes the plain one, and having both registers two sets of
+        // OpenAPI services. Options.Document is the same OpenApiOptions the
+        // standalone call configured, so the transformer carries over unchanged.
+        options.Document.AddSchemaTransformer<StringEnumSchemaTransformer>();
+
+        // Pin the document's identity instead of letting it be inferred.
+        // Microsoft.AspNetCore.OpenApi names a document after the entry
+        // assembly, and the build-time generator runs the app under
+        // GetDocument.Insider — so once Asp.Versioning owned the registration
+        // the committed spec's title turned into "GetDocument.Insider | v1",
+        // description and all. Paths and schemas were unaffected, but the title
+        // is part of what we publish. Setting it explicitly makes the document
+        // identical whether it comes from the build or from a running app.
+        options.Document.AddDocumentTransformer((document, context, cancellationToken) =>
+        {
+            document.Info.Title = "Sabro.API | v1";
+            document.Info.Version = "1.0.0";
+            document.Info.Description = null;
+            return Task.CompletedTask;
+        });
     });
 
     builder.Services
@@ -186,7 +214,12 @@ try
 
     if (app.Environment.IsDevelopment())
     {
-        app.MapOpenApi();
+        // WithDocumentPerVersion is required by Asp.Versioning 10 (AV0030): it
+        // emits one document per declared API version rather than a single
+        // merged one. With v1.0 as the only version the result is the same
+        // single "v1" document, which is what frontend/openapi/Sabro.API.json
+        // and the generated TypeScript types are built from.
+        app.MapOpenApi().WithDocumentPerVersion();
     }
 
     app.UseSerilogRequestLogging();
