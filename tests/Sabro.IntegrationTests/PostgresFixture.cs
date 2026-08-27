@@ -20,7 +20,10 @@ public sealed class PostgresFixture : IAsyncLifetime
     /// </summary>
     public const string DefaultTestUser = "integration-test-user";
 
-    private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:16-alpine")
+    // Matches docker-compose.prod.yml. The suite signs off every module's
+    // migrations, so running it on a different Postgres major than production
+    // means the sign-off is for software we do not ship.
+    private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:17-alpine")
         .WithDatabase("sabro_test")
         .WithUsername("sabro")
         .WithPassword("sabro")
