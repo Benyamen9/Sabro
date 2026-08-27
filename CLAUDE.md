@@ -66,19 +66,27 @@ item 1 and the circuit note. In one pass:
 5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
    30 as the treasury grows.
 
-### 3. TypeScript is split across the frontends ⚠️ **Decide**
+### 3. TypeScript 7 is blocked by the API codegen
 
-**The hub is on TypeScript 5.9; the four game clients are on 6.** The hub is held
-back by `openapi-typescript@7.13.0`, which drives the TypeScript **compiler factory
-API** to generate `app/types/api.generated.ts`. On TS 7 the generator crashes
-outright — `TypeError: Cannot read properties of undefined (reading
-'createKeywordTypeNode')` — so this is a hard break in codegen, not a peer-range
-warning. 7.13.0 is the current latest, so there is nothing to upgrade into.
+**All five frontends are on TypeScript 6** since 2026-08-27 (#253). The hub used to
+lag at 5.9; it no longer does.
 
-Two ways out, both deliberate: wait for upstream TS 7 support, or replace the
-generator. Until one happens the hub cannot follow the clients, and the gap widens
-with every TS release. Dependabot will keep offering TS 7 — closing those PRs is
-the expected outcome, not a to-do.
+**TS 7 is the wall, and it is the same wall for all five.**
+`openapi-typescript@7.13.0` drives the TypeScript **compiler factory API** to
+generate `app/types/api.generated.ts`, and on TS 7 the generator crashes outright:
+`TypeError: Cannot read properties of undefined (reading 'createKeywordTypeNode')`.
+That is a hard break in codegen, not a peer-range warning. 7.13.0 is the current
+latest, so there is nothing to upgrade into. Wait for upstream TS 7 support, or
+replace the generator. **Dependabot will keep offering TS 7 — closing those PRs is
+the expected outcome, not a to-do.**
+
+> ⚠️ **Do not read the `^5.x` peer range as the constraint.** That is what made the
+> hub sit on 5.9 longer than it had to: the peer says `"typescript": "^5.x"`, so
+> TS 6 *looks* unsupported. It is stale metadata, not enforcement — npm resolves the
+> install without complaint and the generator runs fine. Verified rather than
+> assumed before moving: codegen exits 0 and emits an `api.generated.ts`
+> **byte-identical** to the committed one, `nuxt typecheck` exits 0, 108 unit tests
+> pass. Test the tool, not its manifest.
 
 > **`@types/node` is no longer part of this — settled 2026-08-27.** It had drifted
 > to 25.x while every container runs `node:22-bookworm-slim`, and Dependabot
@@ -87,7 +95,7 @@ the expected outcome, not a to-do.
 > real install rather than assumed: `nuxt typecheck` exits 0 and the unit tests
 > pass on the downgrade. **Keep it on the 22.x line while the Dockerfiles say 22** —
 > it moves when the node image moves, not before. Note `@types/node` and the
-> TypeScript compiler version are independent; this did not affect the split above.
+> TypeScript compiler version are independent; this was never what held the hub back.
 
 Related, and the reason this is worth acting on rather than drifting: the same
 "newest is not best" trap already produced an **end-of-life** proposal — see the
