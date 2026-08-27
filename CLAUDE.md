@@ -35,8 +35,9 @@ To pick this up in a fresh session, paste:
 > "Do" steps, run the "Verify" checks before pushing, and stop and ask me on
 > anything the item marks **Decide**. One PR per item unless it says otherwise.
 
-Ordered by what unblocks most. Item 1 needs a human and an external service; 2 and
-3 do not; 4 waits on the recordings themselves; 5 is two decisions, not a task.
+All three that remain need something this repo cannot supply. Item 1 needs the
+UptimeRobot console, item 2 needs the recordings themselves, and item 3 waits on an
+upstream release. Everything that could be done from the code has been.
 
 ---
 
@@ -52,87 +53,7 @@ Cannot be done from a Claude Code session: UptimeRobot is an external service wi
 no credentials in the repo, and `*.sabro.be` is unreachable from the sandboxed web
 environment. Desktop or the UptimeRobot console only.
 
-### 2. The integration fixtures do not run the production versions
-
-The suite signs off migrations and index behaviour against software production
-does not run:
-
-| Fixture | Pins | Production runs |
-|---|---|---|
-| `PostgresFixture` | `postgres:16-alpine` | `postgres:17-alpine` |
-| `MeilisearchFixture` | `getmeili/meilisearch:v1.13` | `v1.53` |
-
-**Do — two separate PRs, Postgres first.** If something breaks you want to know
-which bump did it.
-
-1. `tests/Sabro.IntegrationTests/PostgresFixture.cs` → `new PostgreSqlBuilder("postgres:17-alpine")`
-2. `tests/Sabro.IntegrationTests/MeilisearchFixture.cs` → `new ContainerBuilder("getmeili/meilisearch:v1.53")`
-
-**v1.53**, not v1.51 — production moved on 2026-08-24 (#223). Keep the fixture and
-the compose pin moving together from here.
-
-**Verify.** `dotnet test` locally — this is the one item that genuinely needs the
-real suite, since the point is to find behaviour that differs between versions.
-The Postgres bump exercises every module's migrations; a failure here is a real
-finding about production, not a test problem.
-
-### 3. NuGet drift — cleared except xunit
-
-Dependabot now watches NuGet and npm (#226), so this list stops being hand-kept.
-Routine minor/patch arrives grouped, one PR a week; majors arrive one at a time.
-
-**Landed 2026-08-26:** the patch pass (#224) · `NSubstitute` 6.2.0 (#235) ·
-`Serilog.AspNetCore` 10.0.0 (#236) · `Asp.Versioning` 8.1.1 and `Microsoft.OpenApi`
-2.12.2 (#239) · `Meilisearch` client 0.20.0 (#242).
-**2026-08-27:** `Markdig` 1.3.2 (#246) · **`Asp.Versioning` 10.2.1** (#247).
-
-> **Asp.Versioning 10 was a migration, and it is worth knowing what it changed.**
-> Version 10 makes explicit what 8.x inferred, and enforces it with analysers:
-> `AddMvc()` (AV0013), `AddApiVersioning().AddOpenApi()` **instead of** a standalone
-> `Services.AddOpenApi()` (AV0029), and `MapOpenApi().WithDocumentPerVersion()`
-> (AV0030). `AddOpenApi()` comes from a **third package**, `Asp.Versioning.OpenApi`,
-> which must stay pinned to the same version as the other two.
->
-> Two things in `Program.cs` exist because of it. The `StringEnumSchemaTransformer`
-> now hangs off `VersionedOpenApiOptions.Document` — AV0029 deleted the call it used
-> to live on, and losing it would silently turn every enum in the contract back into
-> an integer. And the OpenAPI **document title is pinned by hand**: once versioning
-> owned the registration the title was inferred from the entry assembly, which at
-> build time is the generator, so the committed spec became
-> `"GetDocument.Insider | v1"`. Do not "simplify" either back.
->
-> `frontend/openapi/Sabro.API.json` came out byte-identical, so the contract and the
-> generated TypeScript types did not move.
-
-**Blocked, with the reason found rather than guessed:**
-
-- `xunit.v3` 3.2.2 → 4.0.0 with `xunit.runner.visualstudio` 3.1.5 → 4.0.0. **Not a
-  bump — a test-platform migration.** 4.0.0 pulls `Microsoft.Testing.Platform`
-  2.3.3, which drops VSTest on the .NET 10 SDK: the build succeeds and then
-  `dotnet test` refuses outright with *"Testing with VSTest target is no longer
-  supported … opt-in to the new dotnet test experience"*
-  (<https://aka.ms/dotnet-test-mtp-error>). Taking it means migrating how both test
-  projects and the CI job invoke tests, and re-proving that coverlet still reports
-  so the Domain/Application coverage gate holds. Runner-alone passes CI but banks a
-  skew, so #237 was closed. Nothing is urgent: 3.2.2 works and 653 unit tests pass.
-
-> **Two packages are excluded from the grouped update** (#238): `Meilisearch` and
-> `Markdig`. Meilisearch is `0.x`, where **minor is the breaking channel** — 0.18 →
-> 0.20 changed `Settings.FilterableAttributes` from `string[]` to
-> `IEnumerable<FilterableAttribute>` and failed the build on behalf of four
-> unrelated Microsoft patches. Markdig 1.1 → 1.3 is the same shape. A breaking
-> change is at its worst hiding inside a batch that gives no clue where the failure
-> came from.
-
-> **`Microsoft.OpenApi` stays in the 2.x line.** Deliberate: 2.x is what
-> `Microsoft.AspNetCore.OpenApi` 10.0.0 is compatible with, so **majors are ignored
-> in `dependabot.yml`** and it will report as outdated forever. Minors within 2.x
-> are fine and 2.12.2 is current. Do not "fix" it to 3.x.
-
-Remember `TreatWarningsAsErrors` is on: a new obsoletion in any of these becomes a
-build failure, exactly as Testcontainers 4.14.0's builder constructors did (#218).
-
-### 4. When the chant recordings land
+### 2. When the chant recordings land
 
 Not a code task on its own, but it is the keystone — it opens Nahlo and unblocks
 item 1 and the circuit note. In one pass:
@@ -145,7 +66,7 @@ item 1 and the circuit note. In one pass:
 5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
    30 as the treasury grows.
 
-### 5. TypeScript is split across the frontends ⚠️ **Decide**
+### 3. TypeScript is split across the frontends ⚠️ **Decide**
 
 **The hub is on TypeScript 5.9; the four game clients are on 6.** The hub is held
 back by `openapi-typescript@7.13.0`, which drives the TypeScript **compiler factory
@@ -420,7 +341,7 @@ Four pieces of logic are deliberately implemented twice, on either side of a rep
 
 **The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies; `CIRCUIT_HANDOFF` currently omits `nahlo`, because handing a player to a game that answers 409 ends their circuit on a closed door.
 
-> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 4 of the Outstanding Worklist.*
+> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 2 of the Outstanding Worklist.*
 
 ## Backoffice (Editorial Admin)
 
@@ -699,14 +620,17 @@ Test pyramid with TDD-first approach for Domain and Application layers.
 - **Playwright** — E2E tests against the Nuxt frontend
 - **Vitest** — Nuxt-side unit tests (composables, components)
 
-> ⚠️ **The integration fixtures do not run the production versions.** As of
-> 2026-08-19 `PostgresFixture` pins `postgres:16-alpine` while both compose files
-> run `postgres:17-alpine`, and `MeilisearchFixture` pins
-> `getmeili/meilisearch:v1.13` while production runs `v1.53`. Migrations and
-> index behaviour are therefore verified against a different major Postgres and a
-> far older Meilisearch than they meet in production. Raise both to match, and
-> keep them matched when the compose pins move. *Tracked as item 2 of the
-> Outstanding Worklist.*
+> ⚠️ **Keep the integration fixtures on the versions production runs.**
+> `PostgresFixture` is `postgres:17-alpine` and `MeilisearchFixture` is
+> `getmeili/meilisearch:v1.53`, matching `docker-compose.prod.yml` since
+> 2026-08-27 (#249, #250). They had drifted to Postgres 16 and Meilisearch v1.13,
+> which meant every module's migrations and all index behaviour were signed off
+> against software we do not ship — and it is part of why the Meilisearch client
+> bump reached CI before its API change was noticed. **Move these whenever the
+> compose pins move.**
+>
+> Neither fixture keeps a volume: each run gets a fresh container, so they never
+> meet the data-directory incompatibility that governs a production upgrade.
 
 **Testcontainers version note.** `Testcontainers` 4.14.0 obsoletes the
 parameterless `ContainerBuilder()` / `PostgreSqlBuilder()` constructors in favour
@@ -721,7 +645,9 @@ build failure — so the image goes in the constructor, not in a following
 - **Global target: 70–75%**
 
 ### CI Enforcement
-Coverage drop blocks CI on **Domain and Application** layers only — other layers report coverage but do not block merges. Avoids contortions to inflate metrics on infrastructure code.
+The *intent* is that a coverage drop blocks CI on **Domain and Application** layers only — other layers report coverage but do not block merges, avoiding contortions to inflate metrics on infrastructure code.
+
+> ⚠️ **That gate does not actually exist yet.** Checked 2026-08-27: CI collects coverage and uploads `*.cobertura.xml` as an artifact, and nothing reads it — there is no threshold, no ReportGenerator step and no failure condition anywhere in `sabro-ci.yml`. Coverage is *observable*, not *enforced*. Treat the targets above as aspirations until something actually asserts them, and do not assume a merge was gated on them.
 
 ### TDD Discipline
 - **Strict TDD** for Domain and Application: write the failing test first
