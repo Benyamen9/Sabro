@@ -39,18 +39,26 @@ jobs:
       - name: Format check
         run: dotnet format Sabro.slnx --verify-no-changes --no-restore
 
+      # Microsoft.Testing.Platform flags, not VSTest's. `--logger trx` and
+      # `--collect:"XPlat Code Coverage"` are VSTest concepts and are rejected
+      # outright once global.json routes `dotnet test` through MTP, which
+      # xunit.v3 4 requires.
       - name: Unit tests
-        run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --logger "trx;LogFileName=unit.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
+        run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --report-trx --report-trx-filename unit.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
 
       - name: Integration tests
-        run: dotnet test tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj --no-build --configuration Release --logger "trx;LogFileName=integration.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
+        run: dotnet test tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj --no-build --configuration Release --report-trx --report-trx-filename integration.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
 
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: coverage
-          path: ./TestResults/**/coverage.cobertura.xml
+          # MTP names the file after the run, not `coverage.cobertura.xml` the
+          # way the coverlet collector did. Matching on the extension keeps the
+          # artifact from silently going missing — nothing fails when a glob
+          # stops matching, it just uploads nothing.
+          path: ./TestResults/**/*.cobertura.xml
 
       - name: Upload test results
         if: always()
