@@ -35,6 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The API layer carries testable logic of its own (the rate-limit partition
+         key), and it is cheaper to cover here than through a Testcontainers run. -->
+    <ProjectReference Include="..\..\src\Sabro.API\Sabro.API.csproj" />
     <ProjectReference Include="..\..\src\Sabro.Shared\Sabro.Shared.csproj" />
     <ProjectReference Include="..\..\src\Sabro.Shared.Infrastructure\Sabro.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Modules\Sabro.Lexicon\Sabro.Lexicon.csproj" />

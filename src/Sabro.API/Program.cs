@@ -3,6 +3,8 @@ using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Options;
 using Sabro.API.Configuration;
 using Sabro.API.Health;
 using Sabro.API.Logto;
@@ -163,21 +165,65 @@ try
             .AllowAnyHeader()
             .AllowAnyMethod()));
 
+    // Bound, never read eagerly with a `.Get<T>()` here. That reads configuration
+    // as it stands during CreateBuilder, and any source added afterwards — which
+    // is how the integration tests, and anything else hosting this app, supply
+    // overrides — is applied later during Build() and would be silently ignored.
+    // Binding defers the read to resolve time, so the value in force is the final
+    // one. The first version of this change got that wrong: the limit looked
+    // configurable and quietly stayed at its default.
+    builder.Services.Configure<TrustedProxyOptions>(
+        builder.Configuration.GetSection(TrustedProxyOptions.SectionName));
+    builder.Services.Configure<RateLimitOptions>(
+        builder.Configuration.GetSection(RateLimitOptions.SectionName));
+
+    // Believe X-Forwarded-For, but only from the reverse proxy. Without this,
+    // Connection.RemoteIpAddress is Caddy's container address on every request,
+    // which made the rate limiter one global window for the whole ecosystem and
+    // logged the proxy as the client on every line. See TrustedProxyOptions for
+    // why the allowlist is the RFC 1918 ranges rather than a pinned subnet.
+    builder.Services
+        .AddOptions<ForwardedHeadersOptions>()
+        .Configure<IOptions<TrustedProxyOptions>>((options, trustedProxies) =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor;
+
+            // Exactly one hop: Caddy. Caddy appends the peer address to whatever
+            // the client sent, so the rightmost entry is the real client and a
+            // forged prefix is ignored. A higher limit would walk back into
+            // client-supplied entries and hand the caller their own partition key.
+            options.ForwardLimit = 1;
+
+            // The defaults trust loopback only, which no container address
+            // matches. KnownIPNetworks/System.Net.IPNetwork, not the KnownNetworks
+            // pair HttpOverrides still exposes — those are obsolete (ASPDEPR005)
+            // and the build treats the deprecation as an error.
+            options.KnownIPNetworks.Clear();
+            options.KnownProxies.Clear();
+            foreach (var network in trustedProxies.Value.Networks)
+            {
+                options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(network));
+            }
+        });
+
     builder.Services.AddRateLimiter(options =>
     {
         options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-            RateLimitPartition.GetFixedWindowLimiter(
-                partitionKey: httpContext.User.Identity?.Name
-                    ?? httpContext.Connection.RemoteIpAddress?.ToString()
-                    ?? "anonymous",
+        {
+            var limits = httpContext.RequestServices
+                .GetRequiredService<IOptions<RateLimitOptions>>().Value;
+
+            return RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: RateLimitPartitioning.ResolvePartitionKey(httpContext),
                 factory: _ => new FixedWindowRateLimiterOptions
                 {
-                    PermitLimit = 100,
-                    Window = TimeSpan.FromMinutes(1),
+                    PermitLimit = limits.PermitLimit,
+                    Window = TimeSpan.FromSeconds(limits.WindowSeconds),
                     QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                     QueueLimit = 0,
-                }));
+                });
+        });
     });
 
     // /health reports on the database, not just the process — see HealthEndpoints.
@@ -222,6 +268,11 @@ try
         app.MapOpenApi().WithDocumentPerVersion();
     }
 
+    // FIRST, deliberately. Everything downstream that reads the client address
+    // must see the real one: Serilog's request log below, and the rate limiter's
+    // partition key. Placed after this, they would each record Caddy instead.
+    app.UseForwardedHeaders();
+
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
 
@@ -241,8 +292,13 @@ try
     {
         ContentTypeProvider = PronunciationAudioFormats.CreateContentTypeProvider(),
     });
-    app.UseRateLimiter();
+
+    // AFTER UseAuthentication, deliberately. The partition key prefers the
+    // authenticated caller, and User is not populated until authentication has
+    // run — with the limiter first, that branch could never fire and every
+    // signed-in caller fell through to the IP bucket.
     app.UseAuthentication();
+    app.UseRateLimiter();
     app.UseAuthorization();
     app.MapControllers();
 
