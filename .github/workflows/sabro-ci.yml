@@ -43,6 +43,16 @@ jobs:
       # `--collect:"XPlat Code Coverage"` are VSTest concepts and are rejected
       # outright once global.json routes `dotnet test` through MTP, which
       # xunit.v3 4 requires.
+      #
+      # `--nologo` belongs on that list and is the dangerous one, because it is
+      # the only member that fails *quietly*. MTP does not report it as an
+      # unrecognized option: it forwards it to the test app, which refuses the
+      # run and reports `Zero tests ran` with exit code 5 -- which reads like
+      # "this project has no tests" rather than "your command was rejected".
+      # Locally that looks exactly like a broken test project, and the exit code
+      # is the only thing distinguishing the two. Plain `dotnet test` (the
+      # pre-commit check in CLAUDE.md) is correct and runs the full suite; do not
+      # add `--nologo` to it. Upstream: https://github.com/dotnet/sdk/issues/55309
       - name: Unit tests
         run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --report-trx --report-trx-filename unit.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
 
