@@ -90,6 +90,13 @@ latest, so there is nothing to upgrade into. Wait for upstream TS 7 support, or
 replace the generator. **Dependabot will keep offering TS 7 — closing those PRs is
 the expected outcome, not a to-do.**
 
+**What to watch upstream** (`openapi-ts/openapi-typescript`, checked 2026-10-01): issue
+#2841 tracks the TS 7 break. Two competing fixes are open and unmerged: #2867 (a
+package-owned compiler) and #2872 (no runtime compiler dependency at all). Nothing has
+been published since 7.13.0 on 2026-06-15. When a release lands, re-run the same proof
+used for TS 6: regenerate `api.generated.ts`, and it must come out **byte-identical**;
+then run `nuxt typecheck` and the unit tests, in all five repos.
+
 > ⚠️ **Do not read the `^5.x` peer range as the constraint.** That is what made the
 > hub sit on 5.9 longer than it had to: the peer says `"typescript": "^5.x"`, so
 > TS 6 *looks* unsupported. It is stale metadata, not enforcement — npm resolves the
