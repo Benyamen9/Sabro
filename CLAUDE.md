@@ -35,10 +35,9 @@ To pick this up in a fresh session, paste:
 > "Do" steps, run the "Verify" checks before pushing, and stop and ask me on
 > anything the item marks **Decide**. One PR per item unless it says otherwise.
 
-Items 1–3 need something this repo cannot supply. Item 1 needs the UptimeRobot
-console, item 2 needs the recordings themselves, and item 3 waits on an upstream
-release. A full prod + five-repo audit on **2026-09-28** re-checked all three and
-none had moved. Everything code-only is done. On 2026-10-01 every open npm advisory
+Both remaining items need something this repo cannot supply: item 1 needs the
+recordings themselves, and item 2 waits on an upstream release. Everything code-only
+is done. The old item 1 (UptimeRobot) closed on 2026-10-01; see *Monitoring*. On 2026-10-01 every open npm advisory
 was closed in all five repos (`js-yaml`, `svgo`, `undici`, `brace-expansion`), leaving
 `npm audit` at zero, and CI gained a minimum-test-count floor.
 
@@ -51,32 +50,19 @@ was closed in all five repos (`js-yaml`, `svgo`, `undici`, `brace-expansion`), l
 
 ---
 
-### 1. Nahlo and analytics are unmonitored ⚠️ **Decide** (external service)
-
-Caddy serves `{$NAHLO_DOMAIN}` and the container is deployed, but the five
-UptimeRobot monitors predate Nahlo's slot (#199), so its downtime is invisible.
-`analytics.sabro.be` likewise. Add a sixth monitor on `https://nahlo.sabro.be`
-(HTTP(s), 5-minute interval, alerting to the Owner's personal mailbox — **not**
-`contact@sabro.be`, which forwards to Hotmail and is dropped silently).
-
-Cannot be done from a Claude Code session: UptimeRobot is an external service with
-no credentials in the repo, and `*.sabro.be` is unreachable from the sandboxed web
-environment. Desktop or the UptimeRobot console only.
-
-### 2. When the chant recordings land
+### 1. When the chant recordings land
 
 Not a code task on its own, but it is the keystone — it opens Nahlo and unblocks
-item 1 and the circuit note. In one pass:
+the circuit note. In one pass:
 
 1. Upload recordings via `/admin/chants`, publish, set `PlayableInNahlo`.
 2. Confirm `GET /api/v1/play/nahlo/today` stops answering 409.
 3. Put `'nahlo'` back into `CIRCUIT_HANDOFF` in **all five** copies of
    `useDailyCircuit.ts` — Sabro hub, Meltho, Mno, Shmo, Nahlo.
-4. Add the UptimeRobot monitor from item 1.
-5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
+4. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
    30 as the treasury grows.
 
-### 3. TypeScript 7 is blocked by the API codegen
+### 2. TypeScript 7 is blocked by the API codegen
 
 **All five frontends are on TypeScript 6** since 2026-08-27 (#253). The hub used to
 lag at 5.9; it no longer does.
@@ -366,7 +352,7 @@ Four pieces of logic are deliberately implemented twice, on either side of a rep
 
 **The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies; `CIRCUIT_HANDOFF` currently omits `nahlo`, because handing a player to a game that answers 409 ends their circuit on a closed door.
 
-> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 2 of the Outstanding Worklist.*
+> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 1 of the Outstanding Worklist.*
 
 ## Backoffice (Editorial Admin)
 
@@ -576,8 +562,8 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   - `/health/live` — **liveness**: runs no checks, depends on nothing. The only one
     safe for a Docker `healthcheck:` or a `depends_on: service_healthy` gate —
     pointing those at `/health` would turn a database blip into a restart loop.
-- **UptimeRobot — live since 2026-07-28.** Five HTTP(s) monitors on a 5-minute
-  interval, emailing on downtime:
+- **UptimeRobot — live since 2026-07-28.** Seven HTTP(s) monitors on a 5-minute
+  interval (the free plan's floor), emailing on downtime:
 
   | Monitor | URL |
   |---|---|
@@ -586,13 +572,16 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   | Meltho | `https://meltho.sabro.be` |
   | Mno | `https://mno.sabro.be` |
   | Shmo | `https://shmo.sabro.be` |
+  | Nahlo | `https://nahlo.sabro.be` |
+  | Umami analytics | `https://analytics.sabro.be` |
 
-  > ⚠️ **Nahlo is not monitored.** Caddy serves `{$NAHLO_DOMAIN}` and the container
-  > is deployed, but no UptimeRobot monitor watches it — the five above predate
-  > Nahlo's deployment slot (#199, 2026-08-09). Add a sixth monitor on
-  > `https://nahlo.sabro.be` when the recordings land and the game opens; until
-  > then its downtime is invisible. `analytics.sabro.be` is likewise unwatched.
-  > *Tracked as item 1 of the Outstanding Worklist.*
+  > **Nahlo was monitored long before the docs said so.** Until 2026-10-01 this file
+  > called Nahlo unmonitored, but checking the console showed a `nahlo.sabro.be` monitor
+  > already up for 1 month 22 days. It was added around the time of Nahlo's deployment
+  > slot (#199, 2026-08-09) and never recorded here. `analytics.sabro.be` really was
+  > unwatched; it got its monitor on 2026-10-01. **Check the console before recording a
+  > monitor as missing.** UptimeRobot itself is the source of truth for this table, and
+  > the table can drift from it.
 
   Alerts go to the **Owner's personal mailbox directly**, deliberately *not* via
   `contact@sabro.be` — that address forwards to Hotmail and Microsoft drops the
@@ -601,7 +590,9 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   Verified end to end at setup: the API monitor's pings are visible server-side
   (`HTTP HEAD /health` every 5 min in `docker logs sabro-api`), all five URLs
   answer `HEAD` with 200, and a deliberately-failing throwaway monitor confirmed
-  an alert email actually **arrives**.
+  an alert email actually **arrives**. The free plan has a single account user, so
+  every monitor alerts the same contact: the Owner's personal mailbox, which is the
+  address the account signs in with.
 
   > UptimeRobot probes with **HEAD**, not GET. Grepping logs for `GET /health`
   > will show zero hits and look like the monitor is dead.
@@ -745,7 +736,7 @@ The *intent* is that a coverage drop blocks CI on **Domain and Application** lay
 everywhere, so advisories surfaced only when someone ran `npm audit`. Secret scanning
 is on for public Sabro only; the four private client repos would need paid Advanced
 Security. Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
-are expected closes (*Outstanding Worklist* item 3), and image bumps for Meilisearch
+are expected closes (*Outstanding Worklist* item 2), and image bumps for Meilisearch
 and Logto need their upgrade rituals — green CI cannot see those.
 
 ### CD
