@@ -259,13 +259,21 @@ jobs:
             $COMPOSE pull
             # Apply migrations before swapping app containers (expand->migrate->contract).
             $COMPOSE --profile migrate run --rm migrator
-            # Bring the stack up and drop orphaned containers, then force the app
-            # services onto the just-pulled image WITHOUT disturbing the data
-            # services (--no-deps). A plain `up -d` can leave a stale api/frontend
-            # container serving after an image bump; --force-recreate guarantees
-            # the swap, and --remove-orphans clears any leftover from an earlier run.
-            $COMPOSE up -d --remove-orphans
+            # Force the app services onto the just-pulled image WITHOUT disturbing the
+            # data services (--no-deps). A plain `up -d` can leave a stale api/frontend
+            # container serving after an image bump; --force-recreate guarantees the
+            # swap. Then bring the rest of the stack up and drop orphans.
+            #
+            # The ORDER matters: swap first, converge second. The other way round,
+            # `up -d` already recreated api (its image tag changed), and compose
+            # creates every container before starting any, so api sat stopped until
+            # the slowest recreate finished (backup took its full 10 s stop timeout).
+            # The force-recreate then restarted api a second time. That came to
+            # ~14 s of 502 on 2026-10-01. In this order api restarts once, never
+            # waits on another service, and the `up -d` that follows finds it
+            # already current and leaves it alone.
             $COMPOSE up -d --force-recreate --no-deps api frontend
+            $COMPOSE up -d --remove-orphans
             # Record exactly which image the api service ended up on (deploy observability).
             $COMPOSE images api
             # Reclaim the images this deploy just superseded. Nothing on the VPS pruned

@@ -625,7 +625,7 @@ Single-VPS hosting at MVP — the modular-monolith philosophy extends to the dep
 **Target stack:**
 - **VPS**: Hetzner Cloud **CPX32** (4 vCPU AMD shared, 8 GB RAM, 160 GB NVMe, 20 TB traffic). All services co-located: Postgres, Meilisearch, Logto, Seq, the ASP.NET API, and the Nuxt frontend. Estimated 3–5 GB RAM in use, leaving 3–5 GB margin.
 - **Off-site storage**: Hetzner **Storage Box BX11** (1 TB) for pgBackRest backups and `wwwroot/media/`. Free internal traffic with the VPS; supports SFTP/rsync/Borg/restic.
-- **Reverse proxy**: **Caddy** in frontal — automatic Let's Encrypt HTTPS, one `reverse_proxy` block per domain. Buffers the brief API restart window during deploys (replaces blue-green at this scale).
+- **Reverse proxy**: **Caddy** in frontal — automatic Let's Encrypt HTTPS, one `reverse_proxy` block per domain. Holds requests across a container swap during deploys with `lb_try_duration` (the `swap_retry` snippet), which replaces blue-green at this scale. It did **not** do this by default: until 2026-10-01 the Caddyfile had no retry, and a deploy measured ~14 s of 502 on the API.
 - **Container runtime**: `docker compose` on the VPS. Compose files in the repo (`docker-compose.prod.yml`); production secrets in a `.env` next to it on the VPS, never committed.
 
 **Single shared database.** The entire ecosystem uses **one PostgreSQL database**, owned by Sabro and the only writer of record. Client apps (Meltho, future small sites) do **not** get their own application database — they read and write through Sabro's API. (Earlier drafts said "each app has its own Postgres database"; that is superseded by the single-database decision.)
@@ -749,7 +749,7 @@ GitHub Actions builds Docker images for the API and frontend, pushes them to **G
 4. SSH to the VPS, `docker compose pull`, run `docker compose run --rm api dotnet ef database update` (one-off migration container) **before** swapping app containers, then `docker compose up -d`.
 5. Health-check `/health` post-deploy. Rollback = retag the previous image SHA and `docker compose up -d` (~30 s).
 
-**Migrations rule — forward-compatible only.** No `DROP COLUMN` / rename / type-narrowing in a single deploy. Destructive changes go through an **expand → migrate → contract** sequence over multiple deploys. There is no blue-green at MVP scale — Caddy in frontal buffers the ~2–3 s API restart window.
+**Migrations rule — forward-compatible only.** No `DROP COLUMN` / rename / type-narrowing in a single deploy. Destructive changes go through an **expand → migrate → contract** sequence over multiple deploys. There is no blue-green at MVP scale. Caddy holds and retries requests across the API restart (`swap_retry`, up to 15 s), and CD swaps api/frontend *before* the general `up -d` so the API restarts once and never waits on another container.
 
 **Build always in CI, never on the VPS** — the shared vCPU is too constrained to run `dotnet publish` while serving traffic.
 
