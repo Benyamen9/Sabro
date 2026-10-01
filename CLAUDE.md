@@ -24,7 +24,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 
 ## Outstanding Worklist
 
-Live handoff list, accurate as of **2026-08-24**. Each item is written to be
+Live handoff list, accurate as of **2026-10-01**. Each item is written to be
 executed cold — context, exact change, how to verify, and what needs a human
 decision. **Delete an item from this file the moment it lands**; a worklist that
 outlives its work is the same drift this file exists to prevent.
@@ -35,9 +35,18 @@ To pick this up in a fresh session, paste:
 > "Do" steps, run the "Verify" checks before pushing, and stop and ask me on
 > anything the item marks **Decide**. One PR per item unless it says otherwise.
 
-All three that remain need something this repo cannot supply. Item 1 needs the
-UptimeRobot console, item 2 needs the recordings themselves, and item 3 waits on an
-upstream release. Everything that could be done from the code has been.
+Items 1–3 need something this repo cannot supply. Item 1 needs the UptimeRobot
+console, item 2 needs the recordings themselves, and item 3 waits on an upstream
+release. A full prod + five-repo audit on **2026-09-28** re-checked all three and
+none had moved. Items 4 and 5 are small and code-only, deliberately left rather than
+forgotten.
+
+> **What 2026-09-28 landed, so nobody redoes it:** the rate limiter partitions per
+> caller instead of globally (#268 — see *API Design → Rate limiting*); `devalue`
+> 5.9.4 closed a runtime DoS advisory in all five repos (#269 here); Dependabot
+> **security alerts** are now enabled on all five repos — they were off everywhere;
+> and the MTP `--nologo` trap is documented (#270 — see *Testing Strategy*). Prod
+> was verified on `0c1e3f4` via `/version` on api and hub.
 
 ---
 
@@ -100,6 +109,33 @@ the expected outcome, not a to-do.**
 Related, and the reason this is worth acting on rather than drifting: the same
 "newest is not best" trap already produced an **end-of-life** proposal — see the
 `node` majors ignore in `.github/dependabot.yml`.
+
+### 4. `js-yaml` and `svgo` advisories — build-time only
+
+Both are flagged **high** in all five repos, and both were left on purpose on
+2026-09-28 because neither has a runtime path: `js-yaml` arrives via eslint,
+`@rollup/plugin-yaml` and openapi-typescript; `svgo` via `cssnano → postcss-svgo`,
+running only over our own CSS. The badge overstates them — rank advisories by
+reachability, not severity.
+
+**Do**, if taken: patch the one lock entry by hand, as #269 did for `devalue`.
+**Never `npm update` a transitive advisory in these repos** — it deletes the
+cac/commander optional peers CI needs. The hub needs `--legacy-peer-deps`; the four
+clients do not. Check first whether `svgo`'s fix needs a major (`>=4.1.0`) rather
+than assuming a patch. Keep GHSA ids out of the commit subject — their capitals
+fail commitlint.
+
+**Verify:** `npm audit` clears the advisory, `nuxt typecheck` and the unit tests pass,
+and the lock diff touches only the entries meant.
+
+### 5. Nothing in CI catches "zero tests ran"
+
+`dotnet test` under MTP exits **5** when it runs no tests, and that non-zero exit is
+the only reason the `--nologo` trap (see *Testing Strategy*) fails the build at all.
+Nothing asserts a *count*. Consider `--minimum-expected-tests` on both test steps in
+`sabro-ci.yml`, set safely below today's 660 unit / 529 integration so ordinary test
+removals do not trip it. **Decide** the thresholds — too tight and every deleted test
+is a red build.
 
 ---
 
@@ -383,8 +419,48 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
   - `api:v1:read` — public content reads
   - `api:v1:write` — authenticated user writes (e.g. recording own game results)
   - `api:v1:admin` — Owner-only editorial and operational endpoints (backoffice, search rebuilds)
-- Rate limiting applied to all public endpoints
+- Rate limiting applied to all public endpoints, **per caller** — see below
 - OpenAPI/Swagger documentation generated automatically (used to generate TypeScript types for the frontend)
+
+### Rate limiting
+
+One fixed-window limiter, partitioned per caller: the Logto `sub` when the request is
+authenticated, otherwise the client IP (`RateLimitPartitioning.ResolvePartitionKey`).
+Until #268 (2026-09-28) it partitioned **nothing** — every request in the ecosystem
+shared one 100/min window, and a live audit had recorded it as "per IP".
+
+Configurable, never hardcoded, for the same reason as the anti-repetition windows:
+
+| Config key | Default | What it is |
+|---|---|---|
+| `RateLimit:PermitLimit` | 100 | Requests per window, per partition |
+| `RateLimit:WindowSeconds` | 60 | Window length |
+| `TrustedProxies:Networks` | loopback + RFC 1918 | Networks whose `X-Forwarded-For` is believed |
+
+**Two pipeline orderings in `Program.cs` are load-bearing.** Moving either one
+silently re-collapses the limiter into a single bucket:
+- **`UseForwardedHeaders` is first.** Caddy proxies from its own container, so without
+  it every request's address is Caddy's — one bucket for the whole internet, and the
+  proxy logged as the client on every Serilog line. `ForwardLimit = 1`.
+- **`UseRateLimiter` comes after `UseAuthentication`.** Before it, `User` is still
+  anonymous when the key is computed and the per-user branch can never fire.
+
+`TrustedProxies` must stay an **allowlist**: `X-Forwarded-For` is client-supplied, so
+trusting it from anywhere would let a caller choose their own partition. The wide
+RFC 1918 default is safe only because the API publishes no host port — `caddy` is
+the only service with a `ports:` mapping. Narrow it to the proxy's address in any
+deployment that exposes the API directly. In prod Caddy sat at `172.18.0.13` on
+2026-09-28, inside `172.16.0.0/12`; re-check if the compose network is ever recreated.
+
+> ⚠️ **SSR shares one bucket.** All five frontends call the API at its public URL, so
+> their server-side render fetches arrive from the host's address, not the visitor's
+> — SSR across the hub and all four games is one partition, while browser traffic
+> splits per visitor. It is the bucket that will hit the ceiling first: raise
+> `RateLimit:PermitLimit` if SSR starts seeing 429s.
+
+`RateLimitPartitioningTests` (unit + integration) pin this; the integration test fails
+against the old ordering with the real symptom — a quiet caller gets 429 from someone
+else's flood.
 
 ### Key endpoints
 
@@ -646,6 +722,15 @@ of ones taking the image, and `TreatWarningsAsErrors` turns that CS0618 into a
 build failure — so the image goes in the constructor, not in a following
 `WithImage` call.
 
+> ⚠️ **Never pass `--nologo` to `dotnet test`.** The test projects run on
+> Microsoft.Testing.Platform, which does not reject the VSTest flag as unknown — it
+> forwards it to the test app, which refuses the run and reports **`Zero tests ran`,
+> exit 5**. That reads like a broken SDK or project; it is neither. Plain
+> `dotnet test` runs all 660 unit tests. When a local run fails and CI passes, diff
+> the *command* before the environment. Documented in `sabro-ci.yml` (#270);
+> upstream: dotnet/sdk#55309. For a subset, run the test exe with `-class`.
+> Nothing yet asserts a minimum test count — *Outstanding Worklist* item 5.
+
 ### Coverage Targets
 - Domain + Application: **80–90%**
 - Infrastructure: **50–60%**
@@ -670,6 +755,14 @@ The *intent* is that a coverage drop blocks CI on **Domain and Application** lay
 - `pr-validation.yml` — Conventional Commits check, lint, format
 
 (Meltho lives in its own repository and carries its own `meltho-ci.yml` — build, Vitest, Playwright. It is not part of Sabro's pipelines.)
+
+**Dependabot** watches npm and NuGet in all five repos (minor + patch grouped), and
+**security alerts are enabled on all five** since 2026-09-28 — they had been off
+everywhere, so advisories surfaced only when someone ran `npm audit`. Secret scanning
+is on for public Sabro only; the four private client repos would need paid Advanced
+Security. Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
+are expected closes (*Outstanding Worklist* item 3), and image bumps for Meilisearch
+and Logto need their upgrade rituals — green CI cannot see those.
 
 ### CD
 GitHub Actions builds Docker images for the API and frontend, pushes them to **GitHub Container Registry** (`ghcr.io`), then SSHes to the production VPS to pull and run `docker compose up -d`.
