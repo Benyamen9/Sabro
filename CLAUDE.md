@@ -38,9 +38,9 @@ To pick this up in a fresh session, paste:
 Items 1–3 need something this repo cannot supply. Item 1 needs the UptimeRobot
 console, item 2 needs the recordings themselves, and item 3 waits on an upstream
 release. A full prod + five-repo audit on **2026-09-28** re-checked all three and
-none had moved. Item 4 is small and code-only. On 2026-10-01 every open npm advisory
+none had moved. Everything code-only is done. On 2026-10-01 every open npm advisory
 was closed in all five repos (`js-yaml`, `svgo`, `undici`, `brace-expansion`), leaving
-`npm audit` at zero.
+`npm audit` at zero, and CI gained a minimum-test-count floor.
 
 > **What 2026-09-28 landed, so nobody redoes it:** the rate limiter partitions per
 > caller instead of globally (#268 — see *API Design → Rate limiting*); `devalue`
@@ -117,15 +117,6 @@ then run `nuxt typecheck` and the unit tests, in all five repos.
 Related, and the reason this is worth acting on rather than drifting: the same
 "newest is not best" trap already produced an **end-of-life** proposal — see the
 `node` majors ignore in `.github/dependabot.yml`.
-
-### 4. Nothing in CI catches "zero tests ran"
-
-`dotnet test` under MTP exits **5** when it runs no tests, and that non-zero exit is
-the only reason the `--nologo` trap (see *Testing Strategy*) fails the build at all.
-Nothing asserts a *count*. Consider `--minimum-expected-tests` on both test steps in
-`sabro-ci.yml`, set safely below today's 660 unit / 529 integration so ordinary test
-removals do not trip it. **Decide** the thresholds — too tight and every deleted test
-is a red build.
 
 ---
 
@@ -719,7 +710,10 @@ build failure — so the image goes in the constructor, not in a following
 > `dotnet test` runs all 660 unit tests. When a local run fails and CI passes, diff
 > the *command* before the environment. Documented in `sabro-ci.yml` (#270);
 > upstream: dotnet/sdk#55309. For a subset, run the test exe with `-class`.
-> Nothing yet asserts a minimum test count — *Outstanding Worklist* item 4.
+> CI now also asserts a **minimum test count** (`--minimum-expected-tests`, 600 unit /
+> 480 integration, set 2026-10-01): too few tests fails with exit 9 and "Minimum
+> expected tests policy violation", so a filter or discovery break cannot pass quietly.
+> Raise the floors as the suites grow; never lower them to get a build through.
 
 ### Coverage Targets
 - Domain + Application: **80–90%**

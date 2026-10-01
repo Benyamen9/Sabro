@@ -53,11 +53,20 @@ jobs:
       # is the only thing distinguishing the two. Plain `dotnet test` (the
       # pre-commit check in CLAUDE.md) is correct and runs the full suite; do not
       # add `--nologo` to it. Upstream: https://github.com/dotnet/sdk/issues/55309
+      #
+      # `--minimum-expected-tests` is the guard against that whole class: a run
+      # that silently executes too few tests fails with exit code 9 and
+      # "Minimum expected tests policy violation", instead of relying on zero
+      # being the one count MTP happens to treat as an error. A filter, a
+      # discovery break or a dropped test class would all have passed before.
+      # The floors sit below the real counts (660 unit / 529 integration on
+      # 2026-10-01) so ordinary test deletions do not turn the build red. Raise
+      # them as the suites grow; do not lower them to get a build through.
       - name: Unit tests
-        run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --report-trx --report-trx-filename unit.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
+        run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --minimum-expected-tests 600 --report-trx --report-trx-filename unit.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
 
       - name: Integration tests
-        run: dotnet test tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj --no-build --configuration Release --report-trx --report-trx-filename integration.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
+        run: dotnet test tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj --no-build --configuration Release --minimum-expected-tests 480 --report-trx --report-trx-filename integration.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
 
       - name: Upload coverage
         if: always()
