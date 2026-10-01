@@ -38,8 +38,8 @@ To pick this up in a fresh session, paste:
 Items 1–3 need something this repo cannot supply. Item 1 needs the UptimeRobot
 console, item 2 needs the recordings themselves, and item 3 waits on an upstream
 release. A full prod + five-repo audit on **2026-09-28** re-checked all three and
-none had moved. Items 4 and 5 are small and code-only, deliberately left rather than
-forgotten.
+none had moved. Items 4 and 5 are small and code-only. The old item 4 (`js-yaml` /
+`svgo`, plus `undici`) landed on 2026-10-01 in all five repos.
 
 > **What 2026-09-28 landed, so nobody redoes it:** the rate limiter partitions per
 > caller instead of globally (#268 — see *API Design → Rate limiting*); `devalue`
@@ -110,23 +110,28 @@ Related, and the reason this is worth acting on rather than drifting: the same
 "newest is not best" trap already produced an **end-of-life** proposal — see the
 `node` majors ignore in `.github/dependabot.yml`.
 
-### 4. `js-yaml` and `svgo` advisories — build-time only
+### 4. `brace-expansion` advisories — dev/build-time only
 
-Both are flagged **high** in all five repos, and both were left on purpose on
-2026-09-28 because neither has a runtime path: `js-yaml` arrives via eslint,
-`@rollup/plugin-yaml` and openapi-typescript; `svgo` via `cssnano → postcss-svgo`,
-running only over our own CSS. The badge overstates them — rank advisories by
-reachability, not severity.
+Three DoS advisories (GHSA-q2hr-2g5m-vwhr, -qhr7-859c-m2p7, -6j4f-fj2g-mc7p), high,
+found 2026-10-01 while landing the `js-yaml` / `svgo` / `undici` fixes (which closed
+the old item 4). Every path is dev or build: `@vue/test-utils → js-beautify`,
+eslint, nitropack's `archiver → readdir-glob` at build, openapi-typescript.
 
-**Do**, if taken: patch the one lock entry by hand, as #269 did for `devalue`.
-**Never `npm update` a transitive advisory in these repos** — it deletes the
-cac/commander optional peers CI needs. The hub needs `--legacy-peer-deps`; the four
-clients do not. Check first whether `svgo`'s fix needs a major (`>=4.1.0`) rather
-than assuming a patch. Keep GHSA ids out of the commit subject — their capitals
-fail commitlint.
+Not the same shape in every repo. The hub resolves a single `5.0.9` (it carries a
+`brace-expansion: ^5.0.8` override), so the fix is one hoisted entry. **The four
+clients also carry nested `2.1.4` copies** under `editorconfig`, `glob` and
+`readdir-glob`, so each needs the fixed 2.x *and* the fixed 5.x. Check the advisory's
+patched version on both lines before assuming one exists for 2.x.
 
-**Verify:** `npm audit` clears the advisory, `nuxt typecheck` and the unit tests pass,
-and the lock diff touches only the entries meant.
+**Do:** patch the lock entries by hand, the way `devalue` (#269) and the 10-01 sweep
+did. **Never `npm update` a transitive advisory in these repos**, because it deletes
+the cac/commander optional peers CI needs. The hub needs `--legacy-peer-deps`; the
+four clients do not. Keep GHSA ids out of the commit subject: their capitals fail
+commitlint.
+
+**Verify:** `npm ci` from the patched lock in WSL (never in the mounted repo), then
+`npm audit`, then CI's real `nuxt build`. The lock diff should touch only the entries
+you meant to change.
 
 ### 5. Nothing in CI catches "zero tests ran"
 
