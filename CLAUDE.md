@@ -38,8 +38,9 @@ To pick this up in a fresh session, paste:
 Items 1–3 need something this repo cannot supply. Item 1 needs the UptimeRobot
 console, item 2 needs the recordings themselves, and item 3 waits on an upstream
 release. A full prod + five-repo audit on **2026-09-28** re-checked all three and
-none had moved. Items 4 and 5 are small and code-only. The old item 4 (`js-yaml` /
-`svgo`, plus `undici`) landed on 2026-10-01 in all five repos.
+none had moved. Item 4 is small and code-only. On 2026-10-01 every open npm advisory
+was closed in all five repos (`js-yaml`, `svgo`, `undici`, `brace-expansion`), leaving
+`npm audit` at zero.
 
 > **What 2026-09-28 landed, so nobody redoes it:** the rate limiter partitions per
 > caller instead of globally (#268 — see *API Design → Rate limiting*); `devalue`
@@ -89,6 +90,13 @@ latest, so there is nothing to upgrade into. Wait for upstream TS 7 support, or
 replace the generator. **Dependabot will keep offering TS 7 — closing those PRs is
 the expected outcome, not a to-do.**
 
+**What to watch upstream** (`openapi-ts/openapi-typescript`, checked 2026-10-01): issue
+#2841 tracks the TS 7 break. Two competing fixes are open and unmerged: #2867 (a
+package-owned compiler) and #2872 (no runtime compiler dependency at all). Nothing has
+been published since 7.13.0 on 2026-06-15. When a release lands, re-run the same proof
+used for TS 6: regenerate `api.generated.ts`, and it must come out **byte-identical**;
+then run `nuxt typecheck` and the unit tests, in all five repos.
+
 > ⚠️ **Do not read the `^5.x` peer range as the constraint.** That is what made the
 > hub sit on 5.9 longer than it had to: the peer says `"typescript": "^5.x"`, so
 > TS 6 *looks* unsupported. It is stale metadata, not enforcement — npm resolves the
@@ -110,30 +118,7 @@ Related, and the reason this is worth acting on rather than drifting: the same
 "newest is not best" trap already produced an **end-of-life** proposal — see the
 `node` majors ignore in `.github/dependabot.yml`.
 
-### 4. `brace-expansion` advisories — dev/build-time only
-
-Three DoS advisories (GHSA-q2hr-2g5m-vwhr, -qhr7-859c-m2p7, -6j4f-fj2g-mc7p), high,
-found 2026-10-01 while landing the `js-yaml` / `svgo` / `undici` fixes (which closed
-the old item 4). Every path is dev or build: `@vue/test-utils → js-beautify`,
-eslint, nitropack's `archiver → readdir-glob` at build, openapi-typescript.
-
-Not the same shape in every repo. The hub resolves a single `5.0.9` (it carries a
-`brace-expansion: ^5.0.8` override), so the fix is one hoisted entry. **The four
-clients also carry nested `2.1.4` copies** under `editorconfig`, `glob` and
-`readdir-glob`, so each needs the fixed 2.x *and* the fixed 5.x. Check the advisory's
-patched version on both lines before assuming one exists for 2.x.
-
-**Do:** patch the lock entries by hand, the way `devalue` (#269) and the 10-01 sweep
-did. **Never `npm update` a transitive advisory in these repos**, because it deletes
-the cac/commander optional peers CI needs. The hub needs `--legacy-peer-deps`; the
-four clients do not. Keep GHSA ids out of the commit subject: their capitals fail
-commitlint.
-
-**Verify:** `npm ci` from the patched lock in WSL (never in the mounted repo), then
-`npm audit`, then CI's real `nuxt build`. The lock diff should touch only the entries
-you meant to change.
-
-### 5. Nothing in CI catches "zero tests ran"
+### 4. Nothing in CI catches "zero tests ran"
 
 `dotnet test` under MTP exits **5** when it runs no tests, and that non-zero exit is
 the only reason the `--nologo` trap (see *Testing Strategy*) fails the build at all.
@@ -734,7 +719,7 @@ build failure — so the image goes in the constructor, not in a following
 > `dotnet test` runs all 660 unit tests. When a local run fails and CI passes, diff
 > the *command* before the environment. Documented in `sabro-ci.yml` (#270);
 > upstream: dotnet/sdk#55309. For a subset, run the test exe with `-class`.
-> Nothing yet asserts a minimum test count — *Outstanding Worklist* item 5.
+> Nothing yet asserts a minimum test count — *Outstanding Worklist* item 4.
 
 ### Coverage Targets
 - Domain + Application: **80–90%**
