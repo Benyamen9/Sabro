@@ -591,6 +591,12 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
 > image with `/health` green throughout. Use `/version` on both `api.sabro.be` and
 > `sabro.be` to prove prod matches `main`; CD asserts this after every deploy.
 
+> **`/health` cannot see Meilisearch either.** From 2026-10-01 to 2026-10-12 the
+> engine crash-looped (15,000+ restarts) because the floating `v1.53` tag was
+> repointed to 1.53.3 and refused the 1.53.1 volume — `/health` and UptimeRobot
+> stayed green throughout. The tag is now pinned to the patch; a meilisearch
+> image bump of any size is an upgrade ritual, never a routine tag PR.
+
 **Disk headroom** — UptimeRobot cannot see the disk, and on 2026-07-31 an
 unpruned image pile filled it to 100%, crash-looping Postgres for ~15 minutes with
 no warning. Two independent guards now cover it:
@@ -666,7 +672,7 @@ Test pyramid with TDD-first approach for Domain and Application layers.
 
 > ⚠️ **Keep the integration fixtures on the versions production runs.**
 > `PostgresFixture` is `postgres:17-alpine` and `MeilisearchFixture` is
-> `getmeili/meilisearch:v1.53`, matching `docker-compose.prod.yml` since
+> `getmeili/meilisearch:v1.53.1`, matching `docker-compose.prod.yml` since
 > 2026-08-27 (#249, #250). They had drifted to Postgres 16 and Meilisearch v1.13,
 > which meant every module's migrations and all index behaviour were signed off
 > against software we do not ship — and it is part of why the Meilisearch client

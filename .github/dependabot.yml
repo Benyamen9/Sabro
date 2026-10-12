@@ -9,8 +9,11 @@
 # Two images need their runbook on merge:
 #   - svhd/logto: bump the tag, then run `npm run alteration deploy` on the VPS
 #     before restarting (see the Logto upgrade notes in docker-compose.prod.yml).
-#   - getmeili/meilisearch: after rollout, rebuild indexes from Postgres via the
-#     admin endpoints if the engine refuses the existing data directory.
+#   - getmeili/meilisearch: EVERY bump, patch included, changes the version the
+#     engine demands of its data directory. Ship it as one boot with
+#     MEILI_UPGRADE_DB set, then a follow-up that removes it. The tag is pinned
+#     to the patch because a floating `v1.53` silently became 1.53.3 on
+#     2026-10-01 and crash-looped search for eleven days.
 version: 2
 updates:
   # Service images in both compose files (dev + prod): postgres, meilisearch,
