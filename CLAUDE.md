@@ -733,7 +733,9 @@ The *intent* is that a coverage drop blocks CI on **Domain and Application** lay
 **security alerts are enabled on all five** since 2026-09-28 — they had been off
 everywhere, so advisories surfaced only when someone ran `npm audit`. Secret scanning
 is on for public Sabro only; the four private client repos would need paid Advanced
-Security. **Known-open npm advisories (sweep of 2026-10-12) — left on purpose, do not re-chase.** `npm audit`
+Security.
+
+**Known-open npm advisories (sweep of 2026-10-12) — left on purpose, do not re-chase.** `npm audit`
 reports ~14–17 entries per repo, all parents of three roots, none in `.output` (nothing the live
 sites run): **simple-git** via Nuxt DevTools (local only; fixed only in simple-git 4, which needs
 DevTools 4, still beta), **braces** via the i18n build plugin, and **node-forge** via the Nuxt dev
