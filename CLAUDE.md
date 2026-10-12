@@ -530,6 +530,8 @@ Login UI is themed in Logto's admin console with Syriac-inspired branding. Sign-
 
 When a new client application is added (e.g. a future history platform), it is registered in Logto's console with no modification to Sabro itself.
 
+**Sign in once, signed in everywhere (Owner, 2026-10-12).** Each app keeps its own Logto session, so a sign-in on one app is invisible to the others. The bridge is `sabro_account`, a hint cookie on `.sabro.be` that only says "this browser has an account" — no identity, never an authority. A signed-out app that sees it sends the player through the ordinary `/sign-in` once, and Logto's existing session completes the round trip with no password. Rationed to one attempt per app, per browser, per day (localStorage), so backing out of a sign-in page never loops. **Deliberately not `prompt=none`**: `@logto/nuxt`'s callback throws a 500 on a failed silent attempt (why the Owner rejected it on 2026-08-08). The same `plugins/ecosystem-account.client.ts` is in all five frontends; change them together.
+
 ---
 
 ## Logging & Monitoring
