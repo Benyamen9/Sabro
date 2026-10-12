@@ -41,7 +41,7 @@ services:
     networks: [internal]
 
   meilisearch:
-    image: getmeili/meilisearch:v1.53
+    image: getmeili/meilisearch:v1.54
     container_name: sabro-meilisearch
     restart: unless-stopped
     environment:
