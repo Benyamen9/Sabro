@@ -53,17 +53,17 @@ services:
     environment:
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?MEILI_MASTER_KEY is required}
       MEILI_ENV: production
-      # 🔴 TEMPORARY — set for exactly ONE boot, then removed in a follow-up PR.
-      # It migrates the volume from the v1.53.1 format to v1.54.3 in place
-      # (2026-10-12; snapshot taken first, ~/snapshots on the VPS). Leaving it set
-      # would make the deploy-safety gate pass EVERY future meilisearch bump — the
-      # gate reads this service's env and passes it through, so a self-migrating
-      # engine never gives it anything to catch. Off is what keeps the gate honest.
+      # No MEILI_UPGRADE_DB here, deliberately. It is set for exactly one boot per
+      # upgrade and removed as soon as that boot is verified: v1.51 → v1.53
+      # (#223, removed by #225) and v1.53.1 → v1.54.3 (#292, 2026-10-12, removed
+      # by the PR that wrote this). Leaving it set would make the deploy-safety
+      # gate pass EVERY future meilisearch bump — the gate reads this service's
+      # env and passes it through, so a self-migrating engine never gives it
+      # anything to catch. Off is what keeps the gate honest.
       #
-      # Same ritual as v1.51 → v1.53 (#223 set it, #225 removed it): set it,
-      # deploy, verify, remove it again. The dev compose keeps it permanently; dev
-      # volumes are disposable and the gate only ever reads this file.
-      MEILI_UPGRADE_DB: "true"
+      # For the next bump: snapshot the volume, set it, deploy, verify, remove it
+      # again in a follow-up. The dev compose keeps it permanently; dev volumes
+      # are disposable and the gate only ever reads this file.
     volumes:
       - meilisearch-data:/meili_data
     healthcheck:
