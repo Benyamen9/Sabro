@@ -16,7 +16,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 2. ✅ **Meltho** launched against that API, then **Mno**, **Shmo** and **Nahlo** followed on the same foundation — the multi-game model held, with no rework.
 3. **Translations and Biblical remain deferred** — fully specified below, but not on any current critical path. No game depends on translated content. **Reviews is partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
-**Current state.** Four games are deployed behind Caddy and watched by UptimeRobot. Three are in the daily circuit; **Nahlo is deployed but not yet offered** — its treasury holds no recordings, so `GET /play/nahlo/today` answers 409 and handing a player there would end their circuit on a closed door. See *Ecosystem Clients* for the standing instruction that unblocks it.
+**Current state.** Four games are deployed behind Caddy and watched by UptimeRobot. All four are in the daily circuit. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day.
 
 **Hub philosophy — wide model, narrow surface.** The data foundation was built to see far (multi-game results, profile, cross-project shape) while the launch UI stayed lean. That bet paid: three further games landed on the same `GameResult` shape without a migration. Keep new surfaces additive for the same reason.
 
@@ -35,9 +35,8 @@ To pick this up in a fresh session, paste:
 > "Do" steps, run the "Verify" checks before pushing, and stop and ask me on
 > anything the item marks **Decide**. One PR per item unless it says otherwise.
 
-Both remaining items need something this repo cannot supply: item 1 needs the
-recordings themselves, and item 2 waits on an upstream release. Everything code-only
-is done. The old item 1 (UptimeRobot) closed on 2026-10-01; see *Monitoring*. On 2026-10-01 every open npm advisory
+The one remaining item waits on an upstream release. Everything code-only is done.
+The chant-recordings item closed on 2026-10-12 (Nahlo live; see *Ecosystem Clients*). The old item 1 (UptimeRobot) closed on 2026-10-01; see *Monitoring*. On 2026-10-01 every open npm advisory
 was closed in all five repos (`js-yaml`, `svgo`, `undici`, `brace-expansion`), leaving
 `npm audit` at zero, and CI gained a minimum-test-count floor.
 
@@ -50,19 +49,7 @@ was closed in all five repos (`js-yaml`, `svgo`, `undici`, `brace-expansion`), l
 
 ---
 
-### 1. When the chant recordings land
-
-Not a code task on its own, but it is the keystone — it opens Nahlo and unblocks
-the circuit note. In one pass:
-
-1. Upload recordings via `/admin/chants`, publish, set `PlayableInNahlo`.
-2. Confirm `GET /api/v1/play/nahlo/today` stops answering 409.
-3. Put `'nahlo'` back into `CIRCUIT_HANDOFF` in **all five** copies of
-   `useDailyCircuit.ts` — Sabro hub, Meltho, Mno, Shmo, Nahlo.
-4. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
-   30 as the treasury grows.
-
-### 2. TypeScript 7 is blocked by the API codegen
+### 1. TypeScript 7 is blocked by the API codegen
 
 **All five frontends are on TypeScript 6** since 2026-08-27 (#253). The hub used to
 lag at 5.9; it no longer does.
@@ -350,9 +337,9 @@ Four pieces of logic are deliberately implemented twice, on either side of a rep
 | Numeral speller | Sabro's C# speller | Mno `app/utils/numerals.ts` | ❌ none |
 | Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** client | ❌ comment only |
 
-**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies; `CIRCUIT_HANDOFF` currently omits `nahlo`, because handing a player to a game that answers 409 ends their circuit on a closed door.
+**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies, and since 2026-10-12 so does `CIRCUIT_HANDOFF`. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
 
-> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 1 of the Outstanding Worklist.*
+> ⚠️ **Any change to `CIRCUIT_HANDOFF` goes into all five repos at once.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
 
 ## Backoffice (Editorial Admin)
 
@@ -736,7 +723,7 @@ The *intent* is that a coverage drop blocks CI on **Domain and Application** lay
 everywhere, so advisories surfaced only when someone ran `npm audit`. Secret scanning
 is on for public Sabro only; the four private client repos would need paid Advanced
 Security. Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
-are expected closes (*Outstanding Worklist* item 2), and image bumps for Meilisearch
+are expected closes (*Outstanding Worklist* item 1), and image bumps for Meilisearch
 and Logto need their upgrade rituals — green CI cannot see those.
 
 ### CD
