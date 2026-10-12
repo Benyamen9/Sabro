@@ -59,8 +59,8 @@ the circuit note. In one pass:
 2. Confirm `GET /api/v1/play/nahlo/today` stops answering 409.
 3. Put `'nahlo'` back into `CIRCUIT_HANDOFF` in **all five** copies of
    `useDailyCircuit.ts` — Sabro hub, Meltho, Mno, Shmo, Nahlo.
-4. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
-   30 as the treasury grows.
+4. Raise `Nahlo:AntiRepetitionWindowDays` (4 since 2026-10-12) only as the pool grows.
+   Keep it well under the pool size: window ≥ pool means 409 the day one chant drops out.
 
 ### 2. TypeScript 7 is blocked by the API codegen
 
@@ -243,7 +243,7 @@ Three of the four draw from a curated pool and exclude anything served inside th
 |---|---|---|---|
 | Meltho | `Meltho:AntiRepetitionWindowDays` | 30 | Pool grown past launch size |
 | Shmo | `Shmo:AntiRepetitionWindowDays` | 30 | Same |
-| Nahlo | `Nahlo:AntiRepetitionWindowDays` | **7** | The chant treasury starts at zero — a 30-day window would starve it immediately |
+| Nahlo | `Nahlo:AntiRepetitionWindowDays` | **4** | The treasury opened with one melody group of eight chants — 7 against 8 would leave one candidate a day |
 | Mno | *(none)* | — | Generated, not drawn from a pool |
 
 Start a window low so a small pool never starves, and raise it as the pool grows. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.

@@ -21,6 +21,12 @@ public sealed class NahloOptions
     /// a spreadsheet. A window wider than the pool leaves the selector with no
     /// candidate and the game answers 409 — raise this as the treasury fills, not
     /// before.
+    /// <para>
+    /// Four, not seven, for the first melody group: a pool of eight against a
+    /// seven-day window leaves exactly one candidate per day, and none at all the
+    /// moment a single chant drops out of the pool. Four keeps the round
+    /// unpredictable with headroom to spare.
+    /// </para>
     /// </remarks>
-    public int AntiRepetitionWindowDays { get; set; } = 7;
+    public int AntiRepetitionWindowDays { get; set; } = 4;
 }
