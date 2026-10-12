@@ -1,0 +1,18 @@
+{
+  "name": "simple-git",
+  "version": "4.0.2-sabro.1",
+  "description": "Sabro shim: the released simple-git 4.0.2, re-exported with the v3-style default export. @nuxt/devtools 3 does `import Git from 'simple-git'`, which v4 removed, and every simple-git 3.x carries critical advisories (GHSA-v5rq-49vh-5v5c, GHSA-x6jw-m9v5-85vh, GHSA-g4wm-2vf7-vfgr, GHSA-858h-whjf-mvg5). Delete this folder and its override once @nuxt/devtools 4 is stable and depends on simple-git 4.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "./index.cjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.cjs"
+    }
+  },
+  "dependencies": {
+    "simple-git-v4": "npm:simple-git@4.0.2"
+  }
+}

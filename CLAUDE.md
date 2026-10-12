@@ -743,12 +743,18 @@ sites run none of it. npm's suggested `nuxt@3.7.4` "fix" is a downgrade: never a
   `overrides: { "node-forge": "$node-forge" }` (a bare relative `file:` in `overrides` resolves
   against listhen's folder and breaks `npm ci`). The Dockerfiles `COPY vendor` before `npm ci`.
   Cost: `nuxt dev --https` is unavailable. **Remove all of it when node-forge ships a fix.**
-- **simple-git — still open.** Fixed only in simple-git 4, which removed the default export that
-  Nuxt DevTools 3 imports; DevTools 4 is still beta. Local DevTools only.
-- **braces — still open.** No fixed release exists (GHSA-vfj7-8cjw-p6xm); its fix is an unmerged
-  upstream PR (micromatch/braces#88). The Owner chose to wait for the release over building
-  with unreleased code. Build-time only (i18n plugin and nitropack's globbing).
-Dependabot security alerts flag both as fixable the day a release lands.
+- **simple-git — shimmed to v4.** Every 3.x carries critical advisories; the fix is simple-git 4,
+  which dropped the default export Nuxt DevTools 3 imports (`import Git from 'simple-git'`), so a
+  plain override to 4 crashes `nuxt dev`. `vendor/simple-git/` re-exports the released 4.0.2
+  (`npm:simple-git@4.0.2`) with that default export, wired the same way as node-forge
+  (`file:` dev dependency + `"$simple-git"` override). Local DevTools only. **Remove it once
+  DevTools 4 is stable and depends on simple-git 4** (Owner, 2026-10-12: shim now, DevTools 4 later).
+- **braces — still open, the only one.** No fixed release exists (GHSA-vfj7-8cjw-p6xm); its fix is
+  an unmerged upstream PR (micromatch/braces#88). The Owner chose to wait for the release over
+  building with unreleased code. Build-time only (i18n plugin and nitropack's globbing).
+  Dependabot security alerts flag it as fixable the day a release lands.
+
+Both stand-ins live in `vendor/` in all five frontends; change them together.
 
 Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
 are expected closes (*Outstanding Worklist* item 1), and image bumps for Meilisearch

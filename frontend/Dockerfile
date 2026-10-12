@@ -31,7 +31,7 @@ ENV NUXT_PUBLIC_COOKIE_DOMAIN=${NUXT_PUBLIC_COOKIE_DOMAIN}
 # `postinstall: nuxt prepare` lifecycle hook, which would fail before the
 # project sources are copied; `nuxt build` runs prepare itself below.
 COPY package.json package-lock.json ./
-# vendor/ holds the node-forge stand-in that package.json overrides point at;
+# vendor/ holds the node-forge and simple-git stand-ins that package.json overrides point at;
 # npm ci needs it before the rest of the source is copied.
 COPY vendor ./vendor
 # --legacy-peer-deps mirrors CI: npm 10.x incorrectly requires optional peer
