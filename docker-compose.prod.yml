@@ -366,6 +366,13 @@ services:
     image: ghcr.io/${GHCR_OWNER:-benyamen9}/sabro-backup:${SABRO_IMAGE_TAG:?SABRO_IMAGE_TAG is required. CD writes it to .env.deploy; run compose with --env-file .env --env-file .env.deploy}
     container_name: sabro-backup
     restart: unless-stopped
+    # crond runs as PID 1, and a PID 1 with no signal handler ignores SIGTERM, so
+    # every stop waited out the full 10 s grace period and was SIGKILLed. This
+    # image is tagged per commit and recreated on every deploy, so that was 10 s
+    # every deploy. tini (init: true) forwards the SIGTERM and the container
+    # stops at once. A backup caught mid-run is cut short either way; the nightly
+    # cron retries.
+    init: true
     depends_on:
       postgres:
         condition: service_healthy

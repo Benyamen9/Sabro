@@ -71,12 +71,27 @@
 	}
 }
 
+# Hold requests across a container swap instead of failing them. Without this a
+# reverse_proxy whose upstream is mid-recreate fails the dial and returns 502 at
+# once; Caddy retries nothing by default. On 2026-10-01 a deploy showed ~14 s of
+# 502 on the API. lb_try_duration keeps retrying the dial for up to 15 s, polling
+# every 250 ms, so a request that lands during a restart waits for the new
+# container instead of erroring. Only a failed *dial* is retried (the request never
+# reached the app), so this is safe for POSTs too. A real outage still surfaces as
+# 502, just 15 s later. Used by every app container that CD recreates.
+(swap_retry) {
+	lb_try_duration 15s
+	lb_try_interval 250ms
+}
+
 # Sabro hub frontend (Nuxt SSR).
 {$SABRO_DOMAIN} {
 	import accesslog
 	import security_headers
 	encode zstd gzip
-	reverse_proxy frontend:3000
+	reverse_proxy frontend:3000 {
+		import swap_retry
+	}
 }
 
 # Sabro API — clients call /api/v1 here directly.
@@ -84,7 +99,9 @@
 	import accesslog
 	import security_headers
 	encode zstd gzip
-	reverse_proxy api:8080
+	reverse_proxy api:8080 {
+		import swap_retry
+	}
 }
 
 # Logto — central IDP (OIDC endpoint). Must stay reachable for every app in the
@@ -107,7 +124,9 @@
 	import accesslog
 	import security_headers
 	encode zstd gzip
-	reverse_proxy meltho:3000
+	reverse_proxy meltho:3000 {
+		import swap_retry
+	}
 }
 
 # Mno — Syriac numbers game (own repo, own container), sharing Sabro's API +
@@ -116,7 +135,9 @@
 	import accesslog
 	import security_headers
 	encode zstd gzip
-	reverse_proxy mno:3000
+	reverse_proxy mno:3000 {
+		import swap_retry
+	}
 }
 
 # Shmo — historical-figure guessing game (own repo, own container), sharing
@@ -125,7 +146,9 @@
 	import accesslog
 	import security_headers
 	encode zstd gzip
-	reverse_proxy shmo:3000
+	reverse_proxy shmo:3000 {
+		import swap_retry
+	}
 }
 
 # Nahlo — Beth Gazo chant game (own repo, own container), sharing Sabro's API +
@@ -136,7 +159,9 @@
 	import accesslog
 	import security_headers
 	encode zstd gzip
-	reverse_proxy nahlo:3000
+	reverse_proxy nahlo:3000 {
+		import swap_retry
+	}
 }
 
 # Umami — self-hosted, cookieless analytics. Its own hostname so the tracker
