@@ -41,7 +41,13 @@ services:
     networks: [internal]
 
   meilisearch:
-    image: getmeili/meilisearch:v1.53
+    # Pinned to the PATCH, never a floating minor tag. Meilisearch refuses a data
+    # directory written by any other version, patch included, and `v1.53` is
+    # repointed upstream: on 2026-10-01 it became 1.53.3, the next CD pulled it,
+    # and the engine crash-looped against the 1.53.1 volume for eleven days while
+    # /health stayed green (it only checks Postgres). A patch bump is an upgrade
+    # like any other: one boot with MEILI_UPGRADE_DB, then remove it.
+    image: getmeili/meilisearch:v1.53.1
     container_name: sabro-meilisearch
     restart: unless-stopped
     environment:

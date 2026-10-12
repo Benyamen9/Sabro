@@ -328,6 +328,19 @@ jobs:
             exit 0
           fi
 
+          # A floating minor tag (v1.53) names no on-disk format: upstream repoints
+          # it at each patch, so booting it today says nothing about the version
+          # that actually wrote the production volume. Pinning such a tag to a
+          # patch of the same minor therefore has no honest baseline — the 1.53
+          # incident (2026-10-01) was exactly this, v1.53 silently becoming 1.53.3.
+          # Every later move is patch-to-patch and is tested in full below.
+          floating='^v[0-9]+\.[0-9]+$'
+          if printf '%s' "$old" | grep -Eq "$floating" \
+            && printf '%s' "$new" | grep -Eq "^${old//./\\.}\.[0-9]+$"; then
+            echo "::notice::Pinning floating meilisearch:$old to $new. The floating tag has no fixed data format, so there is no baseline to test against; confirm the production volume version from the engine's own log (docker logs sabro-meilisearch) before merging."
+            exit 0
+          fi
+
           echo "Meilisearch $old -> $new: testing the new engine against an $old data directory."
 
           # Throwaway, but MEILI_ENV=production rejects a master key under 16
