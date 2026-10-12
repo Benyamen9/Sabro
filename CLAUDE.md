@@ -16,7 +16,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 2. ✅ **Meltho** launched against that API, then **Mno**, **Shmo** and **Nahlo** followed on the same foundation — the multi-game model held, with no rework.
 3. **Translations and Biblical remain deferred** — fully specified below, but not on any current critical path. No game depends on translated content. **Reviews is partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
-**Current state.** Four games are deployed behind Caddy and watched by UptimeRobot. Three are in the daily circuit; **Nahlo is deployed but not yet offered** — its treasury holds no recordings, so `GET /play/nahlo/today` answers 409 and handing a player there would end their circuit on a closed door. See *Ecosystem Clients* for the standing instruction that unblocks it.
+**Current state.** Four games are deployed behind Caddy and watched by UptimeRobot. All four are in the daily circuit. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day.
 
 **Hub philosophy — wide model, narrow surface.** The data foundation was built to see far (multi-game results, profile, cross-project shape) while the launch UI stayed lean. That bet paid: three further games landed on the same `GameResult` shape without a migration. Keep new surfaces additive for the same reason.
 
@@ -24,7 +24,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 
 ## Outstanding Worklist
 
-Live handoff list, accurate as of **2026-08-24**. Each item is written to be
+Live handoff list, accurate as of **2026-10-01**. Each item is written to be
 executed cold — context, exact change, how to verify, and what needs a human
 decision. **Delete an item from this file the moment it lands**; a worklist that
 outlives its work is the same drift this file exists to prevent.
@@ -35,38 +35,21 @@ To pick this up in a fresh session, paste:
 > "Do" steps, run the "Verify" checks before pushing, and stop and ask me on
 > anything the item marks **Decide**. One PR per item unless it says otherwise.
 
-All three that remain need something this repo cannot supply. Item 1 needs the
-UptimeRobot console, item 2 needs the recordings themselves, and item 3 waits on an
-upstream release. Everything that could be done from the code has been.
+The one remaining item waits on an upstream release. Everything code-only is done.
+The chant-recordings item closed on 2026-10-12 (Nahlo live; see *Ecosystem Clients*). The old item 1 (UptimeRobot) closed on 2026-10-01; see *Monitoring*. On 2026-10-01 every open npm advisory
+was closed in all five repos (`js-yaml`, `svgo`, `undici`, `brace-expansion`), leaving
+`npm audit` at zero, and CI gained a minimum-test-count floor.
+
+> **What 2026-09-28 landed, so nobody redoes it:** the rate limiter partitions per
+> caller instead of globally (#268 — see *API Design → Rate limiting*); `devalue`
+> 5.9.4 closed a runtime DoS advisory in all five repos (#269 here); Dependabot
+> **security alerts** are now enabled on all five repos — they were off everywhere;
+> and the MTP `--nologo` trap is documented (#270 — see *Testing Strategy*). Prod
+> was verified on `0c1e3f4` via `/version` on api and hub.
 
 ---
 
-### 1. Nahlo and analytics are unmonitored ⚠️ **Decide** (external service)
-
-Caddy serves `{$NAHLO_DOMAIN}` and the container is deployed, but the five
-UptimeRobot monitors predate Nahlo's slot (#199), so its downtime is invisible.
-`analytics.sabro.be` likewise. Add a sixth monitor on `https://nahlo.sabro.be`
-(HTTP(s), 5-minute interval, alerting to the Owner's personal mailbox — **not**
-`contact@sabro.be`, which forwards to Hotmail and is dropped silently).
-
-Cannot be done from a Claude Code session: UptimeRobot is an external service with
-no credentials in the repo, and `*.sabro.be` is unreachable from the sandboxed web
-environment. Desktop or the UptimeRobot console only.
-
-### 2. When the chant recordings land
-
-Not a code task on its own, but it is the keystone — it opens Nahlo and unblocks
-item 1 and the circuit note. In one pass:
-
-1. Upload recordings via `/admin/chants`, publish, set `PlayableInNahlo`.
-2. Confirm `GET /api/v1/play/nahlo/today` stops answering 409.
-3. Put `'nahlo'` back into `CIRCUIT_HANDOFF` in **all five** copies of
-   `useDailyCircuit.ts` — Sabro hub, Meltho, Mno, Shmo, Nahlo.
-4. Add the UptimeRobot monitor from item 1.
-5. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
-   30 as the treasury grows.
-
-### 3. TypeScript 7 is blocked by the API codegen
+### 1. TypeScript 7 is blocked by the API codegen
 
 **All five frontends are on TypeScript 6** since 2026-08-27 (#253). The hub used to
 lag at 5.9; it no longer does.
@@ -79,6 +62,13 @@ That is a hard break in codegen, not a peer-range warning. 7.13.0 is the current
 latest, so there is nothing to upgrade into. Wait for upstream TS 7 support, or
 replace the generator. **Dependabot will keep offering TS 7 — closing those PRs is
 the expected outcome, not a to-do.**
+
+**What to watch upstream** (`openapi-ts/openapi-typescript`, checked 2026-10-01): issue
+#2841 tracks the TS 7 break. Two competing fixes are open and unmerged: #2867 (a
+package-owned compiler) and #2872 (no runtime compiler dependency at all). Nothing has
+been published since 7.13.0 on 2026-06-15. When a release lands, re-run the same proof
+used for TS 6: regenerate `api.generated.ts`, and it must come out **byte-identical**;
+then run `nuxt typecheck` and the unit tests, in all five repos.
 
 > ⚠️ **Do not read the `^5.x` peer range as the constraint.** That is what made the
 > hub sit on 5.9 longer than it had to: the peer says `"typescript": "^5.x"`, so
@@ -240,10 +230,10 @@ Three of the four draw from a curated pool and exclude anything served inside th
 |---|---|---|---|
 | Meltho | `Meltho:AntiRepetitionWindowDays` | 30 | Pool grown past launch size |
 | Shmo | `Shmo:AntiRepetitionWindowDays` | 30 | Same |
-| Nahlo | `Nahlo:AntiRepetitionWindowDays` | **7** | The chant treasury starts at zero — a 30-day window would starve it immediately |
+| Nahlo | `Nahlo:AntiRepetitionWindowDays` | **4** | The treasury opened with one melody group of eight chants — 7 against 8 would leave one candidate a day |
 | Mno | *(none)* | — | Generated, not drawn from a pool |
 
-Start a window low so a small pool never starves, and raise it as the pool grows. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
+Start a window low so a small pool never starves, and raise it as the pool grows — but keep it well under the pool size: a window at or above the pool answers 409 the day one item drops out. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
 
 **Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro never learns what a player guessed, only whether they solved it and in how many attempts. Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
 
@@ -324,11 +314,13 @@ Four game clients consume Sabro's API, each in **its own repository**, each its 
 | **Meltho** (ܡܠܬܐ, "word") | `Benyamen9/Meltho` | Wordle on Syriac words; 6 guesses, green/yellow/grey | 3100 | Lexicon |
 | **Mno** (ܡܢܐ, "he counted") | `Benyamen9/Mno` | Mathler on additive Syriac alphabetic numerals; 6 guesses | 3200 | *(generated)* |
 | **Shmo** (ܫܡܐ, "name") | `Benyamen9/Shmo` | Pokédle on historical figures; **unlimited guesses, no losing state** | 3300 | Historical |
-| **Nahlo** (ܢܚܠܐ) | `Benyamen9/Nahlo` | Name the chant — melody + mode + shuḥlofo (yes/no); 6 guesses, green/grey only | 3400 | BethGazo |
+| **Nahlo** (ܢܚܠܐ) | `Benyamen9/Nahlo` | Name the chant — melody + mode + shuḥlofo (yes/no); 6 guesses, right/wrong only — **purple**, not green | 3400 | BethGazo |
 
 The hub runs on :3000 and Logto on :3001/:3002.
 
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
+>
+> **Nahlo breaks the shared feedback colour on purpose (Owner, 2026-10-12).** Meltho, Mno and Shmo mark a right part green; Nahlo's right part is its theme purple and a wrong part a pale tint of it — tiles, attempt strip and share grid (🟪/⬜) alike. Same day, its "night vigil" redesign: the answer is asked one question at a time (melody → mode → shuḥlofo), and a mode an earlier guess scored wrong is dimmed, never removed. Do not "restore" the green. Details in the Nahlo README.
 
 ### This file is the ecosystem's memory — fold changes back into it
 
@@ -347,9 +339,9 @@ Four pieces of logic are deliberately implemented twice, on either side of a rep
 | Numeral speller | Sabro's C# speller | Mno `app/utils/numerals.ts` | ❌ none |
 | Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** client | ❌ comment only |
 
-**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies; `CIRCUIT_HANDOFF` currently omits `nahlo`, because handing a player to a game that answers 409 ends their circuit on a closed door.
+**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies, and since 2026-10-12 so does `CIRCUIT_HANDOFF`. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
 
-> ⚠️ **When the chant recordings land, put `'nahlo'` back into `CIRCUIT_HANDOFF` in all five repos.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next. *Tracked as item 2 of the Outstanding Worklist.*
+> ⚠️ **Any change to `CIRCUIT_HANDOFF` goes into all five repos at once.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
 
 ## Backoffice (Editorial Admin)
 
@@ -383,8 +375,48 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
   - `api:v1:read` — public content reads
   - `api:v1:write` — authenticated user writes (e.g. recording own game results)
   - `api:v1:admin` — Owner-only editorial and operational endpoints (backoffice, search rebuilds)
-- Rate limiting applied to all public endpoints
+- Rate limiting applied to all public endpoints, **per caller** — see below
 - OpenAPI/Swagger documentation generated automatically (used to generate TypeScript types for the frontend)
+
+### Rate limiting
+
+One fixed-window limiter, partitioned per caller: the Logto `sub` when the request is
+authenticated, otherwise the client IP (`RateLimitPartitioning.ResolvePartitionKey`).
+Until #268 (2026-09-28) it partitioned **nothing** — every request in the ecosystem
+shared one 100/min window, and a live audit had recorded it as "per IP".
+
+Configurable, never hardcoded, for the same reason as the anti-repetition windows:
+
+| Config key | Default | What it is |
+|---|---|---|
+| `RateLimit:PermitLimit` | 100 | Requests per window, per partition |
+| `RateLimit:WindowSeconds` | 60 | Window length |
+| `TrustedProxies:Networks` | loopback + RFC 1918 | Networks whose `X-Forwarded-For` is believed |
+
+**Two pipeline orderings in `Program.cs` are load-bearing.** Moving either one
+silently re-collapses the limiter into a single bucket:
+- **`UseForwardedHeaders` is first.** Caddy proxies from its own container, so without
+  it every request's address is Caddy's — one bucket for the whole internet, and the
+  proxy logged as the client on every Serilog line. `ForwardLimit = 1`.
+- **`UseRateLimiter` comes after `UseAuthentication`.** Before it, `User` is still
+  anonymous when the key is computed and the per-user branch can never fire.
+
+`TrustedProxies` must stay an **allowlist**: `X-Forwarded-For` is client-supplied, so
+trusting it from anywhere would let a caller choose their own partition. The wide
+RFC 1918 default is safe only because the API publishes no host port — `caddy` is
+the only service with a `ports:` mapping. Narrow it to the proxy's address in any
+deployment that exposes the API directly. In prod Caddy sat at `172.18.0.13` on
+2026-09-28, inside `172.16.0.0/12`; re-check if the compose network is ever recreated.
+
+> ⚠️ **SSR shares one bucket.** All five frontends call the API at its public URL, so
+> their server-side render fetches arrive from the host's address, not the visitor's
+> — SSR across the hub and all four games is one partition, while browser traffic
+> splits per visitor. It is the bucket that will hit the ceiling first: raise
+> `RateLimit:PermitLimit` if SSR starts seeing 429s.
+
+`RateLimitPartitioningTests` (unit + integration) pin this; the integration test fails
+against the old ordering with the real symptom — a quiet caller gets 429 from someone
+else's flood.
 
 ### Key endpoints
 
@@ -398,7 +430,8 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 - `GET /api/v1/play/nahlo/today` — **answers `409` when no chant is eligible** (empty pool, or one too small for the window). That is a normal state, not an error: clients render it as "no chant today".
 
 **Client support reads:**
-- `GET /api/v1/chants/answer-options` — Nahlo's three suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
+- `GET /api/v1/chants/answer-options` — Nahlo's suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
+  **One owner-ruled exception (2026-10-12):** `conditionalModeIds` + `melodyModeHints`. A *conditional* mode is one some moded section does not admit — today only the mshaḥelfotho (farde-only), derived from the section rows, never named. The form offers it (unnumbered) only once the player names a melody with a published chant in it, and a melody with no mode at all (a madrosho) hides the mode question. The always-offered modes are never paired with a melody. The same day the **section stopped being asked** in Nahlo: the round scores melody, mode and shuḥlofo.
 - `GET /api/v1/historical-figures` — Shmo's published roster, fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
 - `GET /api/v1/play/meltho/library` — past Meltho words, public and anonymous. Today's word is never included.
 - `GET /api/v1/play/meltho/leaderboard` (`api:v1:write`) — signed-in only, ranked by longest streak; appearing requires an opt-in on the profile, the caller's own standing is always shown.
@@ -497,6 +530,8 @@ Login UI is themed in Logto's admin console with Syriac-inspired branding. Sign-
 
 When a new client application is added (e.g. a future history platform), it is registered in Logto's console with no modification to Sabro itself.
 
+**Sign in once, signed in everywhere (Owner, 2026-10-12).** Each app keeps its own Logto session, so a sign-in on one app is invisible to the others. The bridge is `sabro_account`, a hint cookie on `.sabro.be` that only says "this browser has an account" — no identity, never an authority. A signed-out app that sees it sends the player through the ordinary `/sign-in` once, and Logto's existing session completes the round trip with no password. Rationed to one attempt per app, per browser, per day (localStorage), so backing out of a sign-in page never loops. **Deliberately not `prompt=none`**: `@logto/nuxt`'s callback throws a 500 on a failed silent attempt (why the Owner rejected it on 2026-08-08). The same `plugins/ecosystem-account.client.ts` is in all five frontends; change them together.
+
 ---
 
 ## Logging & Monitoring
@@ -519,8 +554,8 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   - `/health/live` — **liveness**: runs no checks, depends on nothing. The only one
     safe for a Docker `healthcheck:` or a `depends_on: service_healthy` gate —
     pointing those at `/health` would turn a database blip into a restart loop.
-- **UptimeRobot — live since 2026-07-28.** Five HTTP(s) monitors on a 5-minute
-  interval, emailing on downtime:
+- **UptimeRobot — live since 2026-07-28.** Seven HTTP(s) monitors on a 5-minute
+  interval (the free plan's floor), emailing on downtime:
 
   | Monitor | URL |
   |---|---|
@@ -529,13 +564,16 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   | Meltho | `https://meltho.sabro.be` |
   | Mno | `https://mno.sabro.be` |
   | Shmo | `https://shmo.sabro.be` |
+  | Nahlo | `https://nahlo.sabro.be` |
+  | Umami analytics | `https://analytics.sabro.be` |
 
-  > ⚠️ **Nahlo is not monitored.** Caddy serves `{$NAHLO_DOMAIN}` and the container
-  > is deployed, but no UptimeRobot monitor watches it — the five above predate
-  > Nahlo's deployment slot (#199, 2026-08-09). Add a sixth monitor on
-  > `https://nahlo.sabro.be` when the recordings land and the game opens; until
-  > then its downtime is invisible. `analytics.sabro.be` is likewise unwatched.
-  > *Tracked as item 1 of the Outstanding Worklist.*
+  > **Nahlo was monitored long before the docs said so.** Until 2026-10-01 this file
+  > called Nahlo unmonitored, but checking the console showed a `nahlo.sabro.be` monitor
+  > already up for 1 month 22 days. It was added around the time of Nahlo's deployment
+  > slot (#199, 2026-08-09) and never recorded here. `analytics.sabro.be` really was
+  > unwatched; it got its monitor on 2026-10-01. **Check the console before recording a
+  > monitor as missing.** UptimeRobot itself is the source of truth for this table, and
+  > the table can drift from it.
 
   Alerts go to the **Owner's personal mailbox directly**, deliberately *not* via
   `contact@sabro.be` — that address forwards to Hotmail and Microsoft drops the
@@ -544,7 +582,9 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   Verified end to end at setup: the API monitor's pings are visible server-side
   (`HTTP HEAD /health` every 5 min in `docker logs sabro-api`), all five URLs
   answer `HEAD` with 200, and a deliberately-failing throwaway monitor confirmed
-  an alert email actually **arrives**.
+  an alert email actually **arrives**. The free plan has a single account user, so
+  every monitor alerts the same contact: the Owner's personal mailbox, which is the
+  address the account signs in with.
 
   > UptimeRobot probes with **HEAD**, not GET. Grepping logs for `GET /health`
   > will show zero hits and look like the monitor is dead.
@@ -554,6 +594,12 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
 > passes it happily — on 2026-07-28 production silently served a two-week-old
 > image with `/health` green throughout. Use `/version` on both `api.sabro.be` and
 > `sabro.be` to prove prod matches `main`; CD asserts this after every deploy.
+
+> **`/health` cannot see Meilisearch either.** From 2026-10-01 to 2026-10-12 the
+> engine crash-looped (15,000+ restarts) because the floating `v1.53` tag was
+> repointed to 1.53.3 and refused the 1.53.1 volume — `/health` and UptimeRobot
+> stayed green throughout. The tag is now pinned to the patch; a meilisearch
+> image bump of any size is an upgrade ritual, never a routine tag PR.
 
 **Disk headroom** — UptimeRobot cannot see the disk, and on 2026-07-31 an
 unpruned image pile filled it to 100%, crash-looping Postgres for ~15 minutes with
@@ -577,7 +623,7 @@ Single-VPS hosting at MVP — the modular-monolith philosophy extends to the dep
 **Target stack:**
 - **VPS**: Hetzner Cloud **CPX32** (4 vCPU AMD shared, 8 GB RAM, 160 GB NVMe, 20 TB traffic). All services co-located: Postgres, Meilisearch, Logto, Seq, the ASP.NET API, and the Nuxt frontend. Estimated 3–5 GB RAM in use, leaving 3–5 GB margin.
 - **Off-site storage**: Hetzner **Storage Box BX11** (1 TB) for pgBackRest backups and `wwwroot/media/`. Free internal traffic with the VPS; supports SFTP/rsync/Borg/restic.
-- **Reverse proxy**: **Caddy** in frontal — automatic Let's Encrypt HTTPS, one `reverse_proxy` block per domain. Buffers the brief API restart window during deploys (replaces blue-green at this scale).
+- **Reverse proxy**: **Caddy** in frontal — automatic Let's Encrypt HTTPS, one `reverse_proxy` block per domain. Holds requests across a container swap during deploys with `lb_try_duration` (the `swap_retry` snippet), which replaces blue-green at this scale. It did **not** do this by default: until 2026-10-01 the Caddyfile had no retry, and a deploy measured ~14 s of 502 on the API.
 - **Container runtime**: `docker compose` on the VPS. Compose files in the repo (`docker-compose.prod.yml`); production secrets in a `.env` next to it on the VPS, never committed.
 
 **Single shared database.** The entire ecosystem uses **one PostgreSQL database**, owned by Sabro and the only writer of record. Client apps (Meltho, future small sites) do **not** get their own application database — they read and write through Sabro's API. (Earlier drafts said "each app has its own Postgres database"; that is superseded by the single-database decision.)
@@ -630,7 +676,7 @@ Test pyramid with TDD-first approach for Domain and Application layers.
 
 > ⚠️ **Keep the integration fixtures on the versions production runs.**
 > `PostgresFixture` is `postgres:17-alpine` and `MeilisearchFixture` is
-> `getmeili/meilisearch:v1.53`, matching `docker-compose.prod.yml` since
+> `getmeili/meilisearch:v1.53.1`, matching `docker-compose.prod.yml` since
 > 2026-08-27 (#249, #250). They had drifted to Postgres 16 and Meilisearch v1.13,
 > which meant every module's migrations and all index behaviour were signed off
 > against software we do not ship — and it is part of why the Meilisearch client
@@ -645,6 +691,18 @@ parameterless `ContainerBuilder()` / `PostgreSqlBuilder()` constructors in favou
 of ones taking the image, and `TreatWarningsAsErrors` turns that CS0618 into a
 build failure — so the image goes in the constructor, not in a following
 `WithImage` call.
+
+> ⚠️ **Never pass `--nologo` to `dotnet test`.** The test projects run on
+> Microsoft.Testing.Platform, which does not reject the VSTest flag as unknown — it
+> forwards it to the test app, which refuses the run and reports **`Zero tests ran`,
+> exit 5**. That reads like a broken SDK or project; it is neither. Plain
+> `dotnet test` runs all 660 unit tests. When a local run fails and CI passes, diff
+> the *command* before the environment. Documented in `sabro-ci.yml` (#270);
+> upstream: dotnet/sdk#55309. For a subset, run the test exe with `-class`.
+> CI now also asserts a **minimum test count** (`--minimum-expected-tests`, 600 unit /
+> 480 integration, set 2026-10-01): too few tests fails with exit 9 and "Minimum
+> expected tests policy violation", so a filter or discovery break cannot pass quietly.
+> Raise the floors as the suites grow; never lower them to get a build through.
 
 ### Coverage Targets
 - Domain + Application: **80–90%**
@@ -671,6 +729,14 @@ The *intent* is that a coverage drop blocks CI on **Domain and Application** lay
 
 (Meltho lives in its own repository and carries its own `meltho-ci.yml` — build, Vitest, Playwright. It is not part of Sabro's pipelines.)
 
+**Dependabot** watches npm and NuGet in all five repos (minor + patch grouped), and
+**security alerts are enabled on all five** since 2026-09-28 — they had been off
+everywhere, so advisories surfaced only when someone ran `npm audit`. Secret scanning
+is on for public Sabro only; the four private client repos would need paid Advanced
+Security. Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
+are expected closes (*Outstanding Worklist* item 1), and image bumps for Meilisearch
+and Logto need their upgrade rituals — green CI cannot see those.
+
 ### CD
 GitHub Actions builds Docker images for the API and frontend, pushes them to **GitHub Container Registry** (`ghcr.io`), then SSHes to the production VPS to pull and run `docker compose up -d`.
 
@@ -681,7 +747,7 @@ GitHub Actions builds Docker images for the API and frontend, pushes them to **G
 4. SSH to the VPS, `docker compose pull`, run `docker compose run --rm api dotnet ef database update` (one-off migration container) **before** swapping app containers, then `docker compose up -d`.
 5. Health-check `/health` post-deploy. Rollback = retag the previous image SHA and `docker compose up -d` (~30 s).
 
-**Migrations rule — forward-compatible only.** No `DROP COLUMN` / rename / type-narrowing in a single deploy. Destructive changes go through an **expand → migrate → contract** sequence over multiple deploys. There is no blue-green at MVP scale — Caddy in frontal buffers the ~2–3 s API restart window.
+**Migrations rule — forward-compatible only.** No `DROP COLUMN` / rename / type-narrowing in a single deploy. Destructive changes go through an **expand → migrate → contract** sequence over multiple deploys. There is no blue-green at MVP scale. Caddy holds and retries requests across the API restart (`swap_retry`, up to 15 s), and CD swaps api/frontend *before* the general `up -d` so the API restarts once and never waits on another container.
 
 **Build always in CI, never on the VPS** — the shared vCPU is too constrained to run `dotnet publish` while serving traffic.
 

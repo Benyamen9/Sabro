@@ -14,18 +14,13 @@ export type CircuitGame = (typeof CIRCUIT_GAMES)[number]
 /**
  * The games currently offered as a hand-off destination.
  *
- * Nahlo is deployed and reachable, but its treasury holds no recordings yet, so
- * `/play/nahlo/today` answers 409 and the game cannot serve a puzzle. Handing a
- * player there ends their circuit on a closed door, so it is not offered.
- *
- * It deliberately stays a `CircuitGame`: Nahlo still marks itself played, and
- * nothing about the cookie's vocabulary changes. This is a temporary omission,
- * not a removal.
- *
- * ⚠️ Put 'nahlo' back here — in EVERY copy of this file (five: Sabro, Meltho,
- * Mno, Shmo, Nahlo) — as soon as the recordings land.
+ * All four since 2026-10-12, when Nahlo's first melody group was published.
+ * Kept separate from `CIRCUIT_GAMES` so a game that cannot serve a puzzle (its
+ * `/today` answering 409) can be withheld from the hand-off without changing
+ * the cookie's vocabulary. Every copy of this file (five: Sabro, Meltho, Mno,
+ * Shmo, Nahlo) must agree.
  */
-const CIRCUIT_HANDOFF: readonly CircuitGame[] = ['meltho', 'mno', 'shmo']
+const CIRCUIT_HANDOFF: readonly CircuitGame[] = ['meltho', 'mno', 'shmo', 'nahlo']
 
 interface CircuitState {
   d: string

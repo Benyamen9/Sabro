@@ -26,6 +26,7 @@ public class ChantsControllerTests : IDisposable
 
     /// <summary>The seeded Farde section — it admits every mode, so any mode is valid here.</summary>
     private static readonly Guid Farde = Guid.Parse("7a2c4b20-0000-4000-8000-000000000001");
+    private static readonly Guid Madroshe = Guid.Parse("7a2c4b20-0000-4000-8000-000000000003");
 
     private readonly PostgresFixture postgres;
     private readonly SabroApiFactory factory;
@@ -141,9 +142,10 @@ public class ChantsControllerTests : IDisposable
         var response = await client.GetAsync("/api/v1/chants/answer-options", ct);
         var json = await response.Content.ReadAsStringAsync(ct);
 
-        // The payload carries exactly three arrays. Anything that let a melody sit
-        // beside a mode — a chant list, an object per melody — would show up here as
-        // a key this endpoint has no business having.
+        // Anything that let a melody sit beside its ordinary mode — a chant list, a
+        // mode name per melody — would show up here as a key this endpoint has no
+        // business having. The mode hints carry ids of CONDITIONAL modes only; the
+        // hint tests below pin that.
         json.Should().NotContain("modeName", "a melody must never travel next to its mode");
         json.Should().NotContain("chantId");
         json.Should().NotContain("audioUrl", "recordings are the puzzle, not a lookup");
@@ -165,6 +167,56 @@ public class ChantsControllerTests : IDisposable
         options.Melodies.Should().BeInAscendingOrder();
     }
 
+    [Fact]
+    public async Task AnswerOptions_MarkTheFardeOnlyModeAsConditional_AndNoOther()
+    {
+        // Owner, 2026-10-12: the mshaḥelfotho is offered only when the melody has
+        // one. It is the mode the farde admit and the other moded sections do not,
+        // and that is how it is found — derived from the sections, never named.
+        var ct = TestContext.Current.CancellationToken;
+
+        var options = await AnswerOptionsAsync(ct);
+
+        var mshahelfotho = options.Modes.Single(m => m.Name == "Mshaḥelfotho").Id;
+        options.ConditionalModeIds.Should().Equal(mshahelfotho);
+    }
+
+    [Fact]
+    public async Task AnswerOptions_HintAConditionalModeOnlyForAMelodyThatHasOne()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await PublishAsync("Hint melody with mshahelfotho", shuhlofoNumber: null, ct, modePosition: 9);
+        await PublishAsync("Hint melody with mshahelfotho", shuhlofoNumber: null, ct, modePosition: 3);
+        await PublishAsync("Hint ordinary melody", shuhlofoNumber: null, ct, modePosition: 3);
+
+        var options = await AnswerOptionsAsync(ct);
+
+        var mshahelfotho = options.Modes.Single(m => m.Name == "Mshaḥelfotho").Id;
+        var hint = options.MelodyModeHints.Single(h => h.Melody == "Hint melody with mshahelfotho");
+        hint.HasModes.Should().BeTrue();
+        hint.ConditionalModeIds.Should().Equal(
+            [mshahelfotho],
+            "only the conditional mode may travel with the melody, never its ordinary one");
+        options.MelodyModeHints.Should().NotContain(
+            h => h.Melody == "Hint ordinary melody",
+            "a melody with only always-offered modes has nothing to hint");
+    }
+
+    [Fact]
+    public async Task AnswerOptions_HintThatAModelessMelodyHasNoModes()
+    {
+        // With the section no longer asked, the melody is what tells the form that
+        // a madrosho has no mode to answer.
+        var ct = TestContext.Current.CancellationToken;
+        await PublishAsync("Hint madrosho melody", shuhlofoNumber: null, ct, modePosition: null, sectionId: Madroshe);
+
+        var options = await AnswerOptionsAsync(ct);
+
+        var hint = options.MelodyModeHints.Single(h => h.Melody == "Hint madrosho melody");
+        hint.HasModes.Should().BeFalse();
+        hint.ConditionalModeIds.Should().BeEmpty();
+    }
+
     private async Task<ChantAnswerOptionsDto> AnswerOptionsAsync(CancellationToken ct)
     {
         var response = await client.GetAsync("/api/v1/chants/answer-options", ct);
@@ -176,18 +228,21 @@ public class ChantsControllerTests : IDisposable
         string transliteration,
         int? shuhlofoNumber,
         CancellationToken ct,
-        int modePosition = 1)
+        int? modePosition = 1,
+        Guid? sectionId = null)
     {
         await using var ctx = postgres.CreateBethGazoContext();
-        var mode = ctx.Modes.OrderBy(m => m.Position).Skip(modePosition - 1).First();
+        Guid? modeId = modePosition is int position
+            ? ctx.Modes.Single(m => m.Position == position).Id
+            : null;
 
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/chants",
             new CreateChantRequest(
                 Incipit,
                 transliteration,
-                Farde,
-                mode.Id,
+                sectionId ?? Farde,
+                modeId,
                 VariantKind: shuhlofoNumber is null ? ChantVariantKind.None : ChantVariantKind.Shuhlofo,
                 VariantNumber: shuhlofoNumber),
             ct);
@@ -206,9 +261,10 @@ public class ChantsControllerTests : IDisposable
         string transliteration,
         int? shuhlofoNumber,
         CancellationToken ct,
-        int modePosition = 1)
+        int? modePosition = 1,
+        Guid? sectionId = null)
     {
-        var id = await CreateDraftAsync(transliteration, shuhlofoNumber, ct, modePosition);
+        var id = await CreateDraftAsync(transliteration, shuhlofoNumber, ct, modePosition, sectionId);
 
         using var content = new MultipartFormDataContent();
         var file = new ByteArrayContent(new byte[] { 0x53, 0x41, 0x42, 0x52, 0x4F });

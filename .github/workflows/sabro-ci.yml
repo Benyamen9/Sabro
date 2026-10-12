@@ -43,11 +43,30 @@ jobs:
       # `--collect:"XPlat Code Coverage"` are VSTest concepts and are rejected
       # outright once global.json routes `dotnet test` through MTP, which
       # xunit.v3 4 requires.
+      #
+      # `--nologo` belongs on that list and is the dangerous one, because it is
+      # the only member that fails *quietly*. MTP does not report it as an
+      # unrecognized option: it forwards it to the test app, which refuses the
+      # run and reports `Zero tests ran` with exit code 5 -- which reads like
+      # "this project has no tests" rather than "your command was rejected".
+      # Locally that looks exactly like a broken test project, and the exit code
+      # is the only thing distinguishing the two. Plain `dotnet test` (the
+      # pre-commit check in CLAUDE.md) is correct and runs the full suite; do not
+      # add `--nologo` to it. Upstream: https://github.com/dotnet/sdk/issues/55309
+      #
+      # `--minimum-expected-tests` is the guard against that whole class: a run
+      # that silently executes too few tests fails with exit code 9 and
+      # "Minimum expected tests policy violation", instead of relying on zero
+      # being the one count MTP happens to treat as an error. A filter, a
+      # discovery break or a dropped test class would all have passed before.
+      # The floors sit below the real counts (660 unit / 529 integration on
+      # 2026-10-01) so ordinary test deletions do not turn the build red. Raise
+      # them as the suites grow; do not lower them to get a build through.
       - name: Unit tests
-        run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --report-trx --report-trx-filename unit.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
+        run: dotnet test tests/Sabro.UnitTests/Sabro.UnitTests.csproj --no-build --configuration Release --minimum-expected-tests 600 --report-trx --report-trx-filename unit.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
 
       - name: Integration tests
-        run: dotnet test tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj --no-build --configuration Release --report-trx --report-trx-filename integration.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
+        run: dotnet test tests/Sabro.IntegrationTests/Sabro.IntegrationTests.csproj --no-build --configuration Release --minimum-expected-tests 480 --report-trx --report-trx-filename integration.trx --coverage --coverage-output-format cobertura --results-directory ./TestResults
 
       - name: Upload coverage
         if: always()
@@ -306,6 +325,19 @@ jobs:
 
           if [ -z "$old" ] || [ "$old" = "$new" ]; then
             echo "Meilisearch tag unchanged ($new) — skipping upgrade test."
+            exit 0
+          fi
+
+          # A floating minor tag (v1.53) names no on-disk format: upstream repoints
+          # it at each patch, so booting it today says nothing about the version
+          # that actually wrote the production volume. Pinning such a tag to a
+          # patch of the same minor therefore has no honest baseline — the 1.53
+          # incident (2026-10-01) was exactly this, v1.53 silently becoming 1.53.3.
+          # Every later move is patch-to-patch and is tested in full below.
+          floating='^v[0-9]+\.[0-9]+$'
+          if printf '%s' "$old" | grep -Eq "$floating" \
+            && printf '%s' "$new" | grep -Eq "^${old//./\\.}\.[0-9]+$"; then
+            echo "::notice::Pinning floating meilisearch:$old to $new. The floating tag has no fixed data format, so there is no baseline to test against; confirm the production volume version from the engine's own log (docker logs sabro-meilisearch) before merging."
             exit 0
           fi
 
