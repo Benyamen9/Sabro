@@ -59,8 +59,8 @@ the circuit note. In one pass:
 2. Confirm `GET /api/v1/play/nahlo/today` stops answering 409.
 3. Put `'nahlo'` back into `CIRCUIT_HANDOFF` in **all five** copies of
    `useDailyCircuit.ts` — Sabro hub, Meltho, Mno, Shmo, Nahlo.
-4. Raise `Nahlo:AntiRepetitionWindowDays` (4 since 2026-10-12) only as the pool grows.
-   Keep it well under the pool size: window ≥ pool means 409 the day one chant drops out.
+4. Consider raising `Nahlo:AntiRepetitionWindowDays` from 7 toward the siblings'
+   30 as the treasury grows.
 
 ### 2. TypeScript 7 is blocked by the API codegen
 
@@ -246,7 +246,7 @@ Three of the four draw from a curated pool and exclude anything served inside th
 | Nahlo | `Nahlo:AntiRepetitionWindowDays` | **4** | The treasury opened with one melody group of eight chants — 7 against 8 would leave one candidate a day |
 | Mno | *(none)* | — | Generated, not drawn from a pool |
 
-Start a window low so a small pool never starves, and raise it as the pool grows. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
+Start a window low so a small pool never starves, and raise it as the pool grows — but keep it well under the pool size: a window at or above the pool answers 409 the day one item drops out. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
 
 **Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro never learns what a player guessed, only whether they solved it and in how many attempts. Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
 
