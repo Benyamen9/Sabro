@@ -5670,6 +5670,8 @@ export interface components {
             melodies: string[];
             sections: components["schemas"]["BethGazoSectionDto"][];
             modes: components["schemas"]["BethGazoModeDto"][];
+            conditionalModeIds: string[];
+            melodyModeHints: components["schemas"]["MelodyModeHintDto"][];
         };
         ChantDto: {
             /** Format: uuid */
@@ -6011,6 +6013,11 @@ export interface components {
         };
         /** @enum {string} */
         LibrarySort: "Recent" | "Alphabetical" | "Length";
+        MelodyModeHintDto: {
+            melody: string;
+            hasModes: boolean;
+            conditionalModeIds: string[];
+        };
         MelthoLeaderboardDto: {
             top: components["schemas"]["MelthoLeaderboardEntryDto"][];
             me: components["schemas"]["MelthoLeaderboardMeDto"];

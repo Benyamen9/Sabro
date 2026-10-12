@@ -8884,7 +8884,9 @@
         "required": [
           "melodies",
           "sections",
-          "modes"
+          "modes",
+          "conditionalModeIds",
+          "melodyModeHints"
         ],
         "type": "object",
         "properties": {
@@ -8904,6 +8906,19 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BethGazoModeDto"
+            }
+          },
+          "conditionalModeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "melodyModeHints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MelodyModeHintDto"
             }
           }
         }
@@ -10366,6 +10381,29 @@
           "Length"
         ],
         "type": "string"
+      },
+      "MelodyModeHintDto": {
+        "required": [
+          "melody",
+          "hasModes",
+          "conditionalModeIds"
+        ],
+        "type": "object",
+        "properties": {
+          "melody": {
+            "type": "string"
+          },
+          "hasModes": {
+            "type": "boolean"
+          },
+          "conditionalModeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
       },
       "MelthoLeaderboardDto": {
         "required": [

@@ -428,7 +428,8 @@ else's flood.
 - `GET /api/v1/play/nahlo/today` — **answers `409` when no chant is eligible** (empty pool, or one too small for the window). That is a normal state, not an error: clients render it as "no chant today".
 
 **Client support reads:**
-- `GET /api/v1/chants/answer-options` — Nahlo's three suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
+- `GET /api/v1/chants/answer-options` — Nahlo's suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
+  **One owner-ruled exception (2026-10-12):** `conditionalModeIds` + `melodyModeHints`. A *conditional* mode is one some moded section does not admit — today only the mshaḥelfotho (farde-only), derived from the section rows, never named. The form offers it (unnumbered) only once the player names a melody with a published chant in it, and a melody with no mode at all (a madrosho) hides the mode question. The always-offered modes are never paired with a melody. The same day the **section stopped being asked** in Nahlo: the round scores melody, mode and shuḥlofo.
 - `GET /api/v1/historical-figures` — Shmo's published roster, fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
 - `GET /api/v1/play/meltho/library` — past Meltho words, public and anonymous. Today's word is never included.
 - `GET /api/v1/play/meltho/leaderboard` (`api:v1:write`) — signed-in only, ranked by longest streak; appearing requires an opt-in on the profile, the caller's own standing is always shown.
