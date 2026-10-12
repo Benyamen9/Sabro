@@ -6,6 +6,20 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxtjs/i18n', '@nuxt/eslint', '@logto/nuxt'],
   css: ['~/assets/css/main.css'],
+  // The backoffice renders in the browser only. During SSR the auth calls
+  // (useAdmin → /api/auth/scopes, getAccessToken → /api/auth/access-token) are
+  // internal $fetch calls that carry no cookie, so the server always sees a
+  // signed-out visitor: isAdmin resolved false, every list's useAsyncData was
+  // skipped, and the browser hydrated that skip as a finished, empty result.
+  // A hard load of /admin/chants showed "No chants yet" over eight published
+  // chants (found 2026-10-12). Forwarding the cookie (useRequestFetch) is the
+  // other fix, and the worse one: a token refresh inside that internal call
+  // would rotate the refresh token into a Set-Cookie the browser never gets.
+  // The backoffice is noindex, so it loses nothing by skipping SSR.
+  routeRules: {
+    '/admin': { ssr: false },
+    '/admin/**': { ssr: false },
+  },
   vite: {
     plugins: [tailwindcss()],
     // Works around a Nuxt dev-server race on cold start (nuxt/nuxt#33606, unresolved upstream

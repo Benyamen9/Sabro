@@ -29,6 +29,11 @@
  * visitor — throws and serves a 500 instead of the game. Making that safe means
  * taking over `/callback` in every repo, which puts live sign-in through an
  * untestable path. Owner chose this version on 2026-08-08.
+ *
+ * Since 2026-10-12 the hint is also FOLLOWED: a signed-out app with the hint
+ * set sends the player through the ordinary interactive sign-in once a day,
+ * which Logto's existing session completes without a password. Still no
+ * `prompt=none`. See plugins/ecosystem-account.client.ts.
  */
 
 const cookieKey = 'sabro_account'
