@@ -38,6 +38,7 @@
     "node-forge": "file:./vendor/node-forge",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.9.9",
+    "simple-git": "file:./vendor/simple-git",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11",
     "vue-tsc": "^3.3.12"
@@ -46,6 +47,7 @@
     "brace-expansion": "^5.0.8",
     "esbuild": "^0.28.1",
     "js-yaml": "^4.3.0",
-    "node-forge": "$node-forge"
+    "node-forge": "$node-forge",
+    "simple-git": "$simple-git"
   }
 }
