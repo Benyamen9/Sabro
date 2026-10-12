@@ -733,7 +733,16 @@ The *intent* is that a coverage drop blocks CI on **Domain and Application** lay
 **security alerts are enabled on all five** since 2026-09-28 — they had been off
 everywhere, so advisories surfaced only when someone ran `npm audit`. Secret scanning
 is on for public Sabro only; the four private client repos would need paid Advanced
-Security. Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
+Security.
+
+**Known-open npm advisories (sweep of 2026-10-12) — left on purpose, do not re-chase.** `npm audit`
+reports ~14–17 entries per repo, all parents of three roots, none in `.output` (nothing the live
+sites run): **simple-git** via Nuxt DevTools (local only; fixed only in simple-git 4, which needs
+DevTools 4, still beta), **braces** via the i18n build plugin, and **node-forge** via the Nuxt dev
+server's `listhen` (neither has any fixed version). Revisit when a fix ships; npm's suggested
+`nuxt@3.7.4` "fix" is a downgrade and must never be applied.
+
+Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
 are expected closes (*Outstanding Worklist* item 1), and image bumps for Meilisearch
 and Logto need their upgrade rituals — green CI cannot see those.
 
