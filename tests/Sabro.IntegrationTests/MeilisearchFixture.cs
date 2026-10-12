@@ -21,7 +21,7 @@ public sealed class MeilisearchFixture : IAsyncLifetime
     //
     // Each run gets a fresh container and no volume, so this never meets the
     // data-directory incompatibility that governs a production upgrade.
-    private readonly IContainer container = new ContainerBuilder("getmeili/meilisearch:v1.53.1")
+    private readonly IContainer container = new ContainerBuilder("getmeili/meilisearch:v1.54.3")
         .WithPortBinding(7700, true)
         .WithEnvironment("MEILI_MASTER_KEY", MasterKey)
         .WithEnvironment("MEILI_NO_ANALYTICS", "true")
