@@ -735,12 +735,20 @@ everywhere, so advisories surfaced only when someone ran `npm audit`. Secret sca
 is on for public Sabro only; the four private client repos would need paid Advanced
 Security.
 
-**Known-open npm advisories (sweep of 2026-10-12) — left on purpose, do not re-chase.** `npm audit`
-reports ~14–17 entries per repo, all parents of three roots, none in `.output` (nothing the live
-sites run): **simple-git** via Nuxt DevTools (local only; fixed only in simple-git 4, which needs
-DevTools 4, still beta), **braces** via the i18n build plugin, and **node-forge** via the Nuxt dev
-server's `listhen` (neither has any fixed version). Revisit when a fix ships; npm's suggested
-`nuxt@3.7.4` "fix" is a downgrade and must never be applied.
+**npm advisories after the 2026-10-12 sweep.** None of what remains is in `.output`, so the live
+sites run none of it. npm's suggested `nuxt@3.7.4` "fix" is a downgrade: never apply it.
+- **node-forge — stubbed out.** No fixed release exists (GHSA-86w9-cpqp-85rv). Its only user is
+  listhen, for `nuxt dev --https` certificates, so all five frontends replace it with
+  `vendor/node-forge/`, our own stand-in that throws if used: a `file:` dev dependency plus
+  `overrides: { "node-forge": "$node-forge" }` (a bare relative `file:` in `overrides` resolves
+  against listhen's folder and breaks `npm ci`). The Dockerfiles `COPY vendor` before `npm ci`.
+  Cost: `nuxt dev --https` is unavailable. **Remove all of it when node-forge ships a fix.**
+- **simple-git — still open.** Fixed only in simple-git 4, which removed the default export that
+  Nuxt DevTools 3 imports; DevTools 4 is still beta. Local DevTools only.
+- **braces — still open.** No fixed release exists (GHSA-vfj7-8cjw-p6xm); its fix is an unmerged
+  upstream PR (micromatch/braces#88). The Owner chose to wait for the release over building
+  with unreleased code. Build-time only (i18n plugin and nitropack's globbing).
+Dependabot security alerts flag both as fixable the day a release lands.
 
 Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
 are expected closes (*Outstanding Worklist* item 1), and image bumps for Meilisearch

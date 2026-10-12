@@ -1,0 +1,14 @@
+{
+  "name": "node-forge",
+  "version": "0.0.0-sabro-stub.1",
+  "description": "Sabro stand-in for node-forge, which has no fixed release for GHSA-86w9-cpqp-85rv. Its only user here is listhen (via nitropack), and only to make self-signed certificates for `nuxt dev --https`, which nobody uses. Loading it is harmless; touching any forge API throws. Delete this folder and its override once node-forge ships a fix.",
+  "license": "MIT",
+  "private": true,
+  "main": "./index.cjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.cjs"
+    }
+  }
+}
