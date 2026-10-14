@@ -164,6 +164,17 @@
 	}
 }
 
+# Sofro — the writing game (own repo, own container), behind this same Caddy on
+# its own hostname. Everything it plays is built into the client.
+{$SOFRO_DOMAIN} {
+	import accesslog
+	import security_headers
+	encode zstd gzip
+	reverse_proxy sofro:3000 {
+		import swap_retry
+	}
+}
+
 # Umami — self-hosted, cookieless analytics. Its own hostname so the tracker
 # script and the collect endpoint are first-party to the ecosystem rather than a
 # third party, which is the whole point of self-hosting it. The dashboard behind

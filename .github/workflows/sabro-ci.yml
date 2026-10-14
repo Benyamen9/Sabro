@@ -193,6 +193,9 @@ jobs:
           NAHLO_LOGTO_APP_ID=x
           NAHLO_LOGTO_APP_SECRET=x
           NAHLO_LOGTO_COOKIE_ENCRYPTION_KEY=x
+          SOFRO_LOGTO_APP_ID=x
+          SOFRO_LOGTO_APP_SECRET=x
+          SOFRO_LOGTO_COOKIE_ENCRYPTION_KEY=x
           ENV
 
       # The dummy env above and the -e flags below are hand-kept lists, and a new
@@ -248,6 +251,7 @@ jobs:
             -e MNO_DOMAIN=mno.sabro.test \
             -e SHMO_DOMAIN=shmo.sabro.test \
             -e NAHLO_DOMAIN=nahlo.sabro.test \
+            -e SOFRO_DOMAIN=sofro.sabro.test \
             -e ANALYTICS_DOMAIN=analytics.sabro.test \
             -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" \
             "$image" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
