@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications — **four at present: Meltho (words), Mno (numerals), Shmo (figures) and Nahlo (chants)**, each in its own repository. Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
+Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications — **four live: Meltho (words), Mno (numerals), Shmo (figures) and Nahlo (chants)**, plus **Sofro (writing), in development since 2026-10-14**, each in its own repository. Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
 
 The long-term scope includes translating the entire Bible (Peshitta) and works of various Syriac Church Fathers.
 
@@ -315,8 +315,23 @@ Four game clients consume Sabro's API, each in **its own repository**, each its 
 | **Mno** (ܡܢܐ, "he counted") | `Benyamen9/Mno` | Mathler on additive Syriac alphabetic numerals; 6 guesses | 3200 | *(generated)* |
 | **Shmo** (ܫܡܐ, "name") | `Benyamen9/Shmo` | Pokédle on historical figures; **unlimited guesses, no losing state** | 3300 | Historical |
 | **Nahlo** (ܢܚܠܐ) | `Benyamen9/Nahlo` | Name the chant — melody + mode + shuḥlofo (yes/no); 6 guesses, right/wrong only — **purple**, not green | 3400 | BethGazo |
+| **Sofro** (ܣܦܪܐ, "scribe") | `Benyamen9/Sofro` | Write Syriac letters and words by hand, step by step — **free practice, not a daily puzzle**; **charcoal** | 3500 | *(none yet — Lexicon later)* |
 
 The hub runs on :3000 and Logto on :3001/:3002.
+
+> **Sofro is in development, not deployed (repo created 2026-10-14).** It has no
+> CD, Logto app, Caddy block, DNS record or UptimeRobot monitor yet — so the
+> "four games deployed" statements above still hold. Owner rulings of 2026-10-14:
+> **not in the daily circuit** (never add it to `CIRCUIT_GAMES`/`CIRCUIT_HANDOFF`);
+> **scores stay on the device** at first, so no `Games.Sofro` id and no Sabro
+> endpoint yet — and only a score would ever be stored, **never drawings**; letter
+> data ships **from the font pipeline first**, built into the client, with an
+> owner-only **dot editor** in the backoffice to replace it later; six levels with
+> **hand-picked word lists**, moving to a Lexicon playable-in-Sofro flag later.
+> Its one-line header carries an **app launcher in place of the Sabro pill** — the
+> same change is due in the other five frontends, but only when the Owner says.
+> The full design lives in `Hito/scribe-prototype/SOFRO_SPEC.md` until it is folded
+> into Sofro's README piece by piece.
 
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >
