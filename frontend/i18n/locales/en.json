@@ -12,32 +12,68 @@
     "titleLine2": "letter by letter.",
     "nameGloss": "sabro — Syriac for “hope”",
     "playedToday": "Played today",
-    "lede": "Sabro means hope — and that's the project: a living home for the Syriac language. Learn it by playing — three free daily games, {meltho}, {mno} and {shmo} — and keep every word they teach.",
+    "lede": "Sabro means hope — and that's the project: a living home for the Syriac language. Learn it by playing — four free daily games, {meltho}, {mno}, {shmo} and {nahlo}, and {sofro} to write it by hand — and keep every word they teach.",
     "liveNow": "Live now",
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
       "body": "A Wordle in Syriac — six tries to find the day's hidden word. You don't need to know the alphabet: the keyboard shows every letter's sound as you play.",
-      "cta": "Play today’s word"
+      "cta": "Play today’s word",
+      "kind": "Words",
+      "short": "Six tries to find the day’s hidden word."
     },
     "mno": {
       "heading": "Mno",
       "live": "Live",
       "body": "A daily math puzzle in Syriac numerals — in Syriac, the letters are also the numbers. Build the equation that hits today's target, from Beginner to Extreme.",
-      "cta": "Play today’s equation"
+      "cta": "Play today’s equation",
+      "kind": "Numerals",
+      "short": "Hit today’s target in Syriac numerals."
     },
     "shmo": {
       "heading": "Shmo",
       "live": "Live",
       "body": "Guess today's historical figure — from biblical prophets to Syriac Church Fathers. Every guess scores category, era, role, region, tradition and gender against the answer.",
-      "cta": "Play today’s figure"
+      "cta": "Play today’s figure",
+      "kind": "Figures",
+      "short": "Guess today’s historical figure."
     },
     "library": {
       "eyebrow": "Word library",
       "heading": "Every word, broken down",
-      "body": "Browse each word the games have shown — its letters, sounds, root, and meaning in English, French, and Dutch — one at a time.",
+      "body": "Browse each word the games have shown — its letters, sounds, root, and meaning in English, French, Dutch, German and Swedish — one at a time.",
       "cta": "Open the library",
       "latestTag": "Latest word"
+    },
+    "nahlo": {
+      "heading": "Nahlo",
+      "live": "Live",
+      "kind": "Chants",
+      "short": "Listen, then name today’s chant.",
+      "body": "A chant from the Beth Gazo, sung for you each day. Listen, then name it: its melody, its mode, and whether it has a shuḥlofo.",
+      "cta": "Hear today’s chant"
+    },
+    "sofro": {
+      "heading": "Sofro",
+      "kind": "Writing",
+      "short": "Write the letters by hand, any time.",
+      "body": "Learn to write Syriac by hand. Each letter is shown stroke by stroke, then you write it yourself — first letters, then whole words. No daily limit.",
+      "cta": "Start writing"
+    },
+    "deck": {
+      "label": "Sabro’s games",
+      "daily": "daily",
+      "anyTime": "Any time",
+      "previous": "Previous game",
+      "next": "Next game",
+      "show": "Show {game}",
+      "play": "Play",
+      "listen": "Listen",
+      "write": "Write",
+      "melody": "Melody",
+      "mode": "Mode",
+      "shuhlofo": "Shuḥlofo",
+      "no": "No"
     }
   },
   "nav": {

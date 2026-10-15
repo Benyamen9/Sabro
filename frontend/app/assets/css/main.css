@@ -40,6 +40,12 @@
   --color-nahlo: #6d4b9e;
   --color-nahlo-dark: #57397f;
   --color-nahlo-faint: #efe9f7;
+  /* Sofro's charcoal (scribal family). Its night shade is light, so the
+     text on a Sofro-coloured fill flips too — --color-on-sofro. */
+  --color-sofro: #2f3639;
+  --color-sofro-dark: #1f2426;
+  --color-sofro-faint: #e9ecee;
+  --color-on-sofro: #ffffff;
 
   /* Nahlo's purple (musical family) — same status as Shmo: colour decided,
      game not built, currently only on the home page's second tease. */
@@ -79,6 +85,10 @@
     --color-nahlo: #a98bd6;
     --color-nahlo-dark: #8b6bc0;
     --color-nahlo-faint: #1e1830;
+    --color-sofro: #c6cdd2;
+    --color-sofro-dark: #a6afb5;
+    --color-sofro-faint: #1b1f22;
+    --color-on-sofro: #16191b;
 
     --color-nahlo: #a98bd6;
     --color-nahlo-faint: #241c31;
@@ -121,6 +131,12 @@
   --color-nahlo: #6d4b9e;
   --color-nahlo-dark: #57397f;
   --color-nahlo-faint: #efe9f7;
+  /* Sofro's charcoal (scribal family). Its night shade is light, so the
+     text on a Sofro-coloured fill flips too — --color-on-sofro. */
+  --color-sofro: #2f3639;
+  --color-sofro-dark: #1f2426;
+  --color-sofro-faint: #e9ecee;
+  --color-on-sofro: #ffffff;
 
   --color-nahlo: #6d4b9e;
   --color-nahlo-faint: #f0eaf8;
@@ -154,9 +170,13 @@
   --color-shmo: #94bc95;
   --color-shmo-dark: #74996f;
   --color-shmo-faint: #19251c;
-  --color-nahlo: #6d4b9e;
-  --color-nahlo-dark: #57397f;
-  --color-nahlo-faint: #efe9f7;
+  --color-nahlo: #a98bd6;
+  --color-nahlo-dark: #8b6bc0;
+  --color-nahlo-faint: #1e1830;
+  --color-sofro: #c6cdd2;
+  --color-sofro-dark: #a6afb5;
+  --color-sofro-faint: #1b1f22;
+  --color-on-sofro: #16191b;
 
   --color-nahlo: #a98bd6;
   --color-nahlo-faint: #241c31;

@@ -2,6 +2,9 @@ import { expect, test } from '@playwright/test'
 
 test.describe('landing page', () => {
   test('renders the app shell with brand, switchers, and a Syriac sample', async ({ page }) => {
+    // The game deck deals itself every 2 s; reduced motion holds it still, so
+    // what the page shows is deterministic while we assert on it.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
 
     // The brand link doubles as home. Translations are deferred, so the primary
@@ -13,8 +16,10 @@ test.describe('landing page', () => {
     // The corrected copy: mission-bearing lede, plain-speech cards.
     await expect(page.getByText('Sabro means hope', { exact: false })).toBeVisible()
     await expect(page.getByText('A Wordle in Syriac', { exact: false })).toBeVisible()
-    // Shmo shipped as a third live game — no longer a nameless tease.
-    await expect(page.getByRole('heading', { name: 'Shmo', exact: false })).toBeVisible()
+    // All five apps are in the game deck, one badge each.
+    for (const game of ['Meltho', 'Mno', 'Shmo', 'Nahlo', 'Sofro']) {
+      await expect(page.getByRole('button', { name: `Show ${game}` })).toBeVisible()
+    }
 
     // The script + language switchers are custom dropdowns: a trigger button that
     // opens a listbox of options (replacing the native <select> popup).
@@ -41,6 +46,44 @@ test.describe('landing page', () => {
     const syriac = page.locator('span[lang="syc"]').first()
     await expect(syriac).toBeVisible()
     await expect(syriac).toHaveAttribute('dir', 'rtl')
+  })
+
+  test('the game deck follows the game on top', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+
+    const deck = page.getByRole('region', { name: 'Sabro’s games' })
+    // A fresh visitor starts on Meltho: its heading, description and button.
+    await expect(deck.getByRole('heading', { level: 2, name: /Meltho/ })).toBeVisible()
+    await expect(deck.getByRole('link', { name: 'Play today’s word →' })).toBeVisible()
+
+    // The section's own arrow deals the next card, and the side follows it.
+    await deck.getByRole('button', { name: 'Next game' }).click()
+    await expect(deck.getByRole('heading', { level: 2, name: /Mno/ })).toBeVisible()
+
+    // A badge jumps straight to its game — Sofro, the one with no daily puzzle.
+    await deck.getByRole('button', { name: 'Show Sofro' }).click()
+    await expect(deck.getByRole('heading', { level: 2, name: /Sofro/ })).toBeVisible()
+    await expect(deck.getByText('Writing · Any time')).toBeVisible()
+    await expect(deck.getByRole('link', { name: 'Start writing →' })).toHaveAttribute('href', /sofro/)
+
+    await deck.getByRole('button', { name: 'Previous game' }).click()
+    await expect(deck.getByRole('heading', { level: 2, name: /Nahlo/ })).toBeVisible()
+  })
+
+  test('the game deck opens on the next unplayed game', async ({ page, context, baseURL }) => {
+    const today = new Date().toISOString().slice(0, 10)
+    await context.addCookies([{
+      name: 'sabro_daily_played',
+      value: encodeURIComponent(JSON.stringify({ d: today, g: ['meltho', 'mno'] })),
+      url: baseURL!,
+    }])
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/')
+
+    const deck = page.getByRole('region', { name: 'Sabro’s games' })
+    await expect(deck.getByRole('heading', { level: 2, name: /Shmo/ })).toBeVisible()
   })
 
   test('renders in French when the sabro_locale cookie is fr', async ({ page, context, baseURL }) => {

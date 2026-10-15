@@ -12,32 +12,68 @@
     "titleLine2": "bokstav för bokstav.",
     "nameGloss": "sabro — syriska för ”hopp”",
     "playedToday": "Spelat idag",
-    "lede": "Sabro betyder hopp — och det är precis vad projektet är: ett levande hem för det syriska språket. Lär dig det genom att spela — tre gratis dagliga spel, {meltho}, {mno} och {shmo} — och behåll varje ord de lär dig.",
+    "lede": "Sabro betyder hopp — och det är precis vad projektet är: ett levande hem för det syriska språket. Lär dig det genom att spela — fyra gratis dagliga spel, {meltho}, {mno}, {shmo} och {nahlo}, och {sofro} för att skriva det för hand — och behåll varje ord de lär dig.",
     "liveNow": "Live nu",
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
       "body": "En Wordle på syriska — sex försök att hitta dagens gömda ord. Du behöver inte kunna alfabetet: tangentbordet visar varje bokstavs ljud medan du spelar.",
-      "cta": "Spela dagens ord"
+      "cta": "Spela dagens ord",
+      "kind": "Ord",
+      "short": "Sex försök att hitta dagens dolda ord."
     },
     "mno": {
       "heading": "Mno",
       "live": "Live",
       "body": "Ett dagligt matematikpussel med syriska siffror — på syriska är bokstäverna också siffrorna. Bygg ekvationen som träffar dagens mål, från Nybörjare till Extrem.",
-      "cta": "Spela dagens ekvation"
+      "cta": "Spela dagens ekvation",
+      "kind": "Tal",
+      "short": "Träffa dagens mål med syriska siffror."
     },
     "shmo": {
       "heading": "Shmo",
       "live": "Live",
       "body": "Gissa dagens historiska person — från bibliska profeter till syriska kyrkofäder. Varje gissning poängsätter kategori, århundrade, roll, region, tradition och kön mot svaret.",
-      "cta": "Spela dagens person"
+      "cta": "Spela dagens person",
+      "kind": "Gestalter",
+      "short": "Gissa dagens historiska gestalt."
     },
     "library": {
       "eyebrow": "Ordbibliotek",
       "heading": "Varje ord, uppdelat",
-      "body": "Bläddra bland varje ord som spelen har visat — dess bokstäver, ljud, rot och betydelse på engelska, franska och nederländska — ett i taget.",
+      "body": "Bläddra bland varje ord som spelen har visat — dess bokstäver, ljud, rot och betydelse på engelska, franska, nederländska, tyska och svenska — ett i taget.",
       "cta": "Öppna biblioteket",
       "latestTag": "Senaste ordet"
+    },
+    "nahlo": {
+      "heading": "Nahlo",
+      "live": "Live",
+      "kind": "Sånger",
+      "short": "Lyssna och namnge sedan dagens sång.",
+      "body": "En sång ur Beth Gazo, sjungen för dig varje dag. Lyssna och namnge den sedan: dess melodi, dess modus och om den har en shuḥlofo.",
+      "cta": "Lyssna på dagens sång"
+    },
+    "sofro": {
+      "heading": "Sofro",
+      "kind": "Skrivande",
+      "short": "Skriv bokstäverna för hand, när du vill.",
+      "body": "Lär dig skriva syriska för hand. Varje bokstav visas drag för drag, sedan skriver du den själv — först bokstäver, sedan hela ord. Ingen daglig gräns.",
+      "cta": "Börja skriva"
+    },
+    "deck": {
+      "label": "Sabros spel",
+      "daily": "dagligen",
+      "anyTime": "När som helst",
+      "previous": "Föregående spel",
+      "next": "Nästa spel",
+      "show": "Visa {game}",
+      "play": "Spela",
+      "listen": "Lyssna",
+      "write": "Skriv",
+      "melody": "Melodi",
+      "mode": "Modus",
+      "shuhlofo": "Shuḥlofo",
+      "no": "Nej"
     }
   },
   "nav": {
