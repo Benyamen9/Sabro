@@ -7,7 +7,9 @@ public sealed class CreateChantRequestValidator : AbstractValidator<CreateChantR
 {
     public CreateChantRequestValidator()
     {
-        RuleFor(x => x.SyriacIncipit).NotEmpty().MaximumLength(512);
+        // Optional (owner, 2026-10-15): a chant can go live from its recording
+        // alone. When given, the domain still requires Syriac characters only.
+        RuleFor(x => x.SyriacIncipit).MaximumLength(512);
         RuleFor(x => x.SyriacIncipitVocalized).MaximumLength(512);
 
         // Required, unlike the Lexicon's transliteration: this is the name a player

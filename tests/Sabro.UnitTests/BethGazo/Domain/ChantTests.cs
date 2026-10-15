@@ -42,14 +42,38 @@ public class ChantTests
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Create_WithoutAnIncipit_Fails(string incipit)
+    public void Create_WithoutAnIncipit_Succeeds_WithNoIncipit(string? incipit)
     {
+        // Owner, 2026-10-15: a chant can go in from its recording alone, its
+        // incipit added once it has been read from the book.
         var result = Chant.Create(incipit, "Maryam yoldath Aloho", Farde, Tlithoyo);
 
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.SyriacIncipit.Should().BeNull();
+    }
+
+    [Fact]
+    public void Create_WithAVocalizedIncipitButNoPlainOne_Fails()
+    {
+        var result = Chant.Create(null, "Maryam yoldath Aloho", Farde, Tlithoyo, syriacIncipitVocalized: "ܡܰܪܝܰܡ");
+
         result.IsSuccess.Should().BeFalse();
-        result.Error!.Message.Should().Contain("SyriacIncipit");
+        result.Error!.Message.Should().Contain("SyriacIncipitVocalized");
+    }
+
+    [Fact]
+    public void Update_CanAddTheIncipitLater_AndRemoveItAgain()
+    {
+        var chant = Chant.Create(null, "Maryam yoldath Aloho", Farde, Tlithoyo).Value!;
+
+        chant.Update(Incipit, "Maryam yoldath Aloho", Farde, Tlithoyo).Should().BeNull();
+        chant.SyriacIncipit.Should().Be(Incipit);
+
+        chant.Update("  ", "Maryam yoldath Aloho", Farde, Tlithoyo).Should().BeNull();
+        chant.SyriacIncipit.Should().BeNull();
     }
 
     [Fact]
@@ -232,6 +256,17 @@ public class ChantTests
         error.Should().NotBeNull();
         error!.Message.Should().Contain("recording");
         chant.Status.Should().Be(ChantStatus.Draft);
+    }
+
+    [Fact]
+    public void Publish_WithARecordingButNoIncipit_Succeeds()
+    {
+        // The recording is the publish gate; the incipit is a hint, not the puzzle.
+        var chant = Chant.Create(null, "Maryam yoldath Aloho", Farde, Tlithoyo).Value!;
+        chant.SetAudioUrl("/media/chants/maryam.m4a").Should().BeNull();
+
+        chant.Publish().Should().BeNull();
+        chant.Status.Should().Be(ChantStatus.Published);
     }
 
     [Fact]

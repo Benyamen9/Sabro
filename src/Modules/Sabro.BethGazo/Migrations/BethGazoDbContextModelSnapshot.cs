@@ -18,7 +18,7 @@ namespace Sabro.BethGazo.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("beth_gazo")
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -682,7 +682,6 @@ namespace Sabro.BethGazo.Migrations
                         .HasColumnName("status");
 
                     b.Property<string>("SyriacIncipit")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasColumnName("syriac_incipit");

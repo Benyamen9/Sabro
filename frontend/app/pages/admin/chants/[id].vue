@@ -263,7 +263,8 @@ const actionButtonClass
         {{ chant.modeName }}<span v-if="chant.variantNumber"> · {{ t(`admin.chants.form.variantKind.${chant.variantKind}`) }} {{ chant.variantNumber }}</span>
       </p>
       <p class="mb-6">
-        <SyriacText :text="chant.syriacIncipit" class="!text-2xl" />
+        <SyriacText v-if="chant.syriacIncipit" :text="chant.syriacIncipit" class="!text-2xl" />
+        <span v-else class="font-sans text-sm italic text-[var(--color-text-faint)]">{{ t('admin.chants.noIncipit') }}</span>
       </p>
 
       <p

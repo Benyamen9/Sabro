@@ -11,7 +11,7 @@ namespace Sabro.BethGazo.Application.Chants;
 /// modes: the section decides, not the caller.
 /// </remarks>
 public sealed record CreateChantRequest(
-    string SyriacIncipit,
+    string? SyriacIncipit,
     string Transliteration,
     Guid SectionId,
     Guid? ModeId = null,

@@ -56,7 +56,9 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
 
     /// <summary>
     /// <b>This chant's own</b> opening words in Syriac, unvocalized and
-    /// NFC-normalized. Required.
+    /// NFC-normalized. Optional (owner, 2026-10-15): a chant can be saved and
+    /// published from its recording alone, its incipit added once it has been read
+    /// from the book. Without one, Nahlo simply offers no reading hint.
     /// </summary>
     /// <remarks>
     /// Its own, not its group's: the chants under one melody name open with
@@ -64,7 +66,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     /// nothing guarantees that for any given mode — see
     /// <see cref="Transliteration"/>.
     /// </remarks>
-    public string SyriacIncipit { get; private set; } = string.Empty;
+    public string? SyriacIncipit { get; private set; }
 
     /// <summary>Vocalized form. Optional enrichment, as in the Lexicon — it never gates publication.</summary>
     public string? SyriacIncipitVocalized { get; private set; }
@@ -194,7 +196,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     /// for create and for update.
     /// </remarks>
     public static Result<Chant> Create(
-        string syriacIncipit,
+        string? syriacIncipit,
         string transliteration,
         BethGazoSection section,
         Guid? modeId,
@@ -227,7 +229,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     /// than an edit.
     /// </summary>
     public Error? Update(
-        string syriacIncipit,
+        string? syriacIncipit,
         string transliteration,
         BethGazoSection section,
         Guid? modeId,
@@ -346,7 +348,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     }
 
     private static Result<NormalizedFields> Normalize(
-        string syriacIncipit,
+        string? syriacIncipit,
         string transliteration,
         BethGazoSection section,
         Guid? modeId,
@@ -360,15 +362,29 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
             return Result<NormalizedFields>.Failure(Error.Validation("A section is required."));
         }
 
-        var incipit = NormalizeSyriacRequired(syriacIncipit, "SyriacIncipit");
-        if (!incipit.IsSuccess)
+        string? incipit = null;
+        if (!string.IsNullOrWhiteSpace(syriacIncipit))
         {
-            return Result<NormalizedFields>.Failure(incipit.Error!);
+            var incipitResult = NormalizeSyriacRequired(syriacIncipit, "SyriacIncipit");
+            if (!incipitResult.IsSuccess)
+            {
+                return Result<NormalizedFields>.Failure(incipitResult.Error!);
+            }
+
+            incipit = incipitResult.Value;
         }
 
         string? vocalized = null;
         if (!string.IsNullOrWhiteSpace(syriacIncipitVocalized))
         {
+            // A vocalized form enriches the plain one, as in the Lexicon; on its own
+            // it would leave the incipit searchable only through its vowels.
+            if (incipit is null)
+            {
+                return Result<NormalizedFields>.Failure(
+                    Error.Validation("SyriacIncipitVocalized needs the unvocalized SyriacIncipit too."));
+            }
+
             var vocalizedResult = NormalizeSyriacRequired(syriacIncipitVocalized, "SyriacIncipitVocalized");
             if (!vocalizedResult.IsSuccess)
             {
@@ -431,7 +447,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
         }
 
         return Result<NormalizedFields>.Success(new NormalizedFields(
-            incipit.Value!,
+            incipit,
             vocalized,
             trimmedTransliteration,
             section.Id,
@@ -474,7 +490,7 @@ public sealed class Chant : Entity<Guid>, IAggregateRoot
     private void Touch() => UpdatedAt = DateTimeOffset.UtcNow;
 
     private readonly record struct NormalizedFields(
-        string SyriacIncipit,
+        string? SyriacIncipit,
         string? SyriacIncipitVocalized,
         string Transliteration,
         Guid SectionId,

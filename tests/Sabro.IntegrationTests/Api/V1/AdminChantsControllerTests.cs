@@ -117,6 +117,27 @@ public class AdminChantsControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Post_WithoutAnIncipit_Returns201_WithNoIncipit()
+    {
+        // Owner, 2026-10-15: a chant goes in from its recording alone; the
+        // incipit comes later, once read from the book.
+        var ct = TestContext.Current.CancellationToken;
+        var modeId = await ModeIdAsync(1, ct);
+
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/admin/chants",
+            new CreateChantRequest(null, "Incipit-less melody", Farde, modeId),
+            ct);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var dto = await response.Content.ReadFromJsonAsync<ChantDto>(SabroApiFactory.JsonOptions, ct);
+        dto!.SyriacIncipit.Should().BeNull();
+
+        await using var ctx = postgres.CreateBethGazoContext();
+        (await ctx.Chants.SingleAsync(e => e.Id == dto.Id, ct)).SyriacIncipit.Should().BeNull();
+    }
+
+    [Fact]
     public async Task Post_NormalizesTheSyriacToNfc()
     {
         // Decomposed input must land as NFC, or the same word typed two ways

@@ -841,7 +841,7 @@
       "form": {
         "createTitle": "Nieuw gezang",
         "syriacIncipit": "Syrisch incipit",
-        "syriacIncipitHint": "De EIGEN beginwoorden van dit gezang, zonder vocalisatie. Ze verschillen per modus en komen dus vaak niet overeen met de melodienaam hierboven. Alleen Syrische tekens.",
+        "syriacIncipitHint": "De EIGEN beginwoorden van dit gezang, zonder vocalisatie. Ze verschillen per modus en komen dus vaak niet overeen met de melodienaam hierboven. Alleen Syrische tekens. Optioneel: laat het leeg tot het uit het boek is overgenomen — Nahlo geeft dan geen leeshint voor deze zang.",
         "syriacIncipitVocalized": "Gevocaliseerd incipit",
         "syriacIncipitVocalizedHint": "Optionele verrijking. Bepaalt nooit of publicatie mogelijk is.",
         "transliteration": "Melodie",
@@ -865,7 +865,8 @@
         },
         "variantWhich": "Welke",
         "variantHint": "Een shuḥlofo is een variatie van de melodie; een ḥrino is gewoon een ander gezang in dezelfde modus. Laat op “geen van beide” voor het gezang zelf."
-      }
+      },
+      "noIncipit": "Nog geen incipit"
     },
     "people": {
       "title": "Personen",

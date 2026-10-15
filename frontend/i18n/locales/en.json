@@ -841,7 +841,7 @@
       "form": {
         "createTitle": "New chant",
         "syriacIncipit": "Syriac incipit",
-        "syriacIncipitHint": "This chant's OWN opening words, unvocalized. Different in each mode, so they often do not match the melody name above. Syriac characters only.",
+        "syriacIncipitHint": "This chant's OWN opening words, unvocalized. Different in each mode, so they often do not match the melody name above. Syriac characters only. Optional: leave it empty until it has been read from the book — Nahlo then offers no reading hint for this chant.",
         "syriacIncipitVocalized": "Vocalized incipit",
         "syriacIncipitVocalizedHint": "Optional enrichment. It never gates publication.",
         "transliteration": "Melody",
@@ -865,7 +865,8 @@
         },
         "variantWhich": "Which one",
         "variantHint": "A shuḥlofo varies the melody; a ḥrino is simply another chant standing in the same mode. Leave on “neither” for the chant in its own right."
-      }
+      },
+      "noIncipit": "No incipit yet"
     },
     "people": {
       "title": "People",

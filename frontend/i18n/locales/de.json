@@ -841,7 +841,7 @@
       "form": {
         "createTitle": "Neuer Gesang",
         "syriacIncipit": "Syrisches Incipit",
-        "syriacIncipitHint": "Die EIGENEN Anfangsworte dieses Gesangs, unvokalisiert. Sie unterscheiden sich je Modus und stimmen daher oft nicht mit dem Melodienamen oben überein. Nur syrische Zeichen.",
+        "syriacIncipitHint": "Die EIGENEN Anfangsworte dieses Gesangs, unvokalisiert. Sie unterscheiden sich je Modus und stimmen daher oft nicht mit dem Melodienamen oben überein. Nur syrische Zeichen. Optional: leer lassen, bis es aus dem Buch übernommen ist — Nahlo bietet für diesen Gesang dann keinen Lesehinweis.",
         "syriacIncipitVocalized": "Vokalisiertes Incipit",
         "syriacIncipitVocalizedHint": "Optionale Ergänzung. Sie ist nie Voraussetzung für die Veröffentlichung.",
         "transliteration": "Melodie",
@@ -865,7 +865,8 @@
         },
         "variantWhich": "Welcher",
         "variantHint": "Ein Shuḥlofo variiert die Melodie; ein Ḥrino ist schlicht ein weiterer Gesang im selben Modus. Für den Gesang selbst auf „keines von beiden“ lassen."
-      }
+      },
+      "noIncipit": "Noch kein Incipit"
     },
     "people": {
       "title": "Personen",

@@ -14,7 +14,7 @@ namespace Sabro.BethGazo.Application.Chants;
 /// <param name="ModeName">Null exactly when <paramref name="ModeId"/> is.</param>
 public sealed record ChantDto(
     Guid Id,
-    string SyriacIncipit,
+    string? SyriacIncipit,
     string? SyriacIncipitVocalized,
     string Transliteration,
     Guid SectionId,

@@ -8950,7 +8950,10 @@
             "format": "uuid"
           },
           "syriacIncipit": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "syriacIncipitVocalized": {
             "type": [
@@ -9220,7 +9223,10 @@
         "type": "object",
         "properties": {
           "syriacIncipit": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "transliteration": {
             "type": "string"
@@ -10861,7 +10867,10 @@
             "format": "int32"
           },
           "syriacIncipit": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "syriacIncipitVocalized": {
             "type": [
@@ -12559,7 +12568,10 @@
         "type": "object",
         "properties": {
           "syriacIncipit": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "transliteration": {
             "type": "string"

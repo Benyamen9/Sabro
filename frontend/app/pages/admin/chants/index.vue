@@ -319,7 +319,8 @@ const selectClass
                   >{{ t('admin.chants.inheritsFrom', { melody: chant.inheritsMelodyFromTransliteration }) }}</span>
                 </td>
                 <td class="hidden sm:table-cell px-4 py-3">
-                  <SyriacText :text="chant.syriacIncipit" class="!text-xl" />
+                  <SyriacText v-if="chant.syriacIncipit" :text="chant.syriacIncipit" class="!text-xl" />
+                  <span v-else class="font-sans text-xs italic text-[var(--color-text-faint)]">{{ t('admin.chants.noIncipit') }}</span>
                 </td>
                 <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ chant.modeName }}
