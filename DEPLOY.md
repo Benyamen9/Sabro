@@ -491,8 +491,9 @@ vars fails **Sabro's own deploy**, not just Nahlo's.
 
 1. **Logto** — create a "Traditional Web" app for Nahlo in the shared tenant
    (same user pool, same API resource, scopes `api:v1:read` + `api:v1:write`).
-   Redirect `https://nahlo.sabro.be/callback` and `http://localhost:3400/callback`;
-   post-sign-out `https://nahlo.sabro.be/` and `http://localhost:3400/`.
+   Redirect `https://nahlo.sabro.be/callback`; post-sign-out `https://nahlo.sabro.be/`.
+   Production only, like Meltho, Mno and Shmo: local dev signs in against the
+   local Logto on :3001, so the production tenant never needs a localhost URI.
 2. **VPS `.env`** — add `NAHLO_DOMAIN`, `NAHLO_LOGTO_APP_ID`,
    `NAHLO_LOGTO_APP_SECRET` and a fresh `NAHLO_LOGTO_COOKIE_ENCRYPTION_KEY`
    (`openssl rand -hex 32`). **Do this before merging the compose change** — the
@@ -521,8 +522,9 @@ merges.
 
 1. **Logto** — a "Traditional Web" app for Sofro in the shared tenant (same user
    pool, same API resource, `api:v1:read` + `api:v1:write`). Redirect
-   `https://sofro.sabro.be/callback` and `http://localhost:3500/callback`;
-   post-sign-out `https://sofro.sabro.be/` and `http://localhost:3500/`.
+   `https://sofro.sabro.be/callback`; post-sign-out `https://sofro.sabro.be/`.
+   Production only, like Meltho, Mno and Shmo: local dev signs in against the
+   local Logto on :3001, so the production tenant never needs a localhost URI.
 2. **VPS `.env`** — `SOFRO_DOMAIN=sofro.sabro.be`, `SOFRO_LOGTO_APP_ID`,
    `SOFRO_LOGTO_APP_SECRET` and a fresh `SOFRO_LOGTO_COOKIE_ENCRYPTION_KEY`
    (`openssl rand -hex 32`).
