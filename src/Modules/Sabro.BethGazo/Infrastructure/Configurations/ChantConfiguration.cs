@@ -12,7 +12,7 @@ internal sealed class ChantConfiguration : IEntityTypeConfiguration<Chant>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.SyriacIncipit).HasMaxLength(512).IsRequired();
+        builder.Property(e => e.SyriacIncipit).HasMaxLength(512);
         builder.Property(e => e.SyriacIncipitVocalized).HasMaxLength(512);
         builder.Property(e => e.Transliteration).HasMaxLength(Chant.MaxTransliterationLength).IsRequired();
 

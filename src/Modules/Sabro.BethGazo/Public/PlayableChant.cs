@@ -18,7 +18,7 @@ namespace Sabro.BethGazo.Public;
 /// </param>
 public sealed record PlayableChant(
     Guid Id,
-    string SyriacIncipit,
+    string? SyriacIncipit,
     string? SyriacIncipitVocalized,
     string Transliteration,
     string SectionName,

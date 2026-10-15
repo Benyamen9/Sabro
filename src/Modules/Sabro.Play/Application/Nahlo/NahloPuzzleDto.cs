@@ -41,5 +41,5 @@ public sealed record NahloPuzzleDto(
     string? ModeName,
     ChantVariantKind VariantKind,
     int? VariantNumber,
-    string SyriacIncipit,
+    string? SyriacIncipit,
     string? SyriacIncipitVocalized);

@@ -841,7 +841,7 @@
       "form": {
         "createTitle": "Nouveau chant",
         "syriacIncipit": "Incipit syriaque",
-        "syriacIncipitHint": "Les premiers mots PROPRES à ce chant, sans vocalisation. Ils diffèrent selon le mode et ne correspondent donc souvent pas au nom de la mélodie ci-dessus. Caractères syriaques uniquement.",
+        "syriacIncipitHint": "Les premiers mots PROPRES à ce chant, sans vocalisation. Ils diffèrent selon le mode et ne correspondent donc souvent pas au nom de la mélodie ci-dessus. Caractères syriaques uniquement. Facultatif : laissez-le vide tant qu'il n'a pas été relevé dans le livre — Nahlo n'offre alors pas d'indice de lecture pour ce chant.",
         "syriacIncipitVocalized": "Incipit vocalisé",
         "syriacIncipitVocalizedHint": "Enrichissement facultatif. Ne conditionne jamais la publication.",
         "transliteration": "Mélodie",
@@ -865,7 +865,8 @@
         },
         "variantWhich": "Lequel",
         "variantHint": "Un shuḥlofo est une variation de la mélodie ; un ḥrino est simplement un autre chant dans le même mode. Laissez sur « ni l’un ni l’autre » pour le chant lui-même."
-      }
+      },
+      "noIncipit": "Pas encore d'incipit"
     },
     "people": {
       "title": "Personnes",

@@ -10,7 +10,7 @@ namespace Sabro.BethGazo.Application.Chants;
 /// <see cref="CreateChantRequest"/>.
 /// </remarks>
 public sealed record UpdateChantRequest(
-    string SyriacIncipit,
+    string? SyriacIncipit,
     string Transliteration,
     Guid SectionId,
     Guid? ModeId = null,

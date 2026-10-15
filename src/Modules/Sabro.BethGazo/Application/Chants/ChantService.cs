@@ -290,7 +290,7 @@ internal sealed class ChantService : IChantService
             // entry by whichever form is to hand.
             query = query.Where(e =>
                 EF.Functions.ILike(e.Transliteration, $"%{needle}%")
-                || EF.Functions.ILike(e.SyriacIncipit, $"%{needle}%"));
+                || (e.SyriacIncipit != null && EF.Functions.ILike(e.SyriacIncipit, $"%{needle}%")));
         }
 
         if (status.HasValue)

@@ -136,9 +136,10 @@ const maxTransliterationLength = 256
 const melodyOptions = computed(() =>
   props.melodySources.filter(candidate => candidate.id !== props.chant?.id))
 
+// The incipit is optional (owner, 2026-10-15): a chant can go live from its
+// recording alone and get its incipit once it has been read from the book.
 const canSubmit = computed(() =>
-  syriacIncipit.value.trim().length > 0
-  && transliteration.value.trim().length > 0
+  transliteration.value.trim().length > 0
   && sectionId.value !== ''
   // A mode is required only where the section has any. Insisting on one for a
   // madrosho would make it unsaveable.
@@ -181,7 +182,7 @@ function onSubmit() {
   if (!canSubmit.value) return
 
   emit('submit', {
-    syriacIncipit: syriacIncipit.value.trim(),
+    syriacIncipit: syriacIncipit.value.trim() || null,
     // Blank boxes are sent as null rather than as empty strings: the optional
     // fields mean "this chant has none", which is not the same as "empty text".
     syriacIncipitVocalized: syriacIncipitVocalized.value.trim() || null,
@@ -220,7 +221,7 @@ const errorTextClass = 'mt-1 font-sans text-xs font-medium text-[var(--color-acc
          in the tradition. -->
     <div>
       <label for="chant-syriac" :class="labelClass">
-        {{ t('admin.chants.form.syriacIncipit') }} <span class="text-[var(--color-accent)]">*</span>
+        {{ t('admin.chants.form.syriacIncipit') }}
       </label>
       <input
         id="chant-syriac"

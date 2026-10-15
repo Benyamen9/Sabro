@@ -5676,7 +5676,7 @@ export interface components {
         ChantDto: {
             /** Format: uuid */
             id: string;
-            syriacIncipit: string;
+            syriacIncipit: null | string;
             syriacIncipitVocalized: null | string;
             transliteration: string;
             /** Format: uuid */
@@ -5743,7 +5743,7 @@ export interface components {
             syriacName?: null | string;
         };
         CreateChantRequest: {
-            syriacIncipit: string;
+            syriacIncipit: null | string;
             transliteration: string;
             /** Format: uuid */
             sectionId: string;
@@ -6121,7 +6121,7 @@ export interface components {
             variantKind: components["schemas"]["ChantVariantKind"];
             /** Format: int32 */
             variantNumber: null | number | string;
-            syriacIncipit: string;
+            syriacIncipit: null | string;
             syriacIncipitVocalized: null | string;
         };
         PagedResultOfAnnotationDto: {
@@ -6506,7 +6506,7 @@ export interface components {
             timesPlayed: null | number | string;
         };
         UpdateChantRequest: {
-            syriacIncipit: string;
+            syriacIncipit: null | string;
             transliteration: string;
             /** Format: uuid */
             sectionId: string;
