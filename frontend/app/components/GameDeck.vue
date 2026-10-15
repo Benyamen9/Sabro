@@ -470,8 +470,11 @@ const shmoTiles = [
 .deck-pip:focus-visible { outline: 2px solid var(--deck-c); outline-offset: 2px; }
 
 .deck-timer {
-  flex: none;
-  width: 8.75rem;
+  /* Shrinks beside the badges on the narrowest phones instead of pushing the
+     page sideways. */
+  flex: 1 1 auto;
+  min-width: 2rem;
+  max-width: 8.75rem;
   height: 3px;
   overflow: hidden;
   border-radius: 2px;

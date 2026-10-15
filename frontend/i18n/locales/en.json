@@ -81,10 +81,7 @@
     "home": "Home",
     "translations": "Translations",
     "library": "Library",
-    "admin": "Backoffice",
-    "meltho": "Meltho",
-    "mno": "Mno",
-    "shmo": "Shmo"
+    "admin": "Backoffice"
   },
   "switcher": {
     "languageLabel": "Language",
@@ -1119,6 +1116,17 @@
     "actions": {
       "library": "Browse the library",
       "home": "Back to the hub"
+    }
+  },
+  "launcher": {
+    "label": "Sabro's apps",
+    "what": {
+      "sofro": "Writing",
+      "sabro": "The hub",
+      "meltho": "Words",
+      "mno": "Numerals",
+      "shmo": "Figures",
+      "nahlo": "Chants"
     }
   }
 }

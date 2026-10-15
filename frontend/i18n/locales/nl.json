@@ -81,10 +81,7 @@
     "home": "Home",
     "translations": "Vertalingen",
     "library": "Bibliotheek",
-    "admin": "Backoffice",
-    "meltho": "Meltho",
-    "mno": "Mno",
-    "shmo": "Shmo"
+    "admin": "Backoffice"
   },
   "switcher": {
     "languageLabel": "Taal",
@@ -1119,6 +1116,17 @@
     "actions": {
       "library": "Bekijk de bibliotheek",
       "home": "Terug naar de hub"
+    }
+  },
+  "launcher": {
+    "label": "De apps van Sabro",
+    "what": {
+      "sofro": "Schrijven",
+      "sabro": "De hub",
+      "meltho": "Woorden",
+      "mno": "Getallen",
+      "shmo": "Figuren",
+      "nahlo": "Zangen"
     }
   }
 }
