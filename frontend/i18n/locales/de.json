@@ -12,32 +12,68 @@
     "titleLine2": "Buchstabe für Buchstabe.",
     "nameGloss": "sabro — syrisch für „Hoffnung“",
     "playedToday": "Heute gespielt",
-    "lede": "Sabro bedeutet Hoffnung — und genau das ist das Projekt: ein lebendiges Zuhause für die syrische Sprache. Lernen Sie sie spielerisch — drei kostenlose tägliche Spiele, {meltho}, {mno} und {shmo} — und behalten Sie jedes Wort, das sie vermitteln.",
+    "lede": "Sabro bedeutet Hoffnung — und genau das ist das Projekt: ein lebendiges Zuhause für die syrische Sprache. Lernen Sie sie spielerisch — vier kostenlose tägliche Spiele, {meltho}, {mno}, {shmo} und {nahlo}, und {sofro}, um sie von Hand zu schreiben — und behalten Sie jedes Wort, das sie vermitteln.",
     "liveNow": "Jetzt live",
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
       "body": "Ein Wordle auf Syrisch — sechs Versuche, um das versteckte Wort des Tages zu finden. Sie müssen das Alphabet nicht kennen: Die Tastatur zeigt beim Spielen den Laut jedes Buchstabens.",
-      "cta": "Heutiges Wort spielen"
+      "cta": "Heutiges Wort spielen",
+      "kind": "Wörter",
+      "short": "Sechs Versuche, das versteckte Wort des Tages zu finden."
     },
     "mno": {
       "heading": "Mno",
       "live": "Live",
       "body": "Ein tägliches Zahlenrätsel mit syrischen Ziffern — im Syrischen sind die Buchstaben auch die Zahlen. Bilden Sie die Gleichung, die das heutige Ziel trifft, von Anfänger bis Extrem.",
-      "cta": "Heutige Gleichung spielen"
+      "cta": "Heutige Gleichung spielen",
+      "kind": "Zahlen",
+      "short": "Treffen Sie das heutige Ziel mit syrischen Zahlzeichen."
     },
     "shmo": {
       "heading": "Shmo",
       "live": "Live",
       "body": "Errate die historische Person des Tages — von biblischen Propheten bis zu syrischen Kirchenvätern. Jeder Versuch vergleicht Kategorie, Jahrhundert, Rolle, Region, Tradition und Geschlecht mit der Antwort.",
-      "cta": "Heutige Person spielen"
+      "cta": "Heutige Person spielen",
+      "kind": "Gestalten",
+      "short": "Erraten Sie die historische Gestalt des Tages."
     },
     "library": {
       "eyebrow": "Wortbibliothek",
       "heading": "Jedes Wort, zerlegt",
-      "body": "Durchstöbern Sie jedes Wort, das die Spiele gezeigt haben — seine Buchstaben, Laute, Wurzel und Bedeutung auf Englisch, Französisch und Niederländisch — eins nach dem anderen.",
+      "body": "Durchstöbern Sie jedes Wort, das die Spiele gezeigt haben — seine Buchstaben, Laute, Wurzel und Bedeutung auf Englisch, Französisch, Niederländisch, Deutsch und Schwedisch — eins nach dem anderen.",
       "cta": "Bibliothek öffnen",
       "latestTag": "Neuestes Wort"
+    },
+    "nahlo": {
+      "heading": "Nahlo",
+      "live": "Live",
+      "kind": "Gesänge",
+      "short": "Hören Sie zu und benennen Sie den heutigen Gesang.",
+      "body": "Ein Gesang aus dem Beth Gazo, jeden Tag für Sie gesungen. Hören Sie zu und benennen Sie ihn: seine Melodie, seinen Modus und ob er ein Shuḥlofo hat.",
+      "cta": "Den heutigen Gesang hören"
+    },
+    "sofro": {
+      "heading": "Sofro",
+      "kind": "Schreiben",
+      "short": "Schreiben Sie die Buchstaben von Hand, wann Sie möchten.",
+      "body": "Lernen Sie, Syrisch von Hand zu schreiben. Jeder Buchstabe wird Strich für Strich gezeigt, dann schreiben Sie ihn selbst — erst Buchstaben, dann ganze Wörter. Ohne Tageslimit.",
+      "cta": "Mit dem Schreiben beginnen"
+    },
+    "deck": {
+      "label": "Die Spiele von Sabro",
+      "daily": "täglich",
+      "anyTime": "Jederzeit",
+      "previous": "Vorheriges Spiel",
+      "next": "Nächstes Spiel",
+      "show": "{game} anzeigen",
+      "play": "Spielen",
+      "listen": "Anhören",
+      "write": "Schreiben",
+      "melody": "Melodie",
+      "mode": "Modus",
+      "shuhlofo": "Shuḥlofo",
+      "no": "Nein"
     }
   },
   "nav": {

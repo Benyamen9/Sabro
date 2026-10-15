@@ -12,32 +12,68 @@
     "titleLine2": "letter voor letter.",
     "nameGloss": "sabro — Syrisch voor „hoop”",
     "playedToday": "Vandaag gespeeld",
-    "lede": "Sabro betekent hoop — en dat is het project: een levend thuis voor de Syrische taal. Leer haar door te spelen — drie gratis dagelijkse spellen, {meltho}, {mno} en {shmo} — en bewaar elk woord dat ze leren.",
+    "lede": "Sabro betekent hoop — en dat is het project: een levend thuis voor de Syrische taal. Leer haar door te spelen — vier gratis dagelijkse spellen, {meltho}, {mno}, {shmo} en {nahlo}, en {sofro} om haar met de hand te schrijven — en bewaar elk woord dat ze leren.",
     "liveNow": "Live",
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
       "body": "Een Wordle in het Syrisch — zes pogingen om het verborgen woord van de dag te vinden. Je hoeft het alfabet niet te kennen: het toetsenbord toont de klank van elke letter terwijl je speelt.",
-      "cta": "Speel het woord van vandaag"
+      "cta": "Speel het woord van vandaag",
+      "kind": "Woorden",
+      "short": "Zes pogingen om het verborgen woord van de dag te vinden."
     },
     "mno": {
       "heading": "Mno",
       "live": "Live",
       "body": "Een dagelijkse rekenpuzzel in Syrische cijfers — in het Syrisch zijn de letters ook de getallen. Bouw de vergelijking die het doel van vandaag raakt, van Beginner tot Extreem.",
-      "cta": "Speel de vergelijking van vandaag"
+      "cta": "Speel de vergelijking van vandaag",
+      "kind": "Getallen",
+      "short": "Raak het doel van vandaag met Syrische cijfers."
     },
     "shmo": {
       "heading": "Shmo",
       "live": "Live",
       "body": "Raad de historische figuur van vandaag — van bijbelse profeten tot Syrische kerkvaders. Elke poging scoort categorie, eeuw, rol, regio, traditie en geslacht tegenover het antwoord.",
-      "cta": "Speel de figuur van vandaag"
+      "cta": "Speel de figuur van vandaag",
+      "kind": "Figuren",
+      "short": "Raad de historische figuur van vandaag."
     },
     "library": {
       "eyebrow": "Woordbibliotheek",
       "heading": "Elk woord, ontleed",
-      "body": "Blader door elk woord dat de spellen hebben getoond — zijn letters, klanken, wortel en betekenis in het Engels, Frans en Nederlands — één per keer.",
+      "body": "Blader door elk woord dat de spellen hebben getoond — zijn letters, klanken, wortel en betekenis in het Engels, Frans, Nederlands, Duits en Zweeds — één per keer.",
       "cta": "Open de bibliotheek",
       "latestTag": "Laatste woord"
+    },
+    "nahlo": {
+      "heading": "Nahlo",
+      "live": "Live",
+      "kind": "Zangen",
+      "short": "Luister en benoem dan de zang van vandaag.",
+      "body": "Een zang uit de Beth Gazo, elke dag voor je gezongen. Luister en benoem hem dan: zijn melodie, zijn modus, en of hij een shuḥlofo heeft.",
+      "cta": "Beluister de zang van vandaag"
+    },
+    "sofro": {
+      "heading": "Sofro",
+      "kind": "Schrijven",
+      "short": "Schrijf de letters met de hand, wanneer je wilt.",
+      "body": "Leer Syrisch met de hand schrijven. Elke letter wordt streek voor streek getoond, daarna schrijf je hem zelf — eerst letters, dan hele woorden. Geen daglimiet.",
+      "cta": "Begin met schrijven"
+    },
+    "deck": {
+      "label": "De spellen van Sabro",
+      "daily": "dagelijks",
+      "anyTime": "Altijd",
+      "previous": "Vorig spel",
+      "next": "Volgend spel",
+      "show": "Toon {game}",
+      "play": "Spelen",
+      "listen": "Luisteren",
+      "write": "Schrijven",
+      "melody": "Melodie",
+      "mode": "Modus",
+      "shuhlofo": "Shuḥlofo",
+      "no": "Nee"
     }
   },
   "nav": {
