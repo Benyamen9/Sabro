@@ -16,7 +16,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 2. ✅ **Meltho** launched against that API, then **Mno**, **Shmo** and **Nahlo** followed on the same foundation — the multi-game model held, with no rework.
 3. **Translations and Biblical remain deferred** — fully specified below, but not on any current critical path. No game depends on translated content. **Reviews is partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
-**Current state.** Five games are deployed behind Caddy and watched by UptimeRobot. The four puzzle games are in the daily circuit; **Sofro went live on 2026-10-15** as free practice and stays out of it. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day.
+**Current state.** Five games are deployed behind Caddy and watched by UptimeRobot. The four puzzle games are in the daily circuit; **Sofro went live on 2026-10-15** as free practice and stays out of it. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day. On 2026-10-15 the Owner recorded three more melody groups, each in all eight modes — *Hablo l'itokh*, *Mo rhimin* and *More dramsho* — not yet uploaded through `/admin/chants`.
 
 **Hub philosophy — wide model, narrow surface.** The data foundation was built to see far (multi-game results, profile, cross-project shape) while the launch UI stayed lean. That bet paid: three further games landed on the same `GameResult` shape without a migration. Keep new surfaces additive for the same reason.
 
@@ -330,8 +330,8 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > data ships **from the font pipeline first**, built into the client, with an
 > owner-only **dot editor** in the backoffice to replace it later; six levels with
 > **hand-picked word lists**, moving to a Lexicon playable-in-Sofro flag later.
-> Its one-line header carries an **app launcher in place of the Sabro pill** — the
-> same change is due in the other five frontends, but only when the Owner says.
+> Its one-line header carries an **app launcher in place of the Sabro pill**, and
+> since 2026-10-15 so do the other five frontends — see *Mirrored contracts*.
 > The full design lives in `Hito/scribe-prototype/SOFRO_SPEC.md` until it is folded
 > into Sofro's README piece by piece.
 
@@ -347,7 +347,7 @@ The four client repos carry no `CLAUDE.md`. Their **`README.md` is each app's me
 
 ### Mirrored contracts — duplicated across repo boundaries
 
-Four pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only one has a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
+Five pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only two have a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
 
 | Mirror | Sabro side | Client side | Guard |
 |---|---|---|---|
@@ -355,10 +355,27 @@ Four pieces of logic are deliberately implemented twice, on either side of a rep
 | Syriac letter counting | `playableLength` | Meltho `app/utils/syriac.ts` | ❌ none |
 | Numeral speller | Sabro's C# speller | Mno `app/utils/numerals.ts` | ❌ none |
 | Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** client | ❌ comment only |
+| App launcher | hub `utils/apps.ts` + `AppLauncher.vue` | one copy in **each** of the five clients | ✅ `apps` unit test per repo (order, self, Sofro's badge) |
 
 **The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies, and since 2026-10-12 so does `CIRCUIT_HANDOFF`. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
 
 > ⚠️ **Any change to `CIRCUIT_HANDOFF` goes into all five repos at once.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
+
+**The app launcher** (Owner, 2026-10-13; everywhere since 2026-10-15) is the 3×3 button that replaced
+the "Sabro" pill in the games and the row of game pills in the hub, so every header is **one line at
+every width**. Six copies of the list exist — hub, Meltho, Mno, Shmo, Nahlo, Sofro — each **listing
+itself first, marked as here**, then the others in launch order (Sabro, Meltho, Mno, Shmo, Nahlo,
+Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-config key. On phones the
+hub's page links (Library, Backoffice) live **inside the launcher panel**, under the apps (Owner,
+2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
+
+**The hub's home page** presents the five apps as a **self-dealing deck** (`GameDeck.vue`, Owner,
+2026-10-15, chosen after many rejected redesigns — keep the rest of the page as it is): every **2 s**
+the top card tucks in behind the others, and the rest of the section follows the game on top
+(label, name, description, little board, button) on a tint of its colour. Arrows sit on the
+**section's** edges, never on the cards. It **pauses on hover and focus** (so a click never lands on a
+card that just moved) and **never deals by itself under reduced motion** — which is also how the e2e
+tests hold it still. It opens on the next unplayed game; Sofro shows "Any time", never played/new.
 
 ## Backoffice (Editorial Admin)
 
