@@ -48,6 +48,50 @@ test.describe('landing page', () => {
     await expect(syriac).toHaveAttribute('dir', 'rtl')
   })
 
+  test('the app launcher lists Sabro and every game, Sabro marked as here', async ({ page }) => {
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+
+    const apps = page.getByRole('navigation', { name: "Sabro's apps" })
+    await page.getByRole('button', { name: "Sabro's apps" }).click()
+    await expect(apps).toBeVisible()
+    for (const name of ['Meltho', 'Mno', 'Shmo', 'Nahlo', 'Sofro']) {
+      await expect(apps.getByRole('link', { name: new RegExp(name) })).toBeVisible()
+    }
+    await expect(apps.locator('[aria-current="page"]')).toContainText('Sabro')
+  })
+
+  test('the header stays on one line on a narrow phone', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 })
+    await page.goto('/')
+
+    const brand = page.getByRole('link', { name: 'Sabro', exact: true })
+    const launcher = page.getByRole('button', { name: "Sabro's apps" })
+    for (const el of [brand, launcher]) await expect(el).toBeVisible()
+    const middle = async (el: typeof brand) => { const b = (await el.boundingBox())!; return b.y + b.height / 2 }
+    expect(Math.abs((await middle(launcher)) - (await middle(brand)))).toBeLessThan(12)
+    // Nothing on the page pushes it sideways — header or game deck.
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)
+
+    // On phones the page links move from the header into the launcher panel.
+    const nav = page.getByRole('navigation', { name: 'Primary navigation' })
+    await expect(nav).toBeHidden()
+    await page.waitForLoadState('networkidle')
+    await launcher.click()
+    const apps = page.getByRole('navigation', { name: "Sabro's apps" })
+    await expect(apps.getByRole('link', { name: /Library/ })).toBeVisible()
+  })
+
+  test('on a wide screen the page links stay in the header', async ({ page }) => {
+    await page.goto('/')
+    const nav = page.getByRole('navigation', { name: 'Primary navigation' })
+    await expect(nav.getByRole('link', { name: 'Library', exact: true })).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    await page.getByRole('button', { name: "Sabro's apps" }).click()
+    const apps = page.getByRole('navigation', { name: "Sabro's apps" })
+    await expect(apps.getByRole('link', { name: /Library/ })).toBeHidden()
+  })
+
   test('the game deck follows the game on top', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')

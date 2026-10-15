@@ -81,10 +81,7 @@
     "home": "Hem",
     "translations": "Översättningar",
     "library": "Bibliotek",
-    "admin": "Backoffice",
-    "meltho": "Meltho",
-    "mno": "Mno",
-    "shmo": "Shmo"
+    "admin": "Backoffice"
   },
   "switcher": {
     "languageLabel": "Språk",
@@ -1119,6 +1116,17 @@
     "actions": {
       "library": "Bläddra i biblioteket",
       "home": "Tillbaka till navet"
+    }
+  },
+  "launcher": {
+    "label": "Sabros appar",
+    "what": {
+      "sofro": "Skrivande",
+      "sabro": "Navet",
+      "meltho": "Ord",
+      "mno": "Tal",
+      "shmo": "Gestalter",
+      "nahlo": "Sånger"
     }
   }
 }
