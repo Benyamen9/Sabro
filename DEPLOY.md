@@ -491,8 +491,9 @@ vars fails **Sabro's own deploy**, not just Nahlo's.
 
 1. **Logto** — create a "Traditional Web" app for Nahlo in the shared tenant
    (same user pool, same API resource, scopes `api:v1:read` + `api:v1:write`).
-   Redirect `https://nahlo.sabro.be/callback` and `http://localhost:3400/callback`;
-   post-sign-out `https://nahlo.sabro.be/` and `http://localhost:3400/`.
+   Redirect `https://nahlo.sabro.be/callback`; post-sign-out `https://nahlo.sabro.be/`.
+   Production only, like Meltho, Mno and Shmo: local dev signs in against the
+   local Logto on :3001, so the production tenant never needs a localhost URI.
 2. **VPS `.env`** — add `NAHLO_DOMAIN`, `NAHLO_LOGTO_APP_ID`,
    `NAHLO_LOGTO_APP_SECRET` and a fresh `NAHLO_LOGTO_COOKIE_ENCRYPTION_KEY`
    (`openssl rand -hex 32`). **Do this before merging the compose change** — the
@@ -510,6 +511,33 @@ vars fails **Sabro's own deploy**, not just Nahlo's.
 
 The game itself renders a "no chant today" screen until the Beth Gazo pool has
 recordings — `GET /play/nahlo/today` answers 409 with an empty pool, by design.
+
+---
+
+## Bringing the fifth game online (Sofro)
+
+Same slot, same order, same reason: Sabro's CD runs compose across the whole
+file, so the `sofro` service must be able to start before this repo's change
+merges.
+
+1. **Logto** — a "Traditional Web" app for Sofro in the shared tenant (same user
+   pool, same API resource, `api:v1:read` + `api:v1:write`). Redirect
+   `https://sofro.sabro.be/callback`; post-sign-out `https://sofro.sabro.be/`.
+   Production only, like Meltho, Mno and Shmo: local dev signs in against the
+   local Logto on :3001, so the production tenant never needs a localhost URI.
+2. **VPS `.env`** — `SOFRO_DOMAIN=sofro.sabro.be`, `SOFRO_LOGTO_APP_ID`,
+   `SOFRO_LOGTO_APP_SECRET` and a fresh `SOFRO_LOGTO_COOKIE_ENCRYPTION_KEY`
+   (`openssl rand -hex 32`).
+3. **DNS** — an A record for `sofro.sabro.be` pointing at the VPS.
+4. **A first image** — Sofro's own CD (`sofro-cd`) builds and pushes it. Its
+   repo needs the same secrets as Nahlo's: `NUXT_PUBLIC_SABRO_API_RESOURCE`,
+   `VPS_HOST`, `VPS_USER`, `SSH_PRIVATE_KEY`. Its deploy job only ever touches
+   its own service (`up -d --no-deps sofro`).
+5. **Merge this repo's Sofro slot**, then deploy.
+6. **UptimeRobot** — a monitor for `https://sofro.sabro.be`.
+
+**Never** add Sofro to the daily circuit: it is free practice, not a daily
+puzzle (Owner, 2026-10-14).
 
 ---
 
