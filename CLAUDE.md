@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications — **four live: Meltho (words), Mno (numerals), Shmo (figures) and Nahlo (chants)**, plus **Sofro (writing), in development since 2026-10-14**, each in its own repository. Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
+Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications — **four live: Meltho (words), Mno (numerals), Shmo (figures) and Nahlo (chants)**, plus **Sofro (writing), live since 2026-10-15** as free practice, each in its own repository. Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
 
 The long-term scope includes translating the entire Bible (Peshitta) and works of various Syriac Church Fathers.
 
@@ -16,7 +16,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 2. ✅ **Meltho** launched against that API, then **Mno**, **Shmo** and **Nahlo** followed on the same foundation — the multi-game model held, with no rework.
 3. **Translations and Biblical remain deferred** — fully specified below, but not on any current critical path. No game depends on translated content. **Reviews is partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
-**Current state.** Four games are deployed behind Caddy and watched by UptimeRobot. All four are in the daily circuit. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day.
+**Current state.** Five games are deployed behind Caddy and watched by UptimeRobot. The four puzzle games are in the daily circuit; **Sofro went live on 2026-10-15** as free practice and stays out of it. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day.
 
 **Hub philosophy — wide model, narrow surface.** The data foundation was built to see far (multi-game results, profile, cross-project shape) while the launch UI stayed lean. That bet paid: three further games landed on the same `GameResult` shape without a migration. Keep new surfaces additive for the same reason.
 
@@ -100,7 +100,7 @@ Related, and the reason this is worth acting on rather than drifting: the same
 | Backend | ASP.NET Core 10 (LTS) |
 | Database | PostgreSQL (via Entity Framework Core) — single shared database for the whole ecosystem |
 | Search | Meilisearch (typo-tolerant, dedicated service) |
-| Frontend | Nuxt 4 (Vue 3 + TypeScript strict) — the hub and all four game clients; Tailwind v4 in the clients |
+| Frontend | Nuxt 4 (Vue 3 + TypeScript strict) — the hub and all five game clients; Tailwind v4 in the clients |
 | Auth | Logto (self-hosted IDP, OIDC) |
 | Validation | FluentValidation |
 | Markdown | Markdig |
@@ -307,7 +307,7 @@ For MVP: biblical cross-references only. Patristic and external citations deferr
 
 ## Ecosystem Clients
 
-Four game clients consume Sabro's API, each in **its own repository**, each its own OIDC application in the shared Logto tenant, each its own container behind Caddy. All four are Nuxt 4 + Tailwind v4 + Vitest, and all four ship **EN, FR, NL, DE and SV**.
+Five game clients consume Sabro's API, each in **its own repository**, each its own OIDC application in the shared Logto tenant, each its own container behind Caddy. All five are Nuxt 4 + Tailwind v4 + Vitest, and all five ship **EN, FR, NL, DE and SV**.
 
 | App | Repo | Game | Dev port | Sabro content behind it |
 |---|---|---|---|---|
@@ -319,9 +319,11 @@ Four game clients consume Sabro's API, each in **its own repository**, each its 
 
 The hub runs on :3000 and Logto on :3001/:3002.
 
-> **Sofro is in development, not deployed (repo created 2026-10-14).** It has no
-> CD, Logto app, Caddy block, DNS record or UptimeRobot monitor yet — so the
-> "four games deployed" statements above still hold. Owner rulings of 2026-10-14:
+> **Sofro is live at `sofro.sabro.be` since 2026-10-15** (repo created 2026-10-14):
+> its own CD, Logto app, Caddy block, DNS record and UptimeRobot monitor, brought
+> online by DEPLOY.md's "fifth game" order. Its Logto app registers **production
+> URIs only**, like Meltho, Mno and Shmo — local dev signs in against the local
+> Logto. Owner rulings of 2026-10-14:
 > **not in the daily circuit** (never add it to `CIRCUIT_GAMES`/`CIRCUIT_HANDOFF`);
 > **scores stay on the device** at first, so no `Games.Sofro` id and no Sabro
 > endpoint yet — and only a score would ever be stored, **never drawings**; letter
@@ -537,7 +539,7 @@ Schema is multilingual from day one (`language` column on `Translation` and `Lex
 
 ## Authentication (Logto)
 
-Each application in the ecosystem (Sabro, Meltho, Mno, Shmo, Nahlo, and any future app) is declared as a separate OIDC application in the central Logto instance. Sabro's API validates JWT bearer tokens via Logto's JWKS endpoint using the standard `Microsoft.AspNetCore.Authentication.JwtBearer` middleware — no Logto-specific SDK needed on the backend.
+Each application in the ecosystem (Sabro, Meltho, Mno, Shmo, Nahlo, Sofro, and any future app) is declared as a separate OIDC application in the central Logto instance. Sabro's API validates JWT bearer tokens via Logto's JWKS endpoint using the standard `Microsoft.AspNetCore.Authentication.JwtBearer` middleware — no Logto-specific SDK needed on the backend.
 
 The admin role used to gate the backoffice is carried in the token (Logto role / scope mapped to `api:v1:admin`).
 
@@ -569,7 +571,7 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   - `/health/live` — **liveness**: runs no checks, depends on nothing. The only one
     safe for a Docker `healthcheck:` or a `depends_on: service_healthy` gate —
     pointing those at `/health` would turn a database blip into a restart loop.
-- **UptimeRobot — live since 2026-07-28.** Seven HTTP(s) monitors on a 5-minute
+- **UptimeRobot — live since 2026-07-28.** Eight HTTP(s) monitors on a 5-minute
   interval (the free plan's floor), emailing on downtime:
 
   | Monitor | URL |
@@ -580,6 +582,7 @@ Structured logging via Serilog, shipped to a self-hosted Seq instance for visual
   | Mno | `https://mno.sabro.be` |
   | Shmo | `https://shmo.sabro.be` |
   | Nahlo | `https://nahlo.sabro.be` |
+  | Sofro | `https://sofro.sabro.be` (added 2026-10-15) |
   | Umami analytics | `https://analytics.sabro.be` |
 
   > **Nahlo was monitored long before the docs said so.** Until 2026-10-01 this file
