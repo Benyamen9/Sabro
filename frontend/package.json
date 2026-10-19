@@ -40,7 +40,7 @@
     "prettier": "^3.9.9",
     "simple-git": "file:./vendor/simple-git",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11",
+    "vitest": "^5.0.5",
     "vue-tsc": "^3.3.12"
   },
   "overrides": {
