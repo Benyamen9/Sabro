@@ -19,7 +19,7 @@
     "generate:api-types": "openapi-typescript ./openapi/Sabro.API.json -o ./app/types/api.generated.ts"
   },
   "dependencies": {
-    "@logto/nuxt": "^1.2.10",
+    "@logto/nuxt": "^2.0.1",
     "@nuxtjs/i18n": "^10.4.0",
     "@tailwindcss/vite": "^4.3.0",
     "nuxt": "^4.6.0",
