@@ -47,7 +47,7 @@ services:
     # and the engine crash-looped against the 1.53.1 volume for eleven days while
     # /health stayed green (it only checks Postgres). A patch bump is an upgrade
     # like any other: one boot with MEILI_UPGRADE_DB, then remove it.
-    image: getmeili/meilisearch:v1.54.3
+    image: getmeili/meilisearch:v1.55.0
     container_name: sabro-meilisearch
     restart: unless-stopped
     environment:
