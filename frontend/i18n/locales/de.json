@@ -13,7 +13,27 @@
     "nameGloss": "sabro — syrisch für „Hoffnung“",
     "playedToday": "Heute gespielt",
     "lede": "Sabro bedeutet Hoffnung — und genau das ist das Projekt: ein lebendiges Zuhause für die syrische Sprache. Lernen Sie sie spielerisch — vier kostenlose tägliche Spiele, {meltho}, {mno}, {shmo} und {nahlo}, und {sofro}, um sie von Hand zu schreiben — und behalten Sie jedes Wort, das sie vermitteln.",
-    "liveNow": "Jetzt live",
+    "meetTheGames": "Die Spiele kennenlernen",
+    "today": {
+      "heading": "Heute",
+      "upNext": "Als Nächstes · heute",
+      "upNextShort": "Als Nächstes",
+      "done": "Gespielt",
+      "progress": "{done} von {total}",
+      "anyTime": "jederzeit",
+      "task": {
+        "meltho": "das Wort des Tages",
+        "mno": "die Gleichung des Tages",
+        "shmo": "die Gestalt des Tages",
+        "nahlo": "der Gesang des Tages"
+      },
+      "allDone": "Alle vier für heute gespielt",
+      "allDoneShort": "Alles gespielt",
+      "streak": "{days} Tag | {days} Tage",
+      "keepGoing": "Weiter: von Hand schreiben",
+      "newPuzzlesIn": "Neue Rätsel in {time}",
+      "hoursMinutes": "{h} Std. {m} Min."
+    },
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
@@ -73,7 +93,8 @@
       "melody": "Melodie",
       "mode": "Modus",
       "shuhlofo": "Shuḥlofo",
-      "no": "Nein"
+      "no": "Nein",
+      "swipeHint": "Wische die Karte, um das nächste Spiel zu sehen"
     }
   },
   "nav": {

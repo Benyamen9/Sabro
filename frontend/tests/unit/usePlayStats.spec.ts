@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { GameResultDto } from '~/types/api'
-import { computeGameStats } from '~/composables/usePlayStats'
+import { computeCircuitStreak, computeGameStats } from '~/composables/usePlayStats'
 
 // The derivation is game-agnostic; these specs exercise it through Meltho.
 const computeMelthoStats = (results: GameResultDto[]) => computeGameStats(results, 'meltho')
@@ -122,5 +122,46 @@ describe('computeMelthoStats', () => {
     ])
     expect(s.currentStreak).toBe(4)
     expect(s.maxStreak).toBe(4)
+  })
+})
+
+describe('computeCircuitStreak', () => {
+  const games = ['meltho', 'mno', 'shmo', 'nahlo'] as const
+  const allSolved = (day: string) => games.map(g => result(day, true, 3, g))
+
+  it('counts consecutive days, ending today, on which every game was solved', () => {
+    const results = [...allSolved('2026-10-21'), ...allSolved('2026-10-22'), ...allSolved('2026-10-23')]
+    expect(computeCircuitStreak(results, games, '2026-10-23')).toBe(3)
+  })
+
+  it('is 0 while today is not complete', () => {
+    const results = [...allSolved('2026-10-22'), result('2026-10-23', true, 2, 'meltho')]
+    expect(computeCircuitStreak(results, games, '2026-10-23')).toBe(0)
+  })
+
+  it('needs every game solved, not just played', () => {
+    const today = [...allSolved('2026-10-23').slice(0, 3), result('2026-10-23', false, 6, 'nahlo')]
+    expect(computeCircuitStreak(today, games, '2026-10-23')).toBe(0)
+  })
+
+  it('stops at the first day that was not complete', () => {
+    const results = [
+      ...allSolved('2026-10-20'),
+      // 21: Shmo was played and lost, so the run breaks here.
+      ...allSolved('2026-10-21').filter(r => r.gameId !== 'shmo'), result('2026-10-21', false, 9, 'shmo'),
+      ...allSolved('2026-10-22'),
+      ...allSolved('2026-10-23'),
+    ]
+    expect(computeCircuitStreak(results, games, '2026-10-23')).toBe(2)
+  })
+
+  it('crosses a month boundary', () => {
+    const results = [...allSolved('2026-09-30'), ...allSolved('2026-10-01')]
+    expect(computeCircuitStreak(results, games, '2026-10-01')).toBe(2)
+  })
+
+  it('ignores results from games outside the circuit', () => {
+    const results = [...allSolved('2026-10-23'), result('2026-10-22', true, 1, 'sofro')]
+    expect(computeCircuitStreak(results, games, '2026-10-23')).toBe(1)
   })
 })

@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import type { CircuitGame } from '~/composables/useDailyCircuit'
 
-// The home page's game section (owner, 2026-10-15): the five apps as a deck of
-// cards that deals itself every 2 s — the top card tucks in behind the others —
-// while the rest of the section follows the game on top: its label, name,
-// description, little board and button, on a soft tint of its colour. Arrows sit
-// on the section's edges, not on the cards. Pointing at the section (or focusing
-// inside it) pauses the deal, so a click never lands on a card that just moved;
-// with reduced motion it never deals by itself at all.
+// The home page's game section (owner, 2026-10-15; reworked 2026-10-23): the
+// five apps as a deck of cards, the rest of the section following the game on
+// top — its label, name, description and button — on a soft tint of its colour.
+// Each card carries the game's little board.
+//
+// The deck moves only when the visitor moves it (owner, 2026-10-23: a card that
+// changed every 2 s was too fast to read and could move under a click). On a
+// touch screen you swipe the top card — left for the next game, right for the
+// previous — and a line under the deck says so. With a mouse, ‹ › buttons sit
+// under the deck instead and the hint is gone: nobody expects to drag a card
+// with a mouse, though it still works. The game badges between them jump
+// straight to a game on both.
 type DeckGame = CircuitGame | 'sofro'
 
 interface DeckEntry {
@@ -32,8 +37,9 @@ const games: readonly DeckEntry[] = [
   { id: 'sofro', badge: 'ܣܦ', word: 'ܣܦܪܐ', url: config.sofroUrl as string, verb: 'write' },
 ]
 
-const DEAL_MS = 2000
 const TUCK_MS = 240
+/** How far (px) a card must be dragged sideways before letting go deals it. */
+const SWIPE_PX = 70
 
 /** Daily games show played / new; Sofro is free practice and never "played". */
 function playedToday(id: DeckGame) {
@@ -42,12 +48,10 @@ function playedToday(id: DeckGame) {
 
 // The deck opens on today's next unplayed game, Meltho once the day is done.
 const top = ref(Math.max(0, games.findIndex((g) => g.id === (nextUnplayed() ?? 'meltho'))))
-const current = computed(() => games[top.value]!)
-const leaving = ref<number | null>(null)
-const cycle = ref(0)
-const paused = ref(false)
-// Off on the server and until mount, and for good with reduced motion.
-const autoplay = ref(false)
+/** The card flying off the deck, and to which side. */
+const leaving = ref<{ index: number, side: 'left' | 'right' } | null>(null)
+/** How far the top card is being dragged right now (px), while a swipe is live. */
+const dragX = ref<number | null>(null)
 
 /** How far a card sits from the top of the deck (0 = on top). */
 function depth(index: number) {
@@ -56,28 +60,36 @@ function depth(index: number) {
 
 function cardStyle(index: number) {
   const d = depth(index)
-  return {
-    transform: `translate(${d * 12}px, ${d * 10}px) rotate(${d * 2}deg)`,
+  const style: Record<string, string | number> = {
     zIndex: 10 - d,
     '--card-c': `var(--color-${games[index]!.id})`,
   }
+  if (d === 0 && dragX.value !== null) {
+    style.transform = `translate(${dragX.value}px, ${Math.abs(dragX.value) * 0.05}px) rotate(${dragX.value / 18}deg)`
+  } else if (leaving.value?.index !== index) {
+    style.transform = `translate(${d * 12}px, ${d * 10}px) rotate(${d * 2}deg)`
+  }
+  return style
 }
 
 function show(index: number) {
   top.value = (index + games.length) % games.length
-  cycle.value++
 }
 
 let tuck: ReturnType<typeof setTimeout> | undefined
 
-/** Deal: the top card slides out, then tucks in at the back of the deck. */
-function next() {
+/** Deal: the top card flies off to one side, then tucks in at the back. */
+function fling(side: 'left' | 'right') {
   if (leaving.value !== null) return
-  leaving.value = top.value
+  leaving.value = { index: top.value, side }
   tuck = setTimeout(() => {
     leaving.value = null
-    show(top.value + 1)
+    show(top.value + (side === 'left' ? 1 : -1))
   }, TUCK_MS)
+}
+
+function next() {
+  fling('left')
 }
 
 function previous() {
@@ -88,13 +100,46 @@ function jump(index: number) {
   if (leaving.value === null) show(index)
 }
 
-function onTimerEnd() {
-  if (!paused.value) next()
+// Swiping. A drag only becomes a swipe once it is clearly sideways, so a
+// vertical drag still scrolls the page (the cards are `touch-action: pan-y`).
+let swipe: { x: number, y: number, pointer: number, sideways: boolean | null } | null = null
+/** Set when a swipe just ended, so the click that follows doesn't open the game. */
+let swiped = false
+
+function onPointerDown(event: PointerEvent, index: number) {
+  if (depth(index) !== 0 || leaving.value !== null || event.button !== 0) return
+  swipe = { x: event.clientX, y: event.clientY, pointer: event.pointerId, sideways: null }
+  swiped = false
 }
 
-onMounted(() => {
-  autoplay.value = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-})
+function onPointerMove(event: PointerEvent) {
+  if (!swipe || event.pointerId !== swipe.pointer) return
+  const dx = event.clientX - swipe.x
+  const dy = event.clientY - swipe.y
+  if (swipe.sideways === null && Math.abs(dx) + Math.abs(dy) > 6) {
+    swipe.sideways = Math.abs(dx) > Math.abs(dy)
+    if (swipe.sideways) (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+  }
+  if (swipe.sideways) {
+    swiped = true
+    dragX.value = dx
+  }
+}
+
+function onPointerEnd() {
+  if (!swipe) return
+  const dx = dragX.value ?? 0
+  swipe = null
+  dragX.value = null
+  if (Math.abs(dx) > SWIPE_PX) fling(dx < 0 ? 'left' : 'right')
+}
+
+function onCardClick(event: MouseEvent) {
+  if (!swiped) return
+  event.preventDefault()
+  swiped = false
+}
+
 onBeforeUnmount(() => clearTimeout(tuck))
 
 // Meltho's board: its own letters, the lomad and olaf as gold "present" tiles
@@ -106,14 +151,16 @@ const melthoTiles = [
   { letter: 'ܠ', state: 'present' },
 ] as const
 
-// Mno's: the name ܡܢܐ read as an equation (40 + 50 × 1), in Mno's own
-// feedback colours — green correct, its gold for the wrong place.
+// Mno's: the name ܡܢܐ read as an equation (40 + 50 × 1), drawn the way Mno
+// draws a guess (owner, 2026-10-23): five equal tiles, every one — the signs too
+// — scored in Mno's own colours: green right, amber a number in the wrong place,
+// pale grey a wrong one. No value hints, so it reads at a glance.
 const mnoTiles = [
-  { glyph: 'ܡ', hint: '40', state: 'correct' },
-  { glyph: '+', hint: '', state: 'operatorHit' },
-  { glyph: 'ܢ', hint: '50', state: 'present' },
-  { glyph: '×', hint: '', state: 'operator' },
-  { glyph: 'ܐ', hint: '1', state: 'correct' },
+  { glyph: 'ܡ', operator: false, state: 'correct' },
+  { glyph: '+', operator: true, state: 'correct' },
+  { glyph: 'ܢ', operator: false, state: 'present' },
+  { glyph: '×', operator: true, state: 'correct' },
+  { glyph: 'ܐ', operator: false, state: 'absent' },
 ] as const
 
 // Shmo's: three real scored cells from a guess row (Jacob of Serugh guessed
@@ -123,49 +170,107 @@ const shmoTiles = [
   { value: '4th c.', state: 'near', arrow: '↓' },
   { value: 'Bishop', state: 'miss', arrow: null },
 ] as const
+
+// Sofro's: a practice sheet — letters written on ruled lines, the next ones
+// waiting in pale grey (owner's pick, 2026-10-23).
+const sofroLetters = [
+  { letter: 'ܐ', written: true },
+  { letter: 'ܒ', written: true },
+  { letter: 'ܓ', written: true },
+  { letter: 'ܕ', written: false },
+  { letter: 'ܗ', written: false },
+] as const
 </script>
 
 <template>
   <section
     class="deck"
-    :class="{ 'is-paused': paused }"
-    :style="{ '--deck-c': `var(--color-${current.id})`, '--deck-on': `var(--color-on-${current.id}, #fff)` }"
+    :style="{ '--deck-c': `var(--color-${games[top]!.id})`, '--deck-on': `var(--color-on-${games[top]!.id}, #fff)` }"
     :aria-label="t('home.deck.label')"
     aria-roledescription="carousel"
-    @mouseenter="paused = true"
-    @mouseleave="paused = false"
-    @focusin="paused = true"
-    @focusout="paused = false"
   >
-    <button type="button" class="deck-arrow deck-arrow-prev" :aria-label="t('home.deck.previous')" @click="previous">‹</button>
-    <button type="button" class="deck-arrow deck-arrow-next" :aria-label="t('home.deck.next')" @click="next">›</button>
-
-    <div class="deck-stack">
-      <a
-        v-for="(game, index) in games"
-        :key="game.id"
-        :href="game.url"
-        class="deck-card"
-        :class="{ 'is-leaving': leaving === index }"
-        :style="cardStyle(index)"
-        :aria-hidden="depth(index) !== 0 ? 'true' : undefined"
-        :tabindex="depth(index) === 0 ? undefined : -1"
-      >
-        <span class="flex items-center gap-2.5">
-          <span class="deck-badge font-syriac" dir="rtl" aria-hidden="true">{{ game.badge }}</span>
-          <span>
-            <span class="flex items-center gap-2 font-sans text-[1.05rem] font-semibold text-[var(--color-text)]">
-              {{ t(`home.${game.id}.heading`) }}
-              <span v-if="playedToday(game.id)" class="text-sm font-bold text-green-700 dark:text-green-400" :title="t('home.playedToday')">✓</span>
-              <span v-else-if="game.id === 'sofro'" class="deck-any">{{ t('home.deck.anyTime') }}</span>
-              <span v-else class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" :title="t(`home.${game.id}.live`)" />
+    <div class="min-w-0">
+      <div class="deck-stack">
+        <a
+          v-for="(game, index) in games"
+          :key="game.id"
+          :href="game.url"
+          class="deck-card"
+          :class="{
+            'is-dragging': depth(index) === 0 && dragX !== null,
+            'is-leaving-left': leaving?.index === index && leaving.side === 'left',
+            'is-leaving-right': leaving?.index === index && leaving.side === 'right',
+          }"
+          :style="cardStyle(index)"
+          :aria-hidden="depth(index) !== 0 ? 'true' : undefined"
+          :tabindex="depth(index) === 0 ? undefined : -1"
+          draggable="false"
+          @pointerdown="onPointerDown($event, index)"
+          @pointermove="onPointerMove"
+          @pointerup="onPointerEnd"
+          @pointercancel="onPointerEnd"
+          @dragstart.prevent
+          @click.capture="onCardClick"
+        >
+          <span class="flex items-center gap-2.5">
+            <span class="deck-badge font-syriac" :class="{ 'is-wide': game.badge.length > 1 && game.id === 'sofro' }" dir="rtl" aria-hidden="true">{{ game.badge }}</span>
+            <span>
+              <span class="flex items-center gap-2 font-sans text-[1.05rem] font-semibold text-[var(--color-text)]">
+                {{ t(`home.${game.id}.heading`) }}
+                <span v-if="playedToday(game.id)" class="text-sm font-bold text-green-700 dark:text-green-400" :title="t('home.playedToday')">✓</span>
+                <span v-else-if="game.id === 'sofro'" class="deck-any">{{ t('home.deck.anyTime') }}</span>
+                <span v-else class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" :title="t(`home.${game.id}.live`)" />
+              </span>
+              <span class="block font-sans text-xs text-[var(--color-text-muted)]">{{ t(`home.${game.id}.kind`) }}</span>
             </span>
-            <span class="block font-sans text-xs text-[var(--color-text-muted)]">{{ t(`home.${game.id}.kind`) }}</span>
           </span>
+
+          <!-- The game's little board, decorative; the heading carries the name. -->
+          <span class="deck-board" aria-hidden="true">
+            <span v-if="game.id === 'meltho'" class="flex gap-1.5" dir="rtl">
+              <span v-for="tile in melthoTiles" :key="tile.letter" class="deck-tile font-syriac" :class="tile.state === 'present' ? 'is-gold' : 'is-meltho'">{{ tile.letter }}</span>
+            </span>
+            <span v-else-if="game.id === 'mno'" class="flex gap-1.5" dir="rtl">
+              <span v-for="(tile, tileIndex) in mnoTiles" :key="tileIndex" class="deck-tile" :class="[`is-mno-${tile.state}`, tile.operator ? 'font-sans text-base font-semibold' : 'font-syriac']">{{ tile.glyph }}</span>
+            </span>
+            <span v-else-if="game.id === 'shmo'" class="flex flex-wrap gap-1.5">
+              <span v-for="tile in shmoTiles" :key="tile.value" class="deck-cell" :class="`is-${tile.state}`">
+                {{ tile.value }}<span v-if="tile.arrow" class="font-bold">{{ tile.arrow }}</span>
+              </span>
+            </span>
+            <span v-else-if="game.id === 'nahlo'" class="flex flex-wrap gap-1.5">
+              <span class="deck-part is-right">{{ t('home.deck.melody') }}<b>Zodeq dnehwe</b></span>
+              <span class="deck-part is-right">{{ t('home.deck.mode') }}<b>3</b></span>
+              <span class="deck-part is-wrong">{{ t('home.deck.shuhlofo') }}<b>{{ t('home.deck.no') }}</b></span>
+            </span>
+            <span v-else class="deck-sheet" dir="rtl">
+              <span v-for="item in sofroLetters" :key="item.letter" class="deck-sheet-letter font-syriac" :class="{ 'is-ghost': !item.written }">{{ item.letter }}</span>
+            </span>
+          </span>
+
+          <span class="font-sans text-[0.8rem] font-semibold text-[var(--card-c)]">{{ t(`home.deck.${game.verb}`) }} →</span>
+        </a>
+      </div>
+
+      <!-- Under the deck: ‹ › with a mouse, the badges always, the swipe hint on touch. -->
+      <div class="deck-nav">
+        <button type="button" class="deck-arrow" :aria-label="t('home.deck.previous')" @click="previous">‹</button>
+        <span class="flex gap-1.5">
+          <button
+            v-for="(game, index) in games"
+            :key="game.id"
+            type="button"
+            class="deck-pip font-syriac"
+            :class="{ 'is-on': index === top, 'is-done': playedToday(game.id), 'is-wide': game.badge.length > 1 && game.id === 'sofro' }"
+            :style="{ '--pip-c': `var(--color-${game.id})`, '--pip-on': `var(--color-on-${game.id}, #fff)` }"
+            :aria-label="t('home.deck.show', { game: t(`home.${game.id}.heading`) })"
+            :aria-current="index === top ? 'true' : undefined"
+            @click="jump(index)"
+          ><span dir="rtl" aria-hidden="true">{{ game.badge }}</span></button>
         </span>
-        <span class="flex-1 font-serif text-[0.95rem] leading-snug text-[var(--color-text-muted)]">{{ t(`home.${game.id}.short`) }}</span>
-        <span class="font-sans text-[0.8rem] font-semibold text-[var(--card-c)]">{{ t(`home.deck.${game.verb}`) }} →</span>
-      </a>
+        <button type="button" class="deck-arrow" :aria-label="t('home.deck.next')" @click="next">›</button>
+      </div>
+      <p class="deck-hint font-sans">{{ t('home.deck.swipeHint') }}</p>
     </div>
 
     <div class="min-w-0">
@@ -183,7 +288,7 @@ const shmoTiles = [
           <p class="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-[var(--deck-c)]">
             {{ t(`home.${game.id}.kind`) }} · {{ game.id === 'sofro' ? t('home.deck.anyTime') : t('home.deck.daily') }}
           </p>
-          <h2 class="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-serif text-3xl font-semibold sm:text-[2.1rem]">
+          <h2 class="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-serif text-[1.75rem] font-semibold sm:text-[2.1rem]">
             {{ t(`home.${game.id}.heading`) }}
             <SyriacText :text="game.word" class="text-2xl font-normal text-[var(--color-text-faint)]" />
             <span
@@ -193,57 +298,12 @@ const shmoTiles = [
               :aria-label="t('home.playedToday')"
             >✓</span>
           </h2>
-          <p class="mt-2.5 max-w-xl font-serif text-[1.05rem] leading-relaxed text-[var(--color-text-muted)]">
+          <p class="mb-5 mt-2.5 max-w-xl font-serif text-base leading-relaxed text-[var(--color-text-muted)] sm:text-[1.05rem]">
             {{ t(`home.${game.id}.body`) }}
           </p>
 
-          <!-- The game's little board, decorative; the heading carries the name. -->
-          <div class="mt-4 mb-5 flex min-h-11 items-center" aria-hidden="true">
-            <div v-if="game.id === 'meltho'" class="flex gap-1.5" dir="rtl">
-              <span v-for="tile in melthoTiles" :key="tile.letter" class="deck-tile font-syriac" :class="tile.state === 'present' ? 'is-gold' : 'is-meltho'">{{ tile.letter }}</span>
-            </div>
-            <div v-else-if="game.id === 'mno'" class="flex gap-1.5" dir="rtl">
-              <span v-for="(tile, tileIndex) in mnoTiles" :key="tileIndex" class="deck-tile" :class="`is-mno-${tile.state}`">
-                <span :class="tile.state.startsWith('operator') ? 'font-sans text-lg font-semibold' : 'font-syriac'">{{ tile.glyph }}</span>
-                <span v-if="tile.hint" class="font-sans text-[9px] leading-none opacity-85" dir="ltr">{{ tile.hint }}</span>
-              </span>
-            </div>
-            <div v-else-if="game.id === 'shmo'" class="flex flex-wrap gap-1.5">
-              <span v-for="tile in shmoTiles" :key="tile.value" class="deck-cell" :class="`is-${tile.state}`">
-                {{ tile.value }}<span v-if="tile.arrow" class="font-bold">{{ tile.arrow }}</span>
-              </span>
-            </div>
-            <div v-else-if="game.id === 'nahlo'" class="flex flex-wrap gap-1.5">
-              <span class="deck-part is-right">{{ t('home.deck.melody') }}<b>Zodeq dnehwe</b></span>
-              <span class="deck-part is-right">{{ t('home.deck.mode') }}<b>3</b></span>
-              <span class="deck-part is-wrong">{{ t('home.deck.shuhlofo') }}<b>{{ t('home.deck.no') }}</b></span>
-            </div>
-            <div v-else class="flex gap-1.5" dir="rtl">
-              <span v-for="(letter, letterIndex) in ['ܐ', 'ܒ', 'ܓ', 'ܕ']" :key="letter" class="deck-trace font-syriac" :class="{ 'is-inked': letterIndex < 2 }">{{ letter }}</span>
-            </div>
-          </div>
-
           <a :href="game.url" class="deck-cta">{{ t(`home.${game.id}.cta`) }} →</a>
         </div>
-      </div>
-
-      <div class="mt-6 flex items-center gap-4">
-        <div class="flex gap-1.5">
-          <button
-            v-for="(game, index) in games"
-            :key="game.id"
-            type="button"
-            class="deck-pip font-syriac"
-            :class="{ 'is-on': index === top }"
-            :style="{ '--pip-c': `var(--color-${game.id})` }"
-            :aria-label="t('home.deck.show', { game: t(`home.${game.id}.heading`) })"
-            :aria-current="index === top ? 'true' : undefined"
-            @click="jump(index)"
-          ><span dir="rtl" aria-hidden="true">{{ game.badge }}</span></button>
-        </div>
-        <span class="deck-timer" aria-hidden="true">
-          <span :key="cycle" class="deck-timer-fill" :class="{ 'is-running': autoplay }" :style="{ animationDuration: `${DEAL_MS}ms` }" @animationend="onTimerEnd" />
-        </span>
       </div>
     </div>
   </section>
@@ -253,7 +313,7 @@ const shmoTiles = [
 .deck {
   position: relative;
   display: grid;
-  gap: 1.5rem;
+  gap: 1.25rem;
   align-items: center;
   margin-top: 1.25rem;
   padding: 1.25rem 1rem 1.5rem;
@@ -263,54 +323,22 @@ const shmoTiles = [
 }
 @media (min-width: 768px) {
   .deck {
-    grid-template-columns: 25.5rem minmax(0, 1fr);
+    grid-template-columns: 23.5rem minmax(0, 1fr);
     gap: 2.25rem;
     padding: 1.875rem 2rem;
   }
 }
 
-/* The arrows sit on the section's own edges, half outside it. */
-.deck-arrow {
-  position: absolute;
-  top: 50%;
-  z-index: 30;
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  margin-top: -1.25rem;
-  border: 1px solid var(--color-border);
-  border-radius: 9999px;
-  background: var(--color-bg-elevated);
-  color: var(--deck-c);
-  font: 600 1.25rem/1 var(--font-sans);
-  cursor: pointer;
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.15s, color 0.6s;
-}
-.deck-arrow-prev { left: -1.25rem; }
-.deck-arrow-next { right: -1.25rem; }
-.deck-arrow-prev:hover { transform: translateX(-3px); }
-.deck-arrow-next:hover { transform: translateX(3px); }
-.deck-arrow:focus-visible { outline: 2px solid var(--deck-c); outline-offset: 2px; }
-@media (max-width: 767px) {
-  /* Stacked layout: level with the middle of the deck (section padding + half
-     the stack), not the middle of the much taller section, where the text is. */
-  .deck-arrow { top: 8.75rem; width: 2.125rem; height: 2.125rem; margin-top: -1.0625rem; font-size: 1.05rem; }
-  .deck-arrow-prev { left: -0.75rem; }
-  .deck-arrow-next { right: -0.75rem; }
-}
-
 .deck-stack {
   position: relative;
-  height: 15rem;
+  height: 12.5rem;
   width: calc(100% - 3.5rem);
-  /* The back cards fan out ~3rem below the top one: room for them when the
-     text sits underneath the deck. */
-  margin-bottom: 2.75rem;
+  /* The back cards fan out ~3rem below the top one: room for them above the
+     badges. */
+  margin-bottom: 4rem;
 }
 @media (min-width: 768px) {
-  .deck-stack { width: 20rem; margin-bottom: 0; }
+  .deck-stack { width: 20rem; height: 13.5rem; }
 }
 
 .deck-card {
@@ -326,8 +354,13 @@ const shmoTiles = [
   background: var(--color-bg-elevated);
   box-shadow: var(--shadow-soft);
   text-decoration: none;
-  transition: transform 0.3s cubic-bezier(0.3, 0.7, 0.3, 1);
+  /* Vertical drags still scroll the page; sideways ones swipe. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.3s cubic-bezier(0.3, 0.7, 0.3, 1), opacity 0.24s;
 }
+.deck-card.is-dragging { transition: none; cursor: grabbing; }
 .deck-card::before {
   content: "";
   position: absolute;
@@ -335,10 +368,16 @@ const shmoTiles = [
   height: 3px;
   background: linear-gradient(to right, var(--card-c), transparent);
 }
-/* Dealt: out to the side first, then (back in .deck-card's own transition)
+/* Dealt: out to one side first, then (back in .deck-card's own transition)
    tucked in at the back of the deck. */
-.deck-card.is-leaving {
-  transform: translate(-64%, -8px) rotate(-8deg) !important;
+.deck-card.is-leaving-left {
+  transform: translate(-120%, 10px) rotate(-14deg);
+  opacity: 0;
+  transition-duration: 0.24s;
+}
+.deck-card.is-leaving-right {
+  transform: translate(120%, 10px) rotate(14deg);
+  opacity: 0;
   transition-duration: 0.24s;
 }
 .deck-badge {
@@ -353,6 +392,7 @@ const shmoTiles = [
   font-size: 1.05rem;
   line-height: 1;
 }
+.deck-badge.is-wide { font-size: 0.8rem; }
 .deck-any {
   border: 1px solid var(--color-border);
   border-radius: 9999px;
@@ -363,6 +403,13 @@ const shmoTiles = [
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
+.deck-board {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  padding-bottom: 0.125rem;
+}
+.deck-board > [dir="rtl"] { width: 100%; justify-content: flex-end; }
 
 .deck-info.is-current { animation: deck-swap 0.45s ease both; }
 @keyframes deck-swap {
@@ -374,35 +421,37 @@ const shmoTiles = [
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.875rem;
+  width: 2.25rem;
+  height: 2.5rem;
   border: 2px solid transparent;
-  border-radius: 0.5625rem;
+  border-radius: 0.5rem;
   color: #fff;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   line-height: 1;
+}
+/* Mno's five tiles must fit the card on the narrowest phones. */
+@media (max-width: 380px) {
+  .deck-tile { width: 2rem; }
 }
 .deck-tile.is-meltho { background: var(--color-meltho); border-color: var(--color-meltho-dark); }
 .deck-tile.is-gold { background: var(--color-meltho-gold); border-color: var(--color-meltho-gold-dark); }
 /* Mno's green is a literal, as on the live cards: this preview is the only
-   place outside Mno's repo that needs it. */
-.deck-tile.is-mno-correct,
-.deck-tile.is-mno-operatorHit { background: #4e9c56; border-color: #3d7e44; }
+   place outside Mno's repo that needs it. Its "absent" grey is the hub's own
+   border tones, which are Mno's to within a shade in both themes. */
+.deck-tile.is-mno-correct { background: #4e9c56; border-color: #3d7e44; }
 .deck-tile.is-mno-present { background: var(--color-mno); border-color: var(--color-mno-dark); }
-.deck-tile.is-mno-operator { background: var(--color-bg-subtle); border-color: var(--color-border-strong); color: var(--color-text-muted); }
-.deck-tile.is-mno-operator,
-.deck-tile.is-mno-operatorHit { width: 1.75rem; }
+.deck-tile.is-mno-absent { background: var(--color-border); border-color: var(--color-border-strong); color: var(--color-text-faint); }
 
 .deck-cell {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  height: 2.5rem;
-  padding: 0 0.625rem;
+  height: 2.25rem;
+  padding: 0 0.5rem;
   border: 2px solid transparent;
-  border-radius: 0.625rem;
+  border-radius: 0.5625rem;
   color: #fff;
-  font: 600 0.75rem var(--font-sans);
+  font: 600 0.7rem var(--font-sans);
 }
 .deck-cell.is-hit { background: var(--color-shmo); border-color: color-mix(in oklab, var(--color-shmo) 70%, black); }
 /* Shmo's own "near" amber, a literal like on the live card. */
@@ -414,27 +463,31 @@ const shmoTiles = [
 .deck-part {
   display: grid;
   gap: 1px;
-  padding: 0.375rem 0.625rem;
-  border-radius: 0.5625rem;
+  padding: 0.3125rem 0.5rem;
+  border-radius: 0.5rem;
   text-align: center;
-  font: 600 0.625rem var(--font-sans);
+  font: 600 0.6rem var(--font-sans);
 }
-.deck-part b { font-size: 0.8rem; }
+.deck-part b { font-size: 0.75rem; }
 .deck-part.is-right { background: var(--color-nahlo); color: #fff; }
 .deck-part.is-wrong { background: var(--color-nahlo-faint); color: var(--color-nahlo); }
 
-.deck-trace {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.875rem;
-  border: 2px dashed var(--color-border-strong);
-  border-radius: 0.5625rem;
-  color: var(--color-border-strong);
-  font-size: 1.55rem;
-  line-height: 1;
+/* Sofro's practice sheet: a dashed top line and a solid baseline. */
+.deck-sheet {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-end;
+  padding: 0.25rem 0.375rem 0;
+  background:
+    linear-gradient(var(--color-border-strong), var(--color-border-strong)) left 0 bottom 0.5rem / 100% 1.5px no-repeat,
+    repeating-linear-gradient(90deg, var(--color-border) 0 4px, transparent 4px 8px) left 0 top 0.625rem / 100% 1px no-repeat;
 }
-.deck-trace.is-inked { border-style: solid; border-color: var(--color-sofro); color: var(--color-sofro); }
+.deck-sheet-letter {
+  font-size: 2rem;
+  line-height: 1.3;
+  color: var(--color-sofro);
+}
+.deck-sheet-letter.is-ghost { color: var(--color-border-strong); }
 
 .deck-cta {
   display: inline-flex;
@@ -450,47 +503,91 @@ const shmoTiles = [
 }
 .deck-cta:hover { filter: brightness(0.92); }
 
+/* Under the deck, centred on the cards (the fan sticks out ~3rem right). */
+.deck-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: calc(100% - 0.5rem);
+}
+@media (min-width: 768px) {
+  .deck-nav { width: 23rem; }
+}
+
+.deck-arrow {
+  display: none;
+  flex: none;
+  place-items: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background: var(--color-bg-elevated);
+  color: var(--deck-c);
+  font: 600 1.125rem/1 var(--font-sans);
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s, color 0.6s;
+}
+.deck-arrow:first-child:hover { transform: translateX(-2px); }
+.deck-arrow:last-child:hover { transform: translateX(2px); }
+.deck-arrow:focus-visible { outline: 2px solid var(--deck-c); outline-offset: 2px; }
+
+.deck-hint {
+  display: none;
+  margin: 0.625rem 0 0;
+  width: calc(100% - 0.5rem);
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* A mouse gets the arrows; a touch screen gets the swipe hint. */
+@media (hover: hover) and (pointer: fine) {
+  .deck-arrow { display: grid; }
+}
+@media (pointer: coarse) {
+  .deck-hint { display: block; }
+}
+
 .deck-pip {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 1.625rem;
-  height: 1.625rem;
-  border: 0;
-  border-radius: 0.5rem;
-  background: var(--pip-c);
-  color: #fff;
-  font-size: 0.75rem;
+  width: 2.125rem;
+  height: 2.125rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.625rem;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  font-size: 1rem;
   line-height: 1;
-  opacity: 0.32;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: transform 0.15s, background-color 0.2s;
 }
-.deck-pip.is-on { opacity: 1; transform: scale(1.12); }
-.deck-pip:hover { opacity: 0.7; }
+.deck-pip.is-wide { font-size: 0.75rem; }
+.deck-pip:hover { transform: translateY(-1px); }
+.deck-pip.is-on {
+  border-color: var(--pip-c);
+  background: var(--pip-c);
+  color: var(--pip-on);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--pip-c) 20%, transparent);
+}
+.deck-pip.is-done::after {
+  content: "✓";
+  position: absolute;
+  right: -0.3rem;
+  bottom: -0.3rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 9999px;
+  background: #4e9c56;
+  color: #fff;
+  font: 700 0.5625rem/0.875rem var(--font-sans);
+  text-align: center;
+}
 .deck-pip:focus-visible { outline: 2px solid var(--deck-c); outline-offset: 2px; }
-
-.deck-timer {
-  /* Shrinks beside the badges on the narrowest phones instead of pushing the
-     page sideways. */
-  flex: 1 1 auto;
-  min-width: 2rem;
-  max-width: 8.75rem;
-  height: 3px;
-  overflow: hidden;
-  border-radius: 2px;
-  background: var(--color-border);
-}
-.deck-timer-fill {
-  display: block;
-  width: 0;
-  height: 100%;
-  background: var(--deck-c);
-}
-.deck-timer-fill.is-running { animation: deck-fill linear forwards; }
-.deck.is-paused .deck-timer-fill { animation-play-state: paused; }
-@keyframes deck-fill {
-  to { width: 100%; }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .deck,

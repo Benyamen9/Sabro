@@ -2,9 +2,6 @@ import { expect, test } from '@playwright/test'
 
 test.describe('landing page', () => {
   test('renders the app shell with brand, switchers, and a Syriac sample', async ({ page }) => {
-    // The game deck deals itself every 2 s; reduced motion holds it still, so
-    // what the page shows is deterministic while we assert on it.
-    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
 
     // The brand link doubles as home. Translations are deferred, so the primary
@@ -43,7 +40,8 @@ test.describe('landing page', () => {
     // without one.
     await expect(page.getByText('Auth not configured')).toBeVisible()
 
-    const syriac = page.locator('span[lang="syc"]').first()
+    // Visible only: on a wide screen the hero's one-line name (for phones) is hidden.
+    const syriac = page.locator('span[lang="syc"]:visible').first()
     await expect(syriac).toBeVisible()
     await expect(syriac).toHaveAttribute('dir', 'rtl')
   })
@@ -93,7 +91,6 @@ test.describe('landing page', () => {
   })
 
   test('the game deck follows the game on top', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
@@ -102,7 +99,7 @@ test.describe('landing page', () => {
     await expect(deck.getByRole('heading', { level: 2, name: /Meltho/ })).toBeVisible()
     await expect(deck.getByRole('link', { name: 'Play today’s word →' })).toBeVisible()
 
-    // The section's own arrow deals the next card, and the side follows it.
+    // With a mouse, the arrow under the deck deals the next card, and the side follows it.
     await deck.getByRole('button', { name: 'Next game' }).click()
     await expect(deck.getByRole('heading', { level: 2, name: /Mno/ })).toBeVisible()
 
@@ -116,6 +113,39 @@ test.describe('landing page', () => {
     await expect(deck.getByRole('heading', { level: 2, name: /Nahlo/ })).toBeVisible()
   })
 
+  test('the game deck never deals by itself', async ({ page }) => {
+    await page.goto('/')
+    const deck = page.getByRole('region', { name: 'Sabro’s games' })
+    await expect(deck.getByRole('heading', { level: 2, name: /Meltho/ })).toBeVisible()
+    await page.waitForTimeout(2600)
+    await expect(deck.getByRole('heading', { level: 2, name: /Meltho/ })).toBeVisible()
+  })
+
+  test('swiping the top card left deals the next game, right goes back', async ({ page }) => {
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+    const deck = page.getByRole('region', { name: 'Sabro’s games' })
+    const card = deck.getByRole('link', { name: /Meltho/ }).first()
+    // The deck sits below "Today": bring it on screen, or the mouse drags thin air.
+    await card.scrollIntoViewIfNeeded()
+    const box = (await card.boundingBox())!
+    const y = box.y + box.height / 2
+    const swipe = async (from: number, to: number) => {
+      await page.mouse.move(from, y)
+      await page.mouse.down()
+      for (let step = 1; step <= 8; step++) await page.mouse.move(from + ((to - from) * step) / 8, y)
+      await page.mouse.up()
+    }
+
+    await swipe(box.x + box.width * 0.7, box.x + box.width * 0.7 - 160)
+    await expect(deck.getByRole('heading', { level: 2, name: /Mno/ })).toBeVisible()
+    // A swipe is not a click: the game did not open.
+    expect(new URL(page.url()).pathname).toBe('/')
+
+    await swipe(box.x + box.width * 0.3, box.x + box.width * 0.3 + 160)
+    await expect(deck.getByRole('heading', { level: 2, name: /Meltho/ })).toBeVisible()
+  })
+
   test('the game deck opens on the next unplayed game', async ({ page, context, baseURL }) => {
     const today = new Date().toISOString().slice(0, 10)
     await context.addCookies([{
@@ -123,11 +153,41 @@ test.describe('landing page', () => {
       value: encodeURIComponent(JSON.stringify({ d: today, g: ['meltho', 'mno'] })),
       url: baseURL!,
     }])
-    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
 
     const deck = page.getByRole('region', { name: 'Sabro’s games' })
     await expect(deck.getByRole('heading', { level: 2, name: /Shmo/ })).toBeVisible()
+  })
+
+  test('"Today" says what to play next, what is done, and what to do once the day is over', async ({ page, context, baseURL }) => {
+    const todayPanel = page.getByRole('region', { name: 'Today' })
+
+    // A fresh visitor: nothing played, Meltho is up next.
+    await page.goto('/')
+    await expect(todayPanel.getByText('0 of 4')).toBeVisible()
+    await expect(todayPanel.getByRole('link', { name: /Up next · today.*Meltho — today’s word/ })).toHaveAttribute('href', /meltho/)
+    // Sofro sits after the four daily games, outside the count.
+    await expect(todayPanel.getByRole('link', { name: /Sofro · any time/ })).toHaveAttribute('href', /sofro/)
+
+    // Two played: their squares say so, and the next one is Shmo.
+    const today = new Date().toISOString().slice(0, 10)
+    const played = async (games: string[]) => context.addCookies([{
+      name: 'sabro_daily_played',
+      value: encodeURIComponent(JSON.stringify({ d: today, g: games })),
+      url: baseURL!,
+    }])
+    await played(['meltho', 'mno'])
+    await page.goto('/')
+    await expect(todayPanel.getByText('2 of 4')).toBeVisible()
+    await expect(todayPanel.getByRole('link', { name: 'Mno — Done' })).toBeVisible()
+    await expect(todayPanel.getByRole('link', { name: /Up next · today.*Shmo — today’s figure/ })).toHaveAttribute('href', /shmo/)
+
+    // All four: no game to start — Sofro instead, and when the next puzzles come.
+    await played(['meltho', 'mno', 'shmo', 'nahlo'])
+    await page.goto('/')
+    await expect(todayPanel.getByRole('link', { name: /Up next/ })).toHaveCount(0)
+    await expect(todayPanel.getByRole('link', { name: /All four done today.*Keep going: write by hand/ })).toHaveAttribute('href', /sofro/)
+    await expect(todayPanel.getByText(/New puzzles in \d+ h \d{2} min/)).toBeVisible()
   })
 
   test('renders in French when the sabro_locale cookie is fr', async ({ page, context, baseURL }) => {
