@@ -47,23 +47,24 @@ services:
     # and the engine crash-looped against the 1.53.1 volume for eleven days while
     # /health stayed green (it only checks Postgres). A patch bump is an upgrade
     # like any other: one boot with MEILI_UPGRADE_DB, then remove it.
-    image: getmeili/meilisearch:v1.54.3
+    image: getmeili/meilisearch:v1.55.0
     container_name: sabro-meilisearch
     restart: unless-stopped
     environment:
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?MEILI_MASTER_KEY is required}
       MEILI_ENV: production
-      # No MEILI_UPGRADE_DB here, deliberately. It is set for exactly one boot per
-      # upgrade and removed as soon as that boot is verified: v1.51 → v1.53
-      # (#223, removed by #225) and v1.53.1 → v1.54.3 (#292, 2026-10-12, removed
-      # by the PR that wrote this). Leaving it set would make the deploy-safety
-      # gate pass EVERY future meilisearch bump — the gate reads this service's
-      # env and passes it through, so a self-migrating engine never gives it
-      # anything to catch. Off is what keeps the gate honest.
+      # 🔴 TEMPORARY — set for exactly ONE boot, then removed in a follow-up PR.
+      # It migrates the volume from the v1.54.3 format to v1.55.0 in place
+      # (2026-10-25; snapshot taken first, ~/snapshots on the VPS). Earlier rounds:
+      # v1.51 → v1.53 (#223, removed by #225) and v1.53.1 → v1.54.3 (#292,
+      # 2026-10-12). Leaving it set would make the deploy-safety gate pass EVERY
+      # future meilisearch bump — the gate reads this service's env and passes it
+      # through, so a self-migrating engine never gives it anything to catch. Off
+      # is what keeps the gate honest.
       #
-      # For the next bump: snapshot the volume, set it, deploy, verify, remove it
-      # again in a follow-up. The dev compose keeps it permanently; dev volumes
-      # are disposable and the gate only ever reads this file.
+      # The dev compose keeps it permanently; dev volumes are disposable and the
+      # gate only ever reads this file.
+      MEILI_UPGRADE_DB: "true"
     volumes:
       - meilisearch-data:/meili_data
     healthcheck:

@@ -22,7 +22,7 @@ services:
 
   meilisearch:
     # Same patch as prod — see the note there on why it is never a floating tag.
-    image: getmeili/meilisearch:v1.54.3
+    image: getmeili/meilisearch:v1.55.0
     container_name: sabro-meilisearch
     restart: unless-stopped
     environment:

@@ -724,8 +724,8 @@ Test pyramid with TDD-first approach for Domain and Application layers.
 
 > ⚠️ **Keep the integration fixtures on the versions production runs.**
 > `PostgresFixture` is `postgres:17-alpine` and `MeilisearchFixture` is
-> `getmeili/meilisearch:v1.54.3`, matching `docker-compose.prod.yml` (moved together
-> since 2026-08-27, #249, #250; last bumped 2026-10-12 with the v1.54.3 upgrade). They had drifted to Postgres 16 and Meilisearch v1.13,
+> `getmeili/meilisearch:v1.55.0`, matching `docker-compose.prod.yml` (moved together
+> since 2026-08-27, #249, #250; last bumped 2026-10-25 with the v1.55.0 upgrade). They had drifted to Postgres 16 and Meilisearch v1.13,
 > which meant every module's migrations and all index behaviour were signed off
 > against software we do not ship — and it is part of why the Meilisearch client
 > bump reached CI before its API change was noticed. **Move these whenever the
