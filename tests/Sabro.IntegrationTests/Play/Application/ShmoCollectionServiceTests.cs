@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using Sabro.BethGazo.Public;
 using Sabro.Historical.Domain;
 using Sabro.Historical.Public;
 using Sabro.Play.Application.GameResults;
@@ -141,7 +143,7 @@ public class ShmoCollectionServiceTests
             $"{{\"guessIds\":[{string.Join(',', guesses.Select(g => $"\"{g}\""))}]}}");
 
     private static GameResultService NewResultService(PlayDbContext ctx) =>
-        new(ctx, new RecordGameResultRequestValidator(), TimeProvider.System, NullLogger<GameResultService>.Instance);
+        new(ctx, new RecordGameResultRequestValidator(), TimeProvider.System, Substitute.For<IChantPlayablePool>(), NullLogger<GameResultService>.Instance);
 
     private static string NewUser() => $"shmo-collector-{Guid.NewGuid():N}";
 

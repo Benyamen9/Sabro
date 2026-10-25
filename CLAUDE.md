@@ -235,7 +235,7 @@ Three of the four draw from a curated pool and exclude anything served inside th
 
 Start a window low so a small pool never starves, and raise it as the pool grows — but keep it well under the pool size: a window at or above the pool answers 409 the day one item drops out. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
 
-**Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro does not score guesses. It does see them: Shmo and Nahlo put a round's guesses in the result's `DetailJson`. Sabro reads Shmo's to build the player's figure collection, and **checks that a solved Shmo result ends on that day's answer** before recording it (a found card rests on that, and a signed-in Shmo also sends in rounds played signed out). Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
+**Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro does not score guesses. It does see them: Shmo and Nahlo put a round's guesses in the result's `DetailJson`. Sabro reads Shmo's to build the player's figure collection, and **checks that a solved Shmo or Nahlo result ends on that day's answer** before recording it (a found card and the circuit streak rest on that, and a signed-in Shmo or Nahlo also sends in rounds played signed out). Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
 
 **Beyond the puzzle.** Play also serves `meltho/library` (past words, public and anonymous — today's word is never included, it would spoil the live puzzle) and `meltho/leaderboard` (signed-in only, ranked by longest streak; appearing in it requires an explicit opt-in on the player's profile, while the caller's own standing is always shown).
 
@@ -351,7 +351,7 @@ The four client repos carry no `CLAUDE.md`. Their **`README.md` is each app's me
 
 ### Mirrored contracts — duplicated across repo boundaries
 
-Five pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only two have a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
+Six pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only two have a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
 
 | Mirror | Sabro side | Client side | Guard |
 |---|---|---|---|
@@ -360,6 +360,7 @@ Five pieces of logic are deliberately implemented twice, on either side of a rep
 | Numeral speller | Sabro's C# speller | Mno `app/utils/numerals.ts` | ❌ none |
 | Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** client | ❌ comment only |
 | App launcher | hub `utils/apps.ts` + `AppLauncher.vue` | one copy in **each** of the five clients | ✅ `apps` unit test per repo (order, self, Sofro's badge) |
+| Nahlo's scoring rule (is a guess right?) | `NahloAnswer` (checks a claimed win) | Nahlo `app/utils/compare.ts` | ❌ none: change both together |
 
 **The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies, and since 2026-10-12 so does `CIRCUIT_HANDOFF`. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
 
