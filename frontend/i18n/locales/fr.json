@@ -1192,13 +1192,17 @@
       "confirmRemove": "Confirmer",
       "moveUp": "Monter",
       "moveDown": "Descendre",
-      "saveFailed": "Cette modification a été refusée."
+      "saveFailed": "Cette modification a été refusée.",
+      "bookText": "Texte dans Beth Gazo",
+      "syriacName": "Nom syriaque",
+      "bookTextHint": "Facultatif. Une ligne sur ce qu’est cette section et quand elle est chantée ; les cases vides ne sont pas affichées."
     },
     "chantModes": {
       "title": "Modes",
       "description": "Les modes dans lesquels les chants sont chantés. L’ensemble s’agrandit — rien ne suppose qu’il s’arrête à huit. Un mode ne peut être supprimé tant qu’un chant le porte ou qu’une section l’admet.",
       "add": "Ajouter un mode",
-      "namePlaceholder": "Nom du mode"
+      "namePlaceholder": "Nom du mode",
+      "bookTextHint": "Facultatif. Une ligne sur le caractère du mode et comment le reconnaître ; les cases vides ne sont pas affichées."
     }
   },
   "seo": {

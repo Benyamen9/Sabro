@@ -1192,13 +1192,17 @@
       "confirmRemove": "Really remove",
       "moveUp": "Move up",
       "moveDown": "Move down",
-      "saveFailed": "That change was refused."
+      "saveFailed": "That change was refused.",
+      "bookText": "Text in Beth Gazo",
+      "syriacName": "Syriac name",
+      "bookTextHint": "Optional. One line on what this section is and when it is sung; empty boxes are not shown."
     },
     "chantModes": {
       "title": "Modes",
       "description": "The modes chants are sung in. The set grows — nothing assumes it stops at eight. A mode cannot be removed while a chant carries it or a section admits it.",
       "add": "Add a mode",
-      "namePlaceholder": "Mode name"
+      "namePlaceholder": "Mode name",
+      "bookTextHint": "Optional. One line on the mode’s character and how to tell it apart; empty boxes are not shown."
     }
   },
   "seo": {

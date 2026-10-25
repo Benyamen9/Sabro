@@ -1192,13 +1192,17 @@
       "confirmRemove": "Ta bort på riktigt",
       "moveUp": "Flytta upp",
       "moveDown": "Flytta ner",
-      "saveFailed": "Ändringen avvisades."
+      "saveFailed": "Ändringen avvisades.",
+      "bookText": "Text i Beth Gazo",
+      "syriacName": "Syriskt namn",
+      "bookTextHint": "Valfritt. En rad om vad avsnittet är och när det sjungs; tomma rutor visas inte."
     },
     "chantModes": {
       "title": "Modus",
       "description": "De modus sånger sjungs i. Mängden växer — inget antar att den stannar vid åtta. Ett modus kan inte tas bort medan en sång bär det eller ett avsnitt tillåter det.",
       "add": "Lägg till modus",
-      "namePlaceholder": "Modusets namn"
+      "namePlaceholder": "Modusets namn",
+      "bookTextHint": "Valfritt. En rad om tonartens karaktär och hur man känner igen den; tomma rutor visas inte."
     }
   },
   "seo": {

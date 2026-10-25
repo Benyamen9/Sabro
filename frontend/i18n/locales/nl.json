@@ -1192,13 +1192,17 @@
       "confirmRemove": "Echt verwijderen",
       "moveUp": "Omhoog",
       "moveDown": "Omlaag",
-      "saveFailed": "Die wijziging is geweigerd."
+      "saveFailed": "Die wijziging is geweigerd.",
+      "bookText": "Tekst in Beth Gazo",
+      "syriacName": "Syrische naam",
+      "bookTextHint": "Optioneel. Eén regel over wat deze sectie is en wanneer ze gezongen wordt; lege vakken worden niet getoond."
     },
     "chantModes": {
       "title": "Modi",
       "description": "De modi waarin gezangen worden gezongen. De verzameling groeit — niets gaat ervan uit dat ze bij acht stopt. Een modus kan niet weg zolang een gezang hem draagt of een sectie hem toelaat.",
       "add": "Modus toevoegen",
-      "namePlaceholder": "Naam van de modus"
+      "namePlaceholder": "Naam van de modus",
+      "bookTextHint": "Optioneel. Eén regel over het karakter van de modus en hoe je hem herkent; lege vakken worden niet getoond."
     }
   },
   "seo": {

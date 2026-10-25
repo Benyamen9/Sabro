@@ -24,6 +24,8 @@ public sealed class BethGazoMode : Entity<Guid>, IAggregateRoot
 {
     public const int MaxNameLength = 64;
 
+    private readonly List<BethGazoDescription> descriptions = [];
+
     private BethGazoMode(string name, int position)
     {
         Id = Guid.NewGuid();
@@ -47,6 +49,12 @@ public sealed class BethGazoMode : Entity<Guid>, IAggregateRoot
     /// <see cref="Entity{TId}.Id"/>, so renumbering never rewrites a chant's link.
     /// </summary>
     public int Position { get; private set; }
+
+    /// <summary>The mode's name in Syriac script (NFC), shown beside the transliteration. Optional.</summary>
+    public string? SyriacName { get; private set; }
+
+    /// <summary>One line per language for the hub's Beth Gazo. Optional, in no guaranteed order.</summary>
+    public IReadOnlyList<BethGazoDescription> Descriptions => descriptions;
 
     public static Result<BethGazoMode> Create(string name, int position)
     {
@@ -83,6 +91,32 @@ public sealed class BethGazoMode : Entity<Guid>, IAggregateRoot
     {
         Position = position;
         UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    /// <summary>
+    /// Replaces the Syriac name and every description. Passing none clears them,
+    /// which is how text is removed; there is no separate delete.
+    /// </summary>
+    public Error? Describe(string? syriacName, IEnumerable<BethGazoDescription>? incoming)
+    {
+        var name = BethGazoText.NormalizeSyriacName(syriacName);
+        if (!name.IsSuccess)
+        {
+            return name.Error;
+        }
+
+        var list = (incoming ?? []).ToList();
+        var duplicate = BethGazoText.CheckDistinctLanguages(list);
+        if (duplicate is not null)
+        {
+            return duplicate;
+        }
+
+        SyriacName = name.Value;
+        descriptions.Clear();
+        descriptions.AddRange(list);
+        UpdatedAt = DateTimeOffset.UtcNow;
+        return null;
     }
 
     public Error? Rename(string name)

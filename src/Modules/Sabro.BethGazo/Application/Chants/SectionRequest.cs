@@ -7,6 +7,10 @@ namespace Sabro.BethGazo.Application.Chants;
 /// No position: a new section is appended and reordering is a separate move, so an
 /// editor never types a number into a uniquely-indexed column. See
 /// <see cref="ISectionService"/>.
+/// <para>
+/// A full replacement: omitting the Syriac name or the descriptions clears them, so
+/// the backoffice sends back what it was given.
+/// </para>
 /// </remarks>
 /// <param name="AllowedModeIds">
 /// The modes this section admits. <b>An empty list is meaningful</b> — it declares a
@@ -15,4 +19,6 @@ namespace Sabro.BethGazo.Application.Chants;
 /// </param>
 public sealed record SectionRequest(
     string Name,
-    IReadOnlyList<Guid> AllowedModeIds);
+    IReadOnlyList<Guid> AllowedModeIds,
+    string? SyriacName = null,
+    IReadOnlyList<BethGazoDescriptionRequest>? Descriptions = null);
