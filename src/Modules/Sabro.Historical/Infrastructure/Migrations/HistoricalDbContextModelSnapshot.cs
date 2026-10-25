@@ -18,7 +18,7 @@ namespace Sabro.Historical.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("historical")
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -39,6 +39,11 @@ namespace Sabro.Historical.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<string>("Emblem")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("emblem");
 
                     b.Property<int>("Era")
                         .HasColumnType("integer")
@@ -66,6 +71,11 @@ namespace Sabro.Historical.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("playable_in_shmo");
 
+                    b.Property<string>("ReadMoreUrl")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("read_more_url");
+
                     b.Property<string>("Region")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -83,6 +93,11 @@ namespace Sabro.Historical.Infrastructure.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)")
                         .HasColumnName("status");
+
+                    b.Property<string>("SyriacName")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("syriac_name");
 
                     b.Property<string>("Tradition")
                         .HasMaxLength(32)

@@ -10,7 +10,8 @@ namespace Sabro.Historical.Application.Figures;
 /// <remarks>
 /// <see cref="Descriptions"/> is a full replacement like every other field here:
 /// omitting it clears the figure's descriptions. Clients that mean to leave them
-/// alone must send back the ones they were given.
+/// alone must send back the ones they were given. The same holds for
+/// <see cref="Emblem"/>, <see cref="SyriacName"/> and <see cref="ReadMoreUrl"/>.
 /// </remarks>
 public sealed record UpdateHistoricalFigureRequest(
     string Name,
@@ -21,4 +22,7 @@ public sealed record UpdateHistoricalFigureRequest(
     HistoricalFigureRegion Region,
     HistoricalFigureGender Gender,
     HistoricalFigureTradition? Tradition = null,
-    IReadOnlyList<HistoricalFigureDescriptionRequest>? Descriptions = null);
+    IReadOnlyList<HistoricalFigureDescriptionRequest>? Descriptions = null,
+    HistoricalFigureEmblem? Emblem = null,
+    string? SyriacName = null,
+    string? ReadMoreUrl = null);

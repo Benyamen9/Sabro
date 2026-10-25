@@ -74,6 +74,43 @@ public class HistoricalFiguresControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Get_CarriesCardFieldsButNotTheDescription()
+    {
+        // The hub draws every card from this list, so the card fields belong here.
+        // The description is the reward for finding a figure and must not leak
+        // through the anonymous roster.
+        var ct = TestContext.Current.CancellationToken;
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/admin/historical-figures",
+            new CreateHistoricalFigureRequest(
+                Name: $"Carded Figure {Guid.NewGuid():N}",
+                Category: HistoricalFigureCategory.Patristic,
+                Era: 4,
+                Period: HistoricalPeriod.NiceneEra,
+                Role: HistoricalFigureRole.Commentator,
+                Region: HistoricalFigureRegion.Mesopotamia,
+                Gender: HistoricalFigureGender.Male,
+                Tradition: HistoricalFigureTradition.PreChalcedonian,
+                Descriptions: [new HistoricalFigureDescriptionRequest("en", "Deacon of Nisibis and Edessa.")],
+                Emblem: HistoricalFigureEmblem.Harp,
+                SyriacName: "ܡܪܝ ܐܦܪܝܡ",
+                ReadMoreUrl: "https://syriaca.org/person/13"),
+            ct);
+        var created = (await response.Content.ReadFromJsonAsync<HistoricalFigureDto>(SabroApiFactory.JsonOptions, ct))!;
+        await client.PostAsync($"/api/v1/admin/historical-figures/{created.Id}/publish", content: null, ct);
+
+        var get = await client.GetAsync($"/api/v1/historical-figures/{created.Id}", ct);
+
+        get.StatusCode.Should().Be(HttpStatusCode.OK);
+        using var document = JsonDocument.Parse(await get.Content.ReadAsStringAsync(ct));
+        var root = document.RootElement;
+        root.GetProperty("emblem").GetString().Should().Be("Harp");
+        root.GetProperty("syriacName").GetString().Should().Be("ܡܪܝ ܐܦܪܝܡ");
+        root.GetProperty("readMoreUrl").GetString().Should().Be("https://syriaca.org/person/13");
+        root.EnumerateObject().Select(p => p.Name).Should().NotContain("descriptions");
+    }
+
+    [Fact]
     public async Task Get_DraftById_Returns404()
     {
         var ct = TestContext.Current.CancellationToken;

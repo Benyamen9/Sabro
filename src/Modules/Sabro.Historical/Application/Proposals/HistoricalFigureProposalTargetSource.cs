@@ -199,7 +199,10 @@ internal sealed class HistoricalFigureProposalTargetSource : IProposalTargetSour
             Region: parsed.Region ?? figure.Region,
             Gender: parsed.Gender ?? figure.Gender,
             Tradition: field == "tradition" ? parsed.Tradition : figure.Tradition,
-            Descriptions: descriptions);
+            Descriptions: descriptions,
+            Emblem: figure.Emblem,
+            SyriacName: figure.SyriacName,
+            ReadMoreUrl: figure.ReadMoreUrl);
 
         var result = await figures.UpdateAsync(targetId, request, cancellationToken);
         return result.IsSuccess ? null : result.Error;

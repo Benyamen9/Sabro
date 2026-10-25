@@ -244,6 +244,8 @@ Owns the roster of **historical figures** — biblical figures through the Syria
 
 Same lifecycle as the Lexicon: `Draft` → `Published`, plus a manual `PlayableInShmo` editorial flag that only a published figure may carry.
 
+**Card fields (2026-10-25)** — three optional fields for the hub's figure collection (Beth Ṣalme), none of them a Shmo hint: `Emblem` (`HistoricalFigureEmblem`, the sign on the figure's card — a traditional iconographic attribute or one from the figure's story, chosen per figure by the Owner; null shows the emblem of the role), `SyriacName` (Syriac script, NFC) and `ReadMoreUrl` (absolute http(s), e.g. a Syriaca.org entry). The migration that added them pre-filled the Owner-approved emblem for 140 figures, keyed by name. They are in the public roster because the hub draws every card from it. **The description is not:** it is the reward for finding a figure, so it travels only with a player's own collection.
+
 > **The enum order is a contract.** `HistoricalPeriod` is diffed *by ordinal position*, so reordering its members silently changes every near/far verdict in Shmo. Append new periods; never reorder. Shmo hand-copies these enums into `app/types/figure.ts` and guards the copy with `test/figure.test.ts` — see *Ecosystem Clients*.
 
 ### BethGazo
