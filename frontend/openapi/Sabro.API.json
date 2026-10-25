@@ -6594,6 +6594,35 @@
         }
       }
     },
+    "/api/v1/play/shmo/collection": {
+      "get": {
+        "tags": [
+          "Play"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShmoCollectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShmoCollectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShmoCollectionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/play/results/me": {
       "get": {
         "tags": [
@@ -12343,6 +12372,96 @@
         "properties": {
           "playable": {
             "type": "boolean"
+          }
+        }
+      },
+      "ShmoCardDescriptionDto": {
+        "required": [
+          "language",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "ShmoCardStatus": {
+        "enum": [
+          "Met",
+          "Found"
+        ],
+        "type": "string"
+      },
+      "ShmoCollectionCardDto": {
+        "required": [
+          "historicalFigureId",
+          "status",
+          "timesMet",
+          "firstFoundOn",
+          "fewestAttempts",
+          "illuminated",
+          "descriptions"
+        ],
+        "type": "object",
+        "properties": {
+          "historicalFigureId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ShmoCardStatus"
+          },
+          "timesMet": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "firstFoundOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "fewestAttempts": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "illuminated": {
+            "type": "boolean"
+          },
+          "descriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShmoCardDescriptionDto"
+            }
+          }
+        }
+      },
+      "ShmoCollectionDto": {
+        "required": [
+          "cards"
+        ],
+        "type": "object",
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShmoCollectionCardDto"
+            }
           }
         }
       },

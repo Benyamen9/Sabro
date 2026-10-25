@@ -32,6 +32,7 @@ public sealed class HistoricalModule : IModuleRegistration
 
         services.AddScoped<IHistoricalFigureService, HistoricalFigureService>();
         services.AddScoped<IHistoricalFigurePlayablePool, HistoricalFigurePlayablePool>();
+        services.AddScoped<IHistoricalFigureDescriptions, HistoricalFigureDescriptions>();
 
         // Lets Reviews resolve figures as proposal targets without referencing this
         // module. Registered against the shared interface, not the concrete type —

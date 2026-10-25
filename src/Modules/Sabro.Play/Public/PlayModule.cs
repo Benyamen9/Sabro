@@ -45,6 +45,7 @@ public sealed class PlayModule : IModuleRegistration
         services.AddScoped<IMelthoLeaderboardService, MelthoLeaderboardService>();
         services.AddScoped<IMnoPuzzleService, MnoPuzzleService>();
         services.AddScoped<IShmoPuzzleService, ShmoPuzzleService>();
+        services.AddScoped<IShmoCollectionService, ShmoCollectionService>();
         services.AddScoped<INahloPuzzleService, NahloPuzzleService>();
     }
 }

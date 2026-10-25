@@ -235,7 +235,7 @@ Three of the four draw from a curated pool and exclude anything served inside th
 
 Start a window low so a small pool never starves, and raise it as the pool grows — but keep it well under the pool size: a window at or above the pool answers 409 the day one item drops out. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
 
-**Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro never learns what a player guessed, only whether they solved it and in how many attempts. Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
+**Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro does not score guesses. It does see them: Shmo and Nahlo put a round's guesses in the result's `DetailJson`. Sabro reads Shmo's to build the player's figure collection, and **checks that a solved Shmo result ends on that day's answer** before recording it (a found card rests on that, and a signed-in Shmo also sends in rounds played signed out). Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
 
 **Beyond the puzzle.** Play also serves `meltho/library` (past words, public and anonymous — today's word is never included, it would spoil the live puzzle) and `meltho/leaderboard` (signed-in only, ranked by longest streak; appearing in it requires an explicit opt-in on the player's profile, while the caller's own standing is always shown).
 
@@ -488,6 +488,7 @@ else's flood.
 **Play results (authenticated user writes / reads):**
 - `POST /api/v1/play/results` (`api:v1:write`) — the authenticated user records their result; one per user/game/day (idempotent on the unique key).
 - `GET /api/v1/play/results/me` (`api:v1:write`) — the authenticated user's own results, for the profile/dashboard surface.
+- `GET /api/v1/play/shmo/collection` (`api:v1:write`) — the player's figure collection for the hub's Beth Ṣalme: every figure met (guessed, or revealed in a round given up) or found (solved), worked out from their Shmo results. A found card carries the figure's descriptions, which nothing public serves, and whether it is **illuminated**: a 1 in 20 chance per find, derived from player, figure and day, never stored.
 
 **Profile (authenticated):**
 - `GET /api/v1/profile/me` — current user's profile.
@@ -922,7 +923,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 - Not a CMS — content is scholarly and curated, not crowdsourced
 - Not a social platform — user features are personal and private (notes, favorites, game profile)
 - Not a microservices architecture — it is a modular monolith; do not split modules into separate deployable services unless a clear scaling need arises
-- Not responsible for client game logic — **guess evaluation, feedback colouring, and presentation** live in each client, not in Sabro. The full answer ships with the puzzle and Sabro never learns what a player guessed. (Sabro owns only the shared daily selection, because that state must be identical for all players and persisted.)
+- Not responsible for client game logic — **guess evaluation, feedback colouring, and presentation** live in each client, not in Sabro. The full answer ships with the puzzle and Sabro never scores a guess. (Sabro owns only the shared daily selection, because that state must be identical for all players and persisted.)
 - Not federated with academic identity providers (eduGAIN/Shibboleth) — this is a personal project, not affiliated with an institution
 
 ---

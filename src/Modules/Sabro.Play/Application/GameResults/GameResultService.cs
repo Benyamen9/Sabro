@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sabro.Play.Application.Shmo;
 using Sabro.Play.Domain;
 using Sabro.Play.Infrastructure;
 using Sabro.Shared.Pagination;
@@ -75,6 +76,12 @@ internal sealed class GameResultService : IGameResultService
         if (existing is not null)
         {
             return Result<RecordGameResultOutcome>.Success(new RecordGameResultOutcome(Map(existing), WasCreated: false));
+        }
+
+        var winError = await CheckShmoWinAsync(result, cancellationToken);
+        if (winError is not null)
+        {
+            return Result<RecordGameResultOutcome>.Failure(winError);
         }
 
         dbContext.GameResults.Add(result);
@@ -197,4 +204,40 @@ internal sealed class GameResultService : IGameResultService
         result.DetailJson,
         result.CreatedAt,
         result.UpdatedAt);
+
+    /// <summary>
+    /// A solved Shmo result must end on that day's answer. A found card in the
+    /// collection rests on this, and since a signed-in Shmo also sends in the rounds
+    /// a device played signed out, a claimed win is checked rather than trusted.
+    /// </summary>
+    /// <remarks>
+    /// Guesses before the win are not checked: they only make figures "met", which
+    /// anyone can do in Shmo by guessing, so there is nothing to protect there.
+    /// </remarks>
+    private async Task<Error?> CheckShmoWinAsync(GameResult result, CancellationToken cancellationToken)
+    {
+        if (result.GameId != Games.Shmo || !result.Solved)
+        {
+            return null;
+        }
+
+        var answer = await dbContext.ShmoDailyPuzzles
+            .AsNoTracking()
+            .Where(p => p.GameId == Games.Shmo && p.Date == result.PlayedOn)
+            .Select(p => (Guid?)p.HistoricalFigureId)
+            .FirstOrDefaultAsync(cancellationToken);
+        var guesses = ShmoResultDetail.GuessIds(result.DetailJson);
+
+        if (answer is null || guesses.Count == 0 || guesses[^1] != answer)
+        {
+            logger.LogWarning(
+                "Shmo win rejected: it does not end on the day's answer. PlayedOn={PlayedOn} HasPuzzle={HasPuzzle} GuessCount={GuessCount}",
+                result.PlayedOn,
+                answer is not null,
+                guesses.Count);
+            return Error.Validation("A solved Shmo result must end on that day's answer.");
+        }
+
+        return null;
+    }
 }
