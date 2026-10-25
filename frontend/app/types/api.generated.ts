@@ -5775,6 +5775,9 @@ export interface components {
             gender: components["schemas"]["HistoricalFigureGender"];
             tradition?: null | components["schemas"]["HistoricalFigureTradition"];
             descriptions?: null | components["schemas"]["HistoricalFigureDescriptionRequest"][];
+            emblem?: null | components["schemas"]["HistoricalFigureEmblem"];
+            syriacName?: null | string;
+            readMoreUrl?: null | string;
         };
         CreateLexiconEntryRequest: {
             syriacUnvocalized: string;
@@ -5923,11 +5926,16 @@ export interface components {
             status: components["schemas"]["HistoricalFigureStatus"];
             playableInShmo: boolean;
             descriptions: components["schemas"]["HistoricalFigureDescriptionDto"][];
+            emblem: null | components["schemas"]["HistoricalFigureEmblem"];
+            syriacName: null | string;
+            readMoreUrl: null | string;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
         };
+        /** @enum {string} */
+        HistoricalFigureEmblem: "Alphabet" | "Anchor" | "Ark" | "Arrows" | "Basin" | "BasketOfLoaves" | "Beehive" | "Birds" | "Book" | "Bow" | "BowlOfLentils" | "BronzeHelmet" | "Brush" | "BuildersSquare" | "BurningCoal" | "BurningHeart" | "Candle" | "CelestialSphere" | "Censer" | "Chains" | "ChariotOfFire" | "ChariotWheel" | "CityWall" | "Coat" | "Coins" | "Crook" | "Crown" | "Donkey" | "Dove" | "Eagle" | "Flames" | "Fleece" | "FlintKnife" | "FloweringRod" | "FloweringStaff" | "Flute" | "Fruit" | "FullersClub" | "Gallows" | "GoldenCalf" | "GospelBook" | "GrapeCluster" | "GreatFish" | "Hand" | "Harp" | "HolyFaceCloth" | "HornOfOil" | "Horse" | "JarOfNard" | "Jawbone" | "Keys" | "Knife" | "Ladder" | "Ladle" | "Lamb" | "LambWithCross" | "Lamp" | "Lily" | "LinenShroud" | "Lion" | "Lions" | "Loaves" | "Mandrakes" | "Mantle" | "MoneyBag" | "MyrrhJar" | "NightLamp" | "Oak" | "Ox" | "PalmTree" | "PilgrimStaff" | "Pillar" | "PillarOfSalt" | "Platter" | "Plough" | "PlumbLine" | "PurpleCloth" | "Ram" | "ReedPen" | "RootOfJesse" | "SaddleCloth" | "SaltireCross" | "Sandal" | "ScallopShell" | "Sceptre" | "Scroll" | "SealAndCord" | "Serpent" | "SheafOfBarley" | "Shears" | "Ship" | "Shofar" | "SilverCup" | "Spear" | "Star" | "Stars" | "Statue" | "Stones" | "Sun" | "Sundial" | "Sword" | "Tablets" | "Tambourine" | "TauCross" | "Temple" | "Tent" | "Tomb" | "TorahScroll" | "TornRobe" | "Tower" | "TreeOfKnowledge" | "Vineyard" | "WaterJar" | "WaterSkin" | "Wheels" | "Window" | "WingedLion" | "WingedMan" | "Wings" | "WritingHand" | "Yoke";
         /** @enum {string} */
         HistoricalFigureGender: "Male" | "Female";
         HistoricalFigureListItem: {
@@ -5942,6 +5950,9 @@ export interface components {
             region: components["schemas"]["HistoricalFigureRegion"];
             tradition: null | components["schemas"]["HistoricalFigureTradition"];
             gender: components["schemas"]["HistoricalFigureGender"];
+            emblem?: null | components["schemas"]["HistoricalFigureEmblem"];
+            syriacName?: null | string;
+            readMoreUrl?: null | string;
         };
         /** @enum {string} */
         HistoricalFigureRegion: "IsraelJudah" | "Mesopotamia" | "Syria" | "Persia" | "Arabia" | "Egypt" | "Ethiopia" | "AsiaMinor" | "Greece" | "Italy" | "Armenia" | "India" | "Other";
@@ -6530,6 +6541,9 @@ export interface components {
             gender: components["schemas"]["HistoricalFigureGender"];
             tradition?: null | components["schemas"]["HistoricalFigureTradition"];
             descriptions?: null | components["schemas"]["HistoricalFigureDescriptionRequest"][];
+            emblem?: null | components["schemas"]["HistoricalFigureEmblem"];
+            syriacName?: null | string;
+            readMoreUrl?: null | string;
         };
         UpdateLexiconEntryRequest: {
             syriacUnvocalized: string;

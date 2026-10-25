@@ -28,6 +28,12 @@ public sealed class CreateHistoricalFigureRequestValidator : AbstractValidator<C
             .IsInEnum()
             .When(x => x.Tradition.HasValue);
 
+        // The Syriac name and the read-more link are checked by the domain, which owns
+        // their rules (script, NFC, absolute http(s)).
+        RuleFor(x => x.Emblem!.Value)
+            .IsInEnum()
+            .When(x => x.Emblem.HasValue);
+
         RuleFor(x => x.Era)
             .NotEqual(0)
             .WithMessage("Era must not be zero — there is no century zero.");

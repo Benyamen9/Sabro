@@ -24,6 +24,10 @@ internal sealed class HistoricalFigureConfiguration : IEntityTypeConfiguration<H
         builder.Property(e => e.Tradition).HasConversion<string>().HasMaxLength(32);
         builder.Property(e => e.Gender).HasConversion<string>().HasMaxLength(16).IsRequired();
         builder.Property(e => e.Status).HasConversion<string>().HasMaxLength(16).IsRequired();
+        builder.Property(e => e.Emblem).HasConversion<string>().HasMaxLength(32);
+
+        builder.Property(e => e.SyriacName).HasMaxLength(HistoricalFigure.MaxSyriacNameLength);
+        builder.Property(e => e.ReadMoreUrl).HasMaxLength(HistoricalFigure.MaxReadMoreUrlLength);
 
         builder.Property(e => e.PlayableInShmo).IsRequired();
         builder.Property(e => e.CreatedAt).IsRequired();

@@ -1,5 +1,7 @@
+using System.Text;
 using Sabro.Shared.Domain;
 using Sabro.Shared.Results;
+using Sabro.Shared.Text;
 
 namespace Sabro.Historical.Domain;
 
@@ -13,6 +15,12 @@ namespace Sabro.Historical.Domain;
 /// </summary>
 public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
 {
+    /// <summary>Longest Syriac name accepted; a sanity bound, not a typographic rule.</summary>
+    public const int MaxSyriacNameLength = 128;
+
+    /// <summary>Longest "read more" link accepted.</summary>
+    public const int MaxReadMoreUrlLength = 512;
+
     /// <summary>
     /// Widest centuries the roster accepts, guarding typos (a 4-digit year typed
     /// into a century field). Signed: negative is BC, positive is AD, and there is
@@ -89,6 +97,24 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
     /// </summary>
     public IReadOnlyList<HistoricalFigureDescription> Descriptions => descriptions;
 
+    /// <summary>
+    /// The sign on the figure's card in the hub's collection, or null to show the
+    /// emblem of its <see cref="Role"/>. Picture only: Shmo never scores it.
+    /// </summary>
+    public HistoricalFigureEmblem? Emblem { get; private set; }
+
+    /// <summary>
+    /// The name in Syriac script (NFC), shown under the English one on the figure's
+    /// page. Optional enrichment, filled in over time; never a game hint.
+    /// </summary>
+    public string? SyriacName { get; private set; }
+
+    /// <summary>
+    /// An outside page to read more about the figure, e.g. its entry on Syriaca.org.
+    /// Absolute http(s) only.
+    /// </summary>
+    public string? ReadMoreUrl { get; private set; }
+
     public static Result<HistoricalFigure> Create(
         string name,
         HistoricalFigureCategory category,
@@ -97,9 +123,12 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         HistoricalFigureRole role,
         HistoricalFigureRegion region,
         HistoricalFigureGender gender,
-        HistoricalFigureTradition? tradition = null)
+        HistoricalFigureTradition? tradition = null,
+        HistoricalFigureEmblem? emblem = null,
+        string? syriacName = null,
+        string? readMoreUrl = null)
     {
-        var normalized = Normalize(name, category, era, period, role, region, gender, tradition);
+        var normalized = Normalize(name, category, era, period, role, region, gender, tradition, emblem, syriacName, readMoreUrl);
         if (!normalized.IsSuccess)
         {
             return Result<HistoricalFigure>.Failure(normalized.Error!);
@@ -121,9 +150,12 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         HistoricalFigureRole role,
         HistoricalFigureRegion region,
         HistoricalFigureGender gender,
-        HistoricalFigureTradition? tradition = null)
+        HistoricalFigureTradition? tradition = null,
+        HistoricalFigureEmblem? emblem = null,
+        string? syriacName = null,
+        string? readMoreUrl = null)
     {
-        var normalized = Normalize(name, category, era, period, role, region, gender, tradition);
+        var normalized = Normalize(name, category, era, period, role, region, gender, tradition, emblem, syriacName, readMoreUrl);
         if (!normalized.IsSuccess)
         {
             return normalized.Error;
@@ -224,7 +256,10 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         HistoricalFigureRole role,
         HistoricalFigureRegion region,
         HistoricalFigureGender gender,
-        HistoricalFigureTradition? tradition)
+        HistoricalFigureTradition? tradition,
+        HistoricalFigureEmblem? emblem,
+        string? syriacName,
+        string? readMoreUrl)
     {
         var trimmedName = (name ?? string.Empty).Trim();
         if (trimmedName.Length == 0)
@@ -278,8 +313,84 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
                 Error.Validation($"Era must be between {MinEra} and {MaxEra}."));
         }
 
+        if (emblem.HasValue && !Enum.IsDefined(emblem.Value))
+        {
+            return Result<NormalizedFields>.Failure(Error.Validation("Emblem is not a defined value."));
+        }
+
+        var normalizedSyriacName = NormalizeSyriacName(syriacName);
+        if (!normalizedSyriacName.IsSuccess)
+        {
+            return Result<NormalizedFields>.Failure(normalizedSyriacName.Error!);
+        }
+
+        var normalizedUrl = NormalizeReadMoreUrl(readMoreUrl);
+        if (!normalizedUrl.IsSuccess)
+        {
+            return Result<NormalizedFields>.Failure(normalizedUrl.Error!);
+        }
+
         return Result<NormalizedFields>.Success(
-            new NormalizedFields(trimmedName, category, era, period, role, region, gender, tradition));
+            new NormalizedFields(
+                trimmedName,
+                category,
+                era,
+                period,
+                role,
+                region,
+                gender,
+                tradition,
+                emblem,
+                normalizedSyriacName.Value,
+                normalizedUrl.Value));
+    }
+
+    /// <summary>Blank means "none yet"; anything else must be Syriac script, stored NFC.</summary>
+    private static Result<string?> NormalizeSyriacName(string? syriacName)
+    {
+        var trimmed = syriacName?.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+        {
+            return Result<string?>.Success(null);
+        }
+
+        var normalized = trimmed.Normalize(NormalizationForm.FormC);
+        if (normalized.Length > MaxSyriacNameLength)
+        {
+            return Result<string?>.Failure(
+                Error.Validation($"Syriac name must be at most {MaxSyriacNameLength} characters."));
+        }
+
+        if (!SyriacText.IsSyriacOnly(normalized))
+        {
+            return Result<string?>.Failure(Error.Validation("Syriac name must be written in Syriac script."));
+        }
+
+        return Result<string?>.Success(normalized);
+    }
+
+    /// <summary>Blank means "no link"; anything else must be an absolute http(s) URL.</summary>
+    private static Result<string?> NormalizeReadMoreUrl(string? readMoreUrl)
+    {
+        var trimmed = readMoreUrl?.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+        {
+            return Result<string?>.Success(null);
+        }
+
+        if (trimmed.Length > MaxReadMoreUrlLength)
+        {
+            return Result<string?>.Failure(
+                Error.Validation($"Read-more link must be at most {MaxReadMoreUrlLength} characters."));
+        }
+
+        if (!Uri.TryCreate(trimmed, UriKind.Absolute, out var uri)
+            || (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp))
+        {
+            return Result<string?>.Failure(Error.Validation("Read-more link must be an absolute http(s) address."));
+        }
+
+        return Result<string?>.Success(trimmed);
     }
 
     private void Apply(NormalizedFields fields)
@@ -292,6 +403,9 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         Region = fields.Region;
         Gender = fields.Gender;
         Tradition = fields.Tradition;
+        Emblem = fields.Emblem;
+        SyriacName = fields.SyriacName;
+        ReadMoreUrl = fields.ReadMoreUrl;
     }
 
     private void Touch() => UpdatedAt = DateTimeOffset.UtcNow;
@@ -304,5 +418,8 @@ public sealed class HistoricalFigure : Entity<Guid>, IAggregateRoot
         HistoricalFigureRole Role,
         HistoricalFigureRegion Region,
         HistoricalFigureGender Gender,
-        HistoricalFigureTradition? Tradition);
+        HistoricalFigureTradition? Tradition,
+        HistoricalFigureEmblem? Emblem,
+        string? SyriacName,
+        string? ReadMoreUrl);
 }

@@ -9355,6 +9355,28 @@
             "items": {
               "$ref": "#/components/schemas/HistoricalFigureDescriptionRequest"
             }
+          },
+          "emblem": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/HistoricalFigureEmblem"
+              }
+            ]
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "readMoreUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -9933,6 +9955,9 @@
           "status",
           "playableInShmo",
           "descriptions",
+          "emblem",
+          "syriacName",
+          "readMoreUrl",
           "createdAt",
           "updatedAt"
         ],
@@ -9990,6 +10015,28 @@
               "$ref": "#/components/schemas/HistoricalFigureDescriptionDto"
             }
           },
+          "emblem": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/HistoricalFigureEmblem"
+              }
+            ]
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "readMoreUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -9999,6 +10046,132 @@
             "format": "date-time"
           }
         }
+      },
+      "HistoricalFigureEmblem": {
+        "enum": [
+          "Alphabet",
+          "Anchor",
+          "Ark",
+          "Arrows",
+          "Basin",
+          "BasketOfLoaves",
+          "Beehive",
+          "Birds",
+          "Book",
+          "Bow",
+          "BowlOfLentils",
+          "BronzeHelmet",
+          "Brush",
+          "BuildersSquare",
+          "BurningCoal",
+          "BurningHeart",
+          "Candle",
+          "CelestialSphere",
+          "Censer",
+          "Chains",
+          "ChariotOfFire",
+          "ChariotWheel",
+          "CityWall",
+          "Coat",
+          "Coins",
+          "Crook",
+          "Crown",
+          "Donkey",
+          "Dove",
+          "Eagle",
+          "Flames",
+          "Fleece",
+          "FlintKnife",
+          "FloweringRod",
+          "FloweringStaff",
+          "Flute",
+          "Fruit",
+          "FullersClub",
+          "Gallows",
+          "GoldenCalf",
+          "GospelBook",
+          "GrapeCluster",
+          "GreatFish",
+          "Hand",
+          "Harp",
+          "HolyFaceCloth",
+          "HornOfOil",
+          "Horse",
+          "JarOfNard",
+          "Jawbone",
+          "Keys",
+          "Knife",
+          "Ladder",
+          "Ladle",
+          "Lamb",
+          "LambWithCross",
+          "Lamp",
+          "Lily",
+          "LinenShroud",
+          "Lion",
+          "Lions",
+          "Loaves",
+          "Mandrakes",
+          "Mantle",
+          "MoneyBag",
+          "MyrrhJar",
+          "NightLamp",
+          "Oak",
+          "Ox",
+          "PalmTree",
+          "PilgrimStaff",
+          "Pillar",
+          "PillarOfSalt",
+          "Platter",
+          "Plough",
+          "PlumbLine",
+          "PurpleCloth",
+          "Ram",
+          "ReedPen",
+          "RootOfJesse",
+          "SaddleCloth",
+          "SaltireCross",
+          "Sandal",
+          "ScallopShell",
+          "Sceptre",
+          "Scroll",
+          "SealAndCord",
+          "Serpent",
+          "SheafOfBarley",
+          "Shears",
+          "Ship",
+          "Shofar",
+          "SilverCup",
+          "Spear",
+          "Star",
+          "Stars",
+          "Statue",
+          "Stones",
+          "Sun",
+          "Sundial",
+          "Sword",
+          "Tablets",
+          "Tambourine",
+          "TauCross",
+          "Temple",
+          "Tent",
+          "Tomb",
+          "TorahScroll",
+          "TornRobe",
+          "Tower",
+          "TreeOfKnowledge",
+          "Vineyard",
+          "WaterJar",
+          "WaterSkin",
+          "Wheels",
+          "Window",
+          "WingedLion",
+          "WingedMan",
+          "Wings",
+          "WritingHand",
+          "Yoke"
+        ],
+        "type": "string"
       },
       "HistoricalFigureGender": {
         "enum": [
@@ -10060,6 +10233,28 @@
           },
           "gender": {
             "$ref": "#/components/schemas/HistoricalFigureGender"
+          },
+          "emblem": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/HistoricalFigureEmblem"
+              }
+            ]
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "readMoreUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -12670,6 +12865,28 @@
             "items": {
               "$ref": "#/components/schemas/HistoricalFigureDescriptionRequest"
             }
+          },
+          "emblem": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/HistoricalFigureEmblem"
+              }
+            ]
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "readMoreUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

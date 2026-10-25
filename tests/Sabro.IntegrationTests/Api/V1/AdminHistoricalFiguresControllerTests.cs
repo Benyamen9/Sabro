@@ -215,6 +215,58 @@ public class AdminHistoricalFiguresControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Put_RoundTripsCardFields()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var created = await CreateAsync(NewFigure(), ct);
+
+        var updated = await client.PutAsJsonAsync(
+            $"/api/v1/admin/historical-figures/{created.Id}",
+            new UpdateHistoricalFigureRequest(
+                Name: "Ephrem the Syrian",
+                Category: HistoricalFigureCategory.Patristic,
+                Era: 4,
+                Period: HistoricalPeriod.NiceneEra,
+                Role: HistoricalFigureRole.Commentator,
+                Region: HistoricalFigureRegion.Mesopotamia,
+                Gender: HistoricalFigureGender.Male,
+                Tradition: HistoricalFigureTradition.PreChalcedonian,
+                Emblem: HistoricalFigureEmblem.Harp,
+                SyriacName: "ܡܪܝ ܐܦܪܝܡ",
+                ReadMoreUrl: "https://syriaca.org/person/13"),
+            ct);
+
+        updated.StatusCode.Should().Be(HttpStatusCode.OK);
+        var fetched = await client.GetFromJsonAsync<HistoricalFigureDto>(
+            $"/api/v1/admin/historical-figures/{created.Id}", SabroApiFactory.JsonOptions, ct);
+        fetched!.Emblem.Should().Be(HistoricalFigureEmblem.Harp);
+        fetched.SyriacName.Should().Be("ܡܪܝ ܐܦܪܝܡ");
+        fetched.ReadMoreUrl.Should().Be("https://syriaca.org/person/13");
+    }
+
+    [Fact]
+    public async Task Put_WithLatinSyriacName_Returns400()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var created = await CreateAsync(NewFigure(), ct);
+
+        var updated = await client.PutAsJsonAsync(
+            $"/api/v1/admin/historical-figures/{created.Id}",
+            new UpdateHistoricalFigureRequest(
+                Name: "Ephrem the Syrian",
+                Category: HistoricalFigureCategory.Patristic,
+                Era: 4,
+                Period: HistoricalPeriod.NiceneEra,
+                Role: HistoricalFigureRole.Commentator,
+                Region: HistoricalFigureRegion.Mesopotamia,
+                Gender: HistoricalFigureGender.Male,
+                SyriacName: "Mor Aphrem"),
+            ct);
+
+        updated.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
     public async Task Delete_RemovesFigure()
     {
         var ct = TestContext.Current.CancellationToken;
