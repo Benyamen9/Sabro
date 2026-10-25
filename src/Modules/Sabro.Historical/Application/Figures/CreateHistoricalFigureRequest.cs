@@ -11,4 +11,7 @@ public sealed record CreateHistoricalFigureRequest(
     HistoricalFigureRegion Region,
     HistoricalFigureGender Gender,
     HistoricalFigureTradition? Tradition = null,
-    IReadOnlyList<HistoricalFigureDescriptionRequest>? Descriptions = null);
+    IReadOnlyList<HistoricalFigureDescriptionRequest>? Descriptions = null,
+    HistoricalFigureEmblem? Emblem = null,
+    string? SyriacName = null,
+    string? ReadMoreUrl = null);

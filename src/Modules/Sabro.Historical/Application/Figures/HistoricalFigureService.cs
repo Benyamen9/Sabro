@@ -49,7 +49,10 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
             request.Role,
             request.Region,
             request.Gender,
-            request.Tradition);
+            request.Tradition,
+            request.Emblem,
+            request.SyriacName,
+            request.ReadMoreUrl);
         if (!domainResult.IsSuccess)
         {
             logger.LogWarning(
@@ -119,7 +122,10 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
             request.Role,
             request.Region,
             request.Gender,
-            request.Tradition);
+            request.Tradition,
+            request.Emblem,
+            request.SyriacName,
+            request.ReadMoreUrl);
         if (error is not null)
         {
             logger.LogWarning(
@@ -380,6 +386,9 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
             .OrderBy(d => d.Language, StringComparer.Ordinal)
             .Select(d => new HistoricalFigureDescriptionDto(d.Language, d.Text))
             .ToArray(),
+        figure.Emblem,
+        figure.SyriacName,
+        figure.ReadMoreUrl,
         figure.CreatedAt,
         figure.UpdatedAt);
 
@@ -392,7 +401,10 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         figure.Role,
         figure.Region,
         figure.Tradition,
-        figure.Gender);
+        figure.Gender,
+        figure.Emblem,
+        figure.SyriacName,
+        figure.ReadMoreUrl);
 
     private async Task<Result<HistoricalFigureDto>> MutateAsync(
         Guid id,

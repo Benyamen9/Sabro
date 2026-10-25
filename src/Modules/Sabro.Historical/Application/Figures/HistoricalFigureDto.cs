@@ -15,5 +15,8 @@ public sealed record HistoricalFigureDto(
     HistoricalFigureStatus Status,
     bool PlayableInShmo,
     IReadOnlyList<HistoricalFigureDescriptionDto> Descriptions,
+    HistoricalFigureEmblem? Emblem,
+    string? SyriacName,
+    string? ReadMoreUrl,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);

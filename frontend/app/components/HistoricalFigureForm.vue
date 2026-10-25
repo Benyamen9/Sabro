@@ -3,6 +3,7 @@ import type {
   CreateHistoricalFigureRequest,
   HistoricalFigureCategory,
   HistoricalFigureDto,
+  HistoricalFigureEmblem,
   HistoricalFigureGender,
   HistoricalFigureRegion,
   HistoricalFigureRole,
@@ -11,6 +12,7 @@ import type {
 } from '~/types/api'
 import {
   HISTORICAL_FIGURE_CATEGORIES,
+  HISTORICAL_FIGURE_EMBLEMS,
   HISTORICAL_FIGURE_GENDERS,
   HISTORICAL_FIGURE_REGIONS,
   HISTORICAL_FIGURE_ROLES,
@@ -80,6 +82,18 @@ const gender = ref<HistoricalFigureGender>(
 const tradition = ref<HistoricalFigureTradition | ''>(
   initial('tradition', props.figure?.tradition ?? '') as HistoricalFigureTradition | '',
 )
+
+// The card in Beth Ṣalme. Empty means none: the role's emblem, no Syriac name,
+// no link. None of these is proposable, so a prefill never targets them.
+const emblem = ref<HistoricalFigureEmblem | ''>(props.figure?.emblem ?? '')
+const syriacName = ref(props.figure?.syriacName ?? '')
+const readMoreUrl = ref(props.figure?.readMoreUrl ?? '')
+
+/** 121 emblems: alphabetical in the reader's language, or the list is unusable. */
+const emblemOptions = computed(() =>
+  HISTORICAL_FIGURE_EMBLEMS
+    .map(value => ({ value, label: t(`admin.historicalFigures.emblem.${value}`) }))
+    .sort((a, b) => a.label.localeCompare(b.label)))
 
 // Era is entered as a signed century, so the field is a number input rather
 // than a year. Kept as a string ref because an empty input is not 0.
@@ -193,6 +207,9 @@ const scalarFields = [
   'region',
   'tradition',
   'gender',
+  'emblem',
+  'syriacName',
+  'readMoreUrl',
 ] as const
 
 /**
@@ -231,11 +248,15 @@ function onSubmit() {
     // Empty boxes are omitted rather than sent as blank strings: the domain
     // rejects an empty description, and a language left alone simply has none.
     descriptions: descriptionPayload,
+    emblem: emblem.value === '' ? null : emblem.value,
+    syriacName: syriacName.value.trim() || null,
+    readMoreUrl: readMoreUrl.value.trim() || null,
   })
 }
 
 const fieldClass
   = 'w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-2 font-sans text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none read-only:bg-[var(--color-bg-subtle)] read-only:text-[var(--color-text-muted)] disabled:bg-[var(--color-bg-subtle)] disabled:text-[var(--color-text-muted)]'
+const syriacFieldClass = 'text-right text-lg'
 const labelClass = 'block font-sans text-sm font-medium text-[var(--color-text)]'
 const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
 </script>
@@ -443,6 +464,70 @@ const hintClass = 'mt-1 font-sans text-xs text-[var(--color-text-faint)]'
         <p :class="hintClass">
           {{ (descriptions[language] ?? '').length }} / {{ descriptionMaxLength }}
         </p>
+      </div>
+    </fieldset>
+
+    <!-- The card in Beth Ṣalme: picture and enrichment, never a Shmo hint. -->
+    <fieldset class="flex flex-col gap-4">
+      <legend :class="labelClass">{{ t('admin.historicalFigures.form.card') }}</legend>
+      <p :class="[hintClass, 'mt-0']">{{ t('admin.historicalFigures.form.cardHint') }}</p>
+      <div>
+        <label for="figure-emblem" :class="labelClass">{{ t('admin.historicalFigures.form.emblem') }}</label>
+        <select
+          id="figure-emblem"
+          v-model="emblem"
+          :disabled="readonly"
+          :aria-invalid="errorsFor('emblem').length > 0"
+          :class="[fieldClass, 'mt-1', errorsFor('emblem').length ? errorFieldClass : '']"
+        >
+          <option value="">{{ t('admin.historicalFigures.form.emblemDefault') }}</option>
+          <option v-for="option in emblemOptions" :key="option.value" :value="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+        <p v-if="errorsFor('emblem').length" role="alert" :class="errorTextClass">
+          {{ errorsFor('emblem').join(' ') }}
+        </p>
+        <p :class="hintClass">{{ t('admin.historicalFigures.form.emblemHint') }}</p>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="figure-syriac-name" :class="labelClass">{{ t('admin.historicalFigures.form.syriacName') }}</label>
+          <input
+            id="figure-syriac-name"
+            v-model="syriacName"
+            dir="rtl"
+            lang="syc"
+            maxlength="128"
+            :readonly="readonly"
+            :aria-invalid="errorsFor('syriacName').length > 0"
+            :aria-describedby="errorsFor('syriacName').length ? 'figure-syriac-name-error' : undefined"
+            :class="[fieldClass, syriacFieldClass, 'mt-1', errorsFor('syriacName').length ? errorFieldClass : '']"
+          >
+          <p v-if="errorsFor('syriacName').length" id="figure-syriac-name-error" role="alert" :class="errorTextClass">
+            {{ errorsFor('syriacName').join(' ') }}
+          </p>
+          <p :class="hintClass">{{ t('admin.historicalFigures.form.syriacNameHint') }}</p>
+        </div>
+        <div>
+          <label for="figure-read-more" :class="labelClass">{{ t('admin.historicalFigures.form.readMoreUrl') }}</label>
+          <input
+            id="figure-read-more"
+            v-model="readMoreUrl"
+            type="url"
+            inputmode="url"
+            maxlength="512"
+            placeholder="https://syriaca.org/person/…"
+            :readonly="readonly"
+            :aria-invalid="errorsFor('readMoreUrl').length > 0"
+            :aria-describedby="errorsFor('readMoreUrl').length ? 'figure-read-more-error' : undefined"
+            :class="[fieldClass, 'mt-1', errorsFor('readMoreUrl').length ? errorFieldClass : '']"
+          >
+          <p v-if="errorsFor('readMoreUrl').length" id="figure-read-more-error" role="alert" :class="errorTextClass">
+            {{ errorsFor('readMoreUrl').join(' ') }}
+          </p>
+          <p :class="hintClass">{{ t('admin.historicalFigures.form.readMoreUrlHint') }}</p>
+        </div>
       </div>
     </fieldset>
 
