@@ -102,7 +102,8 @@
     "home": "Hem",
     "translations": "Översättningar",
     "library": "Bibliotek",
-    "admin": "Backoffice"
+    "admin": "Backoffice",
+    "bethSalme": "Beth Ṣalme"
   },
   "switcher": {
     "languageLabel": "Språk",
@@ -1212,6 +1213,10 @@
     "libraryWord": {
       "title": "{translit} · {meaning}",
       "description": "Det syriska ordet {translit} (”{meaning}”): dess bokstäver, vokaler, rot och uttal i Sabros ordbibliotek."
+    },
+    "bethSalme": {
+      "title": "Beth Ṣalme · galleriet",
+      "description": "En prosopografi över 289 bibliska och syriska gestalter som kortsamling: möt dem i Shmo, hitta dem och läs vilka de var."
     }
   },
   "privacy": {
@@ -1281,6 +1286,58 @@
       "mno": "Tal",
       "shmo": "Gestalter",
       "nahlo": "Sånger"
+    }
+  },
+  "bethSalme": {
+    "title": "Beth Ṣalme",
+    "heading": "Galleriet",
+    "lede": "En prosopografi över {count} gestalter, från Adam till kyrkofäderna. Möt dem genom att gissa i Shmo, hitta dem genom att lösa, och samla deras kort här.",
+    "play": "Spela dagens Shmo",
+    "signInLine": "Din samling hör till ditt konto. Logga in så räknas varje Shmo-spel du har spelat.",
+    "signIn": "Logga in",
+    "progress": "{found} hittade, {met} mötta, {locked} inte mötta än, av {total}",
+    "counts": {
+      "found": "{count} hittade",
+      "met": "{count} mötta",
+      "locked": "{count} inte än",
+      "illuminated": "{count} illuminerade"
+    },
+    "collectionFailed": "Din samling kunde inte laddas. Korten nedan visar hela listan.",
+    "search": "Sök ett namn",
+    "filterLabel": "Visa",
+    "filters": {
+      "all": "Alla",
+      "found": "Hittade",
+      "illuminated": "✦ Illuminerade",
+      "met": "Mötta",
+      "locked": "Inte än"
+    },
+    "loadFailed": "Gestalterna kunde inte laddas. Försök igen om en stund.",
+    "empty": "Ingen gestalt matchar.",
+    "pickOne": "Välj ett kort för att se vem det var.",
+    "card": {
+      "number": "Nr {no}",
+      "notMetYet": "inte mött än"
+    },
+    "status": {
+      "found": "Hittad",
+      "met": "Mött",
+      "locked": "Inte mött än",
+      "illuminated": "Illuminerad"
+    },
+    "detail": {
+      "century": "Århundrade",
+      "metOnce": "mött en gång",
+      "metTimes": "mött {count} gånger",
+      "foundOn": "Hittad {date} på {count} gissningar",
+      "notFoundYet": "inte hittad än",
+      "noStory": "Ingen berättelse skriven än.",
+      "findToRead": "Hitta {name} som Shmos svar för att läsa vem det var.",
+      "lockedHint": "Gissa {name} i Shmo för att möta gestalten. Hitta den som dagens svar för att färglägga kortet.",
+      "readMore": "Läs mer",
+      "turnOver": "Vänd kortet",
+      "turnBack": "Vänd tillbaka",
+      "close": "Stäng"
     }
   }
 }

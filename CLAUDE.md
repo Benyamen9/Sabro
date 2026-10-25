@@ -370,8 +370,19 @@ the "Sabro" pill in the games and the row of game pills in the hub, so every hea
 every width**. Six copies of the list exist — hub, Meltho, Mno, Shmo, Nahlo, Sofro — each **listing
 itself first, marked as here**, then the others in launch order (Sabro, Meltho, Mno, Shmo, Nahlo,
 Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-config key. On phones the
-hub's page links (Library, Backoffice) live **inside the launcher panel**, under the apps (Owner,
+hub's page links (Library, Beth Ṣalme, Backoffice) live **inside the launcher panel**, under the apps (Owner,
 2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
+
+**Beth Ṣalme** (ܒܝܬ ܨܠܡ̈ܐ, "house of images", `/beth-salme`; Owner, 2026-10-25) is the hub's figure page: a
+prosopography of Shmo's roster as a **card collection**. A figure is **met** when the player guesses it in
+Shmo (a sketch card, attributes shown) and **found** when they solve it as the day's answer (the card in
+colour, and its description, which nothing public serves). A find is **illuminated** 1 time in 20 (a
+rainbow foil). Cards run A–Z, numbered through time; unmet cards are dark but **show the name**. Each card
+carries the figure's **emblem** (`utils/emblems.ts`, one drawing per `HistoricalFigureEmblem` and per role,
+typed so a new value fails the typecheck until drawn). On a computer the figure's page sits beside the
+collection; on a phone the card lifts out and turns over. Signed out, every card is dark with a sign-in
+line. Each "library" keeps its own style: collecting belongs to Beth Ṣalme alone, never to Beth Gazo.
+**Rarity is parked** (Owner): the one ruling so far is that the great names should be the rare cards.
 
 **The hub's home page** (reworked by the Owner on 2026-10-23 for practicality; the look of
 2026-10-15 stays) has two parts under the hero:

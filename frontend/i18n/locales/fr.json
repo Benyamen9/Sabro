@@ -102,7 +102,8 @@
     "home": "Accueil",
     "translations": "Traductions",
     "library": "Bibliothèque",
-    "admin": "Back-office"
+    "admin": "Back-office",
+    "bethSalme": "Beth Ṣalme"
   },
   "switcher": {
     "languageLabel": "Langue",
@@ -1212,6 +1213,10 @@
     "libraryWord": {
       "title": "{translit} · {meaning}",
       "description": "Le mot syriaque {translit} (« {meaning} ») : ses lettres, ses voyelles, sa racine et sa prononciation dans la bibliothèque Sabro."
+    },
+    "bethSalme": {
+      "title": "Beth Ṣalme · la galerie",
+      "description": "Une prosopographie de 289 figures bibliques et syriaques en cartes à collectionner : rencontrez-les dans Shmo, trouvez-les et lisez qui elles étaient."
     }
   },
   "privacy": {
@@ -1281,6 +1286,58 @@
       "mno": "Nombres",
       "shmo": "Figures",
       "nahlo": "Chants"
+    }
+  },
+  "bethSalme": {
+    "title": "Beth Ṣalme",
+    "heading": "La galerie",
+    "lede": "Une prosopographie de {count} figures, d’Adam aux Pères. Rencontrez-les en devinant dans Shmo, trouvez-les en résolvant, et collectionnez leurs cartes ici.",
+    "play": "Jouer au Shmo du jour",
+    "signInLine": "Votre collection est liée à votre compte. Connectez-vous et chaque partie de Shmo jouée est comptée.",
+    "signIn": "Se connecter",
+    "progress": "{found} trouvées, {met} rencontrées, {locked} pas encore rencontrées, sur {total}",
+    "counts": {
+      "found": "{count} trouvées",
+      "met": "{count} rencontrées",
+      "locked": "{count} pas encore",
+      "illuminated": "{count} enluminées"
+    },
+    "collectionFailed": "Votre collection n’a pas pu être chargée. Les cartes ci-dessous montrent toute la liste.",
+    "search": "Chercher un nom",
+    "filterLabel": "Afficher",
+    "filters": {
+      "all": "Toutes",
+      "found": "Trouvées",
+      "illuminated": "✦ Enluminées",
+      "met": "Rencontrées",
+      "locked": "Pas encore"
+    },
+    "loadFailed": "Les figures n’ont pas pu être chargées. Réessayez dans un instant.",
+    "empty": "Aucune figure ne correspond.",
+    "pickOne": "Choisissez une carte pour découvrir qui c’était.",
+    "card": {
+      "number": "N° {no}",
+      "notMetYet": "pas encore rencontrée"
+    },
+    "status": {
+      "found": "Trouvée",
+      "met": "Rencontrée",
+      "locked": "Pas encore rencontrée",
+      "illuminated": "Enluminée"
+    },
+    "detail": {
+      "century": "Siècle",
+      "metOnce": "rencontrée une fois",
+      "metTimes": "rencontrée {count} fois",
+      "foundOn": "Trouvée le {date} en {count} essais",
+      "notFoundYet": "pas encore trouvée",
+      "noStory": "Pas encore d’histoire écrite.",
+      "findToRead": "Trouvez {name} comme réponse de Shmo pour lire son histoire.",
+      "lockedHint": "Devinez {name} dans Shmo pour la rencontrer. Trouvez-la comme réponse du jour pour colorer la carte.",
+      "readMore": "En savoir plus",
+      "turnOver": "Retourner la carte",
+      "turnBack": "La remettre à l’endroit",
+      "close": "Fermer"
     }
   }
 }
