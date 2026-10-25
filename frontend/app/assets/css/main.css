@@ -53,6 +53,23 @@
   --color-nahlo-faint: #f0eaf8;
 
   --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 4px 16px rgb(28 25 23 / 0.04);
+
+  /* Beth Ṣalme card art: one tone per category (sand, slate, green), plus
+     the dark card of a figure not met yet and the paper of a sketched one. */
+  --figure-ot-bg: #f2e8d4;
+  --figure-ot-mid: #c9a56c;
+  --figure-ot-ink: #8a6232;
+  --figure-nt-bg: #e2e9f1;
+  --figure-nt-mid: #93abc6;
+  --figure-nt-ink: #4b6888;
+  --figure-pa-bg: #e4ede2;
+  --figure-pa-mid: #9cb79d;
+  --figure-pa-ink: #46644a;
+  --figure-paper: #faf8f4;
+  --figure-locked-bg: #2f2c29;
+  --figure-locked-mid: #3a3733;
+  --figure-locked-ink: #5f5a54;
+  --figure-locked-text: #a39d94;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -94,6 +111,21 @@
     --color-nahlo-faint: #241c31;
 
     --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+
+    --figure-ot-bg: #2a2317;
+    --figure-ot-mid: #7d6440;
+    --figure-ot-ink: #e2c48f;
+    --figure-nt-bg: #18202a;
+    --figure-nt-mid: #4d6580;
+    --figure-nt-ink: #aac3df;
+    --figure-pa-bg: #18231a;
+    --figure-pa-mid: #4b684d;
+    --figure-pa-ink: #a9c9aa;
+    --figure-paper: #1c1917;
+    --figure-locked-bg: #0f0d0c;
+    --figure-locked-mid: #1f1c1a;
+    --figure-locked-ink: #3f3a35;
+    --figure-locked-text: #7a746c;
   }
 }
 
@@ -142,6 +174,23 @@
   --color-nahlo-faint: #f0eaf8;
 
   --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 4px 16px rgb(28 25 23 / 0.04);
+
+  /* Beth Ṣalme card art: one tone per category (sand, slate, green), plus
+     the dark card of a figure not met yet and the paper of a sketched one. */
+  --figure-ot-bg: #f2e8d4;
+  --figure-ot-mid: #c9a56c;
+  --figure-ot-ink: #8a6232;
+  --figure-nt-bg: #e2e9f1;
+  --figure-nt-mid: #93abc6;
+  --figure-nt-ink: #4b6888;
+  --figure-pa-bg: #e4ede2;
+  --figure-pa-mid: #9cb79d;
+  --figure-pa-ink: #46644a;
+  --figure-paper: #faf8f4;
+  --figure-locked-bg: #2f2c29;
+  --figure-locked-mid: #3a3733;
+  --figure-locked-ink: #5f5a54;
+  --figure-locked-text: #a39d94;
 }
 
 :root[data-theme="dark"] {
@@ -182,6 +231,21 @@
   --color-nahlo-faint: #241c31;
 
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+
+  --figure-ot-bg: #2a2317;
+  --figure-ot-mid: #7d6440;
+  --figure-ot-ink: #e2c48f;
+  --figure-nt-bg: #18202a;
+  --figure-nt-mid: #4d6580;
+  --figure-nt-ink: #aac3df;
+  --figure-pa-bg: #18231a;
+  --figure-pa-mid: #4b684d;
+  --figure-pa-ink: #a9c9aa;
+  --figure-paper: #1c1917;
+  --figure-locked-bg: #0f0d0c;
+  --figure-locked-mid: #1f1c1a;
+  --figure-locked-ink: #3f3a35;
+  --figure-locked-text: #7a746c;
 }
 
 /* Pins native UI (scrollbars, form controls) to the forced palette; "system"

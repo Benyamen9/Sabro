@@ -102,7 +102,8 @@
     "home": "Home",
     "translations": "Translations",
     "library": "Library",
-    "admin": "Backoffice"
+    "admin": "Backoffice",
+    "bethSalme": "Beth Ṣalme"
   },
   "switcher": {
     "languageLabel": "Language",
@@ -1212,6 +1213,10 @@
     "libraryWord": {
       "title": "{translit} · {meaning}",
       "description": "The Syriac word {translit} (“{meaning}”): its letters, vowels, root and pronunciation in the Sabro word library."
+    },
+    "bethSalme": {
+      "title": "Beth Ṣalme · the gallery",
+      "description": "A prosopography of 289 biblical and Syriac figures, as a card collection: meet them in Shmo, find them, and read who they were."
     }
   },
   "privacy": {
@@ -1281,6 +1286,58 @@
       "mno": "Numerals",
       "shmo": "Figures",
       "nahlo": "Chants"
+    }
+  },
+  "bethSalme": {
+    "title": "Beth Ṣalme",
+    "heading": "The gallery",
+    "lede": "A prosopography of {count} figures, from Adam to the Fathers. Meet them by guessing in Shmo, find them by solving, and collect their cards here.",
+    "play": "Play today’s Shmo",
+    "signInLine": "Your collection lives in your account. Sign in and every Shmo game you have played is counted.",
+    "signIn": "Sign in",
+    "progress": "{found} found, {met} met, {locked} not met yet, out of {total}",
+    "counts": {
+      "found": "{count} found",
+      "met": "{count} met",
+      "locked": "{count} not yet",
+      "illuminated": "{count} illuminated"
+    },
+    "collectionFailed": "Your collection could not be loaded. The cards below show the whole roster.",
+    "search": "Search a name",
+    "filterLabel": "Show",
+    "filters": {
+      "all": "All",
+      "found": "Found",
+      "illuminated": "✦ Illuminated",
+      "met": "Met",
+      "locked": "Not yet"
+    },
+    "loadFailed": "The figures could not be loaded. Try again in a moment.",
+    "empty": "No figure matches.",
+    "pickOne": "Choose a card to see who they were.",
+    "card": {
+      "number": "No. {no}",
+      "notMetYet": "not met yet"
+    },
+    "status": {
+      "found": "Found",
+      "met": "Met",
+      "locked": "Not met yet",
+      "illuminated": "Illuminated"
+    },
+    "detail": {
+      "century": "Century",
+      "metOnce": "met once",
+      "metTimes": "met {count} times",
+      "foundOn": "Found on {date} in {count} guesses",
+      "notFoundYet": "not found yet",
+      "noStory": "No story written yet.",
+      "findToRead": "Find {name} as Shmo’s answer to read who they were.",
+      "lockedHint": "Guess {name} in Shmo to meet them. Find them as the day’s answer to colour the card in.",
+      "readMore": "Read more",
+      "turnOver": "Turn the card over",
+      "turnBack": "Turn it back",
+      "close": "Close"
     }
   }
 }

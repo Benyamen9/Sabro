@@ -102,7 +102,8 @@
     "home": "Home",
     "translations": "Vertalingen",
     "library": "Bibliotheek",
-    "admin": "Backoffice"
+    "admin": "Backoffice",
+    "bethSalme": "Beth Ṣalme"
   },
   "switcher": {
     "languageLabel": "Taal",
@@ -1212,6 +1213,10 @@
     "libraryWord": {
       "title": "{translit} · {meaning}",
       "description": "Het Syrische woord {translit} (“{meaning}”): letters, klinkers, wortel en uitspraak in de Sabro-woordbibliotheek."
+    },
+    "bethSalme": {
+      "title": "Beth Ṣalme · de galerij",
+      "description": "Een prosopografie van 289 bijbelse en Syrische figuren als kaartverzameling: ontmoet ze in Shmo, vind ze en lees wie ze waren."
     }
   },
   "privacy": {
@@ -1281,6 +1286,58 @@
       "mno": "Getallen",
       "shmo": "Figuren",
       "nahlo": "Zangen"
+    }
+  },
+  "bethSalme": {
+    "title": "Beth Ṣalme",
+    "heading": "De galerij",
+    "lede": "Een prosopografie van {count} figuren, van Adam tot de kerkvaders. Ontmoet ze door te raden in Shmo, vind ze door op te lossen en verzamel hier hun kaarten.",
+    "play": "Speel de Shmo van vandaag",
+    "signInLine": "Je verzameling hoort bij je account. Meld je aan en elk gespeeld Shmo-spel telt mee.",
+    "signIn": "Aanmelden",
+    "progress": "{found} gevonden, {met} ontmoet, {locked} nog niet ontmoet, van {total}",
+    "counts": {
+      "found": "{count} gevonden",
+      "met": "{count} ontmoet",
+      "locked": "{count} nog niet",
+      "illuminated": "{count} verlucht"
+    },
+    "collectionFailed": "Je verzameling kon niet worden geladen. De kaarten hieronder tonen de volledige lijst.",
+    "search": "Zoek een naam",
+    "filterLabel": "Toon",
+    "filters": {
+      "all": "Alle",
+      "found": "Gevonden",
+      "illuminated": "✦ Verlucht",
+      "met": "Ontmoet",
+      "locked": "Nog niet"
+    },
+    "loadFailed": "De figuren konden niet worden geladen. Probeer het zo opnieuw.",
+    "empty": "Geen figuur komt overeen.",
+    "pickOne": "Kies een kaart om te zien wie het was.",
+    "card": {
+      "number": "Nr. {no}",
+      "notMetYet": "nog niet ontmoet"
+    },
+    "status": {
+      "found": "Gevonden",
+      "met": "Ontmoet",
+      "locked": "Nog niet ontmoet",
+      "illuminated": "Verlucht"
+    },
+    "detail": {
+      "century": "Eeuw",
+      "metOnce": "één keer ontmoet",
+      "metTimes": "{count} keer ontmoet",
+      "foundOn": "Gevonden op {date} in {count} pogingen",
+      "notFoundYet": "nog niet gevonden",
+      "noStory": "Nog geen verhaal geschreven.",
+      "findToRead": "Vind {name} als antwoord van Shmo om te lezen wie het was.",
+      "lockedHint": "Raad {name} in Shmo om de figuur te ontmoeten. Vind die als antwoord van de dag om de kaart in te kleuren.",
+      "readMore": "Lees meer",
+      "turnOver": "Draai de kaart om",
+      "turnBack": "Terugdraaien",
+      "close": "Sluiten"
     }
   }
 }
