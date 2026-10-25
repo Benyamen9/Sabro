@@ -10219,7 +10219,8 @@
           "role",
           "region",
           "tradition",
-          "gender"
+          "gender",
+          "descriptions"
         ],
         "type": "object",
         "properties": {
@@ -10262,6 +10263,12 @@
           },
           "gender": {
             "$ref": "#/components/schemas/HistoricalFigureGender"
+          },
+          "descriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoricalFigureDescriptionDto"
+            }
           },
           "emblem": {
             "oneOf": [
@@ -12375,21 +12382,6 @@
           }
         }
       },
-      "ShmoCardDescriptionDto": {
-        "required": [
-          "language",
-          "text"
-        ],
-        "type": "object",
-        "properties": {
-          "language": {
-            "type": "string"
-          },
-          "text": {
-            "type": "string"
-          }
-        }
-      },
       "ShmoCardStatus": {
         "enum": [
           "Met",
@@ -12404,8 +12396,7 @@
           "timesMet",
           "firstFoundOn",
           "fewestAttempts",
-          "illuminated",
-          "descriptions"
+          "illuminated"
         ],
         "type": "object",
         "properties": {
@@ -12442,12 +12433,6 @@
           },
           "illuminated": {
             "type": "boolean"
-          },
-          "descriptions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ShmoCardDescriptionDto"
-            }
           }
         }
       },

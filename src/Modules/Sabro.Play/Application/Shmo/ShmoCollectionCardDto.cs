@@ -9,15 +9,10 @@ namespace Sabro.Play.Application.Shmo;
 /// <param name="FirstFoundOn">The first day the player solved it, when found.</param>
 /// <param name="FewestAttempts">The fewest guesses it took, when found.</param>
 /// <param name="Illuminated">Whether any find of this figure came out illuminated.</param>
-/// <param name="Descriptions">
-/// The figure's descriptions, only when found: finding a figure is what reveals
-/// its story. Empty for a met card, and for a found figure nobody has written yet.
-/// </param>
 public sealed record ShmoCollectionCardDto(
     Guid HistoricalFigureId,
     ShmoCardStatus Status,
     int TimesMet,
     DateOnly? FirstFoundOn,
     int? FewestAttempts,
-    bool Illuminated,
-    IReadOnlyList<ShmoCardDescriptionDto> Descriptions);
+    bool Illuminated);

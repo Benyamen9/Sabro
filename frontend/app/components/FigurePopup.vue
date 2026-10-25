@@ -12,7 +12,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { t } = useI18n()
 
 const turned = ref(false)
-const canTurn = computed(() => props.figure.tier !== 'locked')
 const closeButton = ref<HTMLButtonElement | null>(null)
 const tilt = ref('')
 
@@ -63,7 +62,7 @@ onBeforeUnmount(() => {
       <div class="lift" :style="{ transform: tilt }" @pointermove="lean" @pointerleave="tilt = ''">
         <!-- The card itself turns on a tap; the button under it does the same for
              keyboards and screen readers, so the card needs no role of its own. -->
-        <div class="flip" :class="{ turned, turnable: canTurn }" @click="canTurn && (turned = !turned)">
+        <div class="flip" :class="{ turned }" @click="turned = !turned">
           <span class="face front" :class="`frame-${figure.tier}`" :aria-hidden="turned">
             <span class="art"><FigureArt :figure="figure" :tier="figure.tier" :illuminated="figure.illuminated" /></span>
             <span class="caption">
@@ -72,14 +71,14 @@ onBeforeUnmount(() => {
               </span>
               <span class="mt-1 block font-serif text-[19px] font-semibold leading-tight">{{ figure.name }}</span>
               <span
-                v-if="figure.syriacName && figure.tier !== 'locked'"
+                v-if="figure.syriacName"
                 dir="rtl"
                 lang="syc"
                 class="mt-0.5 block text-left font-syriac text-[17px] text-[var(--color-shmo)]"
               >{{ figure.syriacName }}</span>
             </span>
           </span>
-          <div v-if="canTurn" class="face back" :class="`frame-${figure.tier}`" :aria-hidden="!turned">
+          <div class="face back" :class="`frame-${figure.tier}`" :aria-hidden="!turned">
             <div class="sheet">
               <p class="mb-2 font-serif text-[17px] font-semibold leading-tight">{{ figure.name }}</p>
               <FigureDetails :figure="figure" :show-link="false" />
@@ -90,15 +89,14 @@ onBeforeUnmount(() => {
 
       <div class="flex max-w-[300px] flex-col items-center gap-2 text-center font-sans text-[13px] leading-snug text-white/90">
         <button
-          v-if="canTurn"
           type="button"
           class="rounded-full border border-white/40 px-4 py-1.5 font-medium text-white hover:bg-white/10"
           :aria-pressed="turned"
           @click="turned = !turned"
         >{{ turned ? t('bethSalme.detail.turnBack') : t('bethSalme.detail.turnOver') }}</button>
-        <p v-else>{{ t('bethSalme.detail.lockedHint', { name: figure.name }) }}</p>
+        <p v-if="figure.tier !== 'found'">{{ t(figure.tier === 'met' ? 'bethSalme.detail.findToColour' : 'bethSalme.detail.lockedHint', { name: figure.name }) }}</p>
         <a
-          v-if="figure.tier === 'found' && figure.readMoreUrl"
+          v-if="figure.readMoreUrl"
           :href="figure.readMoreUrl"
           target="_blank"
           rel="noopener"
@@ -133,7 +131,7 @@ onBeforeUnmount(() => {
   transition: transform 0.65s cubic-bezier(0.3, 0.7, 0.3, 1);
 }
 
-.flip.turnable { cursor: pointer; }
+.flip { cursor: pointer; }
 .flip.turned { transform: rotateY(180deg); }
 
 .face {

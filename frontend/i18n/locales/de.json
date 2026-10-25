@@ -628,8 +628,8 @@
       "deleteFailed": "Die Gestalt konnte nicht gelöscht werden.",
       "actionFailed": "Diese Aktion konnte nicht ausgeführt werden.",
       "deleteConfirm": "Diese Gestalt löschen? Das lässt sich nicht rückgängig machen.",
-      "eraBc": "{century}. Jh. v. Chr.",
-      "eraAd": "{century}. Jh. n. Chr.",
+      "eraBc": "{ordinal} Jh. v. Chr.",
+      "eraAd": "{ordinal} Jh. n. Chr.",
       "columns": {
         "name": "Name",
         "category": "Kategorie",
@@ -1332,12 +1332,13 @@
       "foundOn": "Gefunden am {date} mit {count} Versuchen",
       "notFoundYet": "noch nicht gefunden",
       "noStory": "Noch keine Geschichte geschrieben.",
-      "findToRead": "Finde {name} als Antwort von Shmo, um zu lesen, wer es war.",
       "lockedHint": "Rate {name} in Shmo, um der Gestalt zu begegnen. Finde sie als Antwort des Tages, um die Karte einzufärben.",
       "readMore": "Mehr lesen",
       "turnOver": "Karte umdrehen",
       "turnBack": "Zurückdrehen",
-      "close": "Schließen"
+      "close": "Schließen",
+      "notMetYet": "In Shmo noch nicht begegnet",
+      "findToColour": "Finde {name} als Antwort von Shmo, um die Karte einzufärben."
     }
   }
 }

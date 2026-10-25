@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Sabro.Historical.Domain;
-using Sabro.Historical.Public;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Application.Shmo;
 using Sabro.Play.Domain;
@@ -78,7 +77,7 @@ public class ShmoCollectionServiceTests
     }
 
     [Fact]
-    public async Task GetForUser_FoundCardCarriesTheStoryAndMetCardDoesNot()
+    public async Task GetForUser_MeetsTheGuessesAndFindsTheAnswer()
     {
         var ct = TestContext.Current.CancellationToken;
         var found = await SeedFigureAsync("Deacon of Nisibis and Edessa.", ct);
@@ -93,8 +92,7 @@ public class ShmoCollectionServiceTests
         }
 
         await using var read = fixture.CreatePlayContext();
-        await using var historical = fixture.CreateHistoricalContext();
-        var collection = await new ShmoCollectionService(read, new HistoricalFigureDescriptions(historical))
+        var collection = await new ShmoCollectionService(read)
             .GetForUserAsync(user, ct);
 
         collection.IsSuccess.Should().BeTrue();
@@ -105,11 +103,10 @@ public class ShmoCollectionServiceTests
         foundCard.Status.Should().Be(ShmoCardStatus.Found);
         foundCard.FirstFoundOn.Should().Be(day);
         foundCard.FewestAttempts.Should().Be(2);
-        foundCard.Descriptions.Should().ContainSingle().Which.Text.Should().Be("Deacon of Nisibis and Edessa.");
 
         var metCard = cards.Single(c => c.HistoricalFigureId == met);
         metCard.Status.Should().Be(ShmoCardStatus.Met);
-        metCard.Descriptions.Should().BeEmpty();
+        metCard.FirstFoundOn.Should().BeNull();
     }
 
     [Fact]
@@ -125,8 +122,7 @@ public class ShmoCollectionServiceTests
         }
 
         await using var read = fixture.CreatePlayContext();
-        await using var historical = fixture.CreateHistoricalContext();
-        var collection = await new ShmoCollectionService(read, new HistoricalFigureDescriptions(historical))
+        var collection = await new ShmoCollectionService(read)
             .GetForUserAsync(NewUser(), ct);
 
         collection.Value!.Cards.Should().BeEmpty();

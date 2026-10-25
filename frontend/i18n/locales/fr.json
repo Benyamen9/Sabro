@@ -628,8 +628,8 @@
       "deleteFailed": "La figure n’a pas pu être supprimée.",
       "actionFailed": "Cette action n’a pas pu être effectuée.",
       "deleteConfirm": "Supprimer cette figure ? Cette action est irréversible.",
-      "eraBc": "{century}e s. av. J.-C.",
-      "eraAd": "{century}e s. apr. J.-C.",
+      "eraBc": "{ordinal} s. av. J.-C.",
+      "eraAd": "{ordinal} s. apr. J.-C.",
       "columns": {
         "name": "Nom",
         "category": "Catégorie",
@@ -1332,12 +1332,13 @@
       "foundOn": "Trouvée le {date} en {count} essais",
       "notFoundYet": "pas encore trouvée",
       "noStory": "Pas encore d’histoire écrite.",
-      "findToRead": "Trouvez {name} comme réponse de Shmo pour lire son histoire.",
       "lockedHint": "Devinez {name} dans Shmo pour la rencontrer. Trouvez-la comme réponse du jour pour colorer la carte.",
       "readMore": "En savoir plus",
       "turnOver": "Retourner la carte",
       "turnBack": "La remettre à l’endroit",
-      "close": "Fermer"
+      "close": "Fermer",
+      "notMetYet": "Pas encore rencontrée dans Shmo",
+      "findToColour": "Trouvez {name} comme réponse de Shmo pour colorer la carte."
     }
   }
 }
