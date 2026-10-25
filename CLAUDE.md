@@ -16,7 +16,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 2. ✅ **Meltho** launched against that API, then **Mno**, **Shmo** and **Nahlo** followed on the same foundation — the multi-game model held, with no rework.
 3. **Translations and Biblical remain deferred** — fully specified below, but not on any current critical path. No game depends on translated content. **Reviews is partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
-**Current state.** Five games are deployed behind Caddy and watched by UptimeRobot. The four puzzle games are in the daily circuit; **Sofro went live on 2026-10-15** as free practice and stays out of it. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day. On 2026-10-15 the Owner recorded three more melody groups, each in all eight modes — *Hablo l'itokh*, *Mo rhimin* and *More dramsho* — not yet uploaded through `/admin/chants`.
+**Current state.** Five games are deployed behind Caddy and watched by UptimeRobot. The four puzzle games are in the daily circuit; **Sofro went live on 2026-10-15** as free practice and stays out of it. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day. On 2026-10-15 the Owner recorded three more melody groups, each in all eight modes — *Hablo l'itokh*, *Mo rhimin* and *More dramsho* — and the same day all 24 were uploaded, published and made playable, so Nahlo's pool is now **32 chants**. Their incipits are not read from the book yet, which is why the incipit became optional (#300; see *BethGazo*).
 
 **Hub philosophy — wide model, narrow surface.** The data foundation was built to see far (multi-game results, profile, cross-project shape) while the launch UI stayed lean. That bet paid: three further games landed on the same `GameResult` shape without a migration. Keep new surfaces additive for the same reason.
 
@@ -230,7 +230,7 @@ Three of the four draw from a curated pool and exclude anything served inside th
 |---|---|---|---|
 | Meltho | `Meltho:AntiRepetitionWindowDays` | 30 | Pool grown past launch size |
 | Shmo | `Shmo:AntiRepetitionWindowDays` | 30 | Same |
-| Nahlo | `Nahlo:AntiRepetitionWindowDays` | **4** | The treasury opened with one melody group of eight chants — 7 against 8 would leave one candidate a day |
+| Nahlo | `Nahlo:AntiRepetitionWindowDays` | **4** | The treasury opened with one melody group of eight chants — 7 against 8 would leave one candidate a day. The pool is 32 since 2026-10-15; raising the window (14 or 21) awaits an Owner decision |
 | Mno | *(none)* | — | Generated, not drawn from a pool |
 
 Start a window low so a small pool never starves, and raise it as the pool grows — but keep it well under the pool size: a window at or above the pool answers 409 the day one item drops out. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
@@ -258,6 +258,8 @@ Owns the **Beth Gazo** — the treasury of chants — and is the content behind 
 **`ChantVariantKind` distinguishes two things the book prints.** A **shuḥlofo** is a variation *of the melody itself* — the same qolo sung another way. A **ḥrino** (ܐܚܪܢܐ, "another"; pl. *ḥrone*) is simply another chant standing in the same mode, not a variant of anything. They must be told apart or a *shuḥlofo 1* and a *ḥrino 1* under one melody and mode collide on the same four values, making the second unsaveable. A string-converted enum, per the house rule.
 
 Recordings are uploaded through the backoffice and stored via `IChantAudioStorage` (`FileSystemChantAudioStorage` at this scale). Lifecycle mirrors the Lexicon: `Draft` → `Published` + a manual `PlayableInNahlo` flag.
+
+**The recording is the publish gate; the incipit is optional** (since 2026-10-15, #300). The Owner recorded 24 chants before their incipits were read from the book, so a chant can be saved and published from its recording alone and the incipit added later from the backoffice. A vocalized incipit still requires the plain one. Nahlo receives a `null` incipit and simply offers no reading hint for that chant.
 
 ### Translations
 **Status: deferred. Spec retained, not built first.**
@@ -369,13 +371,24 @@ Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-con
 hub's page links (Library, Backoffice) live **inside the launcher panel**, under the apps (Owner,
 2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
 
-**The hub's home page** presents the five apps as a **self-dealing deck** (`GameDeck.vue`, Owner,
-2026-10-15, chosen after many rejected redesigns — keep the rest of the page as it is): every **2 s**
-the top card tucks in behind the others, and the rest of the section follows the game on top
-(label, name, description, little board, button) on a tint of its colour. Arrows sit on the
-**section's** edges, never on the cards. It **pauses on hover and focus** (so a click never lands on a
-card that just moved) and **never deals by itself under reduced motion** — which is also how the e2e
-tests hold it still. It opens on the next unplayed game; Sofro shows "Any time", never played/new.
+**The hub's home page** (reworked by the Owner on 2026-10-23 for practicality; the look of
+2026-10-15 stays) has two parts under the hero:
+
+- **"Today"** (`TodayCircuit.vue`) — one line with the next unplayed game and its button; under it a
+  square per daily game (done ✓ / next / waiting, each a link), "n of 4", then **Sofro after a thin
+  line** as a solid square, "any time". Once all four are played the line offers Sofro ("Keep going:
+  write by hand"), a countdown to the next puzzles (midnight UTC, client-only), and for a signed-in
+  player a **streak: days in a row all four were _solved_** (not just played), shown from day 1
+  (`computeCircuitStreak` in `usePlayStats.ts`). Side by side on a wide screen. It replaced the hero's
+  single button. On phones the hero's four letter tiles shrink to one line so "Today" is on the first
+  screen.
+- **"Meet the games"** — the five apps as a deck (`GameDeck.vue`). It **never moves by itself** (the
+  2 s self-deal was too fast to read and moved under clicks). Touch screens **swipe** the top card
+  (left = next, right = back) with a hint under the deck; a mouse gets **‹ › under the deck** instead,
+  chosen by `(pointer: coarse)` / `(hover: hover) and (pointer: fine)`, never by width. Game badges
+  between them jump to a game. Each card carries its game's little board; **Mno's is drawn the way Mno
+  draws a guess** — five equal tiles, signs included, each green / amber / grey. It opens on the next
+  unplayed game; Sofro shows "Any time", never played/new.
 
 ## Backoffice (Editorial Admin)
 
@@ -391,7 +404,7 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 |---|---|---|
 | `/admin/lexicon` | Meltho | Unvocalized + optional vocalized Syriac (NFC on input), optional SBL transliteration, a gloss per configured language. Publish gated on a gloss in **every** configured language; computed playable length shown read-only |
 | `/admin/historical-figures` | Shmo | The scoreable attributes; `PlayableInShmo` |
-| `/admin/chants` | Nahlo | Melody, section, mode, variant + **recording upload**; `PlayableInNahlo`. `/admin/chants/sections` edits the sections and their allowed modes |
+| `/admin/chants` | Nahlo | Melody, section, mode, variant, optional incipit + **recording upload**; `PlayableInNahlo`. `/admin/chants/sections` edits the sections and their allowed modes |
 | `/admin/proposals` | — | Field proposals from area reviewers; the Owner accepts (applying the change) or rejects |
 | `/admin/people` | — | Area grants; owner changes require a confirmation step |
 

@@ -13,7 +13,27 @@
     "nameGloss": "sabro — Syriac for “hope”",
     "playedToday": "Played today",
     "lede": "Sabro means hope — and that's the project: a living home for the Syriac language. Learn it by playing — four free daily games, {meltho}, {mno}, {shmo} and {nahlo}, and {sofro} to write it by hand — and keep every word they teach.",
-    "liveNow": "Live now",
+    "meetTheGames": "Meet the games",
+    "today": {
+      "heading": "Today",
+      "upNext": "Up next · today",
+      "upNextShort": "Up next",
+      "done": "Done",
+      "progress": "{done} of {total}",
+      "anyTime": "any time",
+      "task": {
+        "meltho": "today’s word",
+        "mno": "today’s equation",
+        "shmo": "today’s figure",
+        "nahlo": "today’s chant"
+      },
+      "allDone": "All four done today",
+      "allDoneShort": "All done",
+      "streak": "{days} day | {days} days",
+      "keepGoing": "Keep going: write by hand",
+      "newPuzzlesIn": "New puzzles in {time}",
+      "hoursMinutes": "{h} h {m} min"
+    },
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
@@ -73,7 +93,8 @@
       "melody": "Melody",
       "mode": "Mode",
       "shuhlofo": "Shuḥlofo",
-      "no": "No"
+      "no": "No",
+      "swipeHint": "Swipe the card to see the next game"
     }
   },
   "nav": {

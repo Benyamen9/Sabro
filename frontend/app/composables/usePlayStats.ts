@@ -132,6 +132,37 @@ export function computeGameStats(
 }
 
 /**
+ * The daily-circuit streak: how many days in a row, ending on `today`, the
+ * player solved every one of `games` (owner, 2026-10-23: solved, not merely
+ * played). 0 when today itself is not complete, so the count never shows a
+ * streak the player has already broken or not yet earned. Dates are the UTC
+ * puzzle dates the results are keyed by.
+ */
+export function computeCircuitStreak(
+  results: GameResultDto[],
+  games: readonly string[],
+  today: string,
+): number {
+  const solvedByDay = new Map<string, Set<string>>()
+  for (const r of results) {
+    if (!r.solved || !games.includes(r.gameId)) continue
+    const day = solvedByDay.get(r.playedOn) ?? new Set<string>()
+    day.add(r.gameId)
+    solvedByDay.set(r.playedOn, day)
+  }
+
+  let streak = 0
+  let day = today
+  while ((solvedByDay.get(day)?.size ?? 0) === games.length) {
+    streak += 1
+    const previous = new Date(`${day}T00:00:00Z`)
+    previous.setUTCDate(previous.getUTCDate() - 1)
+    day = previous.toISOString().slice(0, 10)
+  }
+  return streak
+}
+
+/**
  * Loads the signed-in player's play stats, derived client-side from
  * /play/results/me (Sabro stores raw results; streaks and aggregates are not
  * persisted). One fetch serves every game: results are kept raw and each
@@ -178,5 +209,10 @@ export function usePlayStats() {
     }
   }
 
-  return { melthoStats, mnoStats, shmoStats, loading, loaded, load }
+  /** Days in a row all of `games` were solved, ending today; null until loaded. */
+  function circuitStreak(games: readonly string[], today: string) {
+    return results.value ? computeCircuitStreak(results.value, games, today) : null
+  }
+
+  return { melthoStats, mnoStats, shmoStats, loading, loaded, load, circuitStreak }
 }
