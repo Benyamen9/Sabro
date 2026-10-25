@@ -4388,6 +4388,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/play/shmo/collection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ShmoCollectionDto"];
+                        "application/json": components["schemas"]["ShmoCollectionDto"];
+                        "text/json": components["schemas"]["ShmoCollectionDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/play/results/me": {
         parameters: {
             query?: never;
@@ -6414,6 +6451,28 @@ export interface components {
         };
         SetPlayableLexiconEntryRequest: {
             playable: boolean;
+        };
+        ShmoCardDescriptionDto: {
+            language: string;
+            text: string;
+        };
+        /** @enum {string} */
+        ShmoCardStatus: "Met" | "Found";
+        ShmoCollectionCardDto: {
+            /** Format: uuid */
+            historicalFigureId: string;
+            status: components["schemas"]["ShmoCardStatus"];
+            /** Format: int32 */
+            timesMet: number | string;
+            /** Format: date */
+            firstFoundOn: null | string;
+            /** Format: int32 */
+            fewestAttempts: null | number | string;
+            illuminated: boolean;
+            descriptions: components["schemas"]["ShmoCardDescriptionDto"][];
+        };
+        ShmoCollectionDto: {
+            cards: components["schemas"]["ShmoCollectionCardDto"][];
         };
         ShmoPuzzleDto: {
             /** Format: date */

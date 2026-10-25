@@ -28,6 +28,7 @@ public sealed class PlayController : ApiControllerBase
     private readonly IMnoPuzzleService mnoPuzzleService;
     private readonly IShmoPuzzleService shmoPuzzleService;
     private readonly INahloPuzzleService nahloPuzzleService;
+    private readonly IShmoCollectionService shmoCollectionService;
 
     public PlayController(
         IMelthoPuzzleService melthoPuzzleService,
@@ -36,7 +37,8 @@ public sealed class PlayController : ApiControllerBase
         IMelthoLeaderboardService melthoLeaderboardService,
         IMnoPuzzleService mnoPuzzleService,
         IShmoPuzzleService shmoPuzzleService,
-        INahloPuzzleService nahloPuzzleService)
+        INahloPuzzleService nahloPuzzleService,
+        IShmoCollectionService shmoCollectionService)
     {
         this.melthoPuzzleService = melthoPuzzleService;
         this.melthoLibraryService = melthoLibraryService;
@@ -45,6 +47,7 @@ public sealed class PlayController : ApiControllerBase
         this.mnoPuzzleService = mnoPuzzleService;
         this.shmoPuzzleService = shmoPuzzleService;
         this.nahloPuzzleService = nahloPuzzleService;
+        this.shmoCollectionService = shmoCollectionService;
     }
 
     /// <summary>
@@ -248,6 +251,31 @@ public sealed class PlayController : ApiControllerBase
         }
 
         var result = await melthoLeaderboardService.GetAsync(logtoUserIdResult.Value!, cancellationToken);
+        if (!result.IsSuccess)
+        {
+            return FromError(result.Error!);
+        }
+
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Returns the signed-in player's figure collection (Beth Ṣalme in the hub): every
+    /// figure they have met or found in Shmo, worked out from their recorded results.
+    /// A found card carries the figure's descriptions, which nothing public serves.
+    /// </summary>
+    [HttpGet("shmo/collection")]
+    [Authorize(Policy = AuthPolicies.Write)]
+    [ProducesResponseType(typeof(ShmoCollectionDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ShmoCollectionDto>> GetMyShmoCollection(CancellationToken cancellationToken)
+    {
+        var logtoUserIdResult = ResolveLogtoUserId();
+        if (!logtoUserIdResult.IsSuccess)
+        {
+            return FromError(logtoUserIdResult.Error!);
+        }
+
+        var result = await shmoCollectionService.GetForUserAsync(logtoUserIdResult.Value!, cancellationToken);
         if (!result.IsSuccess)
         {
             return FromError(result.Error!);

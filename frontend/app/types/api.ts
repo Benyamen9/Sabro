@@ -91,6 +91,9 @@ export type HistoricalFigureListItem = Schemas['HistoricalFigureListItem']
 export type CreateHistoricalFigureRequest = Schemas['CreateHistoricalFigureRequest']
 export type UpdateHistoricalFigureRequest = Schemas['UpdateHistoricalFigureRequest']
 export type SetPlayableHistoricalFigureRequest = Schemas['SetPlayableHistoricalFigureRequest']
+export type ShmoCollectionDto = Schemas['ShmoCollectionDto']
+export type ShmoCollectionCardDto = Schemas['ShmoCollectionCardDto']
+export type ShmoCardStatus = Schemas['ShmoCardStatus']
 
 // Beth Gazo (the Nahlo chant treasury).
 export type ChantStatus = Schemas['ChantStatus']
