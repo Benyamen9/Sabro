@@ -369,13 +369,24 @@ Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-con
 hub's page links (Library, Backoffice) live **inside the launcher panel**, under the apps (Owner,
 2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
 
-**The hub's home page** presents the five apps as a **self-dealing deck** (`GameDeck.vue`, Owner,
-2026-10-15, chosen after many rejected redesigns — keep the rest of the page as it is): every **2 s**
-the top card tucks in behind the others, and the rest of the section follows the game on top
-(label, name, description, little board, button) on a tint of its colour. Arrows sit on the
-**section's** edges, never on the cards. It **pauses on hover and focus** (so a click never lands on a
-card that just moved) and **never deals by itself under reduced motion** — which is also how the e2e
-tests hold it still. It opens on the next unplayed game; Sofro shows "Any time", never played/new.
+**The hub's home page** (reworked by the Owner on 2026-10-23 for practicality; the look of
+2026-10-15 stays) has two parts under the hero:
+
+- **"Today"** (`TodayCircuit.vue`) — one line with the next unplayed game and its button; under it a
+  square per daily game (done ✓ / next / waiting, each a link), "n of 4", then **Sofro after a thin
+  line** as a solid square, "any time". Once all four are played the line offers Sofro ("Keep going:
+  write by hand"), a countdown to the next puzzles (midnight UTC, client-only), and for a signed-in
+  player a **streak: days in a row all four were _solved_** (not just played), shown from day 1
+  (`computeCircuitStreak` in `usePlayStats.ts`). Side by side on a wide screen. It replaced the hero's
+  single button. On phones the hero's four letter tiles shrink to one line so "Today" is on the first
+  screen.
+- **"Meet the games"** — the five apps as a deck (`GameDeck.vue`). It **never moves by itself** (the
+  2 s self-deal was too fast to read and moved under clicks). Touch screens **swipe** the top card
+  (left = next, right = back) with a hint under the deck; a mouse gets **‹ › under the deck** instead,
+  chosen by `(pointer: coarse)` / `(hover: hover) and (pointer: fine)`, never by width. Game badges
+  between them jump to a game. Each card carries its game's little board; **Mno's is drawn the way Mno
+  draws a guess** — five equal tiles, signs included, each green / amber / grey. It opens on the next
+  unplayed game; Sofro shows "Any time", never played/new.
 
 ## Backoffice (Editorial Admin)
 
