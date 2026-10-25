@@ -13,7 +13,27 @@
     "nameGloss": "sabro — Syrisch voor „hoop”",
     "playedToday": "Vandaag gespeeld",
     "lede": "Sabro betekent hoop — en dat is het project: een levend thuis voor de Syrische taal. Leer haar door te spelen — vier gratis dagelijkse spellen, {meltho}, {mno}, {shmo} en {nahlo}, en {sofro} om haar met de hand te schrijven — en bewaar elk woord dat ze leren.",
-    "liveNow": "Live",
+    "meetTheGames": "Maak kennis met de spellen",
+    "today": {
+      "heading": "Vandaag",
+      "upNext": "Hierna · vandaag",
+      "upNextShort": "Hierna",
+      "done": "Gespeeld",
+      "progress": "{done} van {total}",
+      "anyTime": "altijd",
+      "task": {
+        "meltho": "het woord van vandaag",
+        "mno": "de vergelijking van vandaag",
+        "shmo": "de figuur van vandaag",
+        "nahlo": "de zang van vandaag"
+      },
+      "allDone": "Alle vier gespeeld vandaag",
+      "allDoneShort": "Alles gespeeld",
+      "streak": "{days} dag | {days} dagen",
+      "keepGoing": "Ga door: schrijf met de hand",
+      "newPuzzlesIn": "Nieuwe puzzels over {time}",
+      "hoursMinutes": "{h} u {m} min"
+    },
     "meltho": {
       "heading": "Meltho",
       "live": "Live",
@@ -73,7 +93,8 @@
       "melody": "Melodie",
       "mode": "Modus",
       "shuhlofo": "Shuḥlofo",
-      "no": "Nee"
+      "no": "Nee",
+      "swipeHint": "Veeg de kaart opzij voor het volgende spel"
     }
   },
   "nav": {
