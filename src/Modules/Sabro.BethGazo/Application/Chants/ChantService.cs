@@ -324,22 +324,21 @@ internal sealed class ChantService : IChantService
     }
 
     public async Task<IReadOnlyList<BethGazoModeDto>> ListModesAsync(CancellationToken cancellationToken) =>
-        await dbContext.Modes
+        (await dbContext.Modes
             .AsNoTracking()
             .OrderBy(m => m.Position)
-            .Select(m => new BethGazoModeDto(m.Id, m.Name, m.Position))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken))
+            .Select(BethGazoMapping.ToDto)
+            .ToList();
 
     public async Task<IReadOnlyList<BethGazoSectionDto>> ListSectionsAsync(CancellationToken cancellationToken) =>
-        await dbContext.Sections
+        (await dbContext.Sections
             .AsNoTracking()
+            .Include(s => s.AllowedModes)
             .OrderBy(s => s.Position)
-            .Select(s => new BethGazoSectionDto(
-                s.Id,
-                s.Name,
-                s.Position,
-                s.AllowedModes.Select(m => m.ModeId).ToList()))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken))
+            .Select(BethGazoMapping.ToDto)
+            .ToList();
 
     /// <summary>
     /// Loads the section <b>with its allowed modes</b>, which is the whole point:

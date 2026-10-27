@@ -44,6 +44,11 @@ namespace Sabro.BethGazo.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("position");
 
+                    b.Property<string>("SyriacName")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("syriac_name");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -156,6 +161,11 @@ namespace Sabro.BethGazo.Migrations
                     b.Property<int>("Position")
                         .HasColumnType("integer")
                         .HasColumnName("position");
+
+                    b.Property<string>("SyriacName")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("syriac_name");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -736,6 +746,70 @@ namespace Sabro.BethGazo.Migrations
                     NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("Transliteration", "SectionId", "ModeId", "VariantKind", "VariantNumber"), false);
 
                     b.ToTable("chants", "beth_gazo");
+                });
+
+            modelBuilder.Entity("Sabro.BethGazo.Domain.BethGazoMode", b =>
+                {
+                    b.OwnsMany("Sabro.BethGazo.Domain.BethGazoDescription", "descriptions", b1 =>
+                        {
+                            b1.Property<Guid>("BethGazoModeId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("beth_gazo_mode_id");
+
+                            b1.Property<string>("Language")
+                                .HasMaxLength(8)
+                                .HasColumnType("character varying(8)")
+                                .HasColumnName("language");
+
+                            b1.Property<string>("Text")
+                                .IsRequired()
+                                .HasMaxLength(300)
+                                .HasColumnType("character varying(300)")
+                                .HasColumnName("text");
+
+                            b1.HasKey("BethGazoModeId", "Language")
+                                .HasName("pk_beth_gazo_mode_descriptions");
+
+                            b1.ToTable("beth_gazo_mode_descriptions", "beth_gazo");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BethGazoModeId")
+                                .HasConstraintName("fk_beth_gazo_mode_descriptions_beth_gazo_modes_beth_gazo_mode_~");
+                        });
+
+                    b.Navigation("descriptions");
+                });
+
+            modelBuilder.Entity("Sabro.BethGazo.Domain.BethGazoSection", b =>
+                {
+                    b.OwnsMany("Sabro.BethGazo.Domain.BethGazoDescription", "descriptions", b1 =>
+                        {
+                            b1.Property<Guid>("BethGazoSectionId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("beth_gazo_section_id");
+
+                            b1.Property<string>("Language")
+                                .HasMaxLength(8)
+                                .HasColumnType("character varying(8)")
+                                .HasColumnName("language");
+
+                            b1.Property<string>("Text")
+                                .IsRequired()
+                                .HasMaxLength(300)
+                                .HasColumnType("character varying(300)")
+                                .HasColumnName("text");
+
+                            b1.HasKey("BethGazoSectionId", "Language")
+                                .HasName("pk_beth_gazo_section_descriptions");
+
+                            b1.ToTable("beth_gazo_section_descriptions", "beth_gazo");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BethGazoSectionId")
+                                .HasConstraintName("fk_beth_gazo_section_descriptions_beth_gazo_sections_beth_gazo~");
+                        });
+
+                    b.Navigation("descriptions");
                 });
 
             modelBuilder.Entity("Sabro.BethGazo.Domain.BethGazoSectionMode", b =>

@@ -261,6 +261,10 @@ Owns the **Beth Gazo** — the treasury of chants — and is the content behind 
 
 Recordings are uploaded through the backoffice and stored via `IChantAudioStorage` (`FileSystemChantAudioStorage` at this scale). Lifecycle mirrors the Lexicon: `Draft` → `Published` + a manual `PlayableInNahlo` flag.
 
+**Section and mode text (2026-10-27).** Each section and mode may carry a `SyriacName` and one line per
+content language (`BethGazoDescription`, held by `BethGazoText`), both optional and edited in
+`/admin/chants/sections`. They are for the hub's Beth Gazo page; Nahlo's answer options leave them null.
+
 **The recording is the publish gate; the incipit is optional** (since 2026-10-15, #300). The Owner recorded 24 chants before their incipits were read from the book, so a chant can be saved and published from its recording alone and the incipit added later from the backoffice. A vocalized incipit still requires the plain one. Nahlo receives a `null` incipit and simply offers no reading hint for that chant.
 
 ### Translations
@@ -371,7 +375,7 @@ the "Sabro" pill in the games and the row of game pills in the hub, so every hea
 every width**. Six copies of the list exist — hub, Meltho, Mno, Shmo, Nahlo, Sofro — each **listing
 itself first, marked as here**, then the others in launch order (Sabro, Meltho, Mno, Shmo, Nahlo,
 Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-config key. On phones the
-hub's page links (Library, Beth Ṣalme, Backoffice) live **inside the launcher panel**, under the apps (Owner,
+hub's page links (Library, Beth Gazo, Beth Ṣalme, Backoffice) live **inside the launcher panel**, under the apps (Owner,
 2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
 
 **Beth Ṣalme** (ܒܝܬ ܨܠܡ̈ܐ, "house of images", `/beth-salme`; Owner, 2026-10-25) is the hub's figure page: a
@@ -385,6 +389,20 @@ typed so a new value fails the typecheck until drawn). On a computer the figure'
 collection; on a phone the card lifts out and turns over. Signed out, every card is dark with a sign-in
 line. Each "library" keeps its own style: collecting belongs to Beth Ṣalme alone, never to Beth Gazo.
 **Rarity is parked** (Owner): the one ruling so far is that the great names should be the rare cards.
+
+**Beth Gazo** (ܒܝܬ ܓܙܐ, `/beth-gazo`; Owner, 2026-10-25, layout 2026-10-27) is the hub's chant page: the
+treasury as an **open book**, fed by `GET /chants/book`. **One view, no tabs, closed chapters:** the sections in
+the book's order (numbered, red initials, each with its optional Syriac name and line) open one by one, so a
+full book stays short. Inside, **each melody is one line** with a numbered button per mode (a dot marks a mode
+that also has a shuḥlofo or ḥrino); tapping the melody's name **unfolds** it into its chants, one per line,
+with mode, variant and **incipit**. A section without modes (the madroshe) lists its chants by incipit straight
+away, since nothing else tells them apart (Owner). A search (melody or incipit; an incipit match unfolds the
+melody) or a **mode pill** opens the sections with a match and shows the mode's card. The modes every moded
+section admits are numbered; one only some admit (the mshaḥelfotho) is marked ✶, derived from the section
+rows like Nahlo's conditional modes, never from a count. **One player bar** at the bottom (`BethGazoPlayer`).
+**The ribbon** (Owner, 2026-10-27) remembers the last chant played, in `localStorage` on that device only,
+and the page reopens there with a "where you left off" line. No collecting, unlocking or illumination here.
+Every published chant **with a recording** is listed; nothing is held back for the day's Nahlo.
 
 **The hub's home page** (reworked by the Owner on 2026-10-23 for practicality; the look of
 2026-10-15 stays) has two parts under the hero:
@@ -419,7 +437,7 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 |---|---|---|
 | `/admin/lexicon` | Meltho | Unvocalized + optional vocalized Syriac (NFC on input), optional SBL transliteration, a gloss per configured language. Publish gated on a gloss in **every** configured language; computed playable length shown read-only |
 | `/admin/historical-figures` | Shmo | The scoreable attributes; `PlayableInShmo` |
-| `/admin/chants` | Nahlo | Melody, section, mode, variant, optional incipit + **recording upload**; `PlayableInNahlo`. `/admin/chants/sections` edits the sections and their allowed modes |
+| `/admin/chants` | Nahlo | Melody, section, mode, variant, optional incipit + **recording upload**; `PlayableInNahlo`. `/admin/chants/sections` edits the sections and their allowed modes, and each section's and mode's Syriac name and line |
 | `/admin/proposals` | — | Field proposals from area reviewers; the Owner accepts (applying the change) or rejects |
 | `/admin/people` | — | Area grants; owner changes require a confirmation step |
 
@@ -492,8 +510,9 @@ else's flood.
 - `GET /api/v1/play/nahlo/today` — **answers `409` when no chant is eligible** (empty pool, or one too small for the window). That is a normal state, not an error: clients render it as "no chant today".
 
 **Client support reads:**
-- `GET /api/v1/chants/answer-options` — Nahlo's suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
+- `GET /api/v1/chants/answer-options` — Nahlo's suggestion lists. **They are unjoined**, so Nahlo's own form never hands over the mode: the audio already names the melody to anyone who recognises it.
   **One owner-ruled exception (2026-10-12):** `conditionalModeIds` + `melodyModeHints`. A *conditional* mode is one some moded section does not admit — today only the mshaḥelfotho (farde-only), derived from the section rows, never named. The form offers it (unnumbered) only once the player names a melody with a published chant in it, and a melody with no mode at all (a madrosho) hides the mode question. The always-offered modes are never paired with a melody. The same day the **section stopped being asked** in Nahlo: the round scores melody, mode and shuḥlofo.
+- `GET /api/v1/chants/book` — the whole Beth Gazo for the hub's book page: every section in order with its published, recorded chants grouped by melody (mode, variant, incipit, recording), and every mode, each with its text. **This one is joined, on purpose (Owner, 2026-10-25):** the treasury is open to anyone who wants to learn or listen, and the Owner accepts that today's Nahlo can be looked up in it. It supersedes the old rule that no public payload may pair a melody with its mode; only the answer options above stay unjoined. Do **not** hide just today's chant from it: the gap would name the answer by elimination.
 - `GET /api/v1/historical-figures` — Shmo's published roster (with each figure's descriptions and card fields, for Beth Ṣalme), fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
 - `GET /api/v1/play/meltho/library` — past Meltho words, public and anonymous. Today's word is never included.
 - `GET /api/v1/play/meltho/leaderboard` (`api:v1:write`) — signed-in only, ranked by longest streak; appearing requires an opt-in on the profile, the caller's own standing is always shown.

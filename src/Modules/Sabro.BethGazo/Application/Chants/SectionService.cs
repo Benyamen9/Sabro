@@ -41,6 +41,12 @@ internal sealed class SectionService : ISectionService
         }
 
         var section = created.Value!;
+        var described = Describe(section, request.SyriacName, request.Descriptions);
+        if (described is not null)
+        {
+            return Result<BethGazoSectionDto>.Failure(described);
+        }
+
         var allowedError = section.SetAllowedModes(request.AllowedModeIds);
         if (allowedError is not null)
         {
@@ -103,6 +109,12 @@ internal sealed class SectionService : ISectionService
         if (renameError is not null)
         {
             return Result<BethGazoSectionDto>.Failure(renameError);
+        }
+
+        var described = Describe(section, request.SyriacName, request.Descriptions);
+        if (described is not null)
+        {
+            return Result<BethGazoSectionDto>.Failure(described);
         }
 
         var allowedError = section.SetAllowedModes(request.AllowedModeIds);
@@ -190,6 +202,13 @@ internal sealed class SectionService : ISectionService
         return null;
     }
 
+    /// <summary>Applies the Syriac name and descriptions a request carries.</summary>
+    private static Error? Describe(BethGazoSection section, string? syriacName, IReadOnlyList<BethGazoDescriptionRequest>? descriptions)
+    {
+        var built = BethGazoMapping.ToDescriptions(descriptions);
+        return built.IsSuccess ? section.Describe(syriacName, built.Value) : built.Error;
+    }
+
     private async Task<Error?> CheckModesExistAsync(
         IReadOnlyList<Guid> modeIds,
         CancellationToken cancellationToken)
@@ -230,18 +249,13 @@ internal sealed class SectionService : ISectionService
 
     private async Task<Result<BethGazoSectionDto>> ProjectAsync(Guid id, CancellationToken cancellationToken)
     {
-        var dto = await dbContext.Sections
+        var section = await dbContext.Sections
             .AsNoTracking()
-            .Where(s => s.Id == id)
-            .Select(s => new BethGazoSectionDto(
-                s.Id,
-                s.Name,
-                s.Position,
-                s.AllowedModes.Select(m => m.ModeId).ToList()))
-            .FirstOrDefaultAsync(cancellationToken);
+            .Include(s => s.AllowedModes)
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 
-        return dto is null
+        return section is null
             ? Result<BethGazoSectionDto>.Failure(Error.NotFound("Section not found."))
-            : Result<BethGazoSectionDto>.Success(dto);
+            : Result<BethGazoSectionDto>.Success(BethGazoMapping.ToDto(section));
     }
 }

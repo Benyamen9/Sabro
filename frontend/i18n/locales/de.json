@@ -103,7 +103,8 @@
     "translations": "Übersetzungen",
     "library": "Bibliothek",
     "admin": "Backoffice",
-    "bethSalme": "Beth Ṣalme"
+    "bethSalme": "Beth Ṣalme",
+    "bethGazo": "Beth Gazo"
   },
   "switcher": {
     "languageLabel": "Sprache",
@@ -1192,13 +1193,17 @@
       "confirmRemove": "Wirklich entfernen",
       "moveUp": "Nach oben",
       "moveDown": "Nach unten",
-      "saveFailed": "Diese Änderung wurde abgelehnt."
+      "saveFailed": "Diese Änderung wurde abgelehnt.",
+      "bookText": "Text in Beth Gazo",
+      "syriacName": "Syrischer Name",
+      "bookTextHint": "Optional. Eine Zeile dazu, was dieser Abschnitt ist und wann er gesungen wird; leere Felder werden nicht gezeigt."
     },
     "chantModes": {
       "title": "Modi",
       "description": "Die Modi, in denen Gesänge gesungen werden. Die Menge wächst — nichts nimmt an, dass sie bei acht endet. Ein Modus kann nicht entfernt werden, solange ein Gesang ihn trägt oder ein Abschnitt ihn zulässt.",
       "add": "Modus hinzufügen",
-      "namePlaceholder": "Name des Modus"
+      "namePlaceholder": "Name des Modus",
+      "bookTextHint": "Optional. Eine Zeile zum Charakter des Modus und wie man ihn erkennt; leere Felder werden nicht gezeigt."
     }
   },
   "seo": {
@@ -1217,6 +1222,10 @@
     "bethSalme": {
       "title": "Beth Ṣalme · die Galerie",
       "description": "Eine Prosopographie von 289 biblischen und syrischen Gestalten als Kartensammlung: Begegne ihnen in Shmo, finde sie und lies, wer sie waren."
+    },
+    "bethGazo": {
+      "title": "Beth Gazo · die Schatzkammer der Gesänge",
+      "description": "Die syrisch-orthodoxe Schatzkammer der Gesänge als offenes Buch: jede aufgenommene Melodie, Modus für Modus, zum Anhören und Lernen."
     }
   },
   "privacy": {
@@ -1340,5 +1349,38 @@
       "notMetYet": "In Shmo noch nicht begegnet",
       "findToColour": "Finde {name} als Antwort von Shmo, um die Karte einzufärben."
     }
+  },
+  "bethGazo": {
+    "title": "Beth Gazo",
+    "heading": "Die Schatzkammer der Gesänge",
+    "lede": "Bisher {chants} aufgenommen, in {melodies}. Öffne einen Abschnitt zum Anhören, lerne die Modi und versuche dann das heutige Nahlo.",
+    "ledeEmpty": "Die Schatzkammer der Gesänge als offenes Buch, Modus für Modus.",
+    "play": "Das heutige Nahlo spielen",
+    "loadFailed": "Die Gesänge konnten nicht geladen werden.",
+    "search": "Eine Melodie suchen",
+    "modesLabel": "Modi",
+    "allModes": "Alle Modi",
+    "inThisMode": "{chants} in diesem Modus aufgenommen",
+    "noneInMode": "In diesem Modus ist noch kein Gesang aufgenommen.",
+    "empty": "Keine Melodie passt zu deiner Suche.",
+    "notRecorded": "noch nicht aufgenommen",
+    "sectionCounts": "{melodies} · {chants}",
+    "melodies": "keine Melodien | {n} Melodie | {n} Melodien",
+    "chants": "keine Gesänge | {n} Gesang | {n} Gesänge",
+    "variant": {
+      "Shuhlofo": "Shuḥlofo {number}",
+      "Hrino": "Ḥrino {number}"
+    },
+    "noIncipit": "Incipit noch nicht gelesen",
+    "playChant": "{chant} abspielen",
+    "pauseChant": "{chant} pausieren",
+    "player": "Player",
+    "resume": "Abspielen",
+    "pauseShort": "Pause",
+    "position": "Position im Gesang",
+    "closePlayer": "Player schließen",
+    "found": "nichts gefunden | {n} Melodie gefunden | {n} Melodien gefunden",
+    "ribbon": "Wo du aufgehört hast",
+    "continue": "Weiter"
   }
 }

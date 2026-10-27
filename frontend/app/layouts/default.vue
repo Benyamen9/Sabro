@@ -19,6 +19,7 @@ const navItems = computed(() => {
   // lexicon CRUD link is gated on the admin scope from Logto.
   const items: { to: string, labelKey: string }[] = [
     { to: '/library', labelKey: 'nav.library' },
+    { to: '/beth-gazo', labelKey: 'nav.bethGazo' },
     { to: '/beth-salme', labelKey: 'nav.bethSalme' },
   ]
   // One entry, not one per area: the hub at /admin is the way in, and the
