@@ -1,6 +1,8 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sabro.BethGazo.Public;
+using Sabro.Play.Application.Nahlo;
 using Sabro.Play.Application.Shmo;
 using Sabro.Play.Domain;
 using Sabro.Play.Infrastructure;
@@ -14,17 +16,20 @@ internal sealed class GameResultService : IGameResultService
     private readonly PlayDbContext dbContext;
     private readonly IValidator<RecordGameResultRequest> recordValidator;
     private readonly TimeProvider timeProvider;
+    private readonly IChantPlayablePool chantPool;
     private readonly ILogger<GameResultService> logger;
 
     public GameResultService(
         PlayDbContext dbContext,
         IValidator<RecordGameResultRequest> recordValidator,
         TimeProvider timeProvider,
+        IChantPlayablePool chantPool,
         ILogger<GameResultService> logger)
     {
         this.dbContext = dbContext;
         this.recordValidator = recordValidator;
         this.timeProvider = timeProvider;
+        this.chantPool = chantPool;
         this.logger = logger;
     }
 
@@ -78,7 +83,8 @@ internal sealed class GameResultService : IGameResultService
             return Result<RecordGameResultOutcome>.Success(new RecordGameResultOutcome(Map(existing), WasCreated: false));
         }
 
-        var winError = await CheckShmoWinAsync(result, cancellationToken);
+        var winError = await CheckShmoWinAsync(result, cancellationToken)
+            ?? await CheckNahloWinAsync(result, cancellationToken);
         if (winError is not null)
         {
             return Result<RecordGameResultOutcome>.Failure(winError);
@@ -236,6 +242,58 @@ internal sealed class GameResultService : IGameResultService
                 answer is not null,
                 guesses.Count);
             return Error.Validation("A solved Shmo result must end on that day's answer.");
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// A solved Nahlo result must end on a guess that names that day's chant, by the
+    /// rule Nahlo scores with (see <see cref="NahloAnswer"/>). Nahlo results feed the
+    /// hub's daily-circuit streak, and a signed-in Nahlo also sends in rounds a
+    /// device played signed out (Owner, 2026-10-25).
+    /// </summary>
+    /// <remarks>
+    /// A day whose chant can no longer be read (unpublished, or its recording gone)
+    /// is let through with a warning: the round was played against it, and the fault
+    /// would be ours, not the player's.
+    /// </remarks>
+    private async Task<Error?> CheckNahloWinAsync(GameResult result, CancellationToken cancellationToken)
+    {
+        if (result.GameId != Games.Nahlo || !result.Solved)
+        {
+            return null;
+        }
+
+        var chantId = await dbContext.NahloDailyPuzzles
+            .AsNoTracking()
+            .Where(p => p.GameId == Games.Nahlo && p.Date == result.PlayedOn)
+            .Select(p => (Guid?)p.ChantId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (chantId is null)
+        {
+            logger.LogWarning("Nahlo win rejected: no puzzle that day. PlayedOn={PlayedOn}", result.PlayedOn);
+            return Error.Validation("A solved Nahlo result must end on that day's chant.");
+        }
+
+        var chant = await chantPool.GetPlayableChantAsync(chantId.Value, cancellationToken);
+        if (chant is null)
+        {
+            logger.LogWarning(
+                "Nahlo win accepted unchecked: the day's chant cannot be read. PlayedOn={PlayedOn} ChantId={ChantId}",
+                result.PlayedOn,
+                chantId);
+            return null;
+        }
+
+        var guesses = NahloResultDetail.Guesses(result.DetailJson);
+        if (guesses.Count == 0 || !NahloAnswer.IsRight(guesses[^1], chant))
+        {
+            logger.LogWarning(
+                "Nahlo win rejected: it does not end on the day's chant. PlayedOn={PlayedOn} GuessCount={GuessCount}",
+                result.PlayedOn,
+                guesses.Count);
+            return Error.Validation("A solved Nahlo result must end on that day's chant.");
         }
 
         return null;

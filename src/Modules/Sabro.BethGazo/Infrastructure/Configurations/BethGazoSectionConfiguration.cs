@@ -28,6 +28,21 @@ internal sealed class BethGazoSectionConfiguration : IEntityTypeConfiguration<Be
 
         builder.Property(e => e.Name).HasMaxLength(BethGazoSection.MaxNameLength).IsRequired();
         builder.Property(e => e.Position).IsRequired();
+        builder.Property(e => e.SyriacName).HasMaxLength(BethGazoText.MaxSyriacNameLength);
+
+        // Descriptions: owned-many in a child table keyed by (owner, language), so
+        // the one-per-language rule holds in the database as well as the aggregate.
+        builder.OwnsMany<BethGazoDescription>("descriptions", db =>
+        {
+            db.ToTable("BethGazoSectionDescriptions");
+            db.WithOwner().HasForeignKey("BethGazoSectionId");
+            db.HasKey("BethGazoSectionId", nameof(BethGazoDescription.Language));
+            db.Property(d => d.Language).HasMaxLength(8).IsRequired();
+            db.Property(d => d.Text).HasMaxLength(BethGazoDescription.MaxTextLength).IsRequired();
+        });
+        builder.Metadata.FindNavigation("descriptions")!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
+        builder.Ignore(e => e.Descriptions);
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.UpdatedAt).IsRequired();
 

@@ -9,9 +9,10 @@ namespace Sabro.Historical.Application.Figures;
 /// must not let clients enumerate future Shmo answers.
 /// </summary>
 /// <remarks>
-/// The card fields (emblem, Syriac name, read-more link) are here because the hub
-/// draws every card from this list, met or not. The description is not: it is the
-/// reward for finding a figure, so it travels only with a player's own collection.
+/// The card fields (emblem, Syriac name, read-more link) and the descriptions are here
+/// because the hub draws every card of Beth Ṣalme from this list, and every card
+/// carries its story, met or not (Owner, 2026-10-25). They give nothing away about
+/// Shmo: the roster was already public, and no description names the day's figure.
 /// </remarks>
 public sealed record HistoricalFigureListItem(
     Guid Id,
@@ -23,6 +24,7 @@ public sealed record HistoricalFigureListItem(
     HistoricalFigureRegion Region,
     HistoricalFigureTradition? Tradition,
     HistoricalFigureGender Gender,
+    IReadOnlyList<HistoricalFigureDescriptionDto> Descriptions,
     HistoricalFigureEmblem? Emblem = null,
     string? SyriacName = null,
     string? ReadMoreUrl = null);

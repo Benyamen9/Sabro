@@ -217,6 +217,79 @@ public class ChantsControllerTests : IDisposable
         hint.ConditionalModeIds.Should().BeEmpty();
     }
 
+    [Fact]
+    public async Task Book_ListsEverySectionInOrder_WithItsRecordedChantsByMelody()
+    {
+        // The Owner opened the treasury (2026-10-25): here, unlike the answer
+        // options, a melody is shown with its modes.
+        var ct = TestContext.Current.CancellationToken;
+        await PublishAsync("Book melody", shuhlofoNumber: null, ct, modePosition: 2);
+        await PublishAsync("Book melody", shuhlofoNumber: null, ct, modePosition: 1);
+        await CreateDraftAsync("Book draft melody", shuhlofoNumber: null, ct);
+
+        var book = await BookAsync(ct);
+
+        book.Sections.Select(s => s.Position).Should().BeInAscendingOrder();
+        book.Sections.Should().Contain(s => s.Id == Madroshe, "a section with nothing recorded is still in the book");
+        var farde = book.Sections.Single(s => s.Id == Farde);
+        farde.Melodies.Should().NotContain(m => m.Name == "Book draft melody", "a draft is not in the book yet");
+
+        var melody = farde.Melodies.Single(m => m.Name == "Book melody");
+        await using var ctx = postgres.CreateBethGazoContext();
+        var first = ctx.Modes.Single(m => m.Position == 1).Id;
+        var second = ctx.Modes.Single(m => m.Position == 2).Id;
+        melody.Chants.Select(c => c.ModeId).Should().Equal(first, second);
+        melody.Chants.Should().OnlyContain(c => c.AudioUrl.StartsWith("/media/chants/"));
+        book.Modes.Select(m => m.Position).Should().BeInAscendingOrder();
+    }
+
+    [Fact]
+    public async Task Book_CarriesTheTextWrittenForAMode()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = postgres.CreateBethGazoContext();
+        var tminoyo = ctx.Modes.Single(m => m.Position == 8);
+
+        var saved = await client.PutAsJsonAsync(
+            $"/api/v1/admin/chants/modes/{tminoyo.Id}",
+            new ModeRequest(tminoyo.Name, "ܬܡܝܢܝܐ", [new BethGazoDescriptionRequest("en", "The eighth mode.")]),
+            ct);
+        saved.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        try
+        {
+            var mode = (await BookAsync(ct)).Modes.Single(m => m.Id == tminoyo.Id);
+            mode.SyriacName.Should().Be("ܬܡܝܢܝܐ");
+            mode.Descriptions.Should().ContainSingle().Which.Text.Should().Be("The eighth mode.");
+        }
+        finally
+        {
+            await client.PutAsJsonAsync($"/api/v1/admin/chants/modes/{tminoyo.Id}", new ModeRequest(tminoyo.Name), ct);
+        }
+    }
+
+    [Fact]
+    public async Task AdminMode_WithALatinSyriacName_Returns400()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var ctx = postgres.CreateBethGazoContext();
+        var tminoyo = ctx.Modes.Single(m => m.Position == 8);
+
+        var saved = await client.PutAsJsonAsync(
+            $"/api/v1/admin/chants/modes/{tminoyo.Id}",
+            new ModeRequest(tminoyo.Name, "Tminoyo"),
+            ct);
+
+        saved.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    private async Task<BethGazoBookDto> BookAsync(CancellationToken ct)
+    {
+        var response = await client.GetAsync("/api/v1/chants/book", ct);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        return (await response.Content.ReadFromJsonAsync<BethGazoBookDto>(SabroApiFactory.JsonOptions, ct))!;
+    }
+
     private async Task<ChantAnswerOptionsDto> AnswerOptionsAsync(CancellationToken ct)
     {
         var response = await client.GetAsync("/api/v1/chants/answer-options", ct);
