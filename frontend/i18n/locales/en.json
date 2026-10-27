@@ -103,7 +103,8 @@
     "translations": "Translations",
     "library": "Library",
     "admin": "Backoffice",
-    "bethSalme": "Beth Ṣalme"
+    "bethSalme": "Beth Ṣalme",
+    "bethGazo": "Beth Gazo"
   },
   "switcher": {
     "languageLabel": "Language",
@@ -1221,6 +1222,10 @@
     "bethSalme": {
       "title": "Beth Ṣalme · the gallery",
       "description": "A prosopography of 289 biblical and Syriac figures, as a card collection: meet them in Shmo, find them, and read who they were."
+    },
+    "bethGazo": {
+      "title": "Beth Gazo · the treasury of chants",
+      "description": "The Syriac Orthodox treasury of chants as an open book: every recorded melody, mode by mode, to listen to and learn."
     }
   },
   "privacy": {
@@ -1344,5 +1349,35 @@
       "notMetYet": "Not met yet in Shmo",
       "findToColour": "Find {name} as Shmo’s answer to colour the card in."
     }
+  },
+  "bethGazo": {
+    "title": "Beth Gazo",
+    "heading": "The treasury of chants",
+    "lede": "{chants} recorded so far, in {melodies}. Listen to any of them, learn the modes, then try today’s Nahlo.",
+    "ledeEmpty": "The treasury of chants as an open book, mode by mode.",
+    "play": "Play today’s Nahlo",
+    "loadFailed": "The chants could not be loaded.",
+    "search": "Search a melody",
+    "modesLabel": "Modes",
+    "allModes": "All modes",
+    "inThisMode": "{chants} recorded in this mode",
+    "noneInMode": "No chant in this mode is recorded yet.",
+    "empty": "No melody matches your search.",
+    "notRecorded": "not recorded yet",
+    "sectionCounts": "{melodies} · {chants}",
+    "melodies": "no melodies | {n} melody | {n} melodies",
+    "chants": "no chants | {n} chant | {n} chants",
+    "variant": {
+      "Shuhlofo": "Shuḥlofo {number}",
+      "Hrino": "Ḥrino {number}"
+    },
+    "noIncipit": "Incipit not read yet",
+    "playChant": "Play {chant}",
+    "pauseChant": "Pause {chant}",
+    "player": "Player",
+    "resume": "Play",
+    "pauseShort": "Pause",
+    "position": "Position in the chant",
+    "closePlayer": "Close the player"
   }
 }

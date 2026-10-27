@@ -12,9 +12,9 @@ namespace Sabro.API.Controllers.V1;
 /// </summary>
 /// <remarks>
 /// Deliberately narrow. The editorial listing lives behind
-/// <c>/api/v1/admin/chants</c> and sees drafts, the playable flag and the recording
-/// URLs; none of that belongs here, because the playable flag would enumerate the
-/// puzzle pool.
+/// <c>/api/v1/admin/chants</c> and sees drafts and the playable flag; neither
+/// belongs here, because the playable flag would enumerate the puzzle pool. The
+/// book does serve published recordings, by the Owner's open-treasury ruling.
 /// </remarks>
 [ApiVersion(1.0)]
 [Route("api/v{version:apiVersion}/chants")]

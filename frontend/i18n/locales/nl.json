@@ -103,7 +103,8 @@
     "translations": "Vertalingen",
     "library": "Bibliotheek",
     "admin": "Backoffice",
-    "bethSalme": "Beth Ṣalme"
+    "bethSalme": "Beth Ṣalme",
+    "bethGazo": "Beth Gazo"
   },
   "switcher": {
     "languageLabel": "Taal",
@@ -1221,6 +1222,10 @@
     "bethSalme": {
       "title": "Beth Ṣalme · de galerij",
       "description": "Een prosopografie van 289 bijbelse en Syrische figuren als kaartverzameling: ontmoet ze in Shmo, vind ze en lees wie ze waren."
+    },
+    "bethGazo": {
+      "title": "Beth Gazo · de schatkamer van gezangen",
+      "description": "De Syrisch-orthodoxe schatkamer van gezangen als een open boek: elke opgenomen melodie, modus per modus, om te beluisteren en te leren."
     }
   },
   "privacy": {
@@ -1344,5 +1349,35 @@
       "notMetYet": "Nog niet ontmoet in Shmo",
       "findToColour": "Vind {name} als antwoord van Shmo om de kaart in te kleuren."
     }
+  },
+  "bethGazo": {
+    "title": "Beth Gazo",
+    "heading": "De schatkamer van gezangen",
+    "lede": "{chants} tot nu toe opgenomen, in {melodies}. Beluister ze, leer de modi en probeer dan de Nahlo van vandaag.",
+    "ledeEmpty": "De schatkamer van gezangen als een open boek, modus per modus.",
+    "play": "Speel de Nahlo van vandaag",
+    "loadFailed": "De gezangen konden niet worden geladen.",
+    "search": "Zoek een melodie",
+    "modesLabel": "Modi",
+    "allModes": "Alle modi",
+    "inThisMode": "{chants} opgenomen in deze modus",
+    "noneInMode": "In deze modus is nog geen gezang opgenomen.",
+    "empty": "Geen melodie komt overeen met je zoekopdracht.",
+    "notRecorded": "nog niet opgenomen",
+    "sectionCounts": "{melodies} · {chants}",
+    "melodies": "geen melodieën | {n} melodie | {n} melodieën",
+    "chants": "geen gezangen | {n} gezang | {n} gezangen",
+    "variant": {
+      "Shuhlofo": "Shuḥlofo {number}",
+      "Hrino": "Ḥrino {number}"
+    },
+    "noIncipit": "Incipit nog niet gelezen",
+    "playChant": "{chant} afspelen",
+    "pauseChant": "{chant} pauzeren",
+    "player": "Speler",
+    "resume": "Afspelen",
+    "pauseShort": "Pauze",
+    "position": "Positie in het gezang",
+    "closePlayer": "Speler sluiten"
   }
 }

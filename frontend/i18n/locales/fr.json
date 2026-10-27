@@ -103,7 +103,8 @@
     "translations": "Traductions",
     "library": "Bibliothèque",
     "admin": "Back-office",
-    "bethSalme": "Beth Ṣalme"
+    "bethSalme": "Beth Ṣalme",
+    "bethGazo": "Beth Gazo"
   },
   "switcher": {
     "languageLabel": "Langue",
@@ -1221,6 +1222,10 @@
     "bethSalme": {
       "title": "Beth Ṣalme · la galerie",
       "description": "Une prosopographie de 289 figures bibliques et syriaques en cartes à collectionner : rencontrez-les dans Shmo, trouvez-les et lisez qui elles étaient."
+    },
+    "bethGazo": {
+      "title": "Beth Gazo · le trésor des chants",
+      "description": "Le trésor des chants syriaques orthodoxes en livre ouvert : chaque mélodie enregistrée, mode par mode, à écouter et à apprendre."
     }
   },
   "privacy": {
@@ -1344,5 +1349,35 @@
       "notMetYet": "Pas encore rencontrée dans Shmo",
       "findToColour": "Trouvez {name} comme réponse de Shmo pour colorer la carte."
     }
+  },
+  "bethGazo": {
+    "title": "Beth Gazo",
+    "heading": "Le trésor des chants",
+    "lede": "{chants} enregistrés jusqu’ici, dans {melodies}. Écoutez-les, apprenez les modes, puis tentez le Nahlo du jour.",
+    "ledeEmpty": "Le trésor des chants en livre ouvert, mode par mode.",
+    "play": "Jouer au Nahlo du jour",
+    "loadFailed": "Les chants n’ont pas pu être chargés.",
+    "search": "Chercher une mélodie",
+    "modesLabel": "Modes",
+    "allModes": "Tous les modes",
+    "inThisMode": "{chants} enregistrés dans ce mode",
+    "noneInMode": "Aucun chant n’est encore enregistré dans ce mode.",
+    "empty": "Aucune mélodie ne correspond à votre recherche.",
+    "notRecorded": "pas encore enregistré",
+    "sectionCounts": "{melodies} · {chants}",
+    "melodies": "aucune mélodie | {n} mélodie | {n} mélodies",
+    "chants": "aucun chant | {n} chant | {n} chants",
+    "variant": {
+      "Shuhlofo": "Shuḥlofo {number}",
+      "Hrino": "Ḥrino {number}"
+    },
+    "noIncipit": "Incipit pas encore lu",
+    "playChant": "Écouter {chant}",
+    "pauseChant": "Mettre en pause {chant}",
+    "player": "Lecteur",
+    "resume": "Lire",
+    "pauseShort": "Pause",
+    "position": "Position dans le chant",
+    "closePlayer": "Fermer le lecteur"
   }
 }
