@@ -222,7 +222,7 @@ public class ProfileControllerTests : IDisposable
     private async Task SeedGameResultAsync(string testUser, CancellationToken ct)
     {
         await using var ctx = postgres.CreatePlayContext();
-        var service = new GameResultService(ctx, new RecordGameResultRequestValidator(), TimeProvider.System, Microsoft.Extensions.Logging.Abstractions.NullLogger<GameResultService>.Instance);
+        var service = new GameResultService(ctx, new RecordGameResultRequestValidator(), TimeProvider.System, NSubstitute.Substitute.For<Sabro.BethGazo.Public.IChantPlayablePool>(), Microsoft.Extensions.Logging.Abstractions.NullLogger<GameResultService>.Instance);
         await service.RecordAsync(testUser, new RecordGameResultRequest("meltho", new DateOnly(2026, 7, 1), true, 3, null), ct);
     }
 
