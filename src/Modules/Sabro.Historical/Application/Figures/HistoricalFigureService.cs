@@ -382,10 +382,7 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         figure.Gender,
         figure.Status,
         figure.PlayableInShmo,
-        figure.Descriptions
-            .OrderBy(d => d.Language, StringComparer.Ordinal)
-            .Select(d => new HistoricalFigureDescriptionDto(d.Language, d.Text))
-            .ToArray(),
+        MapDescriptions(figure),
         figure.Emblem,
         figure.SyriacName,
         figure.ReadMoreUrl,
@@ -402,9 +399,16 @@ internal sealed class HistoricalFigureService : IHistoricalFigureService
         figure.Region,
         figure.Tradition,
         figure.Gender,
+        MapDescriptions(figure),
         figure.Emblem,
         figure.SyriacName,
         figure.ReadMoreUrl);
+
+    private static HistoricalFigureDescriptionDto[] MapDescriptions(HistoricalFigure figure) =>
+        figure.Descriptions
+            .OrderBy(d => d.Language, StringComparer.Ordinal)
+            .Select(d => new HistoricalFigureDescriptionDto(d.Language, d.Text))
+            .ToArray();
 
     private async Task<Result<HistoricalFigureDto>> MutateAsync(
         Guid id,

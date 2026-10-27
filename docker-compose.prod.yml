@@ -99,7 +99,7 @@ services:
     # version tags are the 3.x naming.
     # To upgrade: pick a newer tag from ghcr.io/umami-software/umami and read the
     # release notes for schema migrations first.
-    image: ghcr.io/umami-software/umami:3.4.0
+    image: ghcr.io/umami-software/umami:3.4.1
     container_name: sabro-umami
     restart: unless-stopped
     depends_on:
@@ -128,7 +128,7 @@ services:
     # NB the container's org.opencontainers.image.version label reads "24.04";
     # that is the Ubuntu base, NOT Seq's version. Seq's own tags look like
     # 2026.1.17083. Do not pin from that label.
-    image: datalust/seq:2026.1.17182
+    image: datalust/seq:2026.1.17473
     container_name: sabro-seq
     restart: unless-stopped
     environment:

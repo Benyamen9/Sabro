@@ -74,11 +74,10 @@ public class HistoricalFiguresControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_CarriesCardFieldsButNotTheDescription()
+    public async Task Get_CarriesCardFieldsAndTheStory()
     {
-        // The hub draws every card from this list, so the card fields belong here.
-        // The description is the reward for finding a figure and must not leak
-        // through the anonymous roster.
+        // The hub draws every card of Beth Ṣalme from this list, and every card shows
+        // its story, met or not (Owner, 2026-10-25).
         var ct = TestContext.Current.CancellationToken;
         var response = await client.PostAsJsonAsync(
             "/api/v1/admin/historical-figures",
@@ -107,7 +106,9 @@ public class HistoricalFiguresControllerTests : IDisposable
         root.GetProperty("emblem").GetString().Should().Be("Harp");
         root.GetProperty("syriacName").GetString().Should().Be("ܡܪܝ ܐܦܪܝܡ");
         root.GetProperty("readMoreUrl").GetString().Should().Be("https://syriaca.org/person/13");
-        root.EnumerateObject().Select(p => p.Name).Should().NotContain("descriptions");
+        var story = root.GetProperty("descriptions").EnumerateArray().Single();
+        story.GetProperty("language").GetString().Should().Be("en");
+        story.GetProperty("text").GetString().Should().Be("Deacon of Nisibis and Edessa.");
     }
 
     [Fact]

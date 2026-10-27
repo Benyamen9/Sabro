@@ -91,4 +91,62 @@ internal sealed class PublicChantService : IPublicChantService
 
         return new ChantAnswerOptionsDto(melodies, sections, modes, conditionalModeIds, hints);
     }
+
+    public async Task<BethGazoBookDto> GetBookAsync(CancellationToken cancellationToken)
+    {
+        var modes = await dbContext.Modes
+            .AsNoTracking()
+            .OrderBy(m => m.Position)
+            .ToListAsync(cancellationToken);
+        var modePosition = modes.ToDictionary(m => m.Id, m => m.Position);
+
+        var sections = await dbContext.Sections
+            .AsNoTracking()
+            .Include(s => s.AllowedModes)
+            .OrderBy(s => s.Position)
+            .ToListAsync(cancellationToken);
+
+        // Published and recorded only: a draft is not in the book yet, and a chant
+        // without a recording has nothing to play.
+        var chants = await dbContext.Chants
+            .AsNoTracking()
+            .Where(c => c.Status == ChantStatus.Published && c.AudioUrl != null)
+            .ToListAsync(cancellationToken);
+
+        var bySection = chants.ToLookup(c => c.SectionId);
+        var bookSections = sections
+            .Select(section =>
+            {
+                var dto = BethGazoMapping.ToDto(section);
+                var melodies = bySection[section.Id]
+                    .GroupBy(c => c.Transliteration)
+                    .OrderBy(g => g.Key, StringComparer.Ordinal)
+                    .Select(g => new BethGazoBookMelodyDto(
+                        g.Key,
+                        g.OrderBy(c => c.ModeId is Guid id && modePosition.TryGetValue(id, out var position) ? position : 0)
+                            .ThenBy(c => c.VariantKind)
+                            .ThenBy(c => c.VariantNumber ?? 0)
+                            .Select(c => new BethGazoBookChantDto(
+                                c.Id,
+                                c.ModeId,
+                                c.VariantKind,
+                                c.VariantNumber,
+                                c.SyriacIncipit,
+                                c.SyriacIncipitVocalized,
+                                c.AudioUrl!))
+                            .ToList()))
+                    .ToList();
+                return new BethGazoBookSectionDto(
+                    dto.Id,
+                    dto.Name,
+                    dto.Position,
+                    dto.SyriacName,
+                    dto.Descriptions ?? [],
+                    dto.AllowedModeIds,
+                    melodies);
+            })
+            .ToList();
+
+        return new BethGazoBookDto(bookSections, modes.Select(BethGazoMapping.ToDto).ToList());
+    }
 }

@@ -235,7 +235,7 @@ Three of the four draw from a curated pool and exclude anything served inside th
 
 Start a window low so a small pool never starves, and raise it as the pool grows — but keep it well under the pool size: a window at or above the pool answers 409 the day one item drops out. A hardcoded 365 against a 40-item pool would leave the selector with nothing eligible after 40 days and break the game — these must remain config values.
 
-**Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro does not score guesses. It does see them: Shmo and Nahlo put a round's guesses in the result's `DetailJson`. Sabro reads Shmo's to build the player's figure collection, and **checks that a solved Shmo result ends on that day's answer** before recording it (a found card rests on that, and a signed-in Shmo also sends in rounds played signed out). Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
+**Boundary with the clients.** Sabro answers *"what is today's puzzle"* (shared state, single DB, central anti-repetition) and stores the final daily result. Every client owns its own **game mechanics**: guess evaluation, feedback colouring, the attempt ladder, and share text. **The full answer ships with the puzzle** — evaluation is client logic, and Sabro does not score guesses. It does see them: Shmo and Nahlo put a round's guesses in the result's `DetailJson`. Sabro reads Shmo's to build the player's figure collection, and **checks that a solved Shmo or Nahlo result ends on that day's answer** before recording it (a found card and the circuit streak rest on that, and a signed-in Shmo or Nahlo also sends in rounds played signed out). Daily selection is the one piece of shared game state that lives in Sabro rather than the client, precisely because it must be identical for all players and persisted.
 
 **Beyond the puzzle.** Play also serves `meltho/library` (past words, public and anonymous — today's word is never included, it would spoil the live puzzle) and `meltho/leaderboard` (signed-in only, ranked by longest streak; appearing in it requires an explicit opt-in on the player's profile, while the caller's own standing is always shown).
 
@@ -244,7 +244,7 @@ Owns the roster of **historical figures** — biblical figures through the Syria
 
 Same lifecycle as the Lexicon: `Draft` → `Published`, plus a manual `PlayableInShmo` editorial flag that only a published figure may carry.
 
-**Card fields (2026-10-25)** — three optional fields for the hub's figure collection (Beth Ṣalme), none of them a Shmo hint: `Emblem` (`HistoricalFigureEmblem`, the sign on the figure's card — a traditional iconographic attribute or one from the figure's story, chosen per figure by the Owner; null shows the emblem of the role), `SyriacName` (Syriac script, NFC) and `ReadMoreUrl` (absolute http(s), e.g. a Syriaca.org entry). The migration that added them pre-filled the Owner-approved emblem for 140 figures, keyed by name. They are in the public roster because the hub draws every card from it. **The description is not:** it is the reward for finding a figure, so it travels only with a player's own collection.
+**Card fields (2026-10-25)** — three optional fields for the hub's figure collection (Beth Ṣalme), none of them a Shmo hint: `Emblem` (`HistoricalFigureEmblem`, the sign on the figure's card — a traditional iconographic attribute or one from the figure's story, chosen per figure by the Owner; null shows the emblem of the role), `SyriacName` (Syriac script, NFC) and `ReadMoreUrl` (absolute http(s), e.g. a Syriaca.org entry). The migration that added them pre-filled the Owner-approved emblem for 140 figures, keyed by name. They are in the public roster because the hub draws every card from it, and so are the **descriptions**: every card of Beth Ṣalme shows its story, met or not (Owner, 2026-10-25). Nothing there gives Shmo away; the roster was public already.
 
 > **The enum order is a contract.** `HistoricalPeriod` is diffed *by ordinal position*, so reordering its members silently changes every near/far verdict in Shmo. Append new periods; never reorder. Shmo hand-copies these enums into `app/types/figure.ts` and guards the copy with `test/figure.test.ts` — see *Ecosystem Clients*.
 
@@ -260,6 +260,10 @@ Owns the **Beth Gazo** — the treasury of chants — and is the content behind 
 **`ChantVariantKind` distinguishes two things the book prints.** A **shuḥlofo** is a variation *of the melody itself* — the same qolo sung another way. A **ḥrino** (ܐܚܪܢܐ, "another"; pl. *ḥrone*) is simply another chant standing in the same mode, not a variant of anything. They must be told apart or a *shuḥlofo 1* and a *ḥrino 1* under one melody and mode collide on the same four values, making the second unsaveable. A string-converted enum, per the house rule.
 
 Recordings are uploaded through the backoffice and stored via `IChantAudioStorage` (`FileSystemChantAudioStorage` at this scale). Lifecycle mirrors the Lexicon: `Draft` → `Published` + a manual `PlayableInNahlo` flag.
+
+**Section and mode text (2026-10-27).** Each section and mode may carry a `SyriacName` and one line per
+content language (`BethGazoDescription`, held by `BethGazoText`), both optional and edited in
+`/admin/chants/sections`. They are for the hub's Beth Gazo page; Nahlo's answer options leave them null.
 
 **The recording is the publish gate; the incipit is optional** (since 2026-10-15, #300). The Owner recorded 24 chants before their incipits were read from the book, so a chant can be saved and published from its recording alone and the incipit added later from the backoffice. A vocalized incipit still requires the plain one. Nahlo receives a `null` incipit and simply offers no reading hint for that chant.
 
@@ -342,6 +346,8 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >
 > **Nahlo breaks the shared feedback colour on purpose (Owner, 2026-10-12).** Meltho, Mno and Shmo mark a right part green; Nahlo's right part is its theme purple and a wrong part a pale tint of it — tiles, attempt strip and share grid (🟪/⬜) alike. Same day, its "night vigil" redesign: the answer is asked one question at a time (melody → mode → shuḥlofo), and a mode an earlier guess scored wrong is dimmed, never removed. Do not "restore" the green. Details in the Nahlo README.
+>
+> **Nahlo scores points (Owner, 2026-10-27)**, out of 100: 50/42/34/26/18/10 by the solving guess, plus up to 50 for speed (full within 30 s of the first press of play, nothing at 5 min). Opening the incipit gives up the speed points; a blind solve takes them all; a lost round earns 5 per part found. It answers the open Beth Gazo: knowing the chant beats looking it up. **Computed in the client from the round's ingredients, never stored** — Sabro has no points field and needs none; the formula can change without a migration. Result screen and share text only, so far.
 
 ### This file is the ecosystem's memory — fold changes back into it
 
@@ -351,7 +357,7 @@ The four client repos carry no `CLAUDE.md`. Their **`README.md` is each app's me
 
 ### Mirrored contracts — duplicated across repo boundaries
 
-Five pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only two have a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
+Six pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only two have a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
 
 | Mirror | Sabro side | Client side | Guard |
 |---|---|---|---|
@@ -360,6 +366,7 @@ Five pieces of logic are deliberately implemented twice, on either side of a rep
 | Numeral speller | Sabro's C# speller | Mno `app/utils/numerals.ts` | ❌ none |
 | Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** client | ❌ comment only |
 | App launcher | hub `utils/apps.ts` + `AppLauncher.vue` | one copy in **each** of the five clients | ✅ `apps` unit test per repo (order, self, Sofro's badge) |
+| Nahlo's scoring rule (is a guess right?) | `NahloAnswer` (checks a claimed win) | Nahlo `app/utils/compare.ts` | ❌ none: change both together |
 
 **The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies, and since 2026-10-12 so does `CIRCUIT_HANDOFF`. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
 
@@ -370,19 +377,34 @@ the "Sabro" pill in the games and the row of game pills in the hub, so every hea
 every width**. Six copies of the list exist — hub, Meltho, Mno, Shmo, Nahlo, Sofro — each **listing
 itself first, marked as here**, then the others in launch order (Sabro, Meltho, Mno, Shmo, Nahlo,
 Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-config key. On phones the
-hub's page links (Library, Beth Ṣalme, Backoffice) live **inside the launcher panel**, under the apps (Owner,
+hub's page links (Library, Beth Gazo, Beth Ṣalme, Backoffice) live **inside the launcher panel**, under the apps (Owner,
 2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
 
 **Beth Ṣalme** (ܒܝܬ ܨܠܡ̈ܐ, "house of images", `/beth-salme`; Owner, 2026-10-25) is the hub's figure page: a
 prosopography of Shmo's roster as a **card collection**. A figure is **met** when the player guesses it in
 Shmo (a sketch card, attributes shown) and **found** when they solve it as the day's answer (the card in
-colour, and its description, which nothing public serves). A find is **illuminated** 1 time in 20 (a
+colour). **Every card shows its attributes and story**, met or not (Owner, 2026-10-25): the page is a
+reference first, and finding a figure colours its card in. A find is **illuminated** 1 time in 20 (a
 rainbow foil). Cards run A–Z, numbered through time; unmet cards are dark but **show the name**. Each card
 carries the figure's **emblem** (`utils/emblems.ts`, one drawing per `HistoricalFigureEmblem` and per role,
 typed so a new value fails the typecheck until drawn). On a computer the figure's page sits beside the
 collection; on a phone the card lifts out and turns over. Signed out, every card is dark with a sign-in
 line. Each "library" keeps its own style: collecting belongs to Beth Ṣalme alone, never to Beth Gazo.
 **Rarity is parked** (Owner): the one ruling so far is that the great names should be the rare cards.
+
+**Beth Gazo** (ܒܝܬ ܓܙܐ, `/beth-gazo`; Owner, 2026-10-25, layout 2026-10-27) is the hub's chant page: the
+treasury as an **open book**, fed by `GET /chants/book`. **One view, no tabs, closed chapters:** the sections in
+the book's order (numbered, red initials, each with its optional Syriac name and line) open one by one, so a
+full book stays short. Inside, **each melody is one line** with a numbered button per mode (a dot marks a mode
+that also has a shuḥlofo or ḥrino); tapping the melody's name **unfolds** it into its chants, one per line,
+with mode, variant and **incipit**. A section without modes (the madroshe) lists its chants by incipit straight
+away, since nothing else tells them apart (Owner). A search (melody or incipit; an incipit match unfolds the
+melody) or a **mode pill** opens the sections with a match and shows the mode's card. The modes every moded
+section admits are numbered; one only some admit (the mshaḥelfotho) is marked ✶, derived from the section
+rows like Nahlo's conditional modes, never from a count. **One player bar** at the bottom (`BethGazoPlayer`).
+**The ribbon** (Owner, 2026-10-27) remembers the last chant played, in `localStorage` on that device only,
+and the page reopens there with a "where you left off" line. No collecting, unlocking or illumination here.
+Every published chant **with a recording** is listed; nothing is held back for the day's Nahlo.
 
 **The hub's home page** (reworked by the Owner on 2026-10-23 for practicality; the look of
 2026-10-15 stays) has two parts under the hero:
@@ -417,7 +439,7 @@ The editorial write surface for Sabro's own content. It is **part of Sabro, not 
 |---|---|---|
 | `/admin/lexicon` | Meltho | Unvocalized + optional vocalized Syriac (NFC on input), optional SBL transliteration, a gloss per configured language. Publish gated on a gloss in **every** configured language; computed playable length shown read-only |
 | `/admin/historical-figures` | Shmo | The scoreable attributes; `PlayableInShmo` |
-| `/admin/chants` | Nahlo | Melody, section, mode, variant, optional incipit + **recording upload**; `PlayableInNahlo`. `/admin/chants/sections` edits the sections and their allowed modes |
+| `/admin/chants` | Nahlo | Melody, section, mode, variant, optional incipit + **recording upload**; `PlayableInNahlo`. `/admin/chants/sections` edits the sections and their allowed modes, and each section's and mode's Syriac name and line |
 | `/admin/proposals` | — | Field proposals from area reviewers; the Owner accepts (applying the change) or rejects |
 | `/admin/people` | — | Area grants; owner changes require a confirmation step |
 
@@ -490,16 +512,17 @@ else's flood.
 - `GET /api/v1/play/nahlo/today` — **answers `409` when no chant is eligible** (empty pool, or one too small for the window). That is a normal state, not an error: clients render it as "no chant today".
 
 **Client support reads:**
-- `GET /api/v1/chants/answer-options` — Nahlo's suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
+- `GET /api/v1/chants/answer-options` — Nahlo's suggestion lists. **They are unjoined**, so Nahlo's own form never hands over the mode: the audio already names the melody to anyone who recognises it.
   **One owner-ruled exception (2026-10-12):** `conditionalModeIds` + `melodyModeHints`. A *conditional* mode is one some moded section does not admit — today only the mshaḥelfotho (farde-only), derived from the section rows, never named. The form offers it (unnumbered) only once the player names a melody with a published chant in it, and a melody with no mode at all (a madrosho) hides the mode question. The always-offered modes are never paired with a melody. The same day the **section stopped being asked** in Nahlo: the round scores melody, mode and shuḥlofo.
-- `GET /api/v1/historical-figures` — Shmo's published roster, fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
+- `GET /api/v1/chants/book` — the whole Beth Gazo for the hub's book page: every section in order with its published, recorded chants grouped by melody (mode, variant, incipit, recording), and every mode, each with its text. **This one is joined, on purpose (Owner, 2026-10-25):** the treasury is open to anyone who wants to learn or listen, and the Owner accepts that today's Nahlo can be looked up in it. It supersedes the old rule that no public payload may pair a melody with its mode; only the answer options above stay unjoined. Do **not** hide just today's chant from it: the gap would name the answer by elimination.
+- `GET /api/v1/historical-figures` — Shmo's published roster (with each figure's descriptions and card fields, for Beth Ṣalme), fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
 - `GET /api/v1/play/meltho/library` — past Meltho words, public and anonymous. Today's word is never included.
 - `GET /api/v1/play/meltho/leaderboard` (`api:v1:write`) — signed-in only, ranked by longest streak; appearing requires an opt-in on the profile, the caller's own standing is always shown.
 
 **Play results (authenticated user writes / reads):**
 - `POST /api/v1/play/results` (`api:v1:write`) — the authenticated user records their result; one per user/game/day (idempotent on the unique key).
 - `GET /api/v1/play/results/me` (`api:v1:write`) — the authenticated user's own results, for the profile/dashboard surface.
-- `GET /api/v1/play/shmo/collection` (`api:v1:write`) — the player's figure collection for the hub's Beth Ṣalme: every figure met (guessed, or revealed in a round given up) or found (solved), worked out from their Shmo results. A found card carries the figure's descriptions, which nothing public serves, and whether it is **illuminated**: a 1 in 20 chance per find, derived from player, figure and day, never stored.
+- `GET /api/v1/play/shmo/collection` (`api:v1:write`) — the player's figure collection for the hub's Beth Ṣalme: every figure met (guessed, or revealed in a round given up) or found (solved), worked out from their Shmo results. Each card says whether it is **illuminated**: a 1 in 20 chance per find, derived from player, figure and day, never stored.
 
 **Profile (authenticated):**
 - `GET /api/v1/profile/me` — current user's profile.

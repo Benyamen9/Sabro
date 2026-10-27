@@ -103,7 +103,8 @@
     "translations": "Översättningar",
     "library": "Bibliotek",
     "admin": "Backoffice",
-    "bethSalme": "Beth Ṣalme"
+    "bethSalme": "Beth Ṣalme",
+    "bethGazo": "Beth Gazo"
   },
   "switcher": {
     "languageLabel": "Språk",
@@ -628,8 +629,8 @@
       "deleteFailed": "Gestalten kunde inte tas bort.",
       "actionFailed": "Åtgärden kunde inte slutföras.",
       "deleteConfirm": "Ta bort den här gestalten? Detta går inte att ångra.",
-      "eraBc": "{century}:e årh. f.Kr.",
-      "eraAd": "{century}:e årh. e.Kr.",
+      "eraBc": "{ordinal} årh. f.Kr.",
+      "eraAd": "{ordinal} årh. e.Kr.",
       "columns": {
         "name": "Namn",
         "category": "Kategori",
@@ -1192,13 +1193,17 @@
       "confirmRemove": "Ta bort på riktigt",
       "moveUp": "Flytta upp",
       "moveDown": "Flytta ner",
-      "saveFailed": "Ändringen avvisades."
+      "saveFailed": "Ändringen avvisades.",
+      "bookText": "Text i Beth Gazo",
+      "syriacName": "Syriskt namn",
+      "bookTextHint": "Valfritt. En rad om vad avsnittet är och när det sjungs; tomma rutor visas inte."
     },
     "chantModes": {
       "title": "Modus",
       "description": "De modus sånger sjungs i. Mängden växer — inget antar att den stannar vid åtta. Ett modus kan inte tas bort medan en sång bär det eller ett avsnitt tillåter det.",
       "add": "Lägg till modus",
-      "namePlaceholder": "Modusets namn"
+      "namePlaceholder": "Modusets namn",
+      "bookTextHint": "Valfritt. En rad om tonartens karaktär och hur man känner igen den; tomma rutor visas inte."
     }
   },
   "seo": {
@@ -1217,6 +1222,10 @@
     "bethSalme": {
       "title": "Beth Ṣalme · galleriet",
       "description": "En prosopografi över 289 bibliska och syriska gestalter som kortsamling: möt dem i Shmo, hitta dem och läs vilka de var."
+    },
+    "bethGazo": {
+      "title": "Beth Gazo · sångernas skattkammare",
+      "description": "Den syrisk-ortodoxa skattkammaren av sånger som en öppen bok: varje inspelad melodi, modus för modus, att lyssna på och lära sig."
     }
   },
   "privacy": {
@@ -1332,12 +1341,46 @@
       "foundOn": "Hittad {date} på {count} gissningar",
       "notFoundYet": "inte hittad än",
       "noStory": "Ingen berättelse skriven än.",
-      "findToRead": "Hitta {name} som Shmos svar för att läsa vem det var.",
       "lockedHint": "Gissa {name} i Shmo för att möta gestalten. Hitta den som dagens svar för att färglägga kortet.",
       "readMore": "Läs mer",
       "turnOver": "Vänd kortet",
       "turnBack": "Vänd tillbaka",
-      "close": "Stäng"
+      "close": "Stäng",
+      "notMetYet": "Inte mött i Shmo än",
+      "findToColour": "Hitta {name} som Shmos svar för att färglägga kortet."
     }
+  },
+  "bethGazo": {
+    "title": "Beth Gazo",
+    "heading": "Sångernas skattkammare",
+    "lede": "{chants} inspelade hittills, i {melodies}. Öppna en avdelning för att lyssna, lär dig modi och pröva sedan dagens Nahlo.",
+    "ledeEmpty": "Sångernas skattkammare som en öppen bok, modus för modus.",
+    "play": "Spela dagens Nahlo",
+    "loadFailed": "Sångerna kunde inte laddas.",
+    "search": "Sök en melodi",
+    "modesLabel": "Modi",
+    "allModes": "Alla modi",
+    "inThisMode": "{chants} inspelade i detta modus",
+    "noneInMode": "Ingen sång i detta modus är inspelad än.",
+    "empty": "Ingen melodi matchar din sökning.",
+    "notRecorded": "inte inspelad än",
+    "sectionCounts": "{melodies} · {chants}",
+    "melodies": "inga melodier | {n} melodi | {n} melodier",
+    "chants": "inga sånger | {n} sång | {n} sånger",
+    "variant": {
+      "Shuhlofo": "Shuḥlofo {number}",
+      "Hrino": "Ḥrino {number}"
+    },
+    "noIncipit": "Incipit inte läst än",
+    "playChant": "Spela {chant}",
+    "pauseChant": "Pausa {chant}",
+    "player": "Spelare",
+    "resume": "Spela",
+    "pauseShort": "Paus",
+    "position": "Position i sången",
+    "closePlayer": "Stäng spelaren",
+    "found": "inget hittat | {n} melodi hittad | {n} melodier hittade",
+    "ribbon": "Där du slutade",
+    "continue": "Fortsätt"
   }
 }

@@ -55,7 +55,7 @@ const emit = defineEmits<{
   (e: 'cancel'): void
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 /** The stored value, unless a proposal is being applied to this exact field. */
 function initial(field: string, stored: string) {
@@ -131,7 +131,7 @@ const eraValid = computed(() => {
   return value !== null && value !== 0 && value >= MIN_ERA && value <= MAX_ERA
 })
 
-const eraPreview = computed(() => (eraValid.value ? formatEra(eraNumber.value!, t) : null))
+const eraPreview = computed(() => (eraValid.value ? formatEra(eraNumber.value!, t, locale.value) : null))
 
 /**
  * A proposal that arrives after this form has mounted.

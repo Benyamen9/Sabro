@@ -5144,6 +5144,35 @@
         }
       }
     },
+    "/api/v1/chants/book": {
+      "get": {
+        "tags": [
+          "Chants"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BethGazoBookDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BethGazoBookDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BethGazoBookDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/dictionary": {
       "get": {
         "tags": [
@@ -8685,6 +8714,181 @@
           }
         }
       },
+      "BethGazoBookChantDto": {
+        "required": [
+          "id",
+          "modeId",
+          "variantKind",
+          "variantNumber",
+          "syriacIncipit",
+          "syriacIncipitVocalized",
+          "audioUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "variantKind": {
+            "$ref": "#/components/schemas/ChantVariantKind"
+          },
+          "variantNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "syriacIncipit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "syriacIncipitVocalized": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "audioUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "BethGazoBookDto": {
+        "required": [
+          "sections",
+          "modes"
+        ],
+        "type": "object",
+        "properties": {
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BethGazoBookSectionDto"
+            }
+          },
+          "modes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BethGazoModeDto"
+            }
+          }
+        }
+      },
+      "BethGazoBookMelodyDto": {
+        "required": [
+          "name",
+          "chants"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "chants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BethGazoBookChantDto"
+            }
+          }
+        }
+      },
+      "BethGazoBookSectionDto": {
+        "required": [
+          "id",
+          "name",
+          "position",
+          "syriacName",
+          "descriptions",
+          "allowedModeIds",
+          "melodies"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BethGazoDescriptionDto"
+            }
+          },
+          "allowedModeIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "melodies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BethGazoBookMelodyDto"
+            }
+          }
+        }
+      },
+      "BethGazoDescriptionDto": {
+        "required": [
+          "language",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "BethGazoDescriptionRequest": {
+        "required": [
+          "language",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
       "BethGazoModeDto": {
         "required": [
           "id",
@@ -8707,6 +8911,21 @@
               "string"
             ],
             "format": "int32"
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BethGazoDescriptionDto"
+            }
           }
         }
       },
@@ -8739,6 +8958,21 @@
             "items": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BethGazoDescriptionDto"
             }
           }
         }
@@ -10219,7 +10453,8 @@
           "role",
           "region",
           "tradition",
-          "gender"
+          "gender",
+          "descriptions"
         ],
         "type": "object",
         "properties": {
@@ -10262,6 +10497,12 @@
           },
           "gender": {
             "$ref": "#/components/schemas/HistoricalFigureGender"
+          },
+          "descriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoricalFigureDescriptionDto"
+            }
           },
           "emblem": {
             "oneOf": [
@@ -11037,6 +11278,21 @@
         "properties": {
           "name": {
             "type": "string"
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BethGazoDescriptionRequest"
+            }
           }
         }
       },
@@ -12197,6 +12453,21 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "syriacName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BethGazoDescriptionRequest"
+            }
           }
         }
       },
@@ -12375,21 +12646,6 @@
           }
         }
       },
-      "ShmoCardDescriptionDto": {
-        "required": [
-          "language",
-          "text"
-        ],
-        "type": "object",
-        "properties": {
-          "language": {
-            "type": "string"
-          },
-          "text": {
-            "type": "string"
-          }
-        }
-      },
       "ShmoCardStatus": {
         "enum": [
           "Met",
@@ -12404,8 +12660,7 @@
           "timesMet",
           "firstFoundOn",
           "fewestAttempts",
-          "illuminated",
-          "descriptions"
+          "illuminated"
         ],
         "type": "object",
         "properties": {
@@ -12442,12 +12697,6 @@
           },
           "illuminated": {
             "type": "boolean"
-          },
-          "descriptions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ShmoCardDescriptionDto"
-            }
           }
         }
       },
