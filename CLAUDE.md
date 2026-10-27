@@ -346,6 +346,8 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >
 > **Nahlo breaks the shared feedback colour on purpose (Owner, 2026-10-12).** Meltho, Mno and Shmo mark a right part green; Nahlo's right part is its theme purple and a wrong part a pale tint of it — tiles, attempt strip and share grid (🟪/⬜) alike. Same day, its "night vigil" redesign: the answer is asked one question at a time (melody → mode → shuḥlofo), and a mode an earlier guess scored wrong is dimmed, never removed. Do not "restore" the green. Details in the Nahlo README.
+>
+> **Nahlo scores points (Owner, 2026-10-27)**, out of 100: 50/42/34/26/18/10 by the solving guess, plus up to 50 for speed (full within 30 s of the first press of play, nothing at 5 min). Opening the incipit gives up the speed points; a blind solve takes them all; a lost round earns 5 per part found. It answers the open Beth Gazo: knowing the chant beats looking it up. **Computed in the client from the round's ingredients, never stored** — Sabro has no points field and needs none; the formula can change without a migration. Result screen and share text only, so far.
 
 ### This file is the ecosystem's memory — fold changes back into it
 
