@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using Sabro.BethGazo.Public;
 using Sabro.Play.Application.GameResults;
 using Sabro.Play.Infrastructure;
 
@@ -243,6 +245,7 @@ public class GameResultServiceTests
             ctx,
             new RecordGameResultRequestValidator(),
             TimeProvider.System,
+            Substitute.For<IChantPlayablePool>(),
             NullLogger<GameResultService>.Instance);
 
     private static string NewUser() => $"play-user-{Guid.NewGuid():N}";

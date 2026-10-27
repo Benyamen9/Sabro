@@ -3345,6 +3345,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/chants/book": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["BethGazoBookDto"];
+                        "application/json": components["schemas"]["BethGazoBookDto"];
+                        "text/json": components["schemas"]["BethGazoBookDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/dictionary": {
         parameters: {
             query?: never;
@@ -5642,12 +5679,53 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
+        BethGazoBookChantDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            modeId: null | string;
+            variantKind: components["schemas"]["ChantVariantKind"];
+            /** Format: int32 */
+            variantNumber: null | number | string;
+            syriacIncipit: null | string;
+            syriacIncipitVocalized: null | string;
+            audioUrl: string;
+        };
+        BethGazoBookDto: {
+            sections: components["schemas"]["BethGazoBookSectionDto"][];
+            modes: components["schemas"]["BethGazoModeDto"][];
+        };
+        BethGazoBookMelodyDto: {
+            name: string;
+            chants: components["schemas"]["BethGazoBookChantDto"][];
+        };
+        BethGazoBookSectionDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** Format: int32 */
+            position: number | string;
+            syriacName: null | string;
+            descriptions: components["schemas"]["BethGazoDescriptionDto"][];
+            allowedModeIds: string[];
+            melodies: components["schemas"]["BethGazoBookMelodyDto"][];
+        };
+        BethGazoDescriptionDto: {
+            language: string;
+            text: string;
+        };
+        BethGazoDescriptionRequest: {
+            language: string;
+            text: string;
+        };
         BethGazoModeDto: {
             /** Format: uuid */
             id: string;
             name: string;
             /** Format: int32 */
             position: number | string;
+            syriacName?: null | string;
+            descriptions?: null | components["schemas"]["BethGazoDescriptionDto"][];
         };
         BethGazoSectionDto: {
             /** Format: uuid */
@@ -5656,6 +5734,8 @@ export interface components {
             /** Format: int32 */
             position: number | string;
             allowedModeIds: string[];
+            syriacName?: null | string;
+            descriptions?: null | components["schemas"]["BethGazoDescriptionDto"][];
         };
         BiblicalBookDto: {
             /** Format: uuid */
@@ -5987,6 +6067,7 @@ export interface components {
             region: components["schemas"]["HistoricalFigureRegion"];
             tradition: null | components["schemas"]["HistoricalFigureTradition"];
             gender: components["schemas"]["HistoricalFigureGender"];
+            descriptions: components["schemas"]["HistoricalFigureDescriptionDto"][];
             emblem?: null | components["schemas"]["HistoricalFigureEmblem"];
             syriacName?: null | string;
             readMoreUrl?: null | string;
@@ -6156,6 +6237,8 @@ export interface components {
         };
         ModeRequest: {
             name: string;
+            syriacName?: null | string;
+            descriptions?: null | components["schemas"]["BethGazoDescriptionRequest"][];
         };
         NahloPuzzleDto: {
             /** Format: date */
@@ -6414,6 +6497,8 @@ export interface components {
         SectionRequest: {
             name: string;
             allowedModeIds: string[];
+            syriacName?: null | string;
+            descriptions?: null | components["schemas"]["BethGazoDescriptionRequest"][];
         };
         SegmentDto: {
             /** Format: uuid */
@@ -6463,10 +6548,6 @@ export interface components {
         SetPlayableLexiconEntryRequest: {
             playable: boolean;
         };
-        ShmoCardDescriptionDto: {
-            language: string;
-            text: string;
-        };
         /** @enum {string} */
         ShmoCardStatus: "Met" | "Found";
         ShmoCollectionCardDto: {
@@ -6480,7 +6561,6 @@ export interface components {
             /** Format: int32 */
             fewestAttempts: null | number | string;
             illuminated: boolean;
-            descriptions: components["schemas"]["ShmoCardDescriptionDto"][];
         };
         ShmoCollectionDto: {
             cards: components["schemas"]["ShmoCollectionCardDto"][];

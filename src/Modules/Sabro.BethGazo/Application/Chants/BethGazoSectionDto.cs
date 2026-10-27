@@ -20,6 +20,10 @@ namespace Sabro.BethGazo.Application.Chants;
 /// is itself a guess they can get wrong. Withholding it would not protect the
 /// answer; it would only stop the form from asking a sensible question.
 /// </para>
+/// <para>
+/// <see cref="SyriacName"/> and <see cref="Descriptions"/> are filled for the
+/// backoffice and the hub's Beth Gazo; Nahlo's answer options leave them null.
+/// </para>
 /// </remarks>
 /// <param name="AllowedModeIds">
 /// <b>Empty is meaningful:</b> the section has no modes, so a chant in it is never
@@ -29,4 +33,6 @@ public sealed record BethGazoSectionDto(
     Guid Id,
     string Name,
     int Position,
-    IReadOnlyList<Guid> AllowedModeIds);
+    IReadOnlyList<Guid> AllowedModeIds,
+    string? SyriacName = null,
+    IReadOnlyList<BethGazoDescriptionDto>? Descriptions = null);

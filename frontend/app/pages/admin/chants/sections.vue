@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FetchError } from 'ofetch'
-import type { BethGazoSectionDto } from '~/types/api'
+import type { BethGazoModeDto, BethGazoSectionDto } from '~/types/api'
+import { descriptionsOf, linesOf } from '~/utils/bethGazo'
 
 /**
  * The section editor.
@@ -62,6 +63,9 @@ const ordered = computed(() => [...(sections.value ?? [])].sort((a, b) => Number
 const editing = ref<string | null>(null)
 const draftName = ref('')
 const draftModeIds = ref<string[]>([])
+// The section's Syriac name and its line per language, for the hub's Beth Gazo.
+const draftSyriac = ref('')
+const draftLines = ref<Record<string, string>>(linesOf(null))
 const busy = ref(false)
 const error = ref('')
 
@@ -69,6 +73,8 @@ function startNew() {
   editing.value = 'new'
   draftName.value = ''
   draftModeIds.value = []
+  draftSyriac.value = ''
+  draftLines.value = linesOf(null)
   error.value = ''
 }
 
@@ -76,6 +82,8 @@ function startEdit(section: BethGazoSectionDto) {
   editing.value = section.id
   draftName.value = section.name
   draftModeIds.value = [...section.allowedModeIds]
+  draftSyriac.value = section.syriacName ?? ''
+  draftLines.value = linesOf(section.descriptions)
   error.value = ''
 }
 
@@ -112,7 +120,12 @@ async function save() {
   busy.value = true
   error.value = ''
   try {
-    const body = { name: draftName.value.trim(), allowedModeIds: draftModeIds.value }
+    const body = {
+      name: draftName.value.trim(),
+      allowedModeIds: draftModeIds.value,
+      syriacName: draftSyriac.value.trim() || null,
+      descriptions: descriptionsOf(draftLines.value),
+    }
     if (editing.value === 'new') await createSection(body)
     else if (editing.value) await updateSection(editing.value, body)
     await refreshSections()
@@ -182,16 +195,22 @@ const orderedModes = computed(() => [...(modes.value ?? [])].sort((a, b) => Numb
  */
 const editingMode = ref<string | null>(null)
 const modeName = ref('')
+const modeSyriac = ref('')
+const modeLines = ref<Record<string, string>>(linesOf(null))
 
 function startNewMode() {
   editingMode.value = 'new'
   modeName.value = ''
+  modeSyriac.value = ''
+  modeLines.value = linesOf(null)
   error.value = ''
 }
 
-function startEditMode(id: string, name: string) {
-  editingMode.value = id
-  modeName.value = name
+function startEditMode(mode: BethGazoModeDto) {
+  editingMode.value = mode.id
+  modeName.value = mode.name
+  modeSyriac.value = mode.syriacName ?? ''
+  modeLines.value = linesOf(mode.descriptions)
   error.value = ''
 }
 
@@ -200,7 +219,11 @@ async function saveMode() {
   busy.value = true
   error.value = ''
   try {
-    const body = { name: modeName.value.trim() }
+    const body = {
+      name: modeName.value.trim(),
+      syriacName: modeSyriac.value.trim() || null,
+      descriptions: descriptionsOf(modeLines.value),
+    }
     if (editingMode.value === 'new') await createMode(body)
     else if (editingMode.value) await updateMode(editingMode.value, body)
     await refreshModes()
@@ -315,6 +338,7 @@ const fieldClass
               {{ t('admin.chantSections.modesHint') }}
             </p>
           </div>
+          <BethGazoTextFields v-model:syriac-name="draftSyriac" v-model:lines="draftLines" :hint="t('admin.chantSections.bookTextHint')" />
           <div class="flex gap-2">
             <button class="btn btn-primary" :disabled="!canSave" @click="save">
               {{ t('admin.chantSections.save') }}
@@ -364,6 +388,7 @@ const fieldClass
                 </label>
               </div>
             </div>
+            <BethGazoTextFields v-model:syriac-name="draftSyriac" v-model:lines="draftLines" :hint="t('admin.chantSections.bookTextHint')" />
             <div class="flex gap-2">
               <button class="btn btn-primary" :disabled="!canSave" @click="save">
                 {{ t('admin.chantSections.save') }}
@@ -437,12 +462,15 @@ const fieldClass
           </button>
         </div>
 
-        <div v-if="editingMode === 'new'" class="mt-3 flex flex-wrap gap-2">
+        <div v-if="editingMode === 'new'" class="mt-3 flex flex-col gap-3">
           <input v-model="modeName" :placeholder="t('admin.chantModes.namePlaceholder')" :class="[fieldClass, 'max-w-xs']">
+          <BethGazoTextFields v-model:syriac-name="modeSyriac" v-model:lines="modeLines" :hint="t('admin.chantModes.bookTextHint')" />
+          <div class="flex gap-2">
           <button class="btn btn-primary" :disabled="!modeName.trim() || busy" @click="saveMode">
             {{ t('admin.chantSections.save') }}
           </button>
           <button class="btn btn-ghost" @click="editingMode = null">{{ t('admin.chantSections.cancel') }}</button>
+          </div>
         </div>
 
         <ul class="mt-3 flex flex-col gap-1.5">
@@ -451,12 +479,15 @@ const fieldClass
             :key="mode.id"
             class="flex flex-wrap items-center justify-between gap-2 rounded-md border border-[var(--color-border)] px-3 py-2"
           >
-            <div v-if="editingMode === mode.id" class="flex flex-wrap items-center gap-2">
+            <div v-if="editingMode === mode.id" class="flex w-full flex-col gap-3">
               <input v-model="modeName" :class="[fieldClass, 'max-w-xs']">
+              <BethGazoTextFields v-model:syriac-name="modeSyriac" v-model:lines="modeLines" :hint="t('admin.chantModes.bookTextHint')" />
+              <div class="flex gap-2">
               <button class="btn btn-primary" :disabled="!modeName.trim() || busy" @click="saveMode">
                 {{ t('admin.chantSections.save') }}
               </button>
               <button class="btn btn-ghost" @click="editingMode = null">{{ t('admin.chantSections.cancel') }}</button>
+              </div>
             </div>
 
             <template v-else>
@@ -476,7 +507,7 @@ const fieldClass
                   :aria-label="t('admin.chantSections.moveDown')"
                   @click="shiftMode(mode.id, false)"
                 >↓</button>
-                <button class="rounded px-2 py-1 font-sans text-xs text-[var(--color-accent)]" @click="startEditMode(mode.id, mode.name)">
+                <button class="rounded px-2 py-1 font-sans text-xs text-[var(--color-accent)]" @click="startEditMode(mode)">
                   {{ t('admin.chantSections.edit') }}
                 </button>
                 <button

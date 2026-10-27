@@ -103,7 +103,8 @@
     "translations": "Vertalingen",
     "library": "Bibliotheek",
     "admin": "Backoffice",
-    "bethSalme": "Beth Ṣalme"
+    "bethSalme": "Beth Ṣalme",
+    "bethGazo": "Beth Gazo"
   },
   "switcher": {
     "languageLabel": "Taal",
@@ -628,8 +629,8 @@
       "deleteFailed": "De figuur kon niet worden verwijderd.",
       "actionFailed": "Die actie kon niet worden uitgevoerd.",
       "deleteConfirm": "Deze figuur verwijderen? Dit kan niet ongedaan worden gemaakt.",
-      "eraBc": "{century}e eeuw v.Chr.",
-      "eraAd": "{century}e eeuw n.Chr.",
+      "eraBc": "{ordinal} eeuw v.Chr.",
+      "eraAd": "{ordinal} eeuw n.Chr.",
       "columns": {
         "name": "Naam",
         "category": "Categorie",
@@ -1192,13 +1193,17 @@
       "confirmRemove": "Echt verwijderen",
       "moveUp": "Omhoog",
       "moveDown": "Omlaag",
-      "saveFailed": "Die wijziging is geweigerd."
+      "saveFailed": "Die wijziging is geweigerd.",
+      "bookText": "Tekst in Beth Gazo",
+      "syriacName": "Syrische naam",
+      "bookTextHint": "Optioneel. Eén regel over wat deze sectie is en wanneer ze gezongen wordt; lege vakken worden niet getoond."
     },
     "chantModes": {
       "title": "Modi",
       "description": "De modi waarin gezangen worden gezongen. De verzameling groeit — niets gaat ervan uit dat ze bij acht stopt. Een modus kan niet weg zolang een gezang hem draagt of een sectie hem toelaat.",
       "add": "Modus toevoegen",
-      "namePlaceholder": "Naam van de modus"
+      "namePlaceholder": "Naam van de modus",
+      "bookTextHint": "Optioneel. Eén regel over het karakter van de modus en hoe je hem herkent; lege vakken worden niet getoond."
     }
   },
   "seo": {
@@ -1217,6 +1222,10 @@
     "bethSalme": {
       "title": "Beth Ṣalme · de galerij",
       "description": "Een prosopografie van 289 bijbelse en Syrische figuren als kaartverzameling: ontmoet ze in Shmo, vind ze en lees wie ze waren."
+    },
+    "bethGazo": {
+      "title": "Beth Gazo · de schatkamer van gezangen",
+      "description": "De Syrisch-orthodoxe schatkamer van gezangen als een open boek: elke opgenomen melodie, modus per modus, om te beluisteren en te leren."
     }
   },
   "privacy": {
@@ -1332,12 +1341,46 @@
       "foundOn": "Gevonden op {date} in {count} pogingen",
       "notFoundYet": "nog niet gevonden",
       "noStory": "Nog geen verhaal geschreven.",
-      "findToRead": "Vind {name} als antwoord van Shmo om te lezen wie het was.",
       "lockedHint": "Raad {name} in Shmo om de figuur te ontmoeten. Vind die als antwoord van de dag om de kaart in te kleuren.",
       "readMore": "Lees meer",
       "turnOver": "Draai de kaart om",
       "turnBack": "Terugdraaien",
-      "close": "Sluiten"
+      "close": "Sluiten",
+      "notMetYet": "Nog niet ontmoet in Shmo",
+      "findToColour": "Vind {name} als antwoord van Shmo om de kaart in te kleuren."
     }
+  },
+  "bethGazo": {
+    "title": "Beth Gazo",
+    "heading": "De schatkamer van gezangen",
+    "lede": "{chants} tot nu toe opgenomen, in {melodies}. Open een sectie om te luisteren, leer de modi en probeer dan de Nahlo van vandaag.",
+    "ledeEmpty": "De schatkamer van gezangen als een open boek, modus per modus.",
+    "play": "Speel de Nahlo van vandaag",
+    "loadFailed": "De gezangen konden niet worden geladen.",
+    "search": "Zoek een melodie",
+    "modesLabel": "Modi",
+    "allModes": "Alle modi",
+    "inThisMode": "{chants} opgenomen in deze modus",
+    "noneInMode": "In deze modus is nog geen gezang opgenomen.",
+    "empty": "Geen melodie komt overeen met je zoekopdracht.",
+    "notRecorded": "nog niet opgenomen",
+    "sectionCounts": "{melodies} · {chants}",
+    "melodies": "geen melodieën | {n} melodie | {n} melodieën",
+    "chants": "geen gezangen | {n} gezang | {n} gezangen",
+    "variant": {
+      "Shuhlofo": "Shuḥlofo {number}",
+      "Hrino": "Ḥrino {number}"
+    },
+    "noIncipit": "Incipit nog niet gelezen",
+    "playChant": "{chant} afspelen",
+    "pauseChant": "{chant} pauzeren",
+    "player": "Speler",
+    "resume": "Afspelen",
+    "pauseShort": "Pauze",
+    "position": "Positie in het gezang",
+    "closePlayer": "Speler sluiten",
+    "found": "niets gevonden | {n} melodie gevonden | {n} melodieën gevonden",
+    "ribbon": "Waar je gebleven was",
+    "continue": "Verder"
   }
 }

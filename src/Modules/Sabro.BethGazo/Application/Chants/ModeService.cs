@@ -35,6 +35,12 @@ internal sealed class ModeService : IModeService
         }
 
         var mode = created.Value!;
+        var described = Describe(mode, request.SyriacName, request.Descriptions);
+        if (described is not null)
+        {
+            return Result<BethGazoModeDto>.Failure(described);
+        }
+
         dbContext.Modes.Add(mode);
 
         var saveError = await SaveGuardingNameAsync(cancellationToken);
@@ -49,7 +55,7 @@ internal sealed class ModeService : IModeService
             mode.Name,
             mode.Position);
 
-        return Result<BethGazoModeDto>.Success(new BethGazoModeDto(mode.Id, mode.Name, mode.Position));
+        return Result<BethGazoModeDto>.Success(BethGazoMapping.ToDto(mode));
     }
 
     public async Task<Result<BethGazoModeDto>> UpdateAsync(
@@ -71,6 +77,12 @@ internal sealed class ModeService : IModeService
             return Result<BethGazoModeDto>.Failure(error);
         }
 
+        var described = Describe(mode, request.SyriacName, request.Descriptions);
+        if (described is not null)
+        {
+            return Result<BethGazoModeDto>.Failure(described);
+        }
+
         var saveError = await SaveGuardingNameAsync(cancellationToken);
         if (saveError is not null)
         {
@@ -78,7 +90,7 @@ internal sealed class ModeService : IModeService
         }
 
         logger.LogInformation("Beth Gazo mode updated. ModeId={ModeId}", id);
-        return Result<BethGazoModeDto>.Success(new BethGazoModeDto(mode.Id, mode.Name, mode.Position));
+        return Result<BethGazoModeDto>.Success(BethGazoMapping.ToDto(mode));
     }
 
     public async Task<Error?> DeleteAsync(Guid id, CancellationToken cancellationToken)
@@ -157,6 +169,13 @@ internal sealed class ModeService : IModeService
         logger.LogInformation(
             "Beth Gazo mode moved. ModeId={ModeId} From={From} To={To}", id, mine, theirs);
         return null;
+    }
+
+    /// <summary>Applies the Syriac name and descriptions a request carries.</summary>
+    private static Error? Describe(BethGazoMode mode, string? syriacName, IReadOnlyList<BethGazoDescriptionRequest>? descriptions)
+    {
+        var built = BethGazoMapping.ToDescriptions(descriptions);
+        return built.IsSuccess ? mode.Describe(syriacName, built.Value) : built.Error;
     }
 
     private async Task<Error?> SaveGuardingNameAsync(CancellationToken cancellationToken)

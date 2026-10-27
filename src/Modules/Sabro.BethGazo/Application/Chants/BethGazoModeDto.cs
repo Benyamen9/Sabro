@@ -7,5 +7,14 @@ namespace Sabro.BethGazo.Application.Chants;
 /// Served as a list rather than baked into the client as a constant, because the
 /// set grows: the owner adds modes as he works through the tradition, and some
 /// sets run past eight. A hardcoded client list would silently omit them.
+/// <para>
+/// <see cref="SyriacName"/> and <see cref="Descriptions"/> are filled for the
+/// backoffice and the hub's Beth Gazo; Nahlo's answer options leave them null.
+/// </para>
 /// </remarks>
-public sealed record BethGazoModeDto(Guid Id, string Name, int Position);
+public sealed record BethGazoModeDto(
+    Guid Id,
+    string Name,
+    int Position,
+    string? SyriacName = null,
+    IReadOnlyList<BethGazoDescriptionDto>? Descriptions = null);

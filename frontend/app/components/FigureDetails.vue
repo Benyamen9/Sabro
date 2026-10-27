@@ -4,9 +4,10 @@ import { pickDescription } from '~/utils/gallery'
 import { formatEra } from '~/utils/historicalFigures'
 
 /**
- * What the player knows about a figure: the line on how they met it, the
- * attributes Shmo showed them, and, once found, the story. Shared by the
- * computer's side page and the back of the phone's lifted card.
+ * A figure's page: how far the player has come with it, its attributes and its
+ * story. Every figure shows all of it, met or not (Owner, 2026-10-25); finding a
+ * figure colours its card in. Shared by the computer's side page and the back of
+ * the phone's lifted card.
  */
 const props = withDefaults(defineProps<{ figure: GalleryFigure, showLink?: boolean }>(), { showLink: true })
 
@@ -16,6 +17,7 @@ const story = computed(() => pickDescription(props.figure.descriptions, locale.v
 
 const progress = computed(() => {
   const f = props.figure
+  if (f.tier === 'locked') return t('bethSalme.detail.notMetYet')
   const met = f.timesMet === 1 ? t('bethSalme.detail.metOnce') : t('bethSalme.detail.metTimes', { count: f.timesMet })
   if (f.tier === 'found' && f.firstFoundOn) {
     const date = new Intl.DateTimeFormat(locale.value, { day: 'numeric', month: 'long', year: 'numeric' })
@@ -28,7 +30,7 @@ const progress = computed(() => {
 const attributes = computed(() => {
   const f = props.figure
   return [
-    { key: 'century', label: t('bethSalme.detail.century'), value: formatEra(f.era, t) },
+    { key: 'century', label: t('bethSalme.detail.century'), value: formatEra(f.era, t, locale.value) },
     { key: 'period', label: t('admin.historicalFigures.form.period'), value: t(`admin.historicalFigures.period.${f.period}`) },
     { key: 'category', label: t('admin.historicalFigures.form.category'), value: t(`admin.historicalFigures.category.${f.category}`) },
     { key: 'role', label: t('admin.historicalFigures.form.role'), value: t(`admin.historicalFigures.role.${f.role}`) },
@@ -52,14 +54,11 @@ const attributes = computed(() => {
       </div>
     </dl>
     <div class="mt-4 border-t border-[var(--color-border)] pt-3 font-serif text-[15px] leading-relaxed">
-      <template v-if="figure.tier === 'found'">
-        <p v-if="story" class="text-[var(--color-text)]">{{ story }}</p>
-        <p v-else class="italic text-[var(--color-text-faint)]">{{ t('bethSalme.detail.noStory') }}</p>
-      </template>
-      <p v-else class="text-[var(--color-text-muted)]">{{ t('bethSalme.detail.findToRead', { name: figure.name }) }}</p>
+      <p v-if="story" class="text-[var(--color-text)]">{{ story }}</p>
+      <p v-else class="italic text-[var(--color-text-faint)]">{{ t('bethSalme.detail.noStory') }}</p>
     </div>
     <a
-      v-if="showLink && figure.tier === 'found' && figure.readMoreUrl"
+      v-if="showLink && figure.readMoreUrl"
       :href="figure.readMoreUrl"
       target="_blank"
       rel="noopener"
