@@ -262,7 +262,7 @@ public sealed class PlayController : ApiControllerBase
     /// <summary>
     /// Returns the signed-in player's figure collection (Beth Ṣalme in the hub): every
     /// figure they have met or found in Shmo, worked out from their recorded results.
-    /// A found card carries the figure's descriptions, which nothing public serves.
+    /// The figures themselves, stories included, come from the public roster.
     /// </summary>
     [HttpGet("shmo/collection")]
     [Authorize(Policy = AuthPolicies.Write)]

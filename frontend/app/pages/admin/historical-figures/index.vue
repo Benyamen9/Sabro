@@ -18,7 +18,7 @@ import {
 // Editorial / deferred surface — keep out of search indexes.
 useSeoMeta({ robots: 'noindex, nofollow' })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { isAdmin, refresh: refreshAdmin } = useAdmin()
 const { canEdit, canViewBackoffice, refresh: refreshAccess } = useMyAccess()
 const { list } = useHistoricalFiguresAdmin()
@@ -338,7 +338,7 @@ const selectClass
                   {{ t(`admin.historicalFigures.category.${figure.category}`) }}
                 </td>
                 <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
-                  {{ formatEra(Number(figure.era), t) }}
+                  {{ formatEra(Number(figure.era), t, locale) }}
                 </td>
                 <td class="px-4 py-3 font-sans text-sm text-[var(--color-text-muted)]">
                   {{ t(`admin.historicalFigures.period.${figure.period}`) }}

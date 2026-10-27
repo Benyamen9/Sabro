@@ -628,8 +628,8 @@
       "deleteFailed": "De figuur kon niet worden verwijderd.",
       "actionFailed": "Die actie kon niet worden uitgevoerd.",
       "deleteConfirm": "Deze figuur verwijderen? Dit kan niet ongedaan worden gemaakt.",
-      "eraBc": "{century}e eeuw v.Chr.",
-      "eraAd": "{century}e eeuw n.Chr.",
+      "eraBc": "{ordinal} eeuw v.Chr.",
+      "eraAd": "{ordinal} eeuw n.Chr.",
       "columns": {
         "name": "Naam",
         "category": "Categorie",
@@ -1332,12 +1332,13 @@
       "foundOn": "Gevonden op {date} in {count} pogingen",
       "notFoundYet": "nog niet gevonden",
       "noStory": "Nog geen verhaal geschreven.",
-      "findToRead": "Vind {name} als antwoord van Shmo om te lezen wie het was.",
       "lockedHint": "Raad {name} in Shmo om de figuur te ontmoeten. Vind die als antwoord van de dag om de kaart in te kleuren.",
       "readMore": "Lees meer",
       "turnOver": "Draai de kaart om",
       "turnBack": "Terugdraaien",
-      "close": "Sluiten"
+      "close": "Sluiten",
+      "notMetYet": "Nog niet ontmoet in Shmo",
+      "findToColour": "Vind {name} als antwoord van Shmo om de kaart in te kleuren."
     }
   }
 }

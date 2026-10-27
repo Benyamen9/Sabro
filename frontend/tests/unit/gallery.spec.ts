@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { HistoricalFigureListItem, ShmoCollectionCardDto } from '~/types/api'
 import { EMBLEM_PATHS, ROLE_EMBLEM_PATHS } from '~/utils/emblems'
 import { buildGallery, matchesGallery, pickDescription } from '~/utils/gallery'
-import { HISTORICAL_FIGURE_EMBLEMS, HISTORICAL_FIGURE_ROLES } from '~/utils/historicalFigures'
+import { HISTORICAL_FIGURE_EMBLEMS, HISTORICAL_FIGURE_ROLES, ordinalCentury } from '~/utils/historicalFigures'
 
 function figure(id: string, name: string, era: number): HistoricalFigureListItem {
   return {
@@ -15,6 +15,7 @@ function figure(id: string, name: string, era: number): HistoricalFigureListItem
     region: 'Mesopotamia',
     tradition: 'PreChalcedonian',
     gender: 'Male',
+    descriptions: [],
     emblem: null,
     syriacName: null,
     readMoreUrl: null,
@@ -29,7 +30,6 @@ function card(id: string, status: 'Met' | 'Found', extra: Partial<ShmoCollection
     firstFoundOn: status === 'Found' ? '2026-10-20' : null,
     fewestAttempts: status === 'Found' ? 4 : null,
     illuminated: false,
-    descriptions: [],
     ...extra,
   }
 }
@@ -49,10 +49,11 @@ describe('buildGallery', () => {
     expect(buildGallery(roster, []).every(f => f.tier === 'locked')).toBe(true)
   })
 
-  it('takes tier, progress and story from the collection', () => {
-    const gallery = buildGallery(roster, [
+  it('takes tier and progress from the collection, and keeps the roster story', () => {
+    const told = roster.map(f => f.id === 'b' ? { ...f, descriptions: [{ language: 'en', text: 'The Persian Sage.' }] } : f)
+    const gallery = buildGallery(told, [
       card('a', 'Met', { timesMet: 3 }),
-      card('c', 'Found', { illuminated: true, descriptions: [{ language: 'en', text: 'Deacon of Nisibis.' }] }),
+      card('c', 'Found', { illuminated: true }),
     ])
     const abel = gallery.find(f => f.id === 'a')!
     const ephrem = gallery.find(f => f.id === 'c')!
@@ -62,7 +63,8 @@ describe('buildGallery', () => {
     expect(ephrem.tier).toBe('found')
     expect(ephrem.illuminated).toBe(true)
     expect(ephrem.fewestAttempts).toBe(4)
-    expect(ephrem.descriptions).toHaveLength(1)
+    // The story comes with the roster, so a figure not met yet has it too.
+    expect(gallery.find(f => f.id === 'b')!.descriptions).toHaveLength(1)
   })
 })
 
@@ -107,5 +109,15 @@ describe('emblems', () => {
     for (const role of HISTORICAL_FIGURE_ROLES) {
       expect(ROLE_EMBLEM_PATHS[role], role).toMatch(/^M/)
     }
+  })
+})
+
+describe('ordinalCentury', () => {
+  it('follows each language’s own ordinals', () => {
+    expect([1, 2, 3, 4, 11, 21, 22].map(n => ordinalCentury(n, 'en'))).toEqual(['1st', '2nd', '3rd', '4th', '11th', '21st', '22nd'])
+    expect([1, 2, 4].map(n => ordinalCentury(n, 'fr'))).toEqual(['1er', '2e', '4e'])
+    expect([1, 2, 3, 11, 21].map(n => ordinalCentury(n, 'sv'))).toEqual(['1:a', '2:a', '3:e', '11:e', '21:a'])
+    expect(ordinalCentury(1, 'nl')).toBe('1e')
+    expect(ordinalCentury(1, 'de')).toBe('1.')
   })
 })

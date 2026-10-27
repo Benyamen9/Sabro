@@ -244,7 +244,7 @@ Owns the roster of **historical figures** — biblical figures through the Syria
 
 Same lifecycle as the Lexicon: `Draft` → `Published`, plus a manual `PlayableInShmo` editorial flag that only a published figure may carry.
 
-**Card fields (2026-10-25)** — three optional fields for the hub's figure collection (Beth Ṣalme), none of them a Shmo hint: `Emblem` (`HistoricalFigureEmblem`, the sign on the figure's card — a traditional iconographic attribute or one from the figure's story, chosen per figure by the Owner; null shows the emblem of the role), `SyriacName` (Syriac script, NFC) and `ReadMoreUrl` (absolute http(s), e.g. a Syriaca.org entry). The migration that added them pre-filled the Owner-approved emblem for 140 figures, keyed by name. They are in the public roster because the hub draws every card from it. **The description is not:** it is the reward for finding a figure, so it travels only with a player's own collection.
+**Card fields (2026-10-25)** — three optional fields for the hub's figure collection (Beth Ṣalme), none of them a Shmo hint: `Emblem` (`HistoricalFigureEmblem`, the sign on the figure's card — a traditional iconographic attribute or one from the figure's story, chosen per figure by the Owner; null shows the emblem of the role), `SyriacName` (Syriac script, NFC) and `ReadMoreUrl` (absolute http(s), e.g. a Syriaca.org entry). The migration that added them pre-filled the Owner-approved emblem for 140 figures, keyed by name. They are in the public roster because the hub draws every card from it, and so are the **descriptions**: every card of Beth Ṣalme shows its story, met or not (Owner, 2026-10-25). Nothing there gives Shmo away; the roster was public already.
 
 > **The enum order is a contract.** `HistoricalPeriod` is diffed *by ordinal position*, so reordering its members silently changes every near/far verdict in Shmo. Append new periods; never reorder. Shmo hand-copies these enums into `app/types/figure.ts` and guards the copy with `test/figure.test.ts` — see *Ecosystem Clients*.
 
@@ -377,7 +377,8 @@ hub's page links (Library, Beth Ṣalme, Backoffice) live **inside the launcher 
 **Beth Ṣalme** (ܒܝܬ ܨܠܡ̈ܐ, "house of images", `/beth-salme`; Owner, 2026-10-25) is the hub's figure page: a
 prosopography of Shmo's roster as a **card collection**. A figure is **met** when the player guesses it in
 Shmo (a sketch card, attributes shown) and **found** when they solve it as the day's answer (the card in
-colour, and its description, which nothing public serves). A find is **illuminated** 1 time in 20 (a
+colour). **Every card shows its attributes and story**, met or not (Owner, 2026-10-25): the page is a
+reference first, and finding a figure colours its card in. A find is **illuminated** 1 time in 20 (a
 rainbow foil). Cards run A–Z, numbered through time; unmet cards are dark but **show the name**. Each card
 carries the figure's **emblem** (`utils/emblems.ts`, one drawing per `HistoricalFigureEmblem` and per role,
 typed so a new value fails the typecheck until drawn). On a computer the figure's page sits beside the
@@ -493,14 +494,14 @@ else's flood.
 **Client support reads:**
 - `GET /api/v1/chants/answer-options` — Nahlo's suggestion lists. **They are unjoined and must stay that way**: pairing a melody with its mode in a public payload would end the game, since the audio already names the melody to anyone who recognises it.
   **One owner-ruled exception (2026-10-12):** `conditionalModeIds` + `melodyModeHints`. A *conditional* mode is one some moded section does not admit — today only the mshaḥelfotho (farde-only), derived from the section rows, never named. The form offers it (unnumbered) only once the player names a melody with a published chant in it, and a melody with no mode at all (a madrosho) hides the mode question. The always-offered modes are never paired with a melody. The same day the **section stopped being asked** in Nahlo: the round scores melody, mode and shuḥlofo.
-- `GET /api/v1/historical-figures` — Shmo's published roster, fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
+- `GET /api/v1/historical-figures` — Shmo's published roster (with each figure's descriptions and card fields, for Beth Ṣalme), fetched once per session and filtered client-side. No search endpoint yet; a `search` query param is the next step if the roster outgrows that.
 - `GET /api/v1/play/meltho/library` — past Meltho words, public and anonymous. Today's word is never included.
 - `GET /api/v1/play/meltho/leaderboard` (`api:v1:write`) — signed-in only, ranked by longest streak; appearing requires an opt-in on the profile, the caller's own standing is always shown.
 
 **Play results (authenticated user writes / reads):**
 - `POST /api/v1/play/results` (`api:v1:write`) — the authenticated user records their result; one per user/game/day (idempotent on the unique key).
 - `GET /api/v1/play/results/me` (`api:v1:write`) — the authenticated user's own results, for the profile/dashboard surface.
-- `GET /api/v1/play/shmo/collection` (`api:v1:write`) — the player's figure collection for the hub's Beth Ṣalme: every figure met (guessed, or revealed in a round given up) or found (solved), worked out from their Shmo results. A found card carries the figure's descriptions, which nothing public serves, and whether it is **illuminated**: a 1 in 20 chance per find, derived from player, figure and day, never stored.
+- `GET /api/v1/play/shmo/collection` (`api:v1:write`) — the player's figure collection for the hub's Beth Ṣalme: every figure met (guessed, or revealed in a round given up) or found (solved), worked out from their Shmo results. Each card says whether it is **illuminated**: a 1 in 20 chance per find, derived from player, figure and day, never stored.
 
 **Profile (authenticated):**
 - `GET /api/v1/profile/me` — current user's profile.
