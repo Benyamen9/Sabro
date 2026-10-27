@@ -1353,7 +1353,7 @@
   "bethGazo": {
     "title": "Beth Gazo",
     "heading": "De schatkamer van gezangen",
-    "lede": "{chants} tot nu toe opgenomen, in {melodies}. Beluister ze, leer de modi en probeer dan de Nahlo van vandaag.",
+    "lede": "{chants} tot nu toe opgenomen, in {melodies}. Open een sectie om te luisteren, leer de modi en probeer dan de Nahlo van vandaag.",
     "ledeEmpty": "De schatkamer van gezangen als een open boek, modus per modus.",
     "play": "Speel de Nahlo van vandaag",
     "loadFailed": "De gezangen konden niet worden geladen.",
@@ -1378,6 +1378,9 @@
     "resume": "Afspelen",
     "pauseShort": "Pauze",
     "position": "Positie in het gezang",
-    "closePlayer": "Speler sluiten"
+    "closePlayer": "Speler sluiten",
+    "found": "niets gevonden | {n} melodie gevonden | {n} melodieën gevonden",
+    "ribbon": "Waar je gebleven was",
+    "continue": "Verder"
   }
 }

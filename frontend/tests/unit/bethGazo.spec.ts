@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { BethGazoBookChantDto, BethGazoBookDto, BethGazoBookSectionDto } from '~/types/api'
-import { chantCount, filterBook, foldForSearch, lineFor, modeLabels } from '~/utils/bethGazo'
+import { chantCount, filterBook, foldForSearch, foundByIncipit, lineFor, locateChant, modeLabels, modeSlots } from '~/utils/bethGazo'
 
 const MODES = ['Qadmoyo', 'Trayono', 'Tlithoyo', 'Mshaḥelfotho'].map((name, i) => ({ id: `m${i + 1}`, name, position: i + 1 }))
 
@@ -85,5 +85,45 @@ describe('lineFor', () => {
     expect(lineFor(lines, 'fr')).toBe('Matin')
     expect(lineFor(lines, 'sv')).toBe('Morning')
     expect(lineFor([], 'en')).toBeNull()
+  })
+})
+
+describe('modeSlots', () => {
+  const variant = (id: string, modeId: string, kind: 'Shuhlofo' | 'Hrino'): BethGazoBookChantDto => ({ ...chant(id, modeId), variantKind: kind, variantNumber: 1 })
+
+  it('gives one slot per mode, with its variants beside the plain chant', () => {
+    const slots = modeSlots([chant('a', 'm1'), variant('b', 'm1', 'Shuhlofo'), chant('c', 'm2')])
+    expect(slots.map(s => [s.modeId, s.main.id, s.variants.map(v => v.id)])).toEqual([['m1', 'a', ['b']], ['m2', 'c', []]])
+  })
+
+  it('lets a mode recorded only as a variant play that variant', () => {
+    expect(modeSlots([variant('h', 'm3', 'Hrino')]).map(s => s.main.id)).toEqual(['h'])
+  })
+
+  it('puts the plain chant first even when a variant came first', () => {
+    const [slot] = modeSlots([variant('v', 'm1', 'Shuhlofo'), chant('p', 'm1')])
+    expect([slot!.main.id, slot!.variants.map(v => v.id)]).toEqual(['p', ['v']])
+  })
+
+  it('leaves out chants without a mode', () => {
+    expect(modeSlots([chant('x', null)])).toEqual([])
+  })
+})
+
+describe('foundByIncipit', () => {
+  const melody = { name: 'Ḥablo l’itokh', chants: [chant('c1', 'm1', 'ܚܒܠܐ')] }
+
+  it('is true only when the incipit matched and the name did not', () => {
+    expect(foundByIncipit(melody, 'ܚܒܠܐ')).toBe(true)
+    expect(foundByIncipit(melody, 'hablo')).toBe(false)
+    expect(foundByIncipit(melody, '')).toBe(false)
+  })
+})
+
+describe('locateChant', () => {
+  it('finds the section and melody of a chant, or nothing once it is gone', () => {
+    const found = locateChant(book, 'c4')
+    expect([found?.section.id, found?.melody.name]).toEqual(['Qole shahroye', 'Zodeq dnehwe'])
+    expect(locateChant(book, 'gone')).toBeNull()
   })
 })

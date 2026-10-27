@@ -390,14 +390,19 @@ collection; on a phone the card lifts out and turns over. Signed out, every card
 line. Each "library" keeps its own style: collecting belongs to Beth Ṣalme alone, never to Beth Gazo.
 **Rarity is parked** (Owner): the one ruling so far is that the great names should be the rare cards.
 
-**Beth Gazo** (ܒܝܬ ܓܙܐ, `/beth-gazo`; Owner, 2026-10-25) is the hub's chant page: the treasury as an **open
-book**, fed by `GET /chants/book`. **One view, no tabs:** the sections in the book's order (numbered, red
-initials, each with its optional Syriac name and line), each melody's chants mode by mode, all playable,
-with a search (melody or incipit) and **mode pills**. Choosing a mode keeps only its chants and opens a card
-about that mode. The modes every moded section admits are numbered; one only some admit (the mshaḥelfotho)
-is marked ✶, derived from the section rows like Nahlo's conditional modes, never from a count. **One
-player bar** at the bottom (`BethGazoPlayer`), not one per chant. No collecting, unlocking or illumination
-here. Every published chant **with a recording** is listed; nothing is held back for the day's Nahlo.
+**Beth Gazo** (ܒܝܬ ܓܙܐ, `/beth-gazo`; Owner, 2026-10-25, layout 2026-10-27) is the hub's chant page: the
+treasury as an **open book**, fed by `GET /chants/book`. **One view, no tabs, closed chapters:** the sections in
+the book's order (numbered, red initials, each with its optional Syriac name and line) open one by one, so a
+full book stays short. Inside, **each melody is one line** with a numbered button per mode (a dot marks a mode
+that also has a shuḥlofo or ḥrino); tapping the melody's name **unfolds** it into its chants, one per line,
+with mode, variant and **incipit**. A section without modes (the madroshe) lists its chants by incipit straight
+away, since nothing else tells them apart (Owner). A search (melody or incipit; an incipit match unfolds the
+melody) or a **mode pill** opens the sections with a match and shows the mode's card. The modes every moded
+section admits are numbered; one only some admit (the mshaḥelfotho) is marked ✶, derived from the section
+rows like Nahlo's conditional modes, never from a count. **One player bar** at the bottom (`BethGazoPlayer`).
+**The ribbon** (Owner, 2026-10-27) remembers the last chant played, in `localStorage` on that device only,
+and the page reopens there with a "where you left off" line. No collecting, unlocking or illumination here.
+Every published chant **with a recording** is listed; nothing is held back for the day's Nahlo.
 
 **The hub's home page** (reworked by the Owner on 2026-10-23 for practicality; the look of
 2026-10-15 stays) has two parts under the hero:

@@ -1353,7 +1353,7 @@
   "bethGazo": {
     "title": "Beth Gazo",
     "heading": "The treasury of chants",
-    "lede": "{chants} recorded so far, in {melodies}. Listen to any of them, learn the modes, then try today’s Nahlo.",
+    "lede": "{chants} recorded so far, in {melodies}. Open a section to listen, learn the modes, then try today’s Nahlo.",
     "ledeEmpty": "The treasury of chants as an open book, mode by mode.",
     "play": "Play today’s Nahlo",
     "loadFailed": "The chants could not be loaded.",
@@ -1378,6 +1378,9 @@
     "resume": "Play",
     "pauseShort": "Pause",
     "position": "Position in the chant",
-    "closePlayer": "Close the player"
+    "closePlayer": "Close the player",
+    "found": "nothing found | {n} melody found | {n} melodies found",
+    "ribbon": "Where you left off",
+    "continue": "Continue"
   }
 }

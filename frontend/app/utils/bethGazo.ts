@@ -1,4 +1,4 @@
-import type { BethGazoBookDto, BethGazoBookSectionDto, BethGazoDescriptionDto } from '~/types/api'
+import type { BethGazoBookChantDto, BethGazoBookDto, BethGazoBookMelodyDto, BethGazoBookSectionDto, BethGazoDescriptionDto } from '~/types/api'
 
 /** The five languages the ecosystem serves, in the order the backoffice lists them. */
 export const BETH_GAZO_LANGUAGES = ['en', 'fr', 'nl', 'de', 'sv'] as const
@@ -79,4 +79,53 @@ export function filterBook(
 /** How many chants a list of sections holds. */
 export function chantCount(sections: readonly BethGazoBookSectionDto[]): number {
   return sections.reduce((sum, s) => sum + s.melodies.reduce((n, m) => n + m.chants.length, 0), 0)
+}
+
+/** A mode's place on a melody's line: the chant in its own right, and any shuḥlofe or ḥrone beside it. */
+export interface ModeSlot {
+  modeId: string
+  main: BethGazoBookChantDto
+  variants: BethGazoBookChantDto[]
+}
+
+/**
+ * A melody's chants as one button per mode, in the order the API sends them (mode
+ * position, then the plain chant before its variants). A mode recorded only as a
+ * variant still gets a button, playing that variant. Chants without a mode are
+ * left out: a section without modes lists its chants by incipit instead.
+ */
+export function modeSlots(chants: readonly BethGazoBookChantDto[]): ModeSlot[] {
+  const slots: ModeSlot[] = []
+  for (const chant of chants) {
+    if (!chant.modeId) continue
+    const slot = slots.find(s => s.modeId === chant.modeId)
+    if (!slot) slots.push({ modeId: chant.modeId, main: chant, variants: [] })
+    else if (slot.main.variantKind !== 'None' && chant.variantKind === 'None') {
+      slot.variants.unshift(slot.main)
+      slot.main = chant
+    }
+    else slot.variants.push(chant)
+  }
+  return slots
+}
+
+/** Whether the search found this melody by an incipit rather than by its name, so the page unfolds it. */
+export function foundByIncipit(melody: BethGazoBookMelodyDto, query: string): boolean {
+  const needle = query.trim()
+  if (!needle || foldForSearch(melody.name).includes(foldForSearch(needle))) return false
+  return melody.chants.some(c => [c.syriacIncipit, c.syriacIncipitVocalized].some(i => i && i.includes(needle)))
+}
+
+/** Where a chant sits in the book, for the ribbon: its section and melody, or null once it is gone. */
+export function locateChant(
+  book: BethGazoBookDto,
+  chantId: string,
+): { section: BethGazoBookSectionDto, melody: BethGazoBookMelodyDto, chant: BethGazoBookChantDto } | null {
+  for (const section of book.sections) {
+    for (const melody of section.melodies) {
+      const chant = melody.chants.find(c => c.id === chantId)
+      if (chant) return { section, melody, chant }
+    }
+  }
+  return null
 }

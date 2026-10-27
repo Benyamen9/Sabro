@@ -1353,7 +1353,7 @@
   "bethGazo": {
     "title": "Beth Gazo",
     "heading": "Die Schatzkammer der Gesänge",
-    "lede": "Bisher {chants} aufgenommen, in {melodies}. Hör sie dir an, lerne die Modi und versuche dann das heutige Nahlo.",
+    "lede": "Bisher {chants} aufgenommen, in {melodies}. Öffne einen Abschnitt zum Anhören, lerne die Modi und versuche dann das heutige Nahlo.",
     "ledeEmpty": "Die Schatzkammer der Gesänge als offenes Buch, Modus für Modus.",
     "play": "Das heutige Nahlo spielen",
     "loadFailed": "Die Gesänge konnten nicht geladen werden.",
@@ -1378,6 +1378,9 @@
     "resume": "Abspielen",
     "pauseShort": "Pause",
     "position": "Position im Gesang",
-    "closePlayer": "Player schließen"
+    "closePlayer": "Player schließen",
+    "found": "nichts gefunden | {n} Melodie gefunden | {n} Melodien gefunden",
+    "ribbon": "Wo du aufgehört hast",
+    "continue": "Weiter"
   }
 }

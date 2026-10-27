@@ -1353,7 +1353,7 @@
   "bethGazo": {
     "title": "Beth Gazo",
     "heading": "Le trésor des chants",
-    "lede": "{chants} enregistrés jusqu’ici, dans {melodies}. Écoutez-les, apprenez les modes, puis tentez le Nahlo du jour.",
+    "lede": "{chants} enregistrés jusqu’ici, dans {melodies}. Ouvrez une section pour écouter, apprenez les modes, puis tentez le Nahlo du jour.",
     "ledeEmpty": "Le trésor des chants en livre ouvert, mode par mode.",
     "play": "Jouer au Nahlo du jour",
     "loadFailed": "Les chants n’ont pas pu être chargés.",
@@ -1378,6 +1378,9 @@
     "resume": "Lire",
     "pauseShort": "Pause",
     "position": "Position dans le chant",
-    "closePlayer": "Fermer le lecteur"
+    "closePlayer": "Fermer le lecteur",
+    "found": "rien trouvé | {n} mélodie trouvée | {n} mélodies trouvées",
+    "ribbon": "Là où vous vous êtes arrêté",
+    "continue": "Reprendre"
   }
 }

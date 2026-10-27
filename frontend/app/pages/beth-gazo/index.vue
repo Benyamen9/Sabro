@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import type { BethGazoBookChantDto, BethGazoBookSectionDto } from '~/types/api'
-import { chantCount, filterBook, lineFor, modeLabels } from '~/utils/bethGazo'
+import type { BethGazoBookChantDto, BethGazoBookMelodyDto, BethGazoBookSectionDto } from '~/types/api'
+import { chantCount, filterBook, foundByIncipit, lineFor, locateChant, modeLabels, modeSlots } from '~/utils/bethGazo'
 
 /**
  * Beth Gazo (ܒܝܬ ܓܙܐ), the treasury of chants, as an open book (Owner,
  * 2026-10-25). Every published, recorded chant is here and playable, with its
  * melody, mode, section and incipit, so a player can look up today's Nahlo: the
  * Owner ruled the treasury open to anyone who wants to learn or listen, knowing
- * that. One view, no tabs: the sections in the book's order, a search, and mode
- * pills; choosing a mode keeps only its chants and opens a card about it. One
- * player bar at the bottom.
+ * that.
+ *
+ * Laid out as closed chapters (Owner, 2026-10-27), so a full book stays short:
+ * the sections open one by one, each melody is one line with a button per mode,
+ * and the melody's name unfolds it into its chants with their incipits. A
+ * section without modes lists its chants by incipit straight away, since nothing
+ * else tells them apart. A search or a mode pill opens the sections with a match.
+ * The ribbon remembers the last chant played, on this device, and the page
+ * reopens there.
  */
 const { t, locale } = useI18n()
 const config = useRuntimeConfig()
@@ -25,6 +31,7 @@ useSeoMeta({
 
 const query = ref('')
 const modeId = ref<string | null>(null)
+const narrowed = computed(() => query.value.trim().length > 0 || modeId.value !== null)
 
 const modes = computed(() => [...(book.value?.modes ?? [])].sort((a, b) => Number(a.position) - Number(b.position)))
 const labels = computed(() => (book.value ? modeLabels(book.value) : new Map<string, string>()))
@@ -48,11 +55,50 @@ function chooseMode(id: string | null) {
   modeId.value = modeId.value === id ? null : id
 }
 
+/**
+ * What is open. With nothing searched or chosen, a section is open only once
+ * tapped; while narrowed every section with a match is open unless tapped shut.
+ * A melody unfolds when its name is tapped, or by itself when the search found it
+ * by an incipit.
+ */
+const openSections = ref(new Set<string>())
+const shutWhileNarrowed = ref(new Set<string>())
+const unfolded = ref(new Set<string>())
+
+watch(narrowed, () => shutWhileNarrowed.value.clear())
+
+function isOpen(section: BethGazoBookSectionDto) {
+  return narrowed.value ? !shutWhileNarrowed.value.has(section.id) : openSections.value.has(section.id)
+}
+
+function toggleSection(section: BethGazoBookSectionDto) {
+  const set = narrowed.value ? shutWhileNarrowed.value : openSections.value
+  if (set.has(section.id)) set.delete(section.id)
+  else set.add(section.id)
+}
+
+const melodyKey = (section: BethGazoBookSectionDto, melody: BethGazoBookMelodyDto) => `${section.id}|${melody.name}`
+
+function isUnfolded(section: BethGazoBookSectionDto, melody: BethGazoBookMelodyDto) {
+  return unfolded.value.has(melodyKey(section, melody)) || foundByIncipit(melody, query.value)
+}
+
+function toggleMelody(section: BethGazoBookSectionDto, melody: BethGazoBookMelodyDto) {
+  const key = melodyKey(section, melody)
+  if (unfolded.value.has(key)) unfolded.value.delete(key)
+  else unfolded.value.add(key)
+}
+
+/** A melody with no chant in a mode: a madrosho, listed by incipit. */
+const isModeless = (melody: BethGazoBookMelodyDto) => melody.chants.every(c => !c.modeId)
+
 function sectionMeta(section: BethGazoBookSectionDto) {
-  if (!section.melodies.length) return t('bethGazo.notRecorded')
+  if (narrowed.value) return t('bethGazo.found', section.melodies.length)
+  const full = book.value?.sections.find(s => s.id === section.id) ?? section
+  if (!full.melodies.length) return t('bethGazo.notRecorded')
   return t('bethGazo.sectionCounts', {
-    melodies: t('bethGazo.melodies', section.melodies.length),
-    chants: t('bethGazo.chants', chantCount([section])),
+    melodies: t('bethGazo.melodies', full.melodies.length),
+    chants: t('bethGazo.chants', chantCount([full])),
   })
 }
 
@@ -70,6 +116,7 @@ function toggle(chant: BethGazoBookChantDto, melody: string, section: string) {
     return
   }
   current.value = { chant, melody, section }
+  saveRibbon(chant.id)
 }
 
 function isPlaying(chant: BethGazoBookChantDto) {
@@ -80,11 +127,65 @@ const playerSubtitle = computed(() => {
   if (!current.value) return ''
   return [modeNameOf(current.value.chant), current.value.section].filter(Boolean).join(' · ')
 })
+
+/**
+ * The ribbon: the last chant played, kept on this device only (a per-viewer
+ * convenience, so browser storage and never an account). Storage can be missing
+ * or refuse, in which case the page simply has no ribbon.
+ */
+const RIBBON_KEY = 'sabro:beth-gazo:ribbon'
+const ribbonId = ref<string | null>(null)
+const ribbon = computed(() => (book.value && ribbonId.value ? locateChant(book.value, ribbonId.value) : null))
+
+function saveRibbon(id: string) {
+  ribbonId.value = id
+  try {
+    localStorage.setItem(RIBBON_KEY, id)
+  }
+  catch {
+    // No storage: the ribbon lasts this visit only.
+  }
+}
+
+onMounted(() => {
+  try {
+    ribbonId.value = localStorage.getItem(RIBBON_KEY)
+  }
+  catch {
+    ribbonId.value = null
+  }
+  const found = ribbon.value
+  if (!found) return
+  // Reopen the book where it was left: the section, and the melody unfolded.
+  openSections.value.add(found.section.id)
+  unfolded.value.add(melodyKey(found.section, found.melody))
+})
+
+/** Which melody line carries the ribbon mark. */
+const ribbonMelody = computed(() => (ribbon.value ? melodyKey(ribbon.value.section, ribbon.value.melody) : null))
+
+const ribbonLabel = computed(() => {
+  const found = ribbon.value
+  if (!found) return ''
+  return [found.melody.name, modeNameOf(found.chant), found.section.name].filter(Boolean).join(' · ')
+})
+
+async function continueFromRibbon() {
+  const found = ribbon.value
+  if (!found) return
+  query.value = ''
+  modeId.value = null
+  openSections.value.add(found.section.id)
+  unfolded.value.add(melodyKey(found.section, found.melody))
+  toggle(found.chant, found.melody.name, found.section.name)
+  await nextTick()
+  document.getElementById(`chant-${found.chant.id}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+}
 </script>
 
 <template>
   <section class="mx-auto max-w-4xl">
-    <header class="mb-6 pt-2">
+    <header class="mb-5 pt-2">
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-nahlo)]">
         {{ t('bethGazo.title') }}
         <span dir="rtl" lang="syc" class="ml-1 font-syriac text-[15px] normal-case tracking-normal">ܒܝܬ ܓܙܐ</span>
@@ -103,7 +204,21 @@ const playerSubtitle = computed(() => {
     <p v-else-if="pending && !book" class="font-sans text-sm text-[var(--color-text-muted)]">{{ t('common.loading') }}</p>
 
     <template v-else-if="book">
-      <div class="mb-2 flex flex-wrap items-center gap-2.5">
+      <button
+        v-if="ribbon && !current"
+        type="button"
+        class="mb-4 flex w-full items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-2.5 pr-3 pl-3 text-left hover:border-[var(--color-border-strong)]"
+        @click="continueFromRibbon"
+      >
+        <svg aria-hidden="true" viewBox="0 0 14 20" class="h-5 w-3.5 shrink-0 text-[var(--color-accent)]"><path d="M1 0h12v19l-6-4.5L1 19z" fill="currentColor" /></svg>
+        <span class="min-w-0 flex-1">
+          <span class="block font-sans text-xs text-[var(--color-text-muted)]">{{ t('bethGazo.ribbon') }}</span>
+          <span class="block truncate font-serif text-[15px] font-semibold text-[var(--color-text)]">{{ ribbonLabel }}</span>
+        </span>
+        <span class="shrink-0 rounded-full bg-[var(--color-nahlo)] px-3 py-1.5 font-sans text-[13px] font-semibold text-[var(--color-bg)]">{{ t('bethGazo.continue') }}</span>
+      </button>
+
+      <div class="flex flex-wrap items-center gap-2.5">
         <label class="flex min-w-0 flex-[1_1_240px] items-center gap-2 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-bg-elevated)] px-3 py-2">
           <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" class="size-4 shrink-0 text-[var(--color-text-faint)]"><circle cx="9" cy="9" r="6" /><path d="m17 17-3.5-3.5" stroke-linecap="round" /></svg>
           <span class="sr-only">{{ t('bethGazo.search') }}</span>
@@ -112,7 +227,7 @@ const playerSubtitle = computed(() => {
         <div class="flex max-w-full min-w-0 gap-1.5 overflow-x-auto [scrollbar-width:none]" role="group" :aria-label="t('bethGazo.modesLabel')">
           <button
             type="button"
-            class="whitespace-nowrap rounded-full border px-3 py-1.5 font-sans text-[13.5px]"
+            class="shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 font-sans text-[13.5px]"
             :class="modeId === null ? 'border-[var(--color-nahlo)] bg-[var(--color-nahlo-faint)] font-medium text-[var(--color-nahlo)]' : 'border-[var(--color-border-strong)] text-[var(--color-text-muted)]'"
             :aria-pressed="modeId === null"
             @click="modeId = null"
@@ -121,7 +236,7 @@ const playerSubtitle = computed(() => {
             v-for="mode in modes"
             :key="mode.id"
             type="button"
-            class="min-w-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-sans text-[13.5px] tabular-nums"
+            class="min-w-9 shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 font-sans text-[13.5px] tabular-nums"
             :class="modeId === mode.id ? 'border-[var(--color-nahlo)] bg-[var(--color-nahlo-faint)] font-medium text-[var(--color-nahlo)]' : 'border-[var(--color-border-strong)] text-[var(--color-text-muted)]'"
             :aria-pressed="modeId === mode.id"
             :aria-label="mode.name"
@@ -153,33 +268,94 @@ const playerSubtitle = computed(() => {
 
       <p v-if="!sections.length && query" class="mt-6 font-sans text-sm text-[var(--color-text-muted)]">{{ t('bethGazo.empty') }}</p>
 
-      <ol class="mt-5">
-        <li v-for="section in sections" :key="section.id" class="border-t border-[var(--color-border)] py-4">
-          <div class="flex items-baseline gap-3">
+      <ol class="mt-4">
+        <li v-for="section in sections" :key="section.id" class="border-t border-[var(--color-border)]">
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 py-3.5 text-left"
+            :aria-expanded="isOpen(section)"
+            @click="toggleSection(section)"
+          >
             <span aria-hidden="true" class="w-6 shrink-0 text-right font-serif text-sm font-semibold tabular-nums text-[var(--color-accent)]">{{ ordinals.get(section.id) }}</span>
-            <div class="min-w-0 flex-1">
-              <h2 class="font-serif text-[19px] font-semibold first-letter:text-[var(--color-accent)]">
+            <span class="min-w-0 flex-1">
+              <span class="block font-serif text-[19px] font-semibold first-letter:text-[var(--color-accent)]">
                 {{ section.name }}
                 <span v-if="section.syriacName" dir="rtl" lang="syc" class="ml-1.5 inline-block whitespace-nowrap font-syriac text-base font-normal text-[var(--color-text-muted)]">{{ section.syriacName }}</span>
-              </h2>
-              <p v-if="lineFor(section.descriptions, locale)" class="mt-0.5 font-serif text-[14px] italic leading-snug text-[var(--color-text-muted)]">{{ lineFor(section.descriptions, locale) }}</p>
-            </div>
-            <span class="shrink-0 font-sans text-xs text-[var(--color-text-muted)]">{{ sectionMeta(section) }}</span>
-          </div>
+              </span>
+              <span v-if="lineFor(section.descriptions, locale)" class="mt-0.5 block font-serif text-[14px] italic leading-snug text-[var(--color-text-muted)]">{{ lineFor(section.descriptions, locale) }}</span>
+              <span class="mt-0.5 block font-sans text-xs text-[var(--color-text-muted)] sm:hidden">{{ sectionMeta(section) }}</span>
+            </span>
+            <span class="hidden shrink-0 font-sans text-xs text-[var(--color-text-muted)] sm:block">{{ sectionMeta(section) }}</span>
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" class="size-4 shrink-0 text-[var(--color-text-faint)] transition-transform" :class="isOpen(section) ? 'rotate-90' : ''"><path d="m6 3 5 5-5 5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </button>
 
-          <div v-for="melody in section.melodies" :key="melody.name" class="mt-3 sm:ml-9">
-            <h3 class="mb-1.5 mt-3 font-serif text-[16.5px] font-semibold">{{ melody.name }}</h3>
-            <div class="grid gap-1.5 sm:grid-cols-2">
-              <BethGazoChant
-                v-for="chant in melody.chants"
-                :key="chant.id"
-                :chant="chant"
-                :melody="melody.name"
-                :mode-name="modeNameOf(chant)"
-                :mode-label="chant.modeId ? labels.get(chant.modeId) ?? null : null"
-                :playing="isPlaying(chant)"
-                @toggle="toggle(chant, melody.name, section.name)"
-              />
+          <div v-if="isOpen(section) && section.melodies.length" class="pb-4 sm:pl-9">
+            <div v-for="melody in section.melodies" :key="melody.name" class="border-t border-dashed border-[var(--color-border)] py-1.5 first:border-t-0">
+              <!-- A madrosho: no modes, so its chants are listed by incipit straight away. -->
+              <template v-if="isModeless(melody)">
+                <p class="flex items-center gap-1.5 pt-1 font-serif text-[15.5px] font-semibold">
+                  {{ melody.name }}
+                  <svg v-if="ribbonMelody === melodyKey(section, melody)" aria-hidden="true" viewBox="0 0 14 20" class="h-3.5 w-2.5 text-[var(--color-accent)]"><path d="M1 0h12v19l-6-4.5L1 19z" fill="currentColor" /></svg>
+                </p>
+                <BethGazoChant
+                  v-for="chant in melody.chants"
+                  :id="`chant-${chant.id}`"
+                  :key="chant.id"
+                  :chant="chant"
+                  :melody="melody.name"
+                  :mode-name="null"
+                  :mode-label="null"
+                  :playing="isPlaying(chant)"
+                  :current="current?.chant.id === chant.id"
+                  @toggle="toggle(chant, melody.name, section.name)"
+                />
+              </template>
+
+              <template v-else>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                  <button
+                    type="button"
+                    class="flex min-w-0 flex-1 basis-40 items-center gap-1.5 text-left font-serif text-[15.5px] font-semibold"
+                    :aria-expanded="isUnfolded(section, melody)"
+                    @click="toggleMelody(section, melody)"
+                  >
+                    <span class="truncate">{{ melody.name }}</span>
+                    <svg v-if="ribbonMelody === melodyKey(section, melody)" aria-hidden="true" viewBox="0 0 14 20" class="h-3.5 w-2.5 shrink-0 text-[var(--color-accent)]"><path d="M1 0h12v19l-6-4.5L1 19z" fill="currentColor" /></svg>
+                    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" class="size-3.5 shrink-0 text-[var(--color-text-faint)] transition-transform" :class="isUnfolded(section, melody) ? 'rotate-90' : ''"><path d="m6 3 5 5-5 5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </button>
+                  <div class="flex flex-wrap gap-1">
+                    <button
+                      v-for="slot in modeSlots(melody.chants)"
+                      :key="slot.modeId"
+                      type="button"
+                      class="relative grid size-[30px] place-items-center rounded-lg border font-sans text-[13px] font-semibold tabular-nums"
+                      :class="current?.chant.id === slot.main.id
+                        ? 'border-[var(--color-nahlo)] bg-[var(--color-nahlo)] text-[var(--color-bg)]'
+                        : 'border-[color-mix(in_oklab,var(--color-nahlo)_30%,var(--color-border))] bg-[var(--color-bg-elevated)] text-[var(--color-nahlo)] hover:bg-[var(--color-nahlo-faint)]'"
+                      :title="modeById.get(slot.modeId)?.name"
+                      :aria-label="t(isPlaying(slot.main) ? 'bethGazo.pauseChant' : 'bethGazo.playChant', { chant: [melody.name, modeById.get(slot.modeId)?.name].filter(Boolean).join(', ') })"
+                      @click="toggle(slot.main, melody.name, section.name)"
+                    >
+                      {{ labels.get(slot.modeId) }}
+                      <span v-if="slot.variants.length" aria-hidden="true" class="absolute top-[3px] right-[3px] size-[5px] rounded-full bg-current opacity-70" />
+                    </button>
+                  </div>
+                </div>
+                <div v-if="isUnfolded(section, melody)" class="mt-1.5 mb-1 border-l-2 border-[var(--color-nahlo-faint)] pl-2.5">
+                  <BethGazoChant
+                    v-for="chant in melody.chants"
+                    :id="`chant-${chant.id}`"
+                    :key="chant.id"
+                    :chant="chant"
+                    :melody="melody.name"
+                    :mode-name="modeNameOf(chant)"
+                    :mode-label="chant.modeId ? labels.get(chant.modeId) ?? null : null"
+                    :playing="isPlaying(chant)"
+                    :current="current?.chant.id === chant.id"
+                    @toggle="toggle(chant, melody.name, section.name)"
+                  />
+                </div>
+              </template>
             </div>
           </div>
         </li>
@@ -191,6 +367,7 @@ const playerSubtitle = computed(() => {
         :src="mediaUrl(current.chant.audioUrl)"
         :title="current.melody"
         :subtitle="playerSubtitle"
+        :incipit="current.chant.syriacIncipitVocalized ?? current.chant.syriacIncipit"
         @close="current = null"
       />
     </template>

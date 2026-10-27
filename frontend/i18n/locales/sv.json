@@ -1353,7 +1353,7 @@
   "bethGazo": {
     "title": "Beth Gazo",
     "heading": "Sångernas skattkammare",
-    "lede": "{chants} inspelade hittills, i {melodies}. Lyssna på dem, lär dig modi och pröva sedan dagens Nahlo.",
+    "lede": "{chants} inspelade hittills, i {melodies}. Öppna en avdelning för att lyssna, lär dig modi och pröva sedan dagens Nahlo.",
     "ledeEmpty": "Sångernas skattkammare som en öppen bok, modus för modus.",
     "play": "Spela dagens Nahlo",
     "loadFailed": "Sångerna kunde inte laddas.",
@@ -1378,6 +1378,9 @@
     "resume": "Spela",
     "pauseShort": "Paus",
     "position": "Position i sången",
-    "closePlayer": "Stäng spelaren"
+    "closePlayer": "Stäng spelaren",
+    "found": "inget hittat | {n} melodi hittad | {n} melodier hittade",
+    "ribbon": "Där du slutade",
+    "continue": "Fortsätt"
   }
 }

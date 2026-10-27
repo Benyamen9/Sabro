@@ -8,6 +8,7 @@ const props = defineProps<{
   src: string
   title: string
   subtitle: string
+  incipit?: string | null
 }>()
 
 const emit = defineEmits<{ close: [] }>()
@@ -79,6 +80,7 @@ defineExpose({ toggle, paused })
     <div class="w-[38%] min-w-0 shrink-0 sm:w-56">
       <p class="truncate font-serif text-[15px] font-semibold text-[var(--color-text)]">{{ title }}</p>
       <p class="truncate font-sans text-xs text-[var(--color-text-muted)]">{{ subtitle }}</p>
+      <p v-if="incipit" dir="rtl" lang="syc" class="truncate text-left font-syriac text-sm text-[var(--color-text-muted)]">{{ incipit }}</p>
     </div>
     <div class="flex min-w-0 flex-1 items-center gap-2">
       <input
