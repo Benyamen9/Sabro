@@ -56,20 +56,22 @@ describe('FigureCard', () => {
 })
 
 describe('FigureDetails', () => {
-  it('reveals the story and the link only once the figure is found', async () => {
-    const found = await mountSuspended(FigureDetails, { props: { figure: figure() } })
-    const met = await mountSuspended(FigureDetails, {
-      props: { figure: figure({ tier: 'met', firstFoundOn: null, fewestAttempts: null }) },
-    })
+  it('shows the story and the link whether the figure is found, met or not met yet', async () => {
+    for (const tier of ['found', 'met', 'locked'] as const) {
+      const wrapper = await mountSuspended(FigureDetails, { props: { figure: figure({ tier }) } })
 
-    expect(found.text()).toContain('Deacon of Nisibis and Edessa.')
-    expect(found.find('a[href="https://syriaca.org/person/13"]').exists()).toBe(true)
-    expect(met.text()).not.toContain('Deacon of Nisibis and Edessa.')
-    expect(met.text()).toContain('Find Ephrem the Syrian as Shmo’s answer')
-    expect(met.find('a').exists()).toBe(false)
+      expect(wrapper.text(), tier).toContain('Deacon of Nisibis and Edessa.')
+      expect(wrapper.find('a[href="https://syriaca.org/person/13"]').exists(), tier).toBe(true)
+    }
   })
 
-  it('says so when a found figure has no story yet', async () => {
+  it('says so for a figure not met yet', async () => {
+    const wrapper = await mountSuspended(FigureDetails, { props: { figure: figure({ tier: 'locked', timesMet: 0 }) } })
+
+    expect(wrapper.text()).toContain('Not met yet in Shmo')
+  })
+
+  it('says so when a figure has no story yet', async () => {
     const wrapper = await mountSuspended(FigureDetails, { props: { figure: figure({ descriptions: [] }) } })
 
     expect(wrapper.text()).toContain('No story written yet.')

@@ -33,14 +33,14 @@ const { t } = useI18n()
     </p>
     <h2 class="mt-1 font-serif text-[26px] font-semibold leading-tight text-[var(--color-text)]">{{ figure.name }}</h2>
     <p
-      v-if="figure.syriacName && figure.tier !== 'locked'"
+      v-if="figure.syriacName"
       dir="rtl"
       lang="syc"
       class="mt-1 text-left font-syriac text-[21px] text-[var(--color-shmo)]"
     >{{ figure.syriacName }}</p>
-    <FigureDetails v-if="figure.tier !== 'locked'" class="mt-3" :figure="figure" />
-    <p v-else class="mt-3 font-serif text-[15px] leading-relaxed text-[var(--color-text-muted)]">
-      {{ t('bethSalme.detail.lockedHint', { name: figure.name }) }}
+    <FigureDetails class="mt-3" :figure="figure" />
+    <p v-if="figure.tier !== 'found'" class="mt-4 rounded-xl bg-[var(--color-bg-subtle)] px-3 py-2.5 font-sans text-[13px] leading-snug text-[var(--color-text-muted)]">
+      {{ t(figure.tier === 'met' ? 'bethSalme.detail.findToColour' : 'bethSalme.detail.lockedHint', { name: figure.name }) }}
     </p>
   </article>
 </template>

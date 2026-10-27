@@ -6,10 +6,10 @@ import { formatEra } from '~/utils/historicalFigures'
 const props = withDefaults(defineProps<{ figure: GalleryFigure, selected?: boolean }>(), { selected: false })
 defineEmits<{ (e: 'open', figure: GalleryFigure): void }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const caption = computed(() =>
-  props.figure.tier === 'locked' ? t('bethSalme.card.notMetYet') : formatEra(props.figure.era, t))
+  props.figure.tier === 'locked' ? t('bethSalme.card.notMetYet') : formatEra(props.figure.era, t, locale.value))
 
 const status = computed(() => {
   if (props.figure.tier === 'locked') return t('bethSalme.status.locked')

@@ -106,14 +106,39 @@ export const MIN_ERA = -60
 export const MAX_ERA = 21
 
 /**
+ * Ordinal suffixes by language and by the language's own ordinal category
+ * (Intl.PluralRules): English 1st/2nd/3rd/4th, French 1er/2e, Swedish 1:a/2:a/3:e,
+ * Dutch 1e, German 1. A language missing here falls back to English.
+ */
+const ORDINAL_SUFFIXES: Record<string, Partial<Record<Intl.LDMLPluralRule, string>> & { other: string }> = {
+  en: { one: 'st', two: 'nd', few: 'rd', other: 'th' },
+  fr: { one: 'er', other: 'e' },
+  nl: { other: 'e' },
+  de: { other: '.' },
+  sv: { one: ':a', other: ':e' },
+}
+
+/** A century number as an ordinal in the given language: 1 -> "1st", "1er", "1:a". */
+export function ordinalCentury(century: number, locale: string): string {
+  const language = ORDINAL_SUFFIXES[locale] ? locale : 'en'
+  const suffixes = ORDINAL_SUFFIXES[language]!
+  const category = new Intl.PluralRules(language, { type: 'ordinal' }).select(century)
+  return `${century}${suffixes[category] ?? suffixes.other}`
+}
+
+/**
  * Renders a signed century as a human-readable era, e.g. -10 -> "10th c. BC".
- * The ordinal suffix comes from i18n so it can be localised; the era itself is
- * a bare number in the data because Shmo compares it numerically for its
+ * The wording and the ordinal both follow the reader's language; the era itself
+ * is a bare number in the data because Shmo compares it numerically for its
  * higher/lower hint.
  */
-export function formatEra(era: number, t: (key: string, named?: Record<string, unknown>) => string): string {
-  const century = Math.abs(era)
-  return t(era < 0 ? 'admin.historicalFigures.eraBc' : 'admin.historicalFigures.eraAd', { century })
+export function formatEra(
+  era: number,
+  t: (key: string, named?: Record<string, unknown>) => string,
+  locale = 'en',
+): string {
+  const ordinal = ordinalCentury(Math.abs(era), locale)
+  return t(era < 0 ? 'admin.historicalFigures.eraBc' : 'admin.historicalFigures.eraAd', { ordinal })
 }
 
 /**

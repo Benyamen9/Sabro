@@ -628,8 +628,8 @@
       "deleteFailed": "The figure could not be deleted.",
       "actionFailed": "That action could not be completed.",
       "deleteConfirm": "Delete this figure? This cannot be undone.",
-      "eraBc": "{century}th c. BC",
-      "eraAd": "{century}th c. AD",
+      "eraBc": "{ordinal} c. BC",
+      "eraAd": "{ordinal} c. AD",
       "columns": {
         "name": "Name",
         "category": "Category",
@@ -1332,12 +1332,13 @@
       "foundOn": "Found on {date} in {count} guesses",
       "notFoundYet": "not found yet",
       "noStory": "No story written yet.",
-      "findToRead": "Find {name} as Shmo’s answer to read who they were.",
       "lockedHint": "Guess {name} in Shmo to meet them. Find them as the day’s answer to colour the card in.",
       "readMore": "Read more",
       "turnOver": "Turn the card over",
       "turnBack": "Turn it back",
-      "close": "Close"
+      "close": "Close",
+      "notMetYet": "Not met yet in Shmo",
+      "findToColour": "Find {name} as Shmo’s answer to colour the card in."
     }
   }
 }

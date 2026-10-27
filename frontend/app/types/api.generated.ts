@@ -5987,6 +5987,7 @@ export interface components {
             region: components["schemas"]["HistoricalFigureRegion"];
             tradition: null | components["schemas"]["HistoricalFigureTradition"];
             gender: components["schemas"]["HistoricalFigureGender"];
+            descriptions: components["schemas"]["HistoricalFigureDescriptionDto"][];
             emblem?: null | components["schemas"]["HistoricalFigureEmblem"];
             syriacName?: null | string;
             readMoreUrl?: null | string;
@@ -6463,10 +6464,6 @@ export interface components {
         SetPlayableLexiconEntryRequest: {
             playable: boolean;
         };
-        ShmoCardDescriptionDto: {
-            language: string;
-            text: string;
-        };
         /** @enum {string} */
         ShmoCardStatus: "Met" | "Found";
         ShmoCollectionCardDto: {
@@ -6480,7 +6477,6 @@ export interface components {
             /** Format: int32 */
             fewestAttempts: null | number | string;
             illuminated: boolean;
-            descriptions: components["schemas"]["ShmoCardDescriptionDto"][];
         };
         ShmoCollectionDto: {
             cards: components["schemas"]["ShmoCollectionCardDto"][];

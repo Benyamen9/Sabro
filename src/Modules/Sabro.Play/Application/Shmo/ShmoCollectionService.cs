@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Sabro.Historical.Public;
 using Sabro.Play.Domain;
 using Sabro.Play.Infrastructure;
 using Sabro.Shared.Results;
@@ -9,12 +8,10 @@ namespace Sabro.Play.Application.Shmo;
 internal sealed class ShmoCollectionService : IShmoCollectionService
 {
     private readonly PlayDbContext dbContext;
-    private readonly IHistoricalFigureDescriptions descriptions;
 
-    public ShmoCollectionService(PlayDbContext dbContext, IHistoricalFigureDescriptions descriptions)
+    public ShmoCollectionService(PlayDbContext dbContext)
     {
         this.dbContext = dbContext;
-        this.descriptions = descriptions;
     }
 
     public async Task<Result<ShmoCollectionDto>> GetForUserAsync(string logtoUserId, CancellationToken cancellationToken)
@@ -44,12 +41,7 @@ internal sealed class ShmoCollectionService : IShmoCollectionService
             ShmoResultDetail.GuessIds(r.DetailJson),
             answers.TryGetValue(r.PlayedOn, out var answer) ? answer : null));
 
-        var cards = ShmoCollection.Build(trimmedUserId, days);
-
-        var foundIds = cards.Where(c => c.Found).Select(c => c.FigureId).ToArray();
-        var stories = await descriptions.GetDescriptionsAsync(foundIds, cancellationToken);
-
-        var dto = new ShmoCollectionDto(cards
+        var dto = new ShmoCollectionDto(ShmoCollection.Build(trimmedUserId, days)
             .OrderBy(c => c.FigureId)
             .Select(c => new ShmoCollectionCardDto(
                 c.FigureId,
@@ -57,18 +49,9 @@ internal sealed class ShmoCollectionService : IShmoCollectionService
                 c.TimesMet,
                 c.FirstFoundOn,
                 c.FewestAttempts,
-                c.Illuminated,
-                StoryOf(c, stories)))
+                c.Illuminated))
             .ToArray());
 
         return Result<ShmoCollectionDto>.Success(dto);
     }
-
-    /// <summary>Only a found card reveals the story.</summary>
-    private static ShmoCardDescriptionDto[] StoryOf(
-        ShmoCollection.Card card,
-        IReadOnlyDictionary<Guid, IReadOnlyList<FigureDescription>> stories) =>
-        card.Found && stories.TryGetValue(card.FigureId, out var story)
-            ? story.Select(d => new ShmoCardDescriptionDto(d.Language, d.Text)).ToArray()
-            : Array.Empty<ShmoCardDescriptionDto>();
 }

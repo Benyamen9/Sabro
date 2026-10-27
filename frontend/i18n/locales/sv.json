@@ -628,8 +628,8 @@
       "deleteFailed": "Gestalten kunde inte tas bort.",
       "actionFailed": "Åtgärden kunde inte slutföras.",
       "deleteConfirm": "Ta bort den här gestalten? Detta går inte att ångra.",
-      "eraBc": "{century}:e årh. f.Kr.",
-      "eraAd": "{century}:e årh. e.Kr.",
+      "eraBc": "{ordinal} årh. f.Kr.",
+      "eraAd": "{ordinal} årh. e.Kr.",
       "columns": {
         "name": "Namn",
         "category": "Kategori",
@@ -1332,12 +1332,13 @@
       "foundOn": "Hittad {date} på {count} gissningar",
       "notFoundYet": "inte hittad än",
       "noStory": "Ingen berättelse skriven än.",
-      "findToRead": "Hitta {name} som Shmos svar för att läsa vem det var.",
       "lockedHint": "Gissa {name} i Shmo för att möta gestalten. Hitta den som dagens svar för att färglägga kortet.",
       "readMore": "Läs mer",
       "turnOver": "Vänd kortet",
       "turnBack": "Vänd tillbaka",
-      "close": "Stäng"
+      "close": "Stäng",
+      "notMetYet": "Inte mött i Shmo än",
+      "findToColour": "Hitta {name} som Shmos svar för att färglägga kortet."
     }
   }
 }

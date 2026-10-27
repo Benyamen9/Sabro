@@ -17,7 +17,6 @@ export interface GalleryFigure extends Omit<HistoricalFigureListItem, 'era'> {
   firstFoundOn: string | null
   fewestAttempts: number | null
   illuminated: boolean
-  descriptions: { language: string, text: string }[]
 }
 
 /**
@@ -44,13 +43,14 @@ export function buildGallery(
       return {
         ...figure,
         era: Number(figure.era),
+        // Older API builds sent no stories; a missing list must not blank the page.
+        descriptions: figure.descriptions ?? [],
         no: numbers.get(figure.id)!,
         tier: card ? (card.status === 'Found' ? 'found' : 'met') : 'locked',
         timesMet: Number(card?.timesMet ?? 0),
         firstFoundOn: card?.firstFoundOn ?? null,
         fewestAttempts: card?.fewestAttempts == null ? null : Number(card.fewestAttempts),
         illuminated: card?.illuminated ?? false,
-        descriptions: card?.descriptions ?? [],
       } satisfies GalleryFigure
     })
 }
