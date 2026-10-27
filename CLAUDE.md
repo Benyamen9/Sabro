@@ -390,7 +390,7 @@ carries the figure's **emblem** (`utils/emblems.ts`, one drawing per `Historical
 typed so a new value fails the typecheck until drawn). On a computer the figure's page sits beside the
 collection; on a phone the card lifts out and turns over. Signed out, every card is dark with a sign-in
 line. Each "library" keeps its own style: collecting belongs to Beth Ṣalme alone, never to Beth Gazo.
-**Rarity is parked** (Owner): the one ruling so far is that the great names should be the rare cards.
+**No card rarity** (Owner, 2026-10-27): the idea was dropped, not parked. Every card is equal; the only special card is the illuminated one.
 
 **Beth Gazo** (ܒܝܬ ܓܙܐ, `/beth-gazo`; Owner, 2026-10-25, layout 2026-10-27) is the hub's chant page: the
 treasury as an **open book**, fed by `GET /chants/book`. **One view, no tabs, closed chapters:** the sections in
