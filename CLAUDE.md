@@ -218,7 +218,7 @@ The hub's "my profile" surface reads from this module. Play history (what the us
 ### Play
 Owns **ecosystem play data**: cross-game results and the daily-puzzle state of all four games. This module exists because, with a single shared database and no per-client database, shared play state must live in Sabro. It was built multi-game from day one, and that has now been proved three times over — Mno, Shmo and Nahlo each landed on the same `GameResult` shape without a model change.
 
-**`GameResult` — generic, multi-game.** Keyed by Logto user ID + a `GameId` string discriminator. The identifiers are constants on `Sabro.Play.Domain.Games` — `meltho`, `mno`, `shmo`, `nahlo` — never string literals at call sites. Fields: `PlayedOn` (date), `Solved` (bool), `Attempts` (int), and an optional `DetailJson` for game-specific extras. Unique constraint on (`LogtoUserId`, `GameId`, `PlayedOn`) — one result per user, per game, per day. Streaks and aggregates are **derived** from results, not stored. This generic shape is the cross-project equivalent of the savant/ludic split used elsewhere: do not model a Meltho-specific scores table.
+**`GameResult` — generic, multi-game.** Keyed by Logto user ID + a `GameId` string discriminator. The identifiers are constants on `Sabro.Play.Domain.Games` — `meltho`, `mno`, `shmo`, `nahlo`, `sofro` — never string literals at call sites. Fields: `PlayedOn` (date), `Solved` (bool), `Attempts` (int), and an optional `DetailJson` for game-specific extras. Unique constraint on (`LogtoUserId`, `GameId`, `PlayedOn`) — one result per user, per game, per day. Streaks and aggregates are **derived** from results, not stored. This generic shape is the cross-project equivalent of the savant/ludic split used elsewhere: do not model a Meltho-specific scores table.
 
 **Four daily puzzles — shared server state.** One entity per game (`MelthoDailyPuzzle`, `MnoDailyPuzzle`, `ShmoDailyPuzzle`, `NahloDailyPuzzle`), each recording what was served on which day. Selection is **get-or-create per date** (idempotent): the first request for a given day picks, records, and returns it; subsequent requests return the recorded one, so every player gets the same puzzle.
 
@@ -334,7 +334,8 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > Logto. Owner rulings of 2026-10-14:
 > ~~not in the daily circuit~~ — **superseded 2026-10-28**, see below;
 > **scores stay on the device** at first, so no `Games.Sofro` id and no Sabro
-> endpoint yet — and only a score would ever be stored, **never drawings**; letter
+> endpoint yet — and only a score would ever be stored, **never drawings** (lifted on
+> 2026-10-28 for today's word only, and only until the word changes: see below); letter
 > data ships **from the font pipeline first**, built into the client, with an
 > owner-only **dot editor** in the backoffice to replace it later; six levels with
 > **hand-picked word lists**, moving to a Lexicon playable-in-Sofro flag later.
@@ -349,16 +350,22 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > UTC date** (`dailyWordIndex`), the same for everyone, with no Sabro endpoint. Sofro opens
 > on it until it is written; written with a pass, it marks Sofro played in the cookie and
 > hands on to the next unplayed game. **Since the same day it is also a result on Sabro**
-> (`gameId: 'sofro'`, the score in `detailJson`, never the drawing) for a signed-in player,
-> so it follows them across devices like the puzzles; written signed out, it goes up on the
-> next signed-in visit that day. Sabro needed no change (it takes any game id) and has no
-> `Games.Sofro` constant, since it never names the game. **The hub's streak counts all
+> (`gameId: 'sofro'`, the score, word, script and vowels in `detailJson`) for a signed-in
+> player, so it follows them across devices like the puzzles; written signed out, it goes up
+> on the next signed-in visit that day. **The strokes of today's word ride along, but only
+> until the word changes** (Owner, same day: "just the daily vector data, kept till the word
+> resets"), with each step's score, so another device redraws the player's own ink.
+> `GameResultService` clears `strokes` and `stepScores` from every Sofro result of an
+> earlier day before any result is recorded or read, so no past day's strokes are ever
+> served; this is why `Games.Sofro` exists. **The hub's streak counts all
 > five** (Owner, same day, knowingly: Sofro's results only begin on 2026-10-28, so every
 > streak started again from that day). Free practice sends nothing.
 > **Once written, the card is the result** (Owner, same day, mockup B of three): the
 > player's ink with a score stamp, the meaning and each step's score, then Share · the next
-> game · the pen back to practice. Sofro reopens on it all day; the ink stays on the device
-> (`sofro:dailyInk`), so another device shows the book's word and the score from Sabro.
+> game · the pen back to practice. Sofro reopens on it all day. Another device redraws the
+> ink from Sabro; with none there (signed out, or a day recorded before the strokes were),
+> it shows the book's word and the score. **More on Sabro** sits under the row, as on the
+> other games' result pages.
 
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >

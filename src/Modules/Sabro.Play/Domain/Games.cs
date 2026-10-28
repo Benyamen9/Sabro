@@ -16,4 +16,10 @@ public static class Games
     public const string Shmo = "shmo";
 
     public const string Nahlo = "nahlo";
+
+    /// <summary>
+    /// Sofro's word of the day. Named because Sabro clears the day's strokes
+    /// once the word changes (see <c>GameResultService</c>).
+    /// </summary>
+    public const string Sofro = "sofro";
 }
