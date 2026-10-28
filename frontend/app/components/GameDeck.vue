@@ -13,7 +13,7 @@ import type { CircuitGame } from '~/composables/useDailyCircuit'
 // under the deck instead and the hint is gone: nobody expects to drag a card
 // with a mouse, though it still works. The game badges between them jump
 // straight to a game on both.
-type DeckGame = CircuitGame | 'sofro'
+type DeckGame = CircuitGame
 
 interface DeckEntry {
   id: DeckGame
@@ -41,9 +41,9 @@ const TUCK_MS = 240
 /** How far (px) a card must be dragged sideways before letting go deals it. */
 const SWIPE_PX = 70
 
-/** Daily games show played / new; Sofro is free practice and never "played". */
+/** Every game shows played / new: Sofro's word of the day counts since 2026-10-28. */
 function playedToday(id: DeckGame) {
-  return id !== 'sofro' && hasPlayed(id)
+  return hasPlayed(id)
 }
 
 // The deck opens on today's next unplayed game, Meltho once the day is done.
@@ -218,7 +218,6 @@ const sofroLetters = [
               <span class="flex items-center gap-2 font-sans text-[1.05rem] font-semibold text-[var(--color-text)]">
                 {{ t(`home.${game.id}.heading`) }}
                 <span v-if="playedToday(game.id)" class="text-sm font-bold text-green-700 dark:text-green-400" :title="t('home.playedToday')">✓</span>
-                <span v-else-if="game.id === 'sofro'" class="deck-any">{{ t('home.deck.anyTime') }}</span>
                 <span v-else class="size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" :title="t(`home.${game.id}.live`)" />
               </span>
               <span class="block font-sans text-xs text-[var(--color-text-muted)]">{{ t(`home.${game.id}.kind`) }}</span>
@@ -286,7 +285,7 @@ const sofroLetters = [
           :aria-hidden="index === top ? undefined : 'true'"
         >
           <p class="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-[var(--deck-c)]">
-            {{ t(`home.${game.id}.kind`) }} · {{ game.id === 'sofro' ? t('home.deck.anyTime') : t('home.deck.daily') }}
+            {{ t(`home.${game.id}.kind`) }} · {{ t('home.deck.daily') }}
           </p>
           <h2 class="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-serif text-[1.75rem] font-semibold sm:text-[2.1rem]">
             {{ t(`home.${game.id}.heading`) }}
@@ -393,16 +392,6 @@ const sofroLetters = [
   line-height: 1;
 }
 .deck-badge.is-wide { font-size: 0.8rem; }
-.deck-any {
-  border: 1px solid var(--color-border);
-  border-radius: 9999px;
-  padding: 0.125rem 0.375rem;
-  font-size: 0.55rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
 .deck-board {
   display: flex;
   flex: 1;

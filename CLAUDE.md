@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications — **four live: Meltho (words), Mno (numerals), Shmo (figures) and Nahlo (chants)**, plus **Sofro (writing), live since 2026-10-15** as free practice, each in its own repository. Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
+Sabro is an academic web platform for publishing original English translations of 12th-century Syriac patristic commentaries by Dionysios bar Ṣalibi (Metropolitan of Amid, d. 1171, Syriac Orthodox). It serves as the central backend in an ecosystem of applications dedicated to Syriac language and patristic studies, exposing a versioned REST API consumed by client applications — **four live: Meltho (words), Mno (numerals), Shmo (figures) and Nahlo (chants)**, plus **Sofro (writing), live since 2026-10-15** — free practice plus, since 2026-10-28, a word a day — each in its own repository. Sabro also acts as the **ecosystem hub**: it owns shared identity (via Logto), user profiles, and cross-application play data.
 
 The long-term scope includes translating the entire Bible (Peshitta) and works of various Syriac Church Fathers.
 
@@ -16,7 +16,7 @@ The long-term scope (full Peshitta + Church Fathers) is unchanged, but the build
 2. ✅ **Meltho** launched against that API, then **Mno**, **Shmo** and **Nahlo** followed on the same foundation — the multi-game model held, with no rework.
 3. **Translations and Biblical remain deferred** — fully specified below, but not on any current critical path. No game depends on translated content. **Reviews is partly active**: its field-proposal workflow shipped with the backoffice and runs in production; only its three-level prose review stays deferred.
 
-**Current state.** Five games are deployed behind Caddy and watched by UptimeRobot. The four puzzle games are in the daily circuit; **Sofro went live on 2026-10-15** as free practice and stays out of it. **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day. On 2026-10-15 the Owner recorded three more melody groups, each in all eight modes — *Hablo l'itokh*, *Mo rhimin* and *More dramsho* — and the same day all 24 were uploaded, published and made playable, so Nahlo's pool is now **32 chants**. Their incipits are not read from the book yet, which is why the incipit became optional (#300; see *BethGazo*).
+**Current state.** Five games are deployed behind Caddy and watched by UptimeRobot. The four puzzle games are in the daily circuit; **Sofro went live on 2026-10-15** as free practice and **joined the circuit on 2026-10-28** as its fifth game, with a word of the day to write (see *Ecosystem Clients*). **Nahlo went live on 2026-10-12** with its first melody group — *Zodeq dnehwe* in all eight modes (Qole shahroye), the Owner's own recordings — and joined the circuit hand-off the same day. On 2026-10-15 the Owner recorded three more melody groups, each in all eight modes — *Hablo l'itokh*, *Mo rhimin* and *More dramsho* — and the same day all 24 were uploaded, published and made playable, so Nahlo's pool is now **32 chants**. Their incipits are not read from the book yet, which is why the incipit became optional (#300; see *BethGazo*).
 
 **Hub philosophy — wide model, narrow surface.** The data foundation was built to see far (multi-game results, profile, cross-project shape) while the launch UI stayed lean. That bet paid: three further games landed on the same `GameResult` shape without a migration. Keep new surfaces additive for the same reason.
 
@@ -323,7 +323,7 @@ Five game clients consume Sabro's API, each in **its own repository**, each its 
 | **Mno** (ܡܢܐ, "he counted") | `Benyamen9/Mno` | Mathler on additive Syriac alphabetic numerals; 6 guesses | 3200 | *(generated)* |
 | **Shmo** (ܫܡܐ, "name") | `Benyamen9/Shmo` | Pokédle on historical figures; **unlimited guesses, no losing state** | 3300 | Historical |
 | **Nahlo** (ܢܚܠܐ) | `Benyamen9/Nahlo` | Name the chant — melody + mode + shuḥlofo (yes/no); 6 guesses, right/wrong only — **purple**, not green | 3400 | BethGazo |
-| **Sofro** (ܣܦܪܐ, "scribe") | `Benyamen9/Sofro` | Write Syriac letters and words by hand, step by step — **free practice, not a daily puzzle**; **charcoal** | 3500 | *(none yet — Lexicon later)* |
+| **Sofro** (ܣܦܪܐ, "scribe") | `Benyamen9/Sofro` | Write Syriac letters and words by hand, step by step — free practice, plus **a word of the day in the daily circuit** (since 2026-10-28); **charcoal** | 3500 | *(none yet — Lexicon later)* |
 
 The hub runs on :3000 and Logto on :3001/:3002.
 
@@ -332,7 +332,7 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > online by DEPLOY.md's "fifth game" order. Its Logto app registers **production
 > URIs only**, like Meltho, Mno and Shmo — local dev signs in against the local
 > Logto. Owner rulings of 2026-10-14:
-> **not in the daily circuit** (never add it to `CIRCUIT_GAMES`/`CIRCUIT_HANDOFF`);
+> ~~not in the daily circuit~~ — **superseded 2026-10-28**, see below;
 > **scores stay on the device** at first, so no `Games.Sofro` id and no Sabro
 > endpoint yet — and only a score would ever be stored, **never drawings**; letter
 > data ships **from the font pipeline first**, built into the client, with an
@@ -343,9 +343,29 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > The full design lives in `Hito/scribe-prototype/SOFRO_SPEC.md` until it is folded
 > into Sofro's README piece by piece.
 
+> **Sofro's word of the day (Owner, 2026-10-28)** makes it the **fifth game of the daily
+> circuit**, after the four puzzles: `sofro` is in `CIRCUIT_GAMES` and last in
+> `CIRCUIT_HANDOFF`. The word is one of the level-2 words, **picked in the client from the
+> UTC date** (`dailyWordIndex`), the same for everyone, with no Sabro endpoint. Sofro opens
+> on it until it is written; written with a pass, it marks Sofro played in the cookie and
+> hands on to the next unplayed game. **Still nothing on Sabro**: no `Games.Sofro`, so the
+> hub's streak counts the four puzzles only, and a word written on the phone does not show
+> as done on another device. Free practice is unchanged.
+
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >
 > **Nahlo breaks the shared feedback colour on purpose (Owner, 2026-10-12).** Meltho, Mno and Shmo mark a right part green; Nahlo's right part is its theme purple and a wrong part a pale tint of it — tiles, attempt strip and share grid (🟪/⬜) alike. Same day, its "night vigil" redesign: the answer is asked one question at a time (melody → mode → shuḥlofo), and a mode an earlier guess scored wrong is dimmed, never removed. Do not "restore" the green. Details in the Nahlo README.
+>
+> **Nahlo's result page ends with a link to Sofro** (Owner, 2026-10-28), always, below the
+> "More on Sabro" line.
+>
+> **Shmo (Owner, 2026-10-28).** *How to play* now says that only the **era and period**
+> arrows strike out names (Shmo #7's rule; gender and the other categorical columns are left
+> to the player). Figures that share **every** scored attribute (149 of 289 that day, 52
+> groups) get a hint: once a guess has the answer's whole profile without being it, the board
+> names everyone left with that profile, each a button that guesses it. The **result page
+> shows the answer as its Beth Ṣalme card** (colour when found, a sketch when given up) and
+> the day's other guesses as small sketch cards. Details in Shmo's README.
 >
 > **Nahlo scores points (Owner, 2026-10-27)**, out of 100: 50/42/34/26/18/10 by the solving guess, plus up to 50 for speed (full within 30 s of the first press of play, nothing at 5 min). Opening the incipit gives up the speed points; a blind solve takes them all; a lost round earns 5 per part found. It answers the open Beth Gazo: knowing the chant beats looking it up. **Computed in the client from the round's ingredients, never stored** — Sabro has no points field and needs none; the formula can change without a migration. Result screen and share text only, so far.
 
@@ -357,20 +377,21 @@ The four client repos carry no `CLAUDE.md`. Their **`README.md` is each app's me
 
 ### Mirrored contracts — duplicated across repo boundaries
 
-Six pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only two have a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
+Seven pieces of logic are deliberately implemented twice, on either side of a repo boundary. Only two have a drift guard; treat the rest as hand-maintained and check them whenever the Sabro side moves.
 
 | Mirror | Sabro side | Client side | Guard |
 |---|---|---|---|
 | Historical enums | `Sabro.Historical.Domain` | Shmo `app/types/figure.ts` | ✅ `test/figure.test.ts` |
 | Syriac letter counting | `playableLength` | Meltho `app/utils/syriac.ts` | ❌ none |
 | Numeral speller | Sabro's C# speller | Mno `app/utils/numerals.ts` | ❌ none |
-| Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** client | ❌ comment only |
+| Daily circuit | hub `useDailyCircuit.ts` | one copy in **each** of the five clients | ❌ comment only |
+| Figure cards (emblem drawings + picture) | hub `utils/emblems.ts` + `FigureArt.vue` | Shmo `app/utils/emblems.ts` + `FigureArt.vue` | ❌ none: change both together |
 | App launcher | hub `utils/apps.ts` + `AppLauncher.vue` | one copy in **each** of the five clients | ✅ `apps` unit test per repo (order, self, Sofro's badge) |
 | Nahlo's scoring rule (is a guess right?) | `NahloAnswer` (checks a claimed win) | Nahlo `app/utils/compare.ts` | ❌ none: change both together |
 
-**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **five** copies — hub, Meltho, Mno, Shmo, Nahlo. `CIRCUIT_GAMES` lists all four games in all five copies, and since 2026-10-12 so does `CIRCUIT_HANDOFF`. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
+**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **six** copies — hub, Meltho, Mno, Shmo, Nahlo, Sofro. `CIRCUIT_GAMES` lists all five games (the four puzzles, then Sofro since 2026-10-28) in all six copies, and so does `CIRCUIT_HANDOFF`. A cookie is per browser, so **the hub also marks today's games from a signed-in player's saved results** (`TodayCircuit.vue`, 2026-10-28): a round played on the phone shows as done on the computer, and the cookie it writes is the one every game reads. Sofro keeps no result on Sabro, so it alone cannot follow a player across devices. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
 
-> ⚠️ **Any change to `CIRCUIT_HANDOFF` goes into all five repos at once.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
+> ⚠️ **Any change to `CIRCUIT_HANDOFF` goes into all six repos at once.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
 
 **The app launcher** (Owner, 2026-10-13; everywhere since 2026-10-15) is the 3×3 button that replaced
 the "Sabro" pill in the games and the row of game pills in the hub, so every header is **one line at
@@ -410,11 +431,12 @@ Every published chant **with a recording** is listed; nothing is held back for t
 2026-10-15 stays) has two parts under the hero:
 
 - **"Today"** (`TodayCircuit.vue`) — one line with the next unplayed game and its button; under it a
-  square per daily game (done ✓ / next / waiting, each a link), "n of 4", then **Sofro after a thin
-  line** as a solid square, "any time". Once all four are played the line offers Sofro ("Keep going:
-  write by hand"), a countdown to the next puzzles (midnight UTC, client-only), and for a signed-in
-  player a **streak: days in a row all four were _solved_** (not just played), shown from day 1
-  (`computeCircuitStreak` in `usePlayStats.ts`). Side by side on a wide screen. It replaced the hero's
+  square per daily game (done ✓ / next / waiting, each a link), "n of 5", **Sofro's word last**
+  (since 2026-10-28; before that it sat apart, "any time"). Once all five are played the line offers
+  Sofro's free practice ("Keep writing"), a countdown to the next puzzles (midnight UTC, client-only),
+  and for a signed-in player a **streak: days in a row the four puzzles were _solved_** (not just
+  played; Sofro has no saved result to count), shown from day 1 (`computeCircuitStreak` in
+  `usePlayStats.ts`). A signed-in player's saved results mark the squares too, wherever they played. Side by side on a wide screen. It replaced the hero's
   single button. On phones the hero's four letter tiles shrink to one line so "Today" is on the first
   screen.
 - **"Meet the games"** — the five apps as a deck (`GameDeck.vue`). It **never moves by itself** (the
@@ -423,7 +445,7 @@ Every published chant **with a recording** is listed; nothing is held back for t
   chosen by `(pointer: coarse)` / `(hover: hover) and (pointer: fine)`, never by width. Game badges
   between them jump to a game. Each card carries its game's little board; **Mno's is drawn the way Mno
   draws a guess** — five equal tiles, signs included, each green / amber / grey. It opens on the next
-  unplayed game; Sofro shows "Any time", never played/new.
+  unplayed game; Sofro is "daily" like the rest since 2026-10-28.
 
 ## Backoffice (Editorial Admin)
 

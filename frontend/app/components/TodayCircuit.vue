@@ -2,21 +2,26 @@
 import { CIRCUIT_GAMES, circuitToday, type CircuitGame } from '~/composables/useDailyCircuit'
 
 // The home page's "Today" line (owner, 2026-10-23). One row says what to play
-// next and starts it; under it, a square per daily game shows what's done, and
-// Sofro — free practice, outside the daily circuit — sits after a thin line.
-// Once the day's four are done, the row invites the player to Sofro instead,
-// with a countdown to the next puzzles and, for a signed-in player, how many
-// days in a row they have solved all four. On a wide screen the two halves sit
-// side by side. Played/next state comes from the shared daily-circuit cookie,
-// so it renders the same on the server.
+// next and starts it; under it, a square per daily game shows what's done —
+// Sofro's word of the day the fifth since 2026-10-28. Once all five are done,
+// the row invites the player to Sofro's free practice, with a countdown to the
+// next puzzles and, for a signed-in player, how many days in a row they have
+// solved the four puzzles (Sofro keeps no result on Sabro, so it cannot count).
+// On a wide screen the two halves sit side by side. Played/next state comes
+// from the shared daily-circuit cookie, so it renders the same on the server.
+// A signed-in player's saved results fill the cookie in too, so a round played
+// on the phone shows as done on the computer without opening the game.
 const { t } = useI18n()
 const config = useRuntimeConfig().public
-const { hasPlayed, nextUnplayed } = useDailyCircuit()
+const { hasPlayed, nextUnplayed, markPlayed } = useDailyCircuit()
 const { isSignedIn } = useAuth()
-const { load: loadResults, circuitStreak } = usePlayStats()
+const { results, load: loadResults, circuitStreak } = usePlayStats()
 
-const badges: Record<CircuitGame, string> = { meltho: 'ܡ', mno: 'ܐ݈', shmo: 'ܫ', nahlo: 'ܢ' }
-const urls: Record<CircuitGame | 'sofro', string> = {
+/** The daily games whose results Sabro keeps: the streak counts these. */
+const PUZZLE_GAMES: readonly CircuitGame[] = ['meltho', 'mno', 'shmo', 'nahlo']
+
+const badges: Record<CircuitGame, string> = { meltho: 'ܡ', mno: 'ܐ݈', shmo: 'ܫ', nahlo: 'ܢ', sofro: 'ܣܦ' }
+const urls: Record<CircuitGame, string> = {
   meltho: config.melthoUrl as string,
   mno: config.mnoUrl as string,
   shmo: config.shmoUrl as string,
@@ -38,7 +43,7 @@ function squareLabel(game: CircuitGame) {
 // from the first day (owner, 2026-10-23).
 const streak = computed(() => {
   if (next.value !== null || !isSignedIn.value) return 0
-  return circuitStreak(CIRCUIT_GAMES, circuitToday()) ?? 0
+  return circuitStreak(PUZZLE_GAMES, circuitToday()) ?? 0
 })
 
 // The countdown to the next puzzles (midnight UTC, when the puzzle date
@@ -53,11 +58,26 @@ function updateCountdown() {
   countdown.value = t('home.today.hoursMinutes', { h: Math.floor(minutes / 60), m: String(minutes % 60).padStart(2, '0') })
 }
 
+// Rounds this player saved today, wherever they played them, count as played.
+watch(results, (saved) => {
+  const today = circuitToday()
+  for (const result of saved ?? []) {
+    const game = result.gameId as CircuitGame
+    if (result.playedOn === today && CIRCUIT_GAMES.includes(game)) markPlayed(game, today)
+  }
+}, { immediate: true })
+
+watch(next, (game) => {
+  if (game !== null || tick) return
+  updateCountdown()
+  tick = setInterval(updateCountdown, 30_000)
+})
+
 onMounted(() => {
+  if (isSignedIn.value) loadResults()
   if (next.value === null) {
     updateCountdown()
     tick = setInterval(updateCountdown, 30_000)
-    loadResults()
   }
 })
 onBeforeUnmount(() => clearInterval(tick))
@@ -79,10 +99,10 @@ onBeforeUnmount(() => clearInterval(tick))
           {{ t(`home.${next}.heading`) }} — {{ t(`home.today.task.${next}`) }}
         </span>
       </span>
-      <span class="today-go">{{ t(next === 'nahlo' ? 'home.deck.listen' : 'home.deck.play') }}</span>
+      <span class="today-go">{{ t(next === 'nahlo' ? 'home.deck.listen' : next === 'sofro' ? 'home.deck.write' : 'home.deck.play') }}</span>
     </a>
 
-    <!-- The day is done: keep going with Sofro, and when the next puzzles come. -->
+    <!-- The day is done: keep writing in Sofro, and when the next puzzles come. -->
     <a
       v-else
       :href="urls.sofro"
@@ -112,25 +132,19 @@ onBeforeUnmount(() => clearInterval(tick))
       <span class="today-go">{{ t('home.deck.write') }}</span>
     </a>
 
-    <!-- What's done: a square per daily game, then Sofro after a thin line. -->
+    <!-- What's done: a square per daily game, Sofro's word last. -->
     <div class="today-squares font-sans">
       <a
         v-for="game in CIRCUIT_GAMES"
         :key="game"
         :href="urls[game]"
         class="today-square font-syriac"
-        :class="{ 'is-done': hasPlayed(game), 'is-next': game === next }"
+        :class="{ 'is-done': hasPlayed(game), 'is-next': game === next, 'is-wide': game === 'sofro' && !hasPlayed(game) }"
         :style="{ '--step-c': `var(--color-${game})`, '--step-on': `var(--color-on-${game}, #fff)` }"
         :title="squareLabel(game)"
         :aria-label="squareLabel(game)"
       ><span dir="rtl" aria-hidden="true">{{ hasPlayed(game) ? '✓' : badges[game] }}</span></a>
       <span class="ml-0.5 whitespace-nowrap">{{ t('home.today.progress', { done: doneCount, total: CIRCUIT_GAMES.length }) }}</span>
-      <span class="today-spacer" />
-      <span class="today-divider" aria-hidden="true" />
-      <a :href="urls.sofro" class="today-sofro">
-        <span class="today-square is-sofro font-syriac" aria-hidden="true"><span dir="rtl">ܣܦ</span></span>
-        <span class="whitespace-nowrap"><b class="font-semibold text-[var(--color-text)]">{{ t('home.sofro.heading') }}</b><span class="today-anytime"> · {{ t('home.today.anyTime') }}</span></span>
-      </a>
     </div>
   </section>
 </template>
@@ -197,13 +211,6 @@ onBeforeUnmount(() => clearInterval(tick))
   font-size: 0.71875rem;
   color: var(--color-text-muted);
 }
-.today-spacer { flex: 1; }
-.today-divider {
-  width: 1px;
-  height: 1.125rem;
-  margin: 0 0.1875rem;
-  background: var(--color-border);
-}
 .today-square {
   display: grid;
   flex: none;
@@ -230,22 +237,7 @@ a.today-square:hover { transform: translateY(-1px); }
   background: var(--step-c);
   color: var(--step-on, #fff);
 }
-.today-square.is-sofro {
-  --step-c: var(--color-sofro);
-  border-color: color-mix(in oklab, var(--color-sofro) 75%, var(--color-bg-elevated));
-  font-size: 0.5625rem;
-}
-/* The narrowest phones keep Sofro's name and drop "any time", so the row never wraps. */
-@media (max-width: 379px) {
-  .today-anytime { display: none; }
-}
-.today-sofro {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  text-decoration: none;
-  color: var(--color-text-muted);
-}
+.today-square.is-wide { font-size: 0.5625rem; }
 
 /* A wide screen: the two halves side by side, nothing stretched thin. */
 @media (min-width: 768px) {
@@ -262,7 +254,6 @@ a.today-square:hover { transform: translateY(-1px); }
     border-top: 0;
     border-left: 1px solid var(--color-border);
   }
-  .today-spacer { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

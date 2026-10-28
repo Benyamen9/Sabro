@@ -20,17 +20,17 @@
       "upNextShort": "Up next",
       "done": "Done",
       "progress": "{done} of {total}",
-      "anyTime": "any time",
       "task": {
         "meltho": "today’s word",
         "mno": "today’s equation",
         "shmo": "today’s figure",
-        "nahlo": "today’s chant"
+        "nahlo": "today’s chant",
+        "sofro": "today’s word to write"
       },
-      "allDone": "All four done today",
+      "allDone": "All five done today",
       "allDoneShort": "All done",
       "streak": "{days} day | {days} days",
-      "keepGoing": "Keep going: write by hand",
+      "keepGoing": "Keep writing: free practice",
       "newPuzzlesIn": "New puzzles in {time}",
       "hoursMinutes": "{h} h {m} min"
     },
@@ -76,14 +76,14 @@
     "sofro": {
       "heading": "Sofro",
       "kind": "Writing",
-      "short": "Write the letters by hand, any time.",
-      "body": "Learn to write Syriac by hand. Each letter is shown stroke by stroke, then you write it yourself — first letters, then whole words. No daily limit.",
-      "cta": "Start writing"
+      "short": "A word a day to write by hand, and free practice any time.",
+      "body": "Learn to write Syriac by hand. Each letter is shown stroke by stroke, then you write it yourself — first letters, then whole words. One word a day joins the daily circuit; free practice has no limit.",
+      "cta": "Start writing",
+      "live": "Live"
     },
     "deck": {
       "label": "Sabro’s games",
       "daily": "daily",
-      "anyTime": "Any time",
       "previous": "Previous game",
       "next": "Next game",
       "show": "Show {game}",

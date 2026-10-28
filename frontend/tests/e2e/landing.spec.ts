@@ -103,10 +103,10 @@ test.describe('landing page', () => {
     await deck.getByRole('button', { name: 'Next game' }).click()
     await expect(deck.getByRole('heading', { level: 2, name: /Mno/ })).toBeVisible()
 
-    // A badge jumps straight to its game — Sofro, the one with no daily puzzle.
+    // A badge jumps straight to its game — Sofro, the last one, a word a day since 2026-10-28.
     await deck.getByRole('button', { name: 'Show Sofro' }).click()
     await expect(deck.getByRole('heading', { level: 2, name: /Sofro/ })).toBeVisible()
-    await expect(deck.getByText('Writing · Any time')).toBeVisible()
+    await expect(deck.getByText('Writing · daily')).toBeVisible()
     await expect(deck.getByRole('link', { name: 'Start writing →' })).toHaveAttribute('href', /sofro/)
 
     await deck.getByRole('button', { name: 'Previous game' }).click()
@@ -164,10 +164,10 @@ test.describe('landing page', () => {
 
     // A fresh visitor: nothing played, Meltho is up next.
     await page.goto('/')
-    await expect(todayPanel.getByText('0 of 4')).toBeVisible()
+    await expect(todayPanel.getByText('0 of 5')).toBeVisible()
     await expect(todayPanel.getByRole('link', { name: /Up next · today.*Meltho — today’s word/ })).toHaveAttribute('href', /meltho/)
-    // Sofro sits after the four daily games, outside the count.
-    await expect(todayPanel.getByRole('link', { name: /Sofro · any time/ })).toHaveAttribute('href', /sofro/)
+    // Sofro's word of the day is the fifth square.
+    await expect(todayPanel.getByRole('link', { name: 'Sofro', exact: true })).toHaveAttribute('href', /sofro/)
 
     // Two played: their squares say so, and the next one is Shmo.
     const today = new Date().toISOString().slice(0, 10)
@@ -178,15 +178,20 @@ test.describe('landing page', () => {
     }])
     await played(['meltho', 'mno'])
     await page.goto('/')
-    await expect(todayPanel.getByText('2 of 4')).toBeVisible()
+    await expect(todayPanel.getByText('2 of 5')).toBeVisible()
     await expect(todayPanel.getByRole('link', { name: 'Mno — Done' })).toBeVisible()
     await expect(todayPanel.getByRole('link', { name: /Up next · today.*Shmo — today’s figure/ })).toHaveAttribute('href', /shmo/)
 
-    // All four: no game to start — Sofro instead, and when the next puzzles come.
+    // The four puzzles: Sofro's word is up next.
     await played(['meltho', 'mno', 'shmo', 'nahlo'])
     await page.goto('/')
+    await expect(todayPanel.getByRole('link', { name: /Up next · today.*Sofro — today’s word to write/ })).toHaveAttribute('href', /sofro/)
+
+    // All five: no game to start — Sofro's free practice, and when the next puzzles come.
+    await played(['meltho', 'mno', 'shmo', 'nahlo', 'sofro'])
+    await page.goto('/')
     await expect(todayPanel.getByRole('link', { name: /Up next/ })).toHaveCount(0)
-    await expect(todayPanel.getByRole('link', { name: /All four done today.*Keep going: write by hand/ })).toHaveAttribute('href', /sofro/)
+    await expect(todayPanel.getByRole('link', { name: /All five done today.*Keep writing: free practice/ })).toHaveAttribute('href', /sofro/)
     await expect(todayPanel.getByText(/New puzzles in \d+ h \d{2} min/)).toBeVisible()
   })
 
