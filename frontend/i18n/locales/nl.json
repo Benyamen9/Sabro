@@ -20,17 +20,17 @@
       "upNextShort": "Hierna",
       "done": "Gespeeld",
       "progress": "{done} van {total}",
-      "anyTime": "altijd",
       "task": {
         "meltho": "het woord van vandaag",
         "mno": "de vergelijking van vandaag",
         "shmo": "de figuur van vandaag",
-        "nahlo": "de zang van vandaag"
+        "nahlo": "de zang van vandaag",
+        "sofro": "het woord van vandaag om te schrijven"
       },
-      "allDone": "Alle vier gespeeld vandaag",
+      "allDone": "Alle vijf gespeeld vandaag",
       "allDoneShort": "Alles gespeeld",
       "streak": "{days} dag | {days} dagen",
-      "keepGoing": "Ga door: schrijf met de hand",
+      "keepGoing": "Blijf schrijven: vrij oefenen",
       "newPuzzlesIn": "Nieuwe puzzels over {time}",
       "hoursMinutes": "{h} u {m} min"
     },
@@ -76,14 +76,14 @@
     "sofro": {
       "heading": "Sofro",
       "kind": "Schrijven",
-      "short": "Schrijf de letters met de hand, wanneer je wilt.",
-      "body": "Leer Syrisch met de hand schrijven. Elke letter wordt streek voor streek getoond, daarna schrijf je hem zelf — eerst letters, dan hele woorden. Geen daglimiet.",
-      "cta": "Begin met schrijven"
+      "short": "Elke dag een woord om met de hand te schrijven, en vrij oefenen wanneer je wilt.",
+      "body": "Leer Syrisch met de hand schrijven. Elke letter wordt streek voor streek getoond, daarna schrijf je hem zelf — eerst letters, dan hele woorden. Elke dag hoort één woord bij het dagelijkse rondje; vrij oefenen kent geen limiet.",
+      "cta": "Begin met schrijven",
+      "live": "Live"
     },
     "deck": {
       "label": "De spellen van Sabro",
       "daily": "dagelijks",
-      "anyTime": "Altijd",
       "previous": "Vorig spel",
       "next": "Volgend spel",
       "show": "Toon {game}",

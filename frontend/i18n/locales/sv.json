@@ -20,17 +20,17 @@
       "upNextShort": "Näst på tur",
       "done": "Klart",
       "progress": "{done} av {total}",
-      "anyTime": "när som helst",
       "task": {
         "meltho": "dagens ord",
         "mno": "dagens ekvation",
         "shmo": "dagens gestalt",
-        "nahlo": "dagens sång"
+        "nahlo": "dagens sång",
+        "sofro": "dagens ord att skriva"
       },
-      "allDone": "Alla fyra klara i dag",
+      "allDone": "Alla fem klara i dag",
       "allDoneShort": "Allt klart",
       "streak": "{days} dag | {days} dagar",
-      "keepGoing": "Fortsätt: skriv för hand",
+      "keepGoing": "Fortsätt skriva: fri övning",
       "newPuzzlesIn": "Nya pussel om {time}",
       "hoursMinutes": "{h} h {m} min"
     },
@@ -76,14 +76,14 @@
     "sofro": {
       "heading": "Sofro",
       "kind": "Skrivande",
-      "short": "Skriv bokstäverna för hand, när du vill.",
-      "body": "Lär dig skriva syriska för hand. Varje bokstav visas drag för drag, sedan skriver du den själv — först bokstäver, sedan hela ord. Ingen daglig gräns.",
-      "cta": "Börja skriva"
+      "short": "Ett ord om dagen att skriva för hand, och fri övning när du vill.",
+      "body": "Lär dig skriva syriska för hand. Varje bokstav visas drag för drag, sedan skriver du den själv — först bokstäver, sedan hela ord. Ett ord om dagen hör till den dagliga rundan; fri övning har ingen gräns.",
+      "cta": "Börja skriva",
+      "live": "Live"
     },
     "deck": {
       "label": "Sabros spel",
       "daily": "dagligen",
-      "anyTime": "När som helst",
       "previous": "Föregående spel",
       "next": "Nästa spel",
       "show": "Visa {game}",

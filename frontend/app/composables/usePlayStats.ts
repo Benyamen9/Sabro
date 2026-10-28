@@ -214,5 +214,5 @@ export function usePlayStats() {
     return results.value ? computeCircuitStreak(results.value, games, today) : null
   }
 
-  return { melthoStats, mnoStats, shmoStats, loading, loaded, load, circuitStreak }
+  return { results, melthoStats, mnoStats, shmoStats, loading, loaded, load, circuitStreak }
 }

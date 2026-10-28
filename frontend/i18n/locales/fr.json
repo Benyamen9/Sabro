@@ -20,17 +20,17 @@
       "upNextShort": "À suivre",
       "done": "Fait",
       "progress": "{done} sur {total}",
-      "anyTime": "à tout moment",
       "task": {
         "meltho": "le mot du jour",
         "mno": "l’équation du jour",
         "shmo": "le personnage du jour",
-        "nahlo": "le chant du jour"
+        "nahlo": "le chant du jour",
+        "sofro": "le mot du jour à écrire"
       },
-      "allDone": "Les quatre jeux du jour sont faits",
+      "allDone": "Les cinq jeux du jour sont faits",
       "allDoneShort": "Tout est fait",
       "streak": "{days} jour | {days} jours",
-      "keepGoing": "Continuez : écrivez à la main",
+      "keepGoing": "Continuez d’écrire : entraînement libre",
       "newPuzzlesIn": "Nouvelles énigmes dans {time}",
       "hoursMinutes": "{h} h {m} min"
     },
@@ -76,14 +76,14 @@
     "sofro": {
       "heading": "Sofro",
       "kind": "Écriture",
-      "short": "Écrivez les lettres à la main, quand vous voulez.",
-      "body": "Apprenez à écrire le syriaque à la main. Chaque lettre est montrée trait par trait, puis vous l'écrivez vous-même — d'abord des lettres, puis des mots entiers. Sans limite quotidienne.",
-      "cta": "Commencer à écrire"
+      "short": "Un mot par jour à écrire à la main, et l’entraînement libre quand vous voulez.",
+      "body": "Apprenez à écrire le syriaque à la main. Chaque lettre est montrée trait par trait, puis vous l'écrivez vous-même — d'abord des lettres, puis des mots entiers. Un mot par jour rejoint le circuit quotidien ; l’entraînement libre est sans limite.",
+      "cta": "Commencer à écrire",
+      "live": "En ligne"
     },
     "deck": {
       "label": "Les jeux de Sabro",
       "daily": "quotidien",
-      "anyTime": "À tout moment",
       "previous": "Jeu précédent",
       "next": "Jeu suivant",
       "show": "Afficher {game}",

@@ -20,17 +20,17 @@
       "upNextShort": "Als Nächstes",
       "done": "Gespielt",
       "progress": "{done} von {total}",
-      "anyTime": "jederzeit",
       "task": {
         "meltho": "das Wort des Tages",
         "mno": "die Gleichung des Tages",
         "shmo": "die Gestalt des Tages",
-        "nahlo": "der Gesang des Tages"
+        "nahlo": "der Gesang des Tages",
+        "sofro": "das Wort des Tages zum Schreiben"
       },
-      "allDone": "Alle vier für heute gespielt",
+      "allDone": "Alle fünf für heute gespielt",
       "allDoneShort": "Alles gespielt",
       "streak": "{days} Tag | {days} Tage",
-      "keepGoing": "Weiter: von Hand schreiben",
+      "keepGoing": "Weiter schreiben: freies Üben",
       "newPuzzlesIn": "Neue Rätsel in {time}",
       "hoursMinutes": "{h} Std. {m} Min."
     },
@@ -76,14 +76,14 @@
     "sofro": {
       "heading": "Sofro",
       "kind": "Schreiben",
-      "short": "Schreiben Sie die Buchstaben von Hand, wann Sie möchten.",
-      "body": "Lernen Sie, Syrisch von Hand zu schreiben. Jeder Buchstabe wird Strich für Strich gezeigt, dann schreiben Sie ihn selbst — erst Buchstaben, dann ganze Wörter. Ohne Tageslimit.",
-      "cta": "Mit dem Schreiben beginnen"
+      "short": "Jeden Tag ein Wort zum Schreiben von Hand, und freies Üben, wann Sie möchten.",
+      "body": "Lernen Sie, Syrisch von Hand zu schreiben. Jeder Buchstabe wird Strich für Strich gezeigt, dann schreiben Sie ihn selbst — erst Buchstaben, dann ganze Wörter. Ein Wort pro Tag gehört zur täglichen Runde; freies Üben hat kein Limit.",
+      "cta": "Mit dem Schreiben beginnen",
+      "live": "Live"
     },
     "deck": {
       "label": "Die Spiele von Sabro",
       "daily": "täglich",
-      "anyTime": "Jederzeit",
       "previous": "Vorheriges Spiel",
       "next": "Nächstes Spiel",
       "show": "{game} anzeigen",
