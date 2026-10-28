@@ -379,8 +379,10 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > to the player). Figures that share **every** scored attribute (149 of 289 that day, 52
 > groups) get a hint: once a guess has the answer's whole profile without being it, the board
 > names everyone left with that profile, each a button that guesses it. The **result page
-> shows the answer as its Beth Ṣalme card** (colour when found, a sketch when given up) and
-> the day's other guesses as small sketch cards. Details in Shmo's README.
+> reads as an entry framed by the collection** (mockup G, same day): a band with the find's
+> place in Beth Ṣalme (new card / found again / met, found out of the roster; signed out, an
+> invitation to sign in), the entry (card picture, "Today's figure", name, attributes, story),
+> Share and the next game, then the board folded. Details in Shmo's README.
 >
 > **Nahlo scores points (Owner, 2026-10-27)**, out of 100: 50/42/34/26/18/10 by the solving guess, plus up to 50 for speed (full within 30 s of the first press of play, nothing at 5 min). Opening the incipit gives up the speed points; a blind solve takes them all; a lost round earns 5 per part found. It answers the open Beth Gazo: knowing the chant beats looking it up. **Computed in the client from the round's ingredients, never stored** — Sabro has no points field and needs none; the formula can change without a migration. Result screen and share text only, so far.
 
