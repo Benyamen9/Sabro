@@ -55,6 +55,8 @@ internal sealed class GameResultService : IGameResultService
             return Result<RecordGameResultOutcome>.Failure(Error.Validation("PlayedOn must not be in the future."));
         }
 
+        await ClearPastSofroStrokesAsync(cancellationToken);
+
         var domainResult = GameResult.Create(
             trimmedUserId,
             request.GameId,
@@ -138,6 +140,8 @@ internal sealed class GameResultService : IGameResultService
             return Result<PagedResult<GameResultDto>>.Failure(pageError);
         }
 
+        await ClearPastSofroStrokesAsync(cancellationToken);
+
         var query = dbContext.GameResults
             .AsNoTracking()
             .Where(r => r.LogtoUserId == trimmedUserId);
@@ -168,6 +172,8 @@ internal sealed class GameResultService : IGameResultService
         {
             return Result<IReadOnlyList<GameResultDto>>.Failure(Error.Validation("LogtoUserId is required."));
         }
+
+        await ClearPastSofroStrokesAsync(cancellationToken);
 
         var items = await dbContext.GameResults
             .AsNoTracking()
@@ -210,6 +216,33 @@ internal sealed class GameResultService : IGameResultService
         result.DetailJson,
         result.CreatedAt,
         result.UpdatedAt);
+
+    /// <summary>
+    /// Sofro keeps the strokes of the day's word (and each step's score) in its
+    /// result only until the word changes at midnight UTC (Owner, 2026-10-28:
+    /// "just the daily vector data, kept till the word resets"). Every Sofro
+    /// result from an earlier day loses them here, for every player, before any
+    /// result is recorded or read, so no earlier day's strokes are ever served.
+    /// The score, word, script and vowel system stay. One cheap statement; it
+    /// matches nothing once the old days are clean.
+    /// </summary>
+    private async Task ClearPastSofroStrokesAsync(CancellationToken cancellationToken)
+    {
+        var today = DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime);
+        var cleared = await dbContext.Database.ExecuteSqlInterpolatedAsync(
+            $"""
+            UPDATE play.game_results
+            SET detail_json = detail_json - 'strokes' - 'stepScores'
+            WHERE game_id = {Games.Sofro}
+              AND played_on < {today}
+              AND (detail_json ? 'strokes' OR detail_json ? 'stepScores')
+            """,
+            cancellationToken);
+        if (cleared > 0)
+        {
+            logger.LogInformation("Sofro strokes cleared from past days. Count={ClearedCount}", cleared);
+        }
+    }
 
     /// <summary>
     /// A solved Shmo result must end on that day's answer. A found card in the

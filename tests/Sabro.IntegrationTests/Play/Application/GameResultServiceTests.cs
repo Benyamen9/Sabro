@@ -240,6 +240,50 @@ public class GameResultServiceTests
         result.Value.Should().Be(0);
     }
 
+    [Fact]
+    public async Task ListForUserAsync_ClearsSofroStrokesFromPastDays_KeepsTodaysAndTheScore()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = NewUser();
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        const string Detail = """{"word":"qom","score":87,"stepScores":[91,80],"strokes":[[[1,2],[3,4]]]}""";
+
+        await using (var ctx = fixture.CreatePlayContext())
+        {
+            var service = NewService(ctx);
+            (await service.RecordAsync(user, new RecordGameResultRequest("sofro", today.AddDays(-1), true, 1, Detail), ct)).IsSuccess.Should().BeTrue();
+            (await service.RecordAsync(user, new RecordGameResultRequest("sofro", today, true, 1, Detail), ct)).IsSuccess.Should().BeTrue();
+        }
+
+        await using var read = fixture.CreatePlayContext();
+        var result = await NewService(read).ListForUserAsync(user, 1, 10, "sofro", ct);
+
+        result.IsSuccess.Should().BeTrue();
+        var byDay = result.Value!.Items.ToDictionary(r => r.PlayedOn);
+        byDay[today].DetailJson.Should().Contain("strokes").And.Contain("stepScores");
+        byDay[today.AddDays(-1)].DetailJson.Should().NotContain("strokes").And.NotContain("stepScores");
+        byDay[today.AddDays(-1)].DetailJson.Should().Contain("\"score\": 87").And.Contain("qom");
+    }
+
+    [Fact]
+    public async Task ListForUserAsync_LeavesOtherGamesDetailAlone()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = NewUser();
+        var yesterday = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1);
+        const string Detail = """{"strokes":"not sofro's"}""";
+
+        await using (var ctx = fixture.CreatePlayContext())
+        {
+            (await NewService(ctx).RecordAsync(user, new RecordGameResultRequest("meltho", yesterday, true, 3, Detail), ct)).IsSuccess.Should().BeTrue();
+        }
+
+        await using var read = fixture.CreatePlayContext();
+        var result = await NewService(read).ListForUserAsync(user, 1, 10, "meltho", ct);
+
+        result.Value!.Items.Should().ContainSingle().Which.DetailJson.Should().Contain("strokes");
+    }
+
     private static GameResultService NewService(PlayDbContext ctx) =>
         new(
             ctx,
