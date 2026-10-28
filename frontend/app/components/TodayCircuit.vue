@@ -6,7 +6,8 @@ import { CIRCUIT_GAMES, circuitToday, type CircuitGame } from '~/composables/use
 // Sofro's word of the day the fifth since 2026-10-28. Once all five are done,
 // the row invites the player to Sofro's free practice, with a countdown to the
 // next puzzles and, for a signed-in player, how many days in a row they have
-// solved the four puzzles (Sofro keeps no result on Sabro, so it cannot count).
+// solved the four puzzles (Sofro's results only began on 2026-10-28: counting
+// it would have reset every streak).
 // On a wide screen the two halves sit side by side. Played/next state comes
 // from the shared daily-circuit cookie, so it renders the same on the server.
 // A signed-in player's saved results fill the cookie in too, so a round played
