@@ -348,9 +348,13 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > `CIRCUIT_HANDOFF`. The word is one of the level-2 words, **picked in the client from the
 > UTC date** (`dailyWordIndex`), the same for everyone, with no Sabro endpoint. Sofro opens
 > on it until it is written; written with a pass, it marks Sofro played in the cookie and
-> hands on to the next unplayed game. **Still nothing on Sabro**: no `Games.Sofro`, so the
-> hub's streak counts the four puzzles only, and a word written on the phone does not show
-> as done on another device. Free practice is unchanged.
+> hands on to the next unplayed game. **Since the same day it is also a result on Sabro**
+> (`gameId: 'sofro'`, the score in `detailJson`, never the drawing) for a signed-in player,
+> so it follows them across devices like the puzzles; written signed out, it goes up on the
+> next signed-in visit that day. Sabro needed no change (it takes any game id) and has no
+> `Games.Sofro` constant, since it never names the game. The hub's streak still counts the
+> four puzzles only: counting Sofro from its first day would have reset every streak to
+> zero. Free practice sends nothing.
 
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >
@@ -389,7 +393,7 @@ Seven pieces of logic are deliberately implemented twice, on either side of a re
 | App launcher | hub `utils/apps.ts` + `AppLauncher.vue` | one copy in **each** of the five clients | ✅ `apps` unit test per repo (order, self, Sofro's badge) |
 | Nahlo's scoring rule (is a guess right?) | `NahloAnswer` (checks a claimed win) | Nahlo `app/utils/compare.ts` | ❌ none: change both together |
 
-**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **six** copies — hub, Meltho, Mno, Shmo, Nahlo, Sofro. `CIRCUIT_GAMES` lists all five games (the four puzzles, then Sofro since 2026-10-28) in all six copies, and so does `CIRCUIT_HANDOFF`. A cookie is per browser, so **the hub also marks today's games from a signed-in player's saved results** (`TodayCircuit.vue`, 2026-10-28): a round played on the phone shows as done on the computer, and the cookie it writes is the one every game reads. Sofro keeps no result on Sabro, so it alone cannot follow a player across devices. The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
+**The daily circuit** is one cookie shared across `*.sabro.be` (`sabro_daily_played`), and the composable exists in **six** copies — hub, Meltho, Mno, Shmo, Nahlo, Sofro. `CIRCUIT_GAMES` lists all five games (the four puzzles, then Sofro since 2026-10-28) in all six copies, and so does `CIRCUIT_HANDOFF`. A cookie is per browser, so **the hub also marks today's games from a signed-in player's saved results** (`TodayCircuit.vue`, 2026-10-28): a round played on the phone shows as done on the computer, and the cookie it writes is the one every game reads. Sofro's word does the same since it became a result on Sabro (2026-10-28). The two lists stay separate so a game that cannot serve a puzzle (its `/today` answering 409) can be withheld from the hand-off without touching the cookie's vocabulary.
 
 > ⚠️ **Any change to `CIRCUIT_HANDOFF` goes into all six repos at once.** Nothing fails if a copy is missed — the copies simply disagree about which door to open next.
 
@@ -435,7 +439,7 @@ Every published chant **with a recording** is listed; nothing is held back for t
   (since 2026-10-28; before that it sat apart, "any time"). Once all five are played the line offers
   Sofro's free practice ("Keep writing"), a countdown to the next puzzles (midnight UTC, client-only),
   and for a signed-in player a **streak: days in a row the four puzzles were _solved_** (not just
-  played; Sofro has no saved result to count), shown from day 1 (`computeCircuitStreak` in
+  played; Sofro's results only began on 2026-10-28), shown from day 1 (`computeCircuitStreak` in
   `usePlayStats.ts`). A signed-in player's saved results mark the squares too, wherever they played. Side by side on a wide screen. It replaced the hero's
   single button. On phones the hero's four letter tiles shrink to one line so "Today" is on the first
   screen.
