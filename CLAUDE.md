@@ -352,9 +352,9 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > (`gameId: 'sofro'`, the score in `detailJson`, never the drawing) for a signed-in player,
 > so it follows them across devices like the puzzles; written signed out, it goes up on the
 > next signed-in visit that day. Sabro needed no change (it takes any game id) and has no
-> `Games.Sofro` constant, since it never names the game. The hub's streak still counts the
-> four puzzles only: counting Sofro from its first day would have reset every streak to
-> zero. Free practice sends nothing.
+> `Games.Sofro` constant, since it never names the game. **The hub's streak counts all
+> five** (Owner, same day, knowingly: Sofro's results only begin on 2026-10-28, so every
+> streak started again from that day). Free practice sends nothing.
 
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >
@@ -438,8 +438,8 @@ Every published chant **with a recording** is listed; nothing is held back for t
   square per daily game (done ✓ / next / waiting, each a link), "n of 5", **Sofro's word last**
   (since 2026-10-28; before that it sat apart, "any time"). Once all five are played the line offers
   Sofro's free practice ("Keep writing"), a countdown to the next puzzles (midnight UTC, client-only),
-  and for a signed-in player a **streak: days in a row the four puzzles were _solved_** (not just
-  played; Sofro's results only began on 2026-10-28), shown from day 1 (`computeCircuitStreak` in
+  and for a signed-in player a **streak: days in a row all five were _solved_** (not just
+  played; Sofro's word since 2026-10-28, which restarted every streak), shown from day 1 (`computeCircuitStreak` in
   `usePlayStats.ts`). A signed-in player's saved results mark the squares too, wherever they played. Side by side on a wide screen. It replaced the hero's
   single button. On phones the hero's four letter tiles shrink to one line so "Today" is on the first
   screen.
