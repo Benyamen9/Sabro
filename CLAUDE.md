@@ -355,6 +355,10 @@ The hub runs on :3000 and Logto on :3001/:3002.
 > `Games.Sofro` constant, since it never names the game. **The hub's streak counts all
 > five** (Owner, same day, knowingly: Sofro's results only begin on 2026-10-28, so every
 > streak started again from that day). Free practice sends nothing.
+> **Once written, the card is the result** (Owner, same day, mockup B of three): the
+> player's ink with a score stamp, the meaning and each step's score, then Share · the next
+> game · the pen back to practice. Sofro reopens on it all day; the ink stays on the device
+> (`sofro:dailyInk`), so another device shows the book's word and the score from Sabro.
 
 > **Nahlo's spelling came from the Owner** and is not derived from anything — do not "correct" it against a lexicon. Likewise the Owner's ruling that the third answer part is **yes/no** ("does this melody have a variation at all"), never *which* shuḥlofo: the cost is known and accepted.
 >
