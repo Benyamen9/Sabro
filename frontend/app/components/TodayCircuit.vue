@@ -6,8 +6,8 @@ import { CIRCUIT_GAMES, circuitToday, type CircuitGame } from '~/composables/use
 // Sofro's word of the day the fifth since 2026-10-28. Once all five are done,
 // the row invites the player to Sofro's free practice, with a countdown to the
 // next puzzles and, for a signed-in player, how many days in a row they have
-// solved the four puzzles (Sofro's results only began on 2026-10-28: counting
-// it would have reset every streak).
+// done all five (owner, 2026-10-28: Sofro's word counts too, though its results
+// only began that day, so every streak started again from it).
 // On a wide screen the two halves sit side by side. Played/next state comes
 // from the shared daily-circuit cookie, so it renders the same on the server.
 // A signed-in player's saved results fill the cookie in too, so a round played
@@ -17,9 +17,6 @@ const config = useRuntimeConfig().public
 const { hasPlayed, nextUnplayed, markPlayed } = useDailyCircuit()
 const { isSignedIn } = useAuth()
 const { results, load: loadResults, circuitStreak } = usePlayStats()
-
-/** The daily games whose results Sabro keeps: the streak counts these. */
-const PUZZLE_GAMES: readonly CircuitGame[] = ['meltho', 'mno', 'shmo', 'nahlo']
 
 const badges: Record<CircuitGame, string> = { meltho: 'ܡ', mno: 'ܐ݈', shmo: 'ܫ', nahlo: 'ܢ', sofro: 'ܣܦ' }
 const urls: Record<CircuitGame, string> = {
@@ -44,7 +41,7 @@ function squareLabel(game: CircuitGame) {
 // from the first day (owner, 2026-10-23).
 const streak = computed(() => {
   if (next.value !== null || !isSignedIn.value) return 0
-  return circuitStreak(PUZZLE_GAMES, circuitToday()) ?? 0
+  return circuitStreak(CIRCUIT_GAMES, circuitToday()) ?? 0
 })
 
 // The countdown to the next puzzles (midnight UTC, when the puzzle date

@@ -126,7 +126,7 @@ describe('computeMelthoStats', () => {
 })
 
 describe('computeCircuitStreak', () => {
-  const games = ['meltho', 'mno', 'shmo', 'nahlo'] as const
+  const games = ['meltho', 'mno', 'shmo', 'nahlo', 'sofro'] as const
   const allSolved = (day: string) => games.map(g => result(day, true, 3, g))
 
   it('counts consecutive days, ending today, on which every game was solved', () => {
@@ -161,7 +161,7 @@ describe('computeCircuitStreak', () => {
   })
 
   it('ignores results from games outside the circuit', () => {
-    const results = [...allSolved('2026-10-23'), result('2026-10-22', true, 1, 'sofro')]
+    const results = [...allSolved('2026-10-23'), result('2026-10-22', true, 1, 'some-future-game')]
     expect(computeCircuitStreak(results, games, '2026-10-23')).toBe(1)
   })
 })
