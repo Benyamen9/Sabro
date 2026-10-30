@@ -386,6 +386,14 @@ The hub runs on :3000 and Logto on :3001/:3002.
 >
 > **Nahlo scores points (Owner, 2026-10-27)**, out of 100: 50/42/34/26/18/10 by the solving guess, plus up to 50 for speed (full within 30 s of the first press of play, nothing at 5 min). Opening the incipit gives up the speed points; a blind solve takes them all; a lost round earns 5 per part found. It answers the open Beth Gazo: knowing the chant beats looking it up. **Computed in the client from the round's ingredients, never stored** — Sabro has no points field and needs none; the formula can change without a migration. Result screen and share text only, so far.
 
+> **Mno's marks sit only on their own letters (Owner, 2026-10-30)**, from the numeral table of
+> his grammar, replacing the earlier "any mark on any letter" (so ܐ̇ is not 10): **mawotho**
+> (dot above) on ܝ…ܨ = 100…900; **alfayo** (diagonal line below) on ܐ…ܛ, ܝ…ܨ and ܩ…ܬ;
+> **ḥsiroyuth alfayo** (horizontal line below) on ܐ…ܛ and ܝ…ܨ; **mawoth alfayo** (hood below)
+> on ܐ…ܛ. Only a bare taw builds compounds, so 500,000 is ܗ̭ or ܢ̱, never ܬ݈ܩ݈, and
+> `SyriacNumerals.Spell` takes mawoth alfayo from 500,000 up. Mno's keypad, cheatsheet and
+> guess grammar keep to the table; `SyriacNumeralsTests` checks both Sabro spellers against it.
+
 ### This file is the ecosystem's memory — fold changes back into it
 
 The four client repos carry no `CLAUDE.md`. Their **`README.md` is each app's memory**, and it records Owner rulings and reasoning that exist nowhere else. Sabro's `CLAUDE.md` is the only file loaded automatically, so:

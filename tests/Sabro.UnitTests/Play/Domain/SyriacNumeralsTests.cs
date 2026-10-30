@@ -42,10 +42,56 @@ public class SyriacNumeralsTests
     [InlineData(10000, "ܝ!")]
     [InlineData(25000, "ܟ!ܗ!")]
     [InlineData(100000, "ܩ!")]
-    [InlineData(999999, "ܬ!ܬ!ܩ!ܨ!ܛ!ܬܬܩܨܛ")]
+    [InlineData(450000, "ܬ!ܢ!")]
     public void Spell_ThousandsRange_MarksThousandsLettersWithAlfayo(int value, string expected)
     {
         SyriacNumerals.Spell(value).Should().Be(expected.Replace('!', SyriacNumerals.Alfayo));
+    }
+
+    // Alfayo never sits on compound taws (Owner, 2026-10-30): from 500,000 up the
+    // hundred-thousands take mawoth alfayo ('^') on a unit letter, as the grammar
+    // writes them. '!' = alfayo.
+    [Theory]
+    [InlineData(500000, "ܗ^")]
+    [InlineData(523000, "ܗ^ܟ!ܓ!")]
+    [InlineData(999999, "ܛ^ܨ!ܛ!ܬܬܩܨܛ")]
+    public void Spell_FromFiveHundredThousand_TakesMawothAlfayo(int value, string expected)
+    {
+        var withMarks = expected
+            .Replace('!', SyriacNumerals.Alfayo)
+            .Replace('^', SyriacNumerals.MawothAlfayo);
+
+        SyriacNumerals.Spell(value).Should().Be(withMarks);
+    }
+
+    // Each mark sits only on its own letters (Owner, 2026-10-30, the grammar's
+    // numeral table): both spellers must keep to it over the whole range.
+    [Fact]
+    public void Spell_And_SpellMarked_PutEachMarkOnlyOnItsOwnLetters()
+    {
+        const string units = "ܐܒܓܕܗܘܙܚܛ";
+        const string tens = "ܝܟܠܡܢܣܥܦܨ";
+        var allowed = new Dictionary<char, string>
+        {
+            [SyriacNumerals.Mawotho] = tens,
+            [SyriacNumerals.Alfayo] = units + tens + "ܩܪܫܬ",
+            [SyriacNumerals.HsiroyuthAlfayo] = units + tens,
+            [SyriacNumerals.MawothAlfayo] = units,
+        };
+
+        for (var value = 1; value <= 999_999; value += 37)
+        {
+            foreach (var spelled in new[] { SyriacNumerals.Spell(value), SyriacNumerals.SpellMarked(value) })
+            {
+                for (var i = 1; i < spelled.Length; i++)
+                {
+                    if (SyriacNumerals.Marks.Contains(spelled[i]))
+                    {
+                        allowed[spelled[i]].Should().Contain(spelled[i - 1].ToString(), because: "{0} spells {1}", value, spelled);
+                    }
+                }
+            }
+        }
     }
 
     // A tile is one symbol: a base letter plus its optional mark. Combining
