@@ -9,6 +9,11 @@ namespace Sabro.Play.Domain;
 /// the thousands count spelled the same way with the alfayo mark (oblique line
 /// below) on each thousands letter. The canonical form is the unmarked additive
 /// spelling wherever the value allows it; marks appear only where unavoidable.
+/// Each mark sits only on its own letters (Owner, 2026-10-30): mawotho on
+/// ܝ…ܨ; alfayo on ܐ…ܛ, ܝ…ܨ and ܩ…ܬ; hsiroyuth alfayo on ܐ…ܛ and ܝ…ܨ; mawoth
+/// alfayo on ܐ…ܛ. Only a bare taw builds compounds, so from 500,000 up the
+/// hundred-thousands take mawoth alfayo on a unit letter (500,000 = ܗ̭), never
+/// alfayo on compound taws. Mno's numerals.ts mirrors this.
 /// Guess-side parsing of the many valid alternative spellings is client logic
 /// (Mno), not Sabro's — this speller exists to produce the daily solution's
 /// stored tile form and to size equations in tiles.
@@ -47,6 +52,13 @@ public static class SyriacNumerals
 
         var builder = new StringBuilder();
         var thousands = value / 1000;
+        if (thousands >= 500)
+        {
+            // alfayo cannot build compound taws: 500,000 is ܗ̭, not ܬ݈ܩ݈
+            builder.Append(Units[(thousands / 100) - 1]).Append(MawothAlfayo);
+            thousands %= 100;
+        }
+
         if (thousands > 0)
         {
             foreach (var letter in LettersUnderThousand(thousands))
