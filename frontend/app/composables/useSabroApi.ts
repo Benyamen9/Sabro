@@ -7,7 +7,7 @@
 export function useSabroApi() {
   const config = useRuntimeConfig()
   const baseUrl = config.public.apiBaseUrl
-  const { getAccessToken } = useAuth()
+  const { getAccessToken, forgetAccessToken } = useAuth()
 
   return $fetch.create({
     baseURL: baseUrl,
@@ -22,6 +22,10 @@ export function useSabroApi() {
           options.headers.set('Authorization', `Bearer ${token}`)
         }
       }
+    },
+    // A refused token is not kept: the next call fetches a new one.
+    onResponseError({ response }) {
+      if (response.status === 401) forgetAccessToken()
     },
   })
 }
