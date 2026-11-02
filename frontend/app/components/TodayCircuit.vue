@@ -71,14 +71,42 @@ watch(next, (game) => {
   tick = setInterval(updateCountdown, 30_000)
 })
 
+// Keep the line current (owner, 2026-11-02: played Meltho, the home page still
+// showed it to do). The games mark the shared cookie from their own tabs, and
+// the saved results change on other devices, so read both again whenever the
+// page opens or the player comes back to it, never only once per visit.
+function refresh() {
+  refreshCookie('sabro_daily_played')
+  if (isSignedIn.value) loadResults({ refresh: true })
+}
+
+function onVisible() {
+  if (document.visibilityState === 'visible') refresh()
+}
+
+function onPageShow(event: PageTransitionEvent) {
+  if (event.persisted) refresh()
+}
+
+// The automatic ecosystem sign-in can complete after the page has mounted.
+watch(isSignedIn, (signedIn) => {
+  if (signedIn) loadResults({ refresh: true })
+})
+
 onMounted(() => {
-  if (isSignedIn.value) loadResults()
+  refresh()
+  document.addEventListener('visibilitychange', onVisible)
+  window.addEventListener('pageshow', onPageShow)
   if (next.value === null) {
     updateCountdown()
     tick = setInterval(updateCountdown, 30_000)
   }
 })
-onBeforeUnmount(() => clearInterval(tick))
+onBeforeUnmount(() => {
+  clearInterval(tick)
+  document.removeEventListener('visibilitychange', onVisible)
+  window.removeEventListener('pageshow', onPageShow)
+})
 </script>
 
 <template>
