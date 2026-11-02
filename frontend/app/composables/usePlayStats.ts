@@ -183,8 +183,11 @@ export function usePlayStats() {
     results.value ? computeGameStats(results.value, 'shmo', { unlimitedGuesses: true }) : null
   ))
 
-  async function load() {
-    if (!isConfigured.value || !isSignedIn.value || loaded.value) return
+  /** `refresh` fetches again even when already loaded: the home page's "Today"
+   *  line needs rounds saved since, on another device or in another tab. */
+  async function load(options: { refresh?: boolean } = {}) {
+    if (!isConfigured.value || !isSignedIn.value || loading.value) return
+    if (loaded.value && !options.refresh) return
     loading.value = true
     try {
       const all: GameResultDto[] = []
