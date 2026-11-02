@@ -19,10 +19,10 @@
     "generate:api-types": "openapi-typescript ./openapi/Sabro.API.json -o ./app/types/api.generated.ts"
   },
   "dependencies": {
-    "@logto/nuxt": "^2.0.1",
+    "@logto/nuxt": "^2.0.3",
     "@nuxtjs/i18n": "^10.4.0",
     "@tailwindcss/vite": "^4.3.0",
-    "nuxt": "^4.6.2",
+    "nuxt": "^4.6.3",
     "tailwindcss": "^4.3.0",
     "vue": "^3.5.44",
     "vue-router": "^5.4.0"
@@ -41,7 +41,7 @@
     "simple-git": "file:./vendor/simple-git",
     "typescript": "^6.0.3",
     "vitest": "^5.0.5",
-    "vue-tsc": "^3.3.13"
+    "vue-tsc": "^3.3.14"
   },
   "overrides": {
     "brace-expansion": "^5.0.8",
