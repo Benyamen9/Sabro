@@ -1,4 +1,19 @@
 import type { UserInfoResponse } from '@logto/node'
+import { createTokenCache } from '~/utils/tokenCache'
+
+// Browser only. On the server one module serves every visitor, so a token kept
+// there would be handed to the next person's page.
+let browserTokens: ReturnType<typeof createTokenCache> | null = null
+
+async function fetchAccessToken(): Promise<string | null> {
+  try {
+    const result = await $fetch<{ accessToken: string | null }>('/api/auth/access-token')
+    return result.accessToken
+  }
+  catch {
+    return null
+  }
+}
 
 /**
  * Thin wrapper over the @logto/nuxt module that:
@@ -51,20 +66,22 @@ export function useAuth() {
     // sign-out path clears it — a merely signed-out app must never clear it,
     // or visiting one game anonymously would erase the hint for all of them.
     useEcosystemAccount().forget()
+    forgetAccessToken()
     window.location.href = '/sign-out'
   }
 
+  // In the browser the token is kept until shortly before it expires, so a page
+  // that calls Sabro several times asks for it once (utils/tokenCache.ts).
   async function getAccessToken(): Promise<string | null> {
     if (!isConfigured.value || !isSignedIn.value) return null
-    try {
-      const result = await $fetch<{ accessToken: string | null }>(
-        '/api/auth/access-token',
-      )
-      return result.accessToken
-    }
-    catch {
-      return null
-    }
+    if (import.meta.server) return fetchAccessToken()
+    browserTokens ??= createTokenCache(fetchAccessToken)
+    return browserTokens.get()
+  }
+
+  /** Drop the kept token, so the next call fetches a new one. */
+  function forgetAccessToken() {
+    browserTokens?.clear()
   }
 
   return {
@@ -79,5 +96,6 @@ export function useAuth() {
     signIn,
     signOut,
     getAccessToken,
+    forgetAccessToken,
   }
 }
