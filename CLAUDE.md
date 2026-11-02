@@ -426,6 +426,14 @@ Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-con
 hub's page links (Library, Beth Gazo, Beth Ṣalme, Backoffice) live **inside the launcher panel**, under the apps (Owner,
 2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
 
+**Loading speed (Owner, 2026-11-02)** left two more files copied into all six frontends, kept identical:
+`utils/tokenCache.ts` keeps the Sabro access token **in the browser only** until a minute before it
+expires (never on the server, which serves every visitor), cleared on sign-out and on a 401; and
+`scripts/self-host-fonts.mjs` downloads the Google fonts into `public/fonts/` + `assets/css/fonts.css`,
+so no page waits on Google to paint (one cold visit waited 7.6 s). Each app lists its own families in
+the script; re-run it after changing them. A signed-in game also asks for the player's saved result
+**alongside** the puzzle, not after it.
+
 **Beth Ṣalme** (ܒܝܬ ܨܠܡ̈ܐ, "house of images", `/beth-salme`; Owner, 2026-10-25) is the hub's figure page: a
 prosopography of Shmo's roster as a **card collection**. A figure is **met** when the player guesses it in
 Shmo (a sketch card, attributes shown) and **found** when they solve it as the day's answer (the card in

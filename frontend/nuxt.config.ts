@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-01',
   devtools: { enabled: true },
   modules: ['@nuxtjs/i18n', '@nuxt/eslint', '@logto/nuxt'],
-  css: ['~/assets/css/main.css'],
+  // fonts.css comes from scripts/self-host-fonts.mjs: the fonts are served from this site.
+  css: ['~/assets/css/fonts.css', '~/assets/css/main.css'],
   // The backoffice renders in the browser only. During SSR the auth calls
   // (useAdmin → /api/auth/scopes, getAccessToken → /api/auth/access-token) are
   // internal $fetch calls that carry no cookie, so the server always sees a
@@ -17,6 +18,8 @@ export default defineNuxtConfig({
   // would rotate the refresh token into a Set-Cookie the browser never gets.
   // The backoffice is noindex, so it loses nothing by skipping SSR.
   routeRules: {
+    // The font files never change under a name: the generator names them after Google's.
+    '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
   },
@@ -41,12 +44,6 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16.png' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Noto+Sans+Syriac:wght@400;500;700&family=Noto+Sans+Syriac+Eastern:wght@400;500;700&family=Noto+Sans+Syriac+Western:wght@400;500;700&display=swap',
-        },
       ],
       // Analytics is NOT declared here. Google Tag Manager briefly was, which
       // put a third-party request on every page load and contradicted the
