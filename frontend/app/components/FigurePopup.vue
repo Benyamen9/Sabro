@@ -60,6 +60,9 @@ onBeforeUnmount(() => {
       >×</button>
 
       <div class="lift" :style="{ transform: tilt }" @pointermove="lean" @pointerleave="tilt = ''">
+        <!-- The red ribbon (Owner, 2026-11-09): this card is Beth Ṣalme's place. It hangs from the card,
+             not from a face, so it stays put when the card turns over. -->
+        <span class="ribbon" aria-hidden="true" />
         <!-- The card itself turns on a tap; the button under it does the same for
              keyboards and screen readers, so the card needs no role of its own. -->
         <div class="flip" :class="{ turned }" @click="turned = !turned">
@@ -114,11 +117,27 @@ onBeforeUnmount(() => {
 }
 
 .lift {
+  position: relative;
   width: min(78vw, 270px);
   aspect-ratio: 5 / 7;
   transform-style: preserve-3d;
   transition: transform 0.12s ease-out;
   animation: card-lift 0.5s cubic-bezier(0.2, 1.35, 0.4, 1);
+}
+
+.ribbon {
+  position: absolute;
+  top: -4px;
+  right: 22px;
+  z-index: 2;
+  width: 20px;
+  height: 54px;
+  background: #8c2f39;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.3));
+  /* In front of both faces while the card turns behind it. */
+  transform: translateZ(30px);
+  pointer-events: none;
 }
 
 .flip {

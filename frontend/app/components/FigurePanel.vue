@@ -10,9 +10,12 @@ const { t } = useI18n()
 
 <template>
   <article
-    class="rounded-[18px] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4 shadow-[var(--shadow-soft)]"
+    class="relative rounded-[18px] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4 shadow-[var(--shadow-soft)]"
     :aria-label="figure.name"
   >
+    <!-- The red ribbon (Owner, 2026-11-09): the open figure is Beth Ṣalme's place, as on a word page.
+         Clear of the close button. -->
+    <span aria-hidden="true" class="absolute right-14 top-0 h-[52px] w-5 bg-[#8c2f39] drop-shadow-[0_2px_2px_rgb(0_0_0/0.25)] [clip-path:polygon(0_0,100%_0,100%_100%,50%_82%,0_100%)]" />
     <div class="flex items-start justify-between gap-3">
       <div
         class="w-full max-w-[220px] overflow-hidden rounded-2xl"
