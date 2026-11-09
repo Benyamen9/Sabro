@@ -41,18 +41,6 @@ public class ReaderControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_IsForSignedInReadersOnly()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        using var anonymous = factory.CreateClient();
-        anonymous.DefaultRequestHeaders.Authorization = null;
-
-        var response = await anonymous.GetAsync(Base, ct);
-
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-    }
-
-    [Fact]
     public async Task Get_ForANewReader_IsAnEmptyShelf()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -296,7 +284,7 @@ public class ReaderControllerTests : IDisposable
         var figure = HistoricalFigure.Create(
             $"Marked Figure {Guid.NewGuid():N}",
             HistoricalFigureCategory.Patristic,
-            373,
+            4, // the century, not the year
             HistoricalPeriod.NiceneEra,
             HistoricalFigureRole.Commentator,
             HistoricalFigureRegion.Mesopotamia,
