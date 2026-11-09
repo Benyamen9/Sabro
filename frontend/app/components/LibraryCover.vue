@@ -110,7 +110,8 @@ const { t } = useI18n()
 .plate svg { width: 56%; height: 56%; }
 
 .text { display: flex; min-width: 0; flex-direction: column; }
-.syriac { order: 1; display: block; margin-top: 2px; font-family: var(--font-syriac); font-size: 19px; font-weight: 500; color: var(--gold); }
+/* Shrink-wrapped, so right-to-left text sits under the English title instead of at the far edge. */
+.syriac { order: 1; display: block; align-self: flex-start; margin-top: 2px; font-family: var(--font-syriac); font-size: 19px; font-weight: 500; color: var(--gold); }
 .title { order: 0; font-family: var(--font-serif); font-size: 20px; font-weight: 600; letter-spacing: 0.02em; }
 .subtitle { order: 2; display: none; margin-top: 2px; font-family: var(--font-serif); font-size: 14px; font-style: italic; opacity: 0.75; }
 .count { order: 3; margin-top: 8px; font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
@@ -131,7 +132,7 @@ const { t } = useI18n()
   .plate { width: 128px; }
   .text { align-items: center; }
   /* On the tall book the Syriac title sits under the plate, above the English. */
-  .syriac { order: 0; margin-top: 16px; font-size: 26px; }
+  .syriac { order: 0; align-self: center; margin-top: 16px; font-size: 26px; }
   .title { order: 1; font-size: 21px; }
   .subtitle { display: block; }
 }
