@@ -128,13 +128,13 @@ onBeforeUnmount(() => {
 .ribbon {
   position: absolute;
   top: -4px;
-  right: 22px;
+  right: 20px;
   z-index: 2;
-  width: 20px;
-  height: 54px;
+  width: 13px;
+  height: 34px;
   background: #8c2f39;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
-  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.3));
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.25));
   /* In front of both faces while the card turns behind it. */
   transform: translateZ(30px);
   pointer-events: none;
