@@ -436,6 +436,33 @@
       "marked": "marked in the vocalization",
       "computedSoft": "soft after a vowel (computed)",
       "computedHard": "hard at the start or after a vowelless letter (computed)"
+    },
+    "shelf": {
+      "eyebrow": "Library",
+      "heading": "Choose a book",
+      "hint": "A red ribbon on a cover marks your place in that book.",
+      "leftOff": "Where you left off",
+      "continue": "Continue",
+      "books": {
+        "lexicon": {
+          "title": "Lexicon",
+          "subtitle": "every word, letter by letter"
+        },
+        "bethGazo": {
+          "title": "Beth Gazo",
+          "subtitle": "the treasury of chants"
+        },
+        "bethSalme": {
+          "title": "Beth Ṣalme",
+          "subtitle": "the gallery of figures"
+        }
+      },
+      "counts": {
+        "words": "{count} words | {count} word | {count} words",
+        "chants": "{count} chants | {count} chant | {count} chants",
+        "figures": "{count} figures | {count} figure | {count} figures",
+        "found": "{found} of {total} found"
+      }
     }
   },
   "categories": {
@@ -1226,6 +1253,10 @@
     "bethGazo": {
       "title": "Beth Gazo · the treasury of chants",
       "description": "The Syriac Orthodox treasury of chants as an open book: every recorded melody, mode by mode, to listen to and learn."
+    },
+    "libraryShelf": {
+      "title": "Library",
+      "description": "Sabro's Syriac library: the Lexicon of words, the Beth Gazo treasury of chants and the Beth Ṣalme gallery of figures."
     }
   },
   "privacy": {

@@ -90,7 +90,7 @@ useHead({
       <!-- The word only appears when one was actually resolved. -->
       <NuxtLink
         v-if="word"
-        :to="`/library/${word.id}`"
+        :to="`/library/lexicon/${word.id}`"
         class="mt-6 block w-full max-w-xs rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-5 shadow-sm transition-colors hover:border-[var(--color-accent)]"
       >
         <span class="font-sans text-[9.5px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-faint)]">
@@ -111,7 +111,7 @@ useHead({
       </NuxtLink>
 
       <div class="mt-7 flex flex-wrap justify-center gap-2.5">
-        <NuxtLink to="/library" :class="primaryButton">{{ t('error.actions.library') }}</NuxtLink>
+        <NuxtLink to="/library/lexicon" :class="primaryButton">{{ t('error.actions.library') }}</NuxtLink>
         <NuxtLink to="/" :class="secondaryButton">{{ t('error.actions.home') }}</NuxtLink>
       </div>
     </div>

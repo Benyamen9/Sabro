@@ -67,7 +67,16 @@ const selected = computed(() => figures.value.find(f => f.id === selectedId.valu
 function open(figure: GalleryFigure) {
   lifted.value = !window.matchMedia('(min-width: 1024px)').matches
   selectedId.value = figure.id
+  record('beth-salme', figure.id, { title: figure.name, syriac: figure.syriacName ?? null })
 }
+
+// The red ribbon (Owner, 2026-11-01): the last card opened, and "where you left off" reopens it.
+const { places, load: loadPlaces, record } = useLibraryPlaces()
+onMounted(loadPlaces)
+const place = computed(() => {
+  const kept = places.value['beth-salme']
+  return kept ? figures.value.find(f => f.id === kept.itemKey) ?? null : null
+})
 
 function close() {
   selectedId.value = null
@@ -102,6 +111,14 @@ function close() {
         @click="signIn()"
       >{{ t('bethSalme.signIn') }}</button>
     </div>
+
+    <ClientOnly>
+      <LibraryResume
+        v-if="place && place.id !== selectedId"
+        :label="{ title: place.name, syriac: place.syriacName ?? null }"
+        @open="open(place)"
+      />
+    </ClientOnly>
 
     <div v-if="signedIn" class="mb-5" aria-live="polite">
       <div class="flex h-2 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)]" role="img" :aria-label="t('bethSalme.progress', counts)">

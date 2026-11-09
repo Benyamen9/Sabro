@@ -134,6 +134,12 @@ export type SortDirection = Schemas['SortDirection']
 
 // Unified library (/library page: dictionary words, optionally filtered to ones played in Meltho).
 export type UnifiedLibraryEntryDto = Schemas['UnifiedLibraryEntryDto']
+
+// The reader's own Library (red-ribbon places and marks).
+export type ReaderShelfDto = Schemas['ReaderShelfDto']
+export type ReaderPlaceDto = Schemas['ReaderPlaceDto']
+export type ReaderMarkDto = Schemas['ReaderMarkDto']
+export type ReaderItemLabelDto = Schemas['ReaderItemLabelDto']
 export type SyriacLetter = Schemas['SyriacLetter']
 export type SyriacLetterCode = Schemas['SyriacLetterCode']
 export type SyriacVowel = Schemas['SyriacVowel']

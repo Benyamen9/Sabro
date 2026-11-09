@@ -21,6 +21,9 @@ export default defineCachedEventHandler(async (event) => {
   const urls: { loc: string, lastmod?: string }[] = [
     { loc: `${siteUrl}/` },
     { loc: `${siteUrl}/library` },
+    { loc: `${siteUrl}/library/lexicon` },
+    { loc: `${siteUrl}/library/beth-gazo` },
+    { loc: `${siteUrl}/library/beth-salme` },
     { loc: `${siteUrl}/privacy` },
   ]
 
@@ -62,7 +65,7 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   for (const [id, lastmod] of words) {
-    urls.push({ loc: `${siteUrl}/library/${id}`, lastmod })
+    urls.push({ loc: `${siteUrl}/library/lexicon/${id}`, lastmod })
   }
 
   setHeader(event, 'content-type', 'application/xml; charset=utf-8')

@@ -119,7 +119,7 @@ const latestShownOn = computed(() => {
     <section class="mt-8 overflow-hidden rounded-2xl border sm:mt-10 border-[var(--color-border)]">
       <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 pt-5 sm:px-8 sm:pt-6">
         <h3 class="font-sans text-xl">{{ t('home.library.heading') }}</h3>
-        <NuxtLink to="/library" class="font-sans text-sm font-semibold text-[var(--color-accent)] no-underline">
+        <NuxtLink to="/library/lexicon" class="font-sans text-sm font-semibold text-[var(--color-accent)] no-underline">
           {{ t('home.library.cta') }} →
         </NuxtLink>
       </div>
@@ -128,7 +128,7 @@ const latestShownOn = computed(() => {
       </p>
       <NuxtLink
         v-if="latest"
-        :to="`/library/${latest.lexiconEntryId}`"
+        :to="`/library/lexicon/${latest.lexiconEntryId}`"
         class="mx-4 mb-4 mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl bg-[var(--color-bg-subtle)] px-4 py-3.5 no-underline transition-colors hover:bg-[var(--color-accent-faint)] sm:mx-8 sm:mb-6 sm:mt-5 sm:px-5 sm:py-4"
       >
         <SyriacText :text="latest.syriacUnvocalized" class="!text-[2.1rem] leading-none" />

@@ -436,6 +436,33 @@
       "marked": "in der Vokalisation markiert",
       "computedSoft": "weich nach einem Vokal (berechnet)",
       "computedHard": "hart am Anfang oder nach einem vokallosen Buchstaben (berechnet)"
+    },
+    "shelf": {
+      "eyebrow": "Bibliothek",
+      "heading": "Wähle ein Buch",
+      "hint": "Ein rotes Lesebändchen auf einem Einband markiert deine Stelle in diesem Buch.",
+      "leftOff": "Wo du aufgehört hast",
+      "continue": "Weiter",
+      "books": {
+        "lexicon": {
+          "title": "Lexikon",
+          "subtitle": "jedes Wort, Buchstabe für Buchstabe"
+        },
+        "bethGazo": {
+          "title": "Beth Gazo",
+          "subtitle": "die Schatzkammer der Gesänge"
+        },
+        "bethSalme": {
+          "title": "Beth Ṣalme",
+          "subtitle": "die Galerie der Gestalten"
+        }
+      },
+      "counts": {
+        "words": "{count} Wörter | {count} Wort | {count} Wörter",
+        "chants": "{count} Gesänge | {count} Gesang | {count} Gesänge",
+        "figures": "{count} Gestalten | {count} Gestalt | {count} Gestalten",
+        "found": "{found} von {total} gefunden"
+      }
     }
   },
   "categories": {
@@ -1226,6 +1253,10 @@
     "bethGazo": {
       "title": "Beth Gazo · die Schatzkammer der Gesänge",
       "description": "Die syrisch-orthodoxe Schatzkammer der Gesänge als offenes Buch: jede aufgenommene Melodie, Modus für Modus, zum Anhören und Lernen."
+    },
+    "libraryShelf": {
+      "title": "Bibliothek",
+      "description": "Die syrische Bibliothek von Sabro: das Lexikon der Wörter, die Schatzkammer der Gesänge des Beth Gazo und die Galerie der Gestalten des Beth Ṣalme."
     }
   },
   "privacy": {
