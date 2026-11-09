@@ -5,6 +5,7 @@ using Sabro.Historical.Infrastructure;
 using Sabro.Identity.Domain;
 using Sabro.Identity.Infrastructure;
 using Sabro.Lexicon.Infrastructure;
+using Sabro.Library.Infrastructure;
 using Sabro.Play.Infrastructure;
 using Sabro.Reviews.Infrastructure;
 using Sabro.Translations.Infrastructure;
@@ -76,6 +77,9 @@ public sealed class PostgresFixture : IAsyncLifetime
 
         await using var reviews = CreateReviewsContext();
         await reviews.Database.MigrateAsync(ct);
+
+        await using var library = CreateLibraryContext();
+        await library.Database.MigrateAsync(ct);
     }
 
     public async ValueTask DisposeAsync()
@@ -146,5 +150,13 @@ public sealed class PostgresFixture : IAsyncLifetime
             .UseNpgsql(ConnectionString)
             .Options;
         return new PlayDbContext(options);
+    }
+
+    public LibraryDbContext CreateLibraryContext()
+    {
+        var options = new DbContextOptionsBuilder<LibraryDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+        return new LibraryDbContext(options);
     }
 }

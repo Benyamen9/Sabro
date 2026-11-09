@@ -3,6 +3,7 @@ using Sabro.Biblical.Public;
 using Sabro.Historical.Public;
 using Sabro.Identity.Public;
 using Sabro.Lexicon.Public;
+using Sabro.Library.Public;
 using Sabro.Play.Public;
 using Sabro.Reviews.Public;
 using Sabro.Shared.Abstractions;
@@ -38,5 +39,6 @@ public static class SabroModules
         new BethGazoModule(),
         new IdentityModule(),
         new PlayModule(),
+        new LibraryModule(),
     ];
 }

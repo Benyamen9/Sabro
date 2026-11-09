@@ -4698,6 +4698,281 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/library/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    language?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ReaderShelfDto"];
+                        "application/json": components["schemas"]["ReaderShelfDto"];
+                        "text/json": components["schemas"]["ReaderShelfDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/me/places/{book}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: {
+                    language?: string;
+                };
+                header?: never;
+                path: {
+                    book: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SetReadingPlaceRequest"];
+                    "text/json": components["schemas"]["SetReadingPlaceRequest"];
+                    "application/*+json": components["schemas"]["SetReadingPlaceRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ReaderPlaceDto"];
+                        "application/json": components["schemas"]["ReaderPlaceDto"];
+                        "text/json": components["schemas"]["ReaderPlaceDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/me/marks/{book}/{itemKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: {
+                    language?: string;
+                };
+                header?: never;
+                path: {
+                    book: string;
+                    itemKey: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": null | components["schemas"]["MarkItemRequest"];
+                    "text/json": null | components["schemas"]["MarkItemRequest"];
+                    "application/*+json": null | components["schemas"]["MarkItemRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ReaderMarkDto"];
+                        "application/json": components["schemas"]["ReaderMarkDto"];
+                        "text/json": components["schemas"]["ReaderMarkDto"];
+                    };
+                };
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ReaderMarkDto"];
+                        "application/json": components["schemas"]["ReaderMarkDto"];
+                        "text/json": components["schemas"]["ReaderMarkDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    book: string;
+                    itemKey: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ValidationProblemDetails"];
+                        "application/json": components["schemas"]["ValidationProblemDetails"];
+                        "text/json": components["schemas"]["ValidationProblemDetails"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/segments": {
         parameters: {
             query?: never;
@@ -6142,6 +6417,10 @@ export interface components {
         };
         /** @enum {string} */
         LibrarySort: "Recent" | "Alphabetical" | "Length";
+        MarkItemRequest: {
+            /** Format: date-time */
+            markedAt?: null | string;
+        };
         MelodyModeHintDto: {
             melody: string;
             hasModes: boolean;
@@ -6470,10 +6749,50 @@ export interface components {
             scope: string;
             profile: components["schemas"]["UserProfileDto"];
             gameResults: components["schemas"]["GameResultDto"][];
+            library: components["schemas"]["ReaderShelf"];
         };
         ProposalTargetLabel: {
             primary: string;
             secondary?: null | string;
+        };
+        ReaderItemLabelDto: {
+            title: string;
+            syriac: null | string;
+            subtitle: null | string;
+        };
+        ReaderMarkDto: {
+            book: string;
+            itemKey: string;
+            /** Format: date-time */
+            markedAt: string;
+            label: null | components["schemas"]["ReaderItemLabelDto"];
+        };
+        ReaderPlaceDto: {
+            book: string;
+            itemKey: string;
+            /** Format: date-time */
+            openedAt: string;
+            label: null | components["schemas"]["ReaderItemLabelDto"];
+        };
+        ReaderShelf: {
+            places: components["schemas"]["ReadingPlaceDto"][];
+            marks: components["schemas"]["ReadingMarkDto"][];
+        };
+        ReaderShelfDto: {
+            places: components["schemas"]["ReaderPlaceDto"][];
+            marks: components["schemas"]["ReaderMarkDto"][];
+        };
+        ReadingMarkDto: {
+            book: string;
+            itemKey: string;
+            /** Format: date-time */
+            markedAt: string;
+        };
+        ReadingPlaceDto: {
+            book: string;
+            itemKey: string;
+            /** Format: date-time */
+            openedAt: string;
         };
         RecordGameResultRequest: {
             gameId: string;
@@ -6547,6 +6866,11 @@ export interface components {
         };
         SetPlayableLexiconEntryRequest: {
             playable: boolean;
+        };
+        SetReadingPlaceRequest: {
+            itemKey: string;
+            /** Format: date-time */
+            openedAt?: null | string;
         };
         /** @enum {string} */
         ShmoCardStatus: "Met" | "Found";

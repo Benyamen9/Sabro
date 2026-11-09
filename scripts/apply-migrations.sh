@@ -47,6 +47,7 @@ contexts=(
   "BethGazoDbContext:src/Modules/Sabro.BethGazo"
   "PlayDbContext:src/Modules/Sabro.Play"
   "ReviewsDbContext:src/Modules/Sabro.Reviews"
+  "LibraryDbContext:src/Modules/Sabro.Library"
 )
 
 # Sabro.API is the single --startup-project for every context: it references the

@@ -159,6 +159,7 @@ Sabro/
 │       ├── Sabro.Historical/       ← Historical figures and their attributes (feeds Shmo)
 │       ├── Sabro.BethGazo/         ← Chants, modes, sections, recordings (feeds Nahlo)
 │       ├── Sabro.Play/             ← Cross-game results + the four daily-puzzle states
+│       ├── Sabro.Library/          ← The reader's Library: red-ribbon places + ܀ marks (hub)
 │       ├── Sabro.Translations/     ← Translations, versioning, multilingual content (DEFERRED)
 │       ├── Sabro.Reviews/          ← Field proposals (ACTIVE); peer review 3 levels (DEFERRED)
 │       └── Sabro.Biblical/         ← Biblical passages (Peshitta), cross-references (DEFERRED)
@@ -266,6 +267,25 @@ content language (`BethGazoDescription`, held by `BethGazoText`), both optional 
 `/admin/chants/sections`. They are for the hub's Beth Gazo page; Nahlo's answer options leave them null.
 
 **The recording is the publish gate; the incipit is optional** (since 2026-10-15, #300). The Owner recorded 24 chants before their incipits were read from the book, so a chant can be saved and published from its recording alone and the incipit added later from the backoffice. A vocalized incipit still requires the plain one. Nahlo receives a `null` incipit and simply offers no reading hint for that chant.
+
+### Library
+Owns **what a signed-in reader keeps in the hub's Library** (design approved 2026-11-01, storage 2026-11-09): the
+**red ribbon**, one place per book that moves to the last item opened (automatic, never placed by hand), and the
+**܀ marks**, items the reader marked to find again. Not Identity (who the user is), not Play (what they played).
+Schema `library`: `reading_places` (unique per user + book) and `reading_marks` (unique per user + book + item).
+
+A place or mark names a **book** (`LibraryBooks`: `lexicon`, `grammar`, `beth-gazo`, `beth-salme`, the hub's
+`/library/<book>` segments) and an **item key**: the entry, chant or figure id for the three database books, a page
+slug for grammar, whose pages live in the hub. The module references no content module: the API layer
+(`ReaderItemLabels`) labels items from the Lexicon, Historical and BethGazo read services and **leaves out**
+places and marks whose item is no longer published (the rows stay, and return if it is republished). A place or
+mark can only be made for a published item; grammar slugs are taken on trust.
+
+**Signed out, the hub keeps both on the device** and sends them up on the next signed-in visit, passing the
+original times: the **most recently opened place wins** (`ReadingPlace.MoveTo` ignores an older one) and marks
+keep their dates; marks from both sides are kept (a mark removed while signed out can come back, accepted).
+Beth Gazo's localStorage ribbon moves into this once. Ceiling: `ReadingMark.MaxPerUser` (2000). Included in the
+profile **export** and removed by **account deletion**.
 
 ### Translations
 **Status: deferred. Spec retained, not built first.**
@@ -578,6 +598,12 @@ else's flood.
 - `POST /api/v1/play/results` (`api:v1:write`) — the authenticated user records their result; one per user/game/day (idempotent on the unique key).
 - `GET /api/v1/play/results/me` (`api:v1:write`) — the authenticated user's own results, for the profile/dashboard surface.
 - `GET /api/v1/play/shmo/collection` (`api:v1:write`) — the player's figure collection for the hub's Beth Ṣalme: every figure met (guessed, or revealed in a round given up) or found (solved), worked out from their Shmo results. Each card says whether it is **illuminated**: a 1 in 20 chance per find, derived from player, figure and day, never stored.
+
+**Library (authenticated, `api:v1:write`)** — the reader's own places and marks (see *Library*):
+- `GET /api/v1/library/me?language=` — every place and mark, each with a label (word gloss in that language, figure name, chant melody + mode); marks newest first.
+- `PUT /api/v1/library/me/places/{book}` — `{ itemKey, openedAt? }` moves the ribbon; an older `openedAt` leaves a newer place and returns it.
+- `PUT /api/v1/library/me/marks/{book}/{itemKey}` — optional `{ markedAt? }`; 201 when made, 200 when already marked.
+- `DELETE /api/v1/library/me/marks/{book}/{itemKey}` — 204, also when nothing was marked.
 
 **Profile (authenticated):**
 - `GET /api/v1/profile/me` — current user's profile.
@@ -1001,7 +1027,7 @@ Semantic Versioning (`major.minor.patch`). Git tags on each release. Changelog g
 5. Clone the repo and open `Sabro.slnx` in Visual Studio
 6. Copy `appsettings.Development.example.json` to `appsettings.Development.json` and fill in connection strings, Logto config, Meilisearch URL, and `Meltho:AntiRepetitionWindowDays`
 7. Start auxiliary services: `docker-compose up -d` (Meilisearch + Seq + Logto)
-8. Run migrations for the active modules — **Lexicon, Identity, Historical, BethGazo, Play, Reviews** — e.g. `dotnet ef database update --project src/Modules/Sabro.Lexicon --startup-project src/Sabro.API --context LexiconDbContext` (repeat per module). The authoritative list is `scripts/apply-migrations.sh`, which is what CD runs; a module missing from it works locally and fails in production. `ModuleMigrationCoverageTests` fails the build if that list and the modules disagree.
+8. Run migrations for the active modules — **Lexicon, Identity, Historical, BethGazo, Play, Reviews, Library** — e.g. `dotnet ef database update --project src/Modules/Sabro.Lexicon --startup-project src/Sabro.API --context LexiconDbContext` (repeat per module). The authoritative list is `scripts/apply-migrations.sh`, which is what CD runs; a module missing from it works locally and fails in production. `ModuleMigrationCoverageTests` fails the build if that list and the modules disagree.
 9. Start the API: F5 in Visual Studio
 10. Start the frontend: `cd frontend && npm install && npm run dev`
 

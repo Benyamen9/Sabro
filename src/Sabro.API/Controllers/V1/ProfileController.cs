@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sabro.API.Configuration;
 using Sabro.API.Logto;
 using Sabro.Identity.Application.UserProfiles;
+using Sabro.Library.Application.Reading;
 using Sabro.Play.Application.GameResults;
 
 namespace Sabro.API.Controllers.V1;
@@ -21,11 +22,12 @@ public sealed class ProfileController : ApiControllerBase
     /// social links) is held by Logto, not Sabro, so it is out of scope here.
     /// </summary>
     private const string ExportScope =
-        "All personal data stored by Sabro: your profile and your game results. "
+        "All personal data stored by Sabro: your profile, your game results, and your Library places and marks. "
         + "Sign-in identity data (email, password, linked social accounts) is managed by the identity provider and is not included.";
 
     private readonly IUserProfileService userProfileService;
     private readonly IGameResultService gameResultService;
+    private readonly IReaderService readerService;
     private readonly ILogtoManagementClient logtoManagementClient;
     private readonly TimeProvider timeProvider;
     private readonly ILogger<ProfileController> logger;
@@ -33,12 +35,14 @@ public sealed class ProfileController : ApiControllerBase
     public ProfileController(
         IUserProfileService userProfileService,
         IGameResultService gameResultService,
+        IReaderService readerService,
         ILogtoManagementClient logtoManagementClient,
         TimeProvider timeProvider,
         ILogger<ProfileController> logger)
     {
         this.userProfileService = userProfileService;
         this.gameResultService = gameResultService;
+        this.readerService = readerService;
         this.logtoManagementClient = logtoManagementClient;
         this.timeProvider = timeProvider;
         this.logger = logger;
@@ -99,7 +103,7 @@ public sealed class ProfileController : ApiControllerBase
 
     /// <summary>
     /// Returns everything Sabro stores about the caller in one portable JSON
-    /// document: their profile and all their game results. Right to data
+    /// document: their profile, all their game results, and their Library places and marks. Right to data
     /// portability / right of access (GDPR). Uses the write scope like the
     /// other personal-data surfaces (results/me, account deletion).
     /// </summary>
@@ -129,16 +133,23 @@ public sealed class ProfileController : ApiControllerBase
             return FromError(resultsResult.Error!);
         }
 
+        var libraryResult = await readerService.GetShelfAsync(userId, cancellationToken);
+        if (!libraryResult.IsSuccess)
+        {
+            return FromError(libraryResult.Error!);
+        }
+
         logger.LogInformation("Personal-data export served. ResultCount={ResultCount}", resultsResult.Value!.Count);
         return Ok(new ProfileExportDto(
             timeProvider.GetUtcNow(),
             ExportScope,
             profileResult.Value!,
-            resultsResult.Value!));
+            resultsResult.Value!,
+            libraryResult.Value!));
     }
 
     /// <summary>
-    /// Permanently deletes the caller's account: their play results, their
+    /// Permanently deletes the caller's account: their play results, their Library places and marks, their
     /// profile, and finally their Logto identity. The identity is removed last
     /// so that a failure there leaves the caller still able to sign in and
     /// retry. Right to erasure (GDPR).
@@ -164,6 +175,12 @@ public sealed class ProfileController : ApiControllerBase
             return FromError(resultsResult.Error!);
         }
 
+        var libraryResult = await readerService.DeleteAllForUserAsync(userId, cancellationToken);
+        if (!libraryResult.IsSuccess)
+        {
+            return FromError(libraryResult.Error!);
+        }
+
         var profileResult = await userProfileService.DeleteAsync(userId, cancellationToken);
         if (!profileResult.IsSuccess)
         {
@@ -176,7 +193,10 @@ public sealed class ProfileController : ApiControllerBase
             return FromError(identityResult.Error!);
         }
 
-        logger.LogInformation("Account deleted. ResultsRemoved={ResultsRemoved}", resultsResult.Value);
+        logger.LogInformation(
+            "Account deleted. ResultsRemoved={ResultsRemoved} LibraryRowsRemoved={LibraryRowsRemoved}",
+            resultsResult.Value,
+            libraryResult.Value);
         return NoContent();
     }
 }
