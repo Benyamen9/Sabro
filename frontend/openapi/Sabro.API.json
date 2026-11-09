@@ -6971,6 +6971,452 @@
         }
       }
     },
+    "/api/v1/library/me": {
+      "get": {
+        "tags": [
+          "Reader"
+        ],
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderShelfDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderShelfDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderShelfDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/library/me/places/{book}": {
+      "put": {
+        "tags": [
+          "Reader"
+        ],
+        "parameters": [
+          {
+            "name": "book",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetReadingPlaceRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetReadingPlaceRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetReadingPlaceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderPlaceDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderPlaceDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderPlaceDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/library/me/marks/{book}/{itemKey}": {
+      "put": {
+        "tags": [
+          "Reader"
+        ],
+        "parameters": [
+          {
+            "name": "book",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MarkItemRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MarkItemRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MarkItemRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderMarkDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderMarkDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderMarkDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderMarkDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderMarkDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderMarkDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Reader"
+        ],
+        "parameters": [
+          {
+            "name": "book",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/segments": {
       "post": {
         "tags": [
@@ -10853,6 +11299,18 @@
         ],
         "type": "string"
       },
+      "MarkItemRequest": {
+        "type": "object",
+        "properties": {
+          "markedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "MelodyModeHintDto": {
         "required": [
           "melody",
@@ -12317,7 +12775,8 @@
           "exportedAt",
           "scope",
           "profile",
-          "gameResults"
+          "gameResults",
+          "library"
         ],
         "type": "object",
         "properties": {
@@ -12336,6 +12795,9 @@
             "items": {
               "$ref": "#/components/schemas/GameResultDto"
             }
+          },
+          "library": {
+            "$ref": "#/components/schemas/ReaderShelf"
           }
         }
       },
@@ -12353,6 +12815,175 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "ReaderItemLabelDto": {
+        "required": [
+          "title",
+          "syriac",
+          "subtitle"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "syriac": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "subtitle": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReaderMarkDto": {
+        "required": [
+          "book",
+          "itemKey",
+          "markedAt",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "book": {
+            "type": "string"
+          },
+          "itemKey": {
+            "type": "string"
+          },
+          "markedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "label": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReaderItemLabelDto"
+              }
+            ]
+          }
+        }
+      },
+      "ReaderPlaceDto": {
+        "required": [
+          "book",
+          "itemKey",
+          "openedAt",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "book": {
+            "type": "string"
+          },
+          "itemKey": {
+            "type": "string"
+          },
+          "openedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "label": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReaderItemLabelDto"
+              }
+            ]
+          }
+        }
+      },
+      "ReaderShelf": {
+        "required": [
+          "places",
+          "marks"
+        ],
+        "type": "object",
+        "properties": {
+          "places": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadingPlaceDto"
+            }
+          },
+          "marks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadingMarkDto"
+            }
+          }
+        }
+      },
+      "ReaderShelfDto": {
+        "required": [
+          "places",
+          "marks"
+        ],
+        "type": "object",
+        "properties": {
+          "places": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReaderPlaceDto"
+            }
+          },
+          "marks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReaderMarkDto"
+            }
+          }
+        }
+      },
+      "ReadingMarkDto": {
+        "required": [
+          "book",
+          "itemKey",
+          "markedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "book": {
+            "type": "string"
+          },
+          "itemKey": {
+            "type": "string"
+          },
+          "markedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReadingPlaceDto": {
+        "required": [
+          "book",
+          "itemKey",
+          "openedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "book": {
+            "type": "string"
+          },
+          "itemKey": {
+            "type": "string"
+          },
+          "openedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -12643,6 +13274,24 @@
         "properties": {
           "playable": {
             "type": "boolean"
+          }
+        }
+      },
+      "SetReadingPlaceRequest": {
+        "required": [
+          "itemKey"
+        ],
+        "type": "object",
+        "properties": {
+          "itemKey": {
+            "type": "string"
+          },
+          "openedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -13504,6 +14153,9 @@
     },
     {
       "name": "Profile"
+    },
+    {
+      "name": "Reader"
     },
     {
       "name": "Segments"

@@ -10,6 +10,7 @@
     <Project Path="src/Modules/Sabro.Historical/Sabro.Historical.csproj" />
     <Project Path="src/Modules/Sabro.Identity/Sabro.Identity.csproj" />
     <Project Path="src/Modules/Sabro.Lexicon/Sabro.Lexicon.csproj" />
+    <Project Path="src/Modules/Sabro.Library/Sabro.Library.csproj" />
     <Project Path="src/Modules/Sabro.Play/Sabro.Play.csproj" />
     <Project Path="src/Modules/Sabro.Reviews/Sabro.Reviews.csproj" />
     <Project Path="src/Modules/Sabro.Translations/Sabro.Translations.csproj" />
