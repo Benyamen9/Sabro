@@ -915,10 +915,16 @@ sites run none of it. npm's suggested `nuxt@3.7.4` "fix" is a downgrade: never a
   (`npm:simple-git@4.0.2`) with that default export, wired the same way as node-forge
   (`file:` dev dependency + `"$simple-git"` override). Local DevTools only. **Remove it once
   DevTools 4 is stable and depends on simple-git 4** (Owner, 2026-10-12: shim now, DevTools 4 later).
-- **braces — still open, the only one.** No fixed release exists (GHSA-vfj7-8cjw-p6xm); its fix is
-  an unmerged upstream PR (micromatch/braces#88). The Owner chose to wait for the release over
-  building with unreleased code. Build-time only (i18n plugin and nitropack's globbing).
-  Dependabot security alerts flag it as fixable the day a release lands.
+- **braces — no longer flagged** (gone from every repo's open alerts by 2026-11-09). It had waited
+  on an upstream fix (micromatch/braces#88) rather than unreleased code (Owner).
+- **Still open on 2026-11-09, all blocked upstream and kept out of `.output`.** Every fixable alert
+  was closed that day (vue-i18n 11.4.14, Nahlo's Nuxt 4.6.3, happy-dom 21.0.4, vitest 4.1.12).
+  - **minimatch** (fix only in 11.x) and **glob** (fix only in 14.x): every dependent (eslint,
+    `@vercel/nft`, archiver's readdir-glob, js-beautify) asks for ^10 / ^13. Build tooling. Forcing
+    the majors with `overrides` is not worth the breakage. They close when the dependents move.
+  - **deepmerge**: no fixed release exists.
+  - **vue-i18n 10.0.8** (+ its `@intlify/*`), nested under `@intlify/vue-i18n-extensions`, a
+    build-time compiler plugin with no fixed 10.x. The shipped vue-i18n is the top-level 11.x.
 
 Both stand-ins live in `vendor/` in all five frontends; change them together.
 
