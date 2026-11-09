@@ -295,7 +295,7 @@ function setSort(next: LibrarySort) {
         <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" :class="{ 'mt-6': !group.label }">
           <li v-for="word in group.words" :key="word.id">
             <NuxtLink
-              :to="`/library/${word.id}`"
+              :to="`/library/lexicon/${word.id}`"
               class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-5 py-4 no-underline shadow-[var(--shadow-soft)] transition-[border-color,transform] hover:-translate-y-px hover:border-[color-mix(in_oklab,var(--color-accent)_45%,var(--color-border))]"
             >
               <SyriacText :text="word.syriacVocalized ?? word.syriacUnvocalized" class="min-w-[4.75rem] !text-[2.1rem] leading-tight text-[var(--color-accent)]" />

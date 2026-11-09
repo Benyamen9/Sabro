@@ -436,6 +436,33 @@
       "marked": "aangegeven in de vocalisatie",
       "computedSoft": "zacht na een klinker (berekend)",
       "computedHard": "hard aan het begin of na een klinkerloze letter (berekend)"
+    },
+    "shelf": {
+      "eyebrow": "Bibliotheek",
+      "heading": "Kies een boek",
+      "hint": "Een rood lint op een kaft markeert waar je in dat boek gebleven bent.",
+      "leftOff": "Waar je gebleven was",
+      "continue": "Verder",
+      "books": {
+        "lexicon": {
+          "title": "Lexicon",
+          "subtitle": "elk woord, letter voor letter"
+        },
+        "bethGazo": {
+          "title": "Beth Gazo",
+          "subtitle": "de schatkamer van gezangen"
+        },
+        "bethSalme": {
+          "title": "Beth Ṣalme",
+          "subtitle": "de galerij van figuren"
+        }
+      },
+      "counts": {
+        "words": "{count} woorden | {count} woord | {count} woorden",
+        "chants": "{count} gezangen | {count} gezang | {count} gezangen",
+        "figures": "{count} figuren | {count} figuur | {count} figuren",
+        "found": "{found} van {total} gevonden"
+      }
     }
   },
   "categories": {
@@ -1226,6 +1253,10 @@
     "bethGazo": {
       "title": "Beth Gazo · de schatkamer van gezangen",
       "description": "De Syrisch-orthodoxe schatkamer van gezangen als een open boek: elke opgenomen melodie, modus per modus, om te beluisteren en te leren."
+    },
+    "libraryShelf": {
+      "title": "Bibliotheek",
+      "description": "De Syrische bibliotheek van Sabro: het Lexicon van woorden, de schatkamer van gezangen van de Beth Gazo en de galerij van figuren van de Beth Ṣalme."
     }
   },
   "privacy": {

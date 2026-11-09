@@ -14,7 +14,7 @@ import { chantCount, filterBook, foundByIncipit, lineFor, locateChant, modeLabel
  * and the melody's name unfolds it into its chants with their incipits. A
  * section without modes lists its chants by incipit straight away, since nothing
  * else tells them apart. A search or a mode pill opens the sections with a match.
- * The ribbon remembers the last chant played, on this device, and the page
+ * The ribbon (the Library's red ribbon) remembers the last chant played, and the page
  * reopens there.
  */
 const { t, locale } = useI18n()
@@ -116,7 +116,7 @@ function toggle(chant: BethGazoBookChantDto, melody: string, section: string) {
     return
   }
   current.value = { chant, melody, section }
-  saveRibbon(chant.id)
+  record('beth-gazo', chant.id, { title: melody, subtitle: modeNameOf(chant) })
 }
 
 function isPlaying(chant: BethGazoBookChantDto) {
@@ -129,33 +129,20 @@ const playerSubtitle = computed(() => {
 })
 
 /**
- * The ribbon: the last chant played, kept on this device only (a per-viewer
- * convenience, so browser storage and never an account). Storage can be missing
- * or refuse, in which case the page simply has no ribbon.
+ * The ribbon: the last chant played. Since the Library shelf (2026-11-09) it is the Library's red
+ * ribbon for this book (useLibraryPlaces): on the device for everyone, on Sabro too for a signed-in
+ * reader. The device-only ribbon this page kept before moves in on first load.
  */
-const RIBBON_KEY = 'sabro:beth-gazo:ribbon'
-const ribbonId = ref<string | null>(null)
+const { places, load: loadPlaces, record, name: nameRibbon } = useLibraryPlaces()
+const ribbonId = computed(() => places.value['beth-gazo']?.itemKey ?? null)
 const ribbon = computed(() => (book.value && ribbonId.value ? locateChant(book.value, ribbonId.value) : null))
 
-function saveRibbon(id: string) {
-  ribbonId.value = id
-  try {
-    localStorage.setItem(RIBBON_KEY, id)
-  }
-  catch {
-    // No storage: the ribbon lasts this visit only.
-  }
-}
-
-onMounted(() => {
-  try {
-    ribbonId.value = localStorage.getItem(RIBBON_KEY)
-  }
-  catch {
-    ribbonId.value = null
-  }
+onMounted(async () => {
+  await loadPlaces()
   const found = ribbon.value
   if (!found) return
+  // The old ribbon kept only an id: give the shelf's cover a name for it.
+  nameRibbon('beth-gazo', found.chant.id, { title: found.melody.name, subtitle: modeNameOf(found.chant) })
   // Reopen the book where it was left: the section, and the melody unfolded.
   openSections.value.add(found.section.id)
   unfolded.value.add(melodyKey(found.section, found.melody))

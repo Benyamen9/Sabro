@@ -54,7 +54,7 @@ useHead({
           '@type': 'SearchAction',
           'target': {
             '@type': 'EntryPoint',
-            'urlTemplate': `${siteUrl}/library?q={search_term_string}`,
+            'urlTemplate': `${siteUrl}/library/lexicon?q={search_term_string}`,
           },
           'query-input': 'required name=search_term_string',
         },

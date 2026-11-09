@@ -67,11 +67,11 @@ useHead({
         'name': seoWord.value.translit,
         'alternateName': [word.syriacUnvocalized, word.syriacVocalized].filter(Boolean),
         'description': seoWord.value.meaning,
-        'url': `${siteUrl}/library/${word.id}`,
+        'url': `${siteUrl}/library/lexicon/${word.id}`,
         'inDefinedTermSet': {
           '@type': 'DefinedTermSet',
           'name': 'Sabro Syriac word library',
-          'url': `${siteUrl}/library`,
+          'url': `${siteUrl}/library/lexicon`,
         },
       }),
     }]
@@ -88,6 +88,17 @@ const orderedMeanings = computed(() => {
   return [...known, ...extra]
 })
 
+// The red ribbon (Owner, 2026-11-01): opening a word moves the Lexicon's place to it.
+const { record } = useLibraryPlaces()
+watch(
+  () => (status.value === 'ready' ? data.value : null),
+  (word) => {
+    if (!word || import.meta.server) return
+    record('lexicon', word.id, { title: preferredMeaning(word.meanings) ?? '', syriac: heroForm.value })
+  },
+  { immediate: true },
+)
+
 function categoryLabel(category: string | undefined) {
   if (!category) return ''
   const key = `categories.${category}`
@@ -99,7 +110,7 @@ function categoryLabel(category: string | undefined) {
 
 <template>
   <section class="mx-auto max-w-3xl">
-    <NuxtLink to="/library" class="font-sans text-sm text-[var(--color-text-muted)] no-underline hover:text-[var(--color-text)]">
+    <NuxtLink to="/library/lexicon" class="font-sans text-sm text-[var(--color-text-muted)] no-underline hover:text-[var(--color-text)]">
       ← {{ t('library.back') }}
     </NuxtLink>
 
@@ -126,7 +137,9 @@ function categoryLabel(category: string | undefined) {
     <template v-else-if="data">
       <!-- The word as a dictionary entry: form, pronunciation, meta chips, and
            senses in one composed block — not a metadata grid. -->
-      <article class="mt-5 overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] shadow-[var(--shadow-soft)]">
+      <article class="relative mt-5 overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-bg-elevated)] shadow-[var(--shadow-soft)]">
+        <!-- The ribbon hangs on the page being read: leave, and the Lexicon reopens here. -->
+        <span aria-hidden="true" class="absolute right-5 top-0 h-[62px] w-6 bg-[#8c2f39] drop-shadow-[0_2px_2px_rgb(0_0_0/0.25)] [clip-path:polygon(0_0,100%_0,100%_100%,50%_82%,0_100%)]" />
         <div class="px-5 pb-7 pt-9 text-center sm:px-9">
           <!-- The word is the control: pressing it plays the recording and the
                strip beneath fills, right to left, like the word itself. A word
@@ -177,7 +190,7 @@ function categoryLabel(category: string | undefined) {
            so it also lives in the game view of the library. -->
       <NuxtLink
         v-if="data.playedInMeltho"
-        to="/library?view=meltho"
+        to="/library/lexicon?view=meltho"
         class="mt-4 flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-meltho-faint)] px-5 py-3.5 font-sans text-sm text-[var(--color-meltho)] no-underline transition-colors hover:border-[var(--color-meltho)]"
       >
         <span

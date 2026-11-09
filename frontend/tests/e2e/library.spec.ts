@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-test.describe('library page', () => {
+test.describe('Lexicon (word library)', () => {
   test('renders the unified library with its toggle and gracefully reports API failure', async ({ page }) => {
-    await page.goto('/library')
+    await page.goto('/library/lexicon')
 
     await expect(page.getByRole('heading', { name: 'Word library' })).toBeVisible()
     // The dictionary state is the default: the switch is off, labelled "Dictionary".
@@ -18,7 +18,7 @@ test.describe('library page', () => {
   })
 
   test('switches to the Meltho filter via the toggle', async ({ page }) => {
-    await page.goto('/library')
+    await page.goto('/library/lexicon')
     // The switch has no native fallback (unlike the old tab links' real <a href>), so a click
     // before Vue hydration attaches its listener is a silent no-op — wait for hydration first.
     await page.waitForLoadState('networkidle')
@@ -34,14 +34,14 @@ test.describe('library page', () => {
   })
 
   test('remembers the toggle across a fresh visit with no query string', async ({ page }) => {
-    await page.goto('/library')
+    await page.goto('/library/lexicon')
     // The switch has no native fallback (unlike the old tab links' real <a href>), so a click
     // before Vue hydration attaches its listener is a silent no-op — wait for hydration first.
     await page.waitForLoadState('networkidle')
     await page.getByRole('switch', { name: /Meltho/ }).click()
     await expect(page).toHaveURL(/view=meltho/)
 
-    await page.goto('/library')
+    await page.goto('/library/lexicon')
 
     await expect(page.getByRole('switch', { name: /Meltho/ })).toHaveAttribute('aria-checked', 'true')
   })

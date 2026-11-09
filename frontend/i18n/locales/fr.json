@@ -436,6 +436,33 @@
       "marked": "marqué dans la vocalisation",
       "computedSoft": "doux après une voyelle (calculé)",
       "computedHard": "dur à l’initiale ou après une lettre sans voyelle (calculé)"
+    },
+    "shelf": {
+      "eyebrow": "Bibliothèque",
+      "heading": "Choisissez un livre",
+      "hint": "Un ruban rouge sur une couverture marque votre page dans ce livre.",
+      "leftOff": "Là où vous vous êtes arrêté",
+      "continue": "Reprendre",
+      "books": {
+        "lexicon": {
+          "title": "Lexique",
+          "subtitle": "chaque mot, lettre par lettre"
+        },
+        "bethGazo": {
+          "title": "Beth Gazo",
+          "subtitle": "le trésor des chants"
+        },
+        "bethSalme": {
+          "title": "Beth Ṣalme",
+          "subtitle": "la galerie des figures"
+        }
+      },
+      "counts": {
+        "words": "{count} mots | {count} mot | {count} mots",
+        "chants": "{count} chants | {count} chant | {count} chants",
+        "figures": "{count} figures | {count} figure | {count} figures",
+        "found": "{found} sur {total} trouvées"
+      }
     }
   },
   "categories": {
@@ -1226,6 +1253,10 @@
     "bethGazo": {
       "title": "Beth Gazo · le trésor des chants",
       "description": "Le trésor des chants syriaques orthodoxes en livre ouvert : chaque mélodie enregistrée, mode par mode, à écouter et à apprendre."
+    },
+    "libraryShelf": {
+      "title": "Bibliothèque",
+      "description": "La bibliothèque syriaque de Sabro : le Lexique des mots, le trésor des chants du Beth Gazo et la galerie des figures du Beth Ṣalme."
     }
   },
   "privacy": {

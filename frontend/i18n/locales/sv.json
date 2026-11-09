@@ -436,6 +436,33 @@
       "marked": "markerad i vokaliseringen",
       "computedSoft": "mjuk efter en vokal (beräknat)",
       "computedHard": "hård i början eller efter en vokallös bokstav (beräknat)"
+    },
+    "shelf": {
+      "eyebrow": "Bibliotek",
+      "heading": "Välj en bok",
+      "hint": "Ett rött bokmärkesband på ett omslag visar var du är i den boken.",
+      "leftOff": "Där du slutade",
+      "continue": "Fortsätt",
+      "books": {
+        "lexicon": {
+          "title": "Lexikon",
+          "subtitle": "varje ord, bokstav för bokstav"
+        },
+        "bethGazo": {
+          "title": "Beth Gazo",
+          "subtitle": "skattkammaren av sånger"
+        },
+        "bethSalme": {
+          "title": "Beth Ṣalme",
+          "subtitle": "galleriet av gestalter"
+        }
+      },
+      "counts": {
+        "words": "{count} ord | {count} ord | {count} ord",
+        "chants": "{count} sånger | {count} sång | {count} sånger",
+        "figures": "{count} gestalter | {count} gestalt | {count} gestalter",
+        "found": "{found} av {total} hittade"
+      }
     }
   },
   "categories": {
@@ -1226,6 +1253,10 @@
     "bethGazo": {
       "title": "Beth Gazo · sångernas skattkammare",
       "description": "Den syrisk-ortodoxa skattkammaren av sånger som en öppen bok: varje inspelad melodi, modus för modus, att lyssna på och lära sig."
+    },
+    "libraryShelf": {
+      "title": "Bibliotek",
+      "description": "Sabros syriska bibliotek: Lexikonet med ord, Beth Gazos skattkammare av sånger och Beth Ṣalmes galleri av gestalter."
     }
   },
   "privacy": {
