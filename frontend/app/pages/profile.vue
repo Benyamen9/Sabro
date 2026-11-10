@@ -229,6 +229,7 @@ const navGroups = computed(() => [
     label: t('account.nav.account'),
     items: [
       { id: 'preferences', label: t('account.nav.preferences') },
+      { id: 'marked', label: t('account.nav.marked') },
     ],
   },
   {
@@ -263,7 +264,7 @@ const navGroups = computed(() => [
 // horizontally-scrollable pill row.
 const flatNavItems = computed(() => navGroups.value.flatMap(group => group.items))
 
-const sectionIds = ['preferences', 'meltho', 'mno', 'leaderboard', 'username', 'email', 'password', 'session', 'export', 'delete']
+const sectionIds = ['preferences', 'marked', 'meltho', 'mno', 'leaderboard', 'username', 'email', 'password', 'session', 'export', 'delete']
 const activeSection = ref('preferences')
 
 function goToSection(id: string) {
@@ -641,6 +642,20 @@ onBeforeUnmount(() => {
                 </button>
               </div>
             </div>
+          </section>
+
+          <!-- Marked — the reader's ܀ marks from the Library, opened in the same panel as there. -->
+          <section
+            id="marked"
+            class="scroll-mt-24 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-6 shadow-[var(--shadow-soft)]"
+          >
+            <div class="min-w-0 flex-1 basis-56">
+              <h2 class="font-serif text-lg font-semibold tracking-tight text-[var(--color-text)]">
+                {{ t('account.nav.marked') }}
+              </h2>
+              <p class="mt-1 font-sans text-sm text-[var(--color-text-muted)]">{{ t('account.marked.text') }}</p>
+            </div>
+            <div><MarkedLauncher /></div>
           </section>
 
           <!-- Game stats — derived per game from the user's own results

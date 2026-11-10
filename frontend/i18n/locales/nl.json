@@ -159,7 +159,8 @@
       "password": "Wachtwoord",
       "session": "Sessie",
       "export": "Uw gegevens",
-      "delete": "Account verwijderen"
+      "delete": "Account verwijderen",
+      "marked": "Gemarkeerd"
     },
     "username": {
       "heading": "Gebruikersnaam",
@@ -298,6 +299,9 @@
       "confirmButton": "Definitief verwijderen",
       "deleting": "Verwijderen…",
       "error": "Kon uw account niet verwijderen. Probeer het opnieuw."
+    },
+    "marked": {
+      "text": "De woorden, gezangen en figuren die je met ܀ hebt gemarkeerd in de Bibliotheek."
     }
   },
   "translations": {
@@ -463,6 +467,24 @@
         "figures": "{count} figuren | {count} figuur | {count} figuren",
         "found": "{found} van {total} gevonden"
       }
+    },
+    "marks": {
+      "title": "Gemarkeerd",
+      "mark": "Markeren",
+      "marked": "Gemarkeerd",
+      "markItem": "{item} markeren",
+      "unmarkItem": "Markering van {item} verwijderen",
+      "keep": "{item} gemarkeerd houden",
+      "close": "Sluiten",
+      "filterLabel": "Markeringen tonen uit",
+      "all": "Alles",
+      "empty": "Nog niets gemarkeerd. Markeer een woord, een gezang of een figuur met ܀ en je vindt het hier terug.",
+      "emptyBook": "Niets gemarkeerd in dit boek.",
+      "hint": "Tik op een rij om die te openen; tik op het vinkje om de markering te verwijderen.",
+      "hintUnticked": "Markering verwijderd: vink opnieuw aan om die te houden. Ze verdwijnt wanneer je het paneel sluit.",
+      "removed": "{count} markeringen verwijderd | {count} markering verwijderd | {count} markeringen verwijderd",
+      "undo": "Ongedaan maken",
+      "signInLine": "Meld je aan om je markeringen op elk apparaat te bewaren."
     }
   },
   "categories": {

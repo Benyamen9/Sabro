@@ -10,6 +10,7 @@ import { matchesGallery, type GalleryFigure, type GalleryFilter } from '~/utils/
  * phone the card lifts out over it.
  */
 const { t } = useI18n()
+const route = useRoute()
 const config = useRuntimeConfig()
 const { signIn } = useAuth()
 const { figures, pending, rosterFailed, collectionFailed, signedIn, canSignIn } = useFigureGallery()
@@ -81,6 +82,16 @@ const place = computed(() => {
 function close() {
   selectedId.value = null
 }
+
+// A figure opened from the Marked panel (`?figure=<id>`): its card opens once the roster is in.
+const askedFor = computed(() => (typeof route.query.figure === 'string' ? route.query.figure : null))
+onMounted(() => {
+  watch([figures, askedFor], ([all, id]) => {
+    if (!id || selectedId.value === id) return
+    const figure = all.find(f => f.id === id)
+    if (figure) open(figure)
+  }, { immediate: true })
+})
 </script>
 
 <template>

@@ -38,6 +38,13 @@ const { t } = useI18n()
       lang="syc"
       class="mt-1 text-left font-syriac text-[21px] text-[var(--color-shmo)]"
     >{{ figure.syriacName }}</p>
+    <MarkButton
+      class="mt-3"
+      book="beth-salme"
+      :item-key="figure.id"
+      :label="{ title: figure.name, syriac: figure.syriacName ?? null }"
+      :name="figure.name"
+    />
     <FigureDetails class="mt-3" :figure="figure" />
     <p v-if="figure.tier !== 'found'" class="mt-4 rounded-xl bg-[var(--color-bg-subtle)] px-3 py-2.5 font-sans text-[13px] leading-snug text-[var(--color-text-muted)]">
       {{ t(figure.tier === 'met' ? 'bethSalme.detail.findToColour' : 'bethSalme.detail.lockedHint', { name: figure.name }) }}

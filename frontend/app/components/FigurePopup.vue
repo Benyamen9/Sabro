@@ -94,6 +94,13 @@ onBeforeUnmount(() => {
           :aria-pressed="turned"
           @click="turned = !turned"
         >{{ turned ? t('bethSalme.detail.turnBack') : t('bethSalme.detail.turnOver') }}</button>
+        <MarkButton
+          on-dark
+          book="beth-salme"
+          :item-key="figure.id"
+          :label="{ title: figure.name, syriac: figure.syriacName ?? null }"
+          :name="figure.name"
+        />
         <p v-if="figure.tier !== 'found'">{{ t(figure.tier === 'met' ? 'bethSalme.detail.findToColour' : 'bethSalme.detail.lockedHint', { name: figure.name }) }}</p>
         <a
           v-if="figure.readMoreUrl"

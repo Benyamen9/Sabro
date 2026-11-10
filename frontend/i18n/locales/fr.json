@@ -159,7 +159,8 @@
       "password": "Mot de passe",
       "session": "Session",
       "export": "Vos données",
-      "delete": "Supprimer le compte"
+      "delete": "Supprimer le compte",
+      "marked": "Marqués"
     },
     "username": {
       "heading": "Nom d’utilisateur",
@@ -298,6 +299,9 @@
       "confirmButton": "Supprimer définitivement",
       "deleting": "Suppression…",
       "error": "Impossible de supprimer votre compte. Veuillez réessayer."
+    },
+    "marked": {
+      "text": "Les mots, chants et figures que vous avez marqués ܀ dans la Bibliothèque."
     }
   },
   "translations": {
@@ -463,6 +467,24 @@
         "figures": "{count} figures | {count} figure | {count} figures",
         "found": "{found} sur {total} trouvées"
       }
+    },
+    "marks": {
+      "title": "Marqués",
+      "mark": "Marquer",
+      "marked": "Marqué",
+      "markItem": "Marquer {item}",
+      "unmarkItem": "Retirer la marque de {item}",
+      "keep": "Garder {item} marqué",
+      "close": "Fermer",
+      "filterLabel": "Afficher les marques de",
+      "all": "Tout",
+      "empty": "Rien de marqué pour l’instant. Marquez un mot, un chant ou une figure avec ܀ et vous le retrouverez ici.",
+      "emptyBook": "Rien de marqué dans ce livre.",
+      "hint": "Touchez une ligne pour l’ouvrir ; touchez sa coche pour retirer la marque.",
+      "hintUnticked": "Marque retirée : cochez à nouveau pour la garder. Elle disparaît à la fermeture du panneau.",
+      "removed": "{count} marques retirées | {count} marque retirée | {count} marques retirées",
+      "undo": "Annuler",
+      "signInLine": "Connectez-vous pour garder vos marques sur tous vos appareils."
     }
   },
   "categories": {

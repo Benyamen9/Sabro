@@ -293,10 +293,10 @@ function setSort(next: LibrarySort) {
           </span>
         </h2>
         <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" :class="{ 'mt-6': !group.label }">
-          <li v-for="word in group.words" :key="word.id">
+          <li v-for="word in group.words" :key="word.id" class="relative">
             <NuxtLink
               :to="`/library/lexicon/${word.id}`"
-              class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-5 py-4 no-underline shadow-[var(--shadow-soft)] transition-[border-color,transform] hover:-translate-y-px hover:border-[color-mix(in_oklab,var(--color-accent)_45%,var(--color-border))]"
+              class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-4 pr-14 pl-5 no-underline shadow-[var(--shadow-soft)] transition-[border-color,transform] hover:-translate-y-px hover:border-[color-mix(in_oklab,var(--color-accent)_45%,var(--color-border))]"
             >
               <SyriacText :text="word.syriacVocalized ?? word.syriacUnvocalized" class="min-w-[4.75rem] !text-[2.1rem] leading-tight text-[var(--color-accent)]" />
               <span class="min-w-0 flex-1">
@@ -320,6 +320,15 @@ function setSort(next: LibrarySort) {
                 {{ word.letterCount }}
               </span>
             </NuxtLink>
+            <!-- Beside the link, not inside it: marking a word must not open it. -->
+            <MarkButton
+              class="absolute top-1/2 right-2.5 -translate-y-1/2"
+              variant="icon"
+              book="lexicon"
+              :item-key="word.id"
+              :label="{ title: preferredMeaning(word.meanings) ?? '', syriac: word.syriacVocalized ?? word.syriacUnvocalized }"
+              :name="preferredMeaning(word.meanings) ?? word.syriacUnvocalized"
+            />
           </li>
         </ul>
       </section>

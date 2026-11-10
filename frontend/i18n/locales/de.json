@@ -159,7 +159,8 @@
       "password": "Passwort",
       "session": "Sitzung",
       "export": "Ihre Daten",
-      "delete": "Konto löschen"
+      "delete": "Konto löschen",
+      "marked": "Markiert"
     },
     "username": {
       "heading": "Benutzername",
@@ -298,6 +299,9 @@
       "confirmButton": "Endgültig löschen",
       "deleting": "Wird gelöscht…",
       "error": "Ihr Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+    },
+    "marked": {
+      "text": "Die Wörter, Gesänge und Gestalten, die du in der Bibliothek mit ܀ markiert hast."
     }
   },
   "translations": {
@@ -463,6 +467,24 @@
         "figures": "{count} Gestalten | {count} Gestalt | {count} Gestalten",
         "found": "{found} von {total} gefunden"
       }
+    },
+    "marks": {
+      "title": "Markiert",
+      "mark": "Markieren",
+      "marked": "Markiert",
+      "markItem": "{item} markieren",
+      "unmarkItem": "Markierung von {item} entfernen",
+      "keep": "{item} markiert lassen",
+      "close": "Schließen",
+      "filterLabel": "Markierungen anzeigen aus",
+      "all": "Alle",
+      "empty": "Noch nichts markiert. Markiere ein Wort, einen Gesang oder eine Gestalt mit ܀ und du findest es hier wieder.",
+      "emptyBook": "In diesem Buch ist nichts markiert.",
+      "hint": "Tippe auf eine Zeile, um sie zu öffnen; tippe auf ihr Häkchen, um die Markierung zu entfernen.",
+      "hintUnticked": "Markierung entfernt: Setze das Häkchen erneut, um sie zu behalten. Sie verschwindet, wenn du das Feld schließt.",
+      "removed": "{count} Markierungen entfernt | {count} Markierung entfernt | {count} Markierungen entfernt",
+      "undo": "Rückgängig",
+      "signInLine": "Melde dich an, um deine Markierungen auf jedem Gerät zu behalten."
     }
   },
   "categories": {

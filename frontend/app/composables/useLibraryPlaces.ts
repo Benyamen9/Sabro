@@ -42,6 +42,7 @@ export function useLibraryPlaces() {
   const api = useSabroApi()
   const { isConfigured, isSignedIn } = useAuth()
   const { locale } = useI18n()
+  const { fetchShelf } = useReaderShelf()
 
   const places = useState<LibraryPlaces>('library-places', () => ({}))
   const loaded = useState('library-places-loaded', () => false)
@@ -66,7 +67,7 @@ export function useLibraryPlaces() {
 
     let shelf: ReaderShelfDto
     try {
-      shelf = await api<ReaderShelfDto>('/library/me', { query: { language: locale.value } })
+      shelf = await fetchShelf()
     }
     catch {
       return // Sabro unreachable: the device's places stand.

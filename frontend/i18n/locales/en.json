@@ -159,7 +159,8 @@
       "password": "Password",
       "session": "Session",
       "export": "Your data",
-      "delete": "Delete account"
+      "delete": "Delete account",
+      "marked": "Marked"
     },
     "username": {
       "heading": "Username",
@@ -298,6 +299,9 @@
       "confirmButton": "Permanently delete",
       "deleting": "Deleting…",
       "error": "Could not delete your account. Please try again."
+    },
+    "marked": {
+      "text": "The words, chants and figures you marked ܀ in the Library."
     }
   },
   "translations": {
@@ -463,6 +467,24 @@
         "figures": "{count} figures | {count} figure | {count} figures",
         "found": "{found} of {total} found"
       }
+    },
+    "marks": {
+      "title": "Marked",
+      "mark": "Mark",
+      "marked": "Marked",
+      "markItem": "Mark {item}",
+      "unmarkItem": "Remove the mark from {item}",
+      "keep": "Keep {item} marked",
+      "close": "Close",
+      "filterLabel": "Show marks from",
+      "all": "All",
+      "empty": "Nothing marked yet. Mark a word, a chant or a figure with ܀ and you will find it here.",
+      "emptyBook": "Nothing marked in this book.",
+      "hint": "Tap a row to open it; tap its tick to unmark.",
+      "hintUnticked": "Unmarked: tick it again to keep it. It goes when you close the panel.",
+      "removed": "{count} marks removed | {count} mark removed | {count} marks removed",
+      "undo": "Undo",
+      "signInLine": "Sign in to keep your marks on every device."
     }
   },
   "categories": {

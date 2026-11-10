@@ -159,7 +159,8 @@
       "password": "Lösenord",
       "session": "Session",
       "export": "Dina uppgifter",
-      "delete": "Ta bort konto"
+      "delete": "Ta bort konto",
+      "marked": "Markerat"
     },
     "username": {
       "heading": "Användarnamn",
@@ -298,6 +299,9 @@
       "confirmButton": "Ta bort permanent",
       "deleting": "Tar bort…",
       "error": "Det gick inte att ta bort ditt konto. Försök igen."
+    },
+    "marked": {
+      "text": "De ord, sånger och gestalter som du har markerat med ܀ i Biblioteket."
     }
   },
   "translations": {
@@ -463,6 +467,24 @@
         "figures": "{count} gestalter | {count} gestalt | {count} gestalter",
         "found": "{found} av {total} hittade"
       }
+    },
+    "marks": {
+      "title": "Markerat",
+      "mark": "Markera",
+      "marked": "Markerad",
+      "markItem": "Markera {item}",
+      "unmarkItem": "Ta bort markeringen från {item}",
+      "keep": "Behåll {item} markerad",
+      "close": "Stäng",
+      "filterLabel": "Visa markeringar från",
+      "all": "Alla",
+      "empty": "Inget markerat ännu. Markera ett ord, en sång eller en gestalt med ܀ så hittar du det här.",
+      "emptyBook": "Inget markerat i den här boken.",
+      "hint": "Tryck på en rad för att öppna den; tryck på bocken för att ta bort markeringen.",
+      "hintUnticked": "Markeringen borttagen: bocka i igen för att behålla den. Den försvinner när du stänger panelen.",
+      "removed": "{count} markeringar borttagna | {count} markering borttagen | {count} markeringar borttagna",
+      "undo": "Ångra",
+      "signInLine": "Logga in för att behålla dina markeringar på alla enheter."
     }
   },
   "categories": {
