@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FetchError } from 'ofetch'
+import { grammarVerbFor } from '~/data/grammar'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -27,6 +28,9 @@ const status = computed<'loading' | 'notFound' | 'failed' | 'ready'>(() => {
   if (!data.value) return 'failed'
   return 'ready'
 })
+
+// A verb the Grammar has tables for carries its conjugation here (Owner, 2026-11-10).
+const verb = computed(() => (data.value ? grammarVerbFor(data.value) : null))
 
 const hasComposition = computed(() => (data.value?.composition ?? []).length > 0)
 
@@ -209,6 +213,8 @@ function categoryLabel(category: string | undefined) {
         {{ t('library.playedInMeltho') }}
         <span aria-hidden="true" class="ml-auto">→</span>
       </NuxtLink>
+
+      <VerbConjugation v-if="verb" :verb="verb" />
 
       <!-- Letter by letter: the page's centrepiece — one right-to-left row of
            cards, read in the same direction as the word itself. -->

@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { GRAMMAR_TENSES, GRAMMAR_TEXT, GRAMMAR_TITLES, grammarTablesOf } from '~/data/grammar'
+import { GRAMMAR_CHAPTERS } from '~/data/grammar'
 
 /**
- * The Grammar book (ܓܪܰܡܰܛܺܝܩܺܝ; Owner, 2026-11-01, first edition 2026-11-10): the verb in the past,
- * the present and the future, as the Owner teaches it from his grammar. This page is its table of
- * contents: each tense, and under it one table per kind of root. A table is what the red ribbon
- * and a ܀ mark point at.
+ * The Grammar book (ܓܪܰܡܰܛܺܝܩܺܝ; Owner, 2026-11-10): the rules of the verb, a few chapters of them.
+ * The conjugation tables are not here: they belong to the words, on each verb's page in the Lexicon,
+ * and every chapter points at the verbs to see its rules in. This page is the table of contents.
  */
 const { t, locale } = useI18n()
-const { categoryName, label } = useGrammar()
+const { chapterTitle, chapterLine, label } = useGrammar()
 
 useSeoMeta({
   title: () => t('seo.grammar.title'),
@@ -17,14 +16,7 @@ useSeoMeta({
   ogDescription: () => t('seo.grammar.description'),
 })
 
-const tenses = computed(() => GRAMMAR_TENSES.map(tense => ({
-  tense,
-  title: GRAMMAR_TITLES[tense],
-  line: GRAMMAR_TEXT[tense].line,
-  tables: grammarTablesOf(tense),
-})))
-
-// "Where you left off": the table the red ribbon keeps (see useLibraryPlaces).
+// "Where you left off": the chapter the red ribbon keeps (see useLibraryPlaces).
 const { places, load: loadPlaces } = useLibraryPlaces()
 onMounted(loadPlaces)
 const place = computed(() => {
@@ -35,7 +27,7 @@ const place = computed(() => {
 </script>
 
 <template>
-  <section class="mx-auto max-w-4xl" :style="{ '--color-accent': 'var(--color-grammar)', '--color-accent-faint': 'var(--color-grammar-faint)' }">
+  <section class="mx-auto max-w-3xl" :style="{ '--color-accent': 'var(--color-grammar)', '--color-accent-faint': 'var(--color-grammar-faint)' }">
     <header class="mb-6 pt-2">
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
         {{ t('library.shelf.books.grammar.title') }}
@@ -50,41 +42,27 @@ const place = computed(() => {
       <LibraryResume v-if="place" :label="place.label" :to="`/library/grammar/${place.itemKey}`" />
     </ClientOnly>
 
-    <ol class="grid gap-9">
-      <li v-for="(item, index) in tenses" :key="item.tense">
-        <div class="flex items-baseline gap-3 border-b border-[var(--color-border)] pb-2">
-          <span aria-hidden="true" class="font-serif text-sm font-semibold tabular-nums text-[var(--color-accent)]">{{ index + 1 }}</span>
-          <h2 class="font-serif text-[26px] font-semibold tracking-[-0.01em]">{{ t(`grammar.tenses.${item.tense}`) }}</h2>
-          <span class="font-sans text-xs text-[var(--color-text-faint)]">{{ t('grammar.tableCount', { count: item.tables.length }, item.tables.length) }}</span>
-        </div>
-        <p class="mt-2 text-[19px] leading-relaxed text-[var(--color-text-muted)]"><GrammarWord :text="item.title" /></p>
-        <!-- English content for now (Owner, 2026-11-09): the explanations are not interface strings. -->
-        <p class="mt-1 font-serif text-[15.5px] text-[var(--color-text-muted)]">{{ item.line }}</p>
-
-        <ul class="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-          <li v-for="table in item.tables" :key="table.slug" class="relative">
-            <NuxtLink
-              :to="`/library/grammar/${table.slug}`"
-              class="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-3 pr-14 pl-5 no-underline shadow-[var(--shadow-soft)] transition-[border-color,transform] hover:-translate-y-px hover:border-[color-mix(in_oklab,var(--color-accent)_45%,var(--color-border))]"
-            >
-              <GrammarWord :text="table.model" class="min-w-[4.5rem] text-[2rem] leading-tight text-[var(--color-accent)]" />
-              <span class="min-w-0 flex-1">
-                <span class="block truncate font-serif text-[16.5px] text-[var(--color-text)]">{{ categoryName(table) }}</span>
-                <span class="block truncate text-[15px] text-[var(--color-text-faint)]"><GrammarWord :text="table.categorySyriac" /></span>
-              </span>
-            </NuxtLink>
-            <!-- Beside the link, not inside it: marking a table must not open it. -->
-            <MarkButton
-              class="absolute top-1/2 right-2.5 -translate-y-1/2"
-              variant="icon"
-              book="grammar"
-              :item-key="table.slug"
-              :label="label(table.slug)"
-              :name="`${t(`grammar.tenses.${item.tense}`)}, ${categoryName(table)}`"
-            />
-          </li>
-        </ul>
+    <ol>
+      <li v-for="(chapter, index) in GRAMMAR_CHAPTERS" :key="chapter.slug" class="border-t border-[var(--color-border)]">
+        <NuxtLink :to="`/library/grammar/${chapter.slug}`" class="group flex items-center gap-3.5 py-4 no-underline">
+          <span aria-hidden="true" class="w-5 shrink-0 text-right font-serif text-sm font-semibold tabular-nums text-[var(--color-accent)]">{{ index + 1 }}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-serif text-[20px] font-semibold text-[var(--color-text)] group-hover:text-[var(--color-accent)]">{{ chapterTitle(chapter) }}</span>
+            <span class="mt-0.5 block font-serif text-[15px] leading-snug text-[var(--color-text-muted)]">{{ chapterLine(chapter) }}</span>
+          </span>
+          <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" class="size-4 shrink-0 text-[var(--color-text-faint)]"><path d="m6 3 5 5-5 5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </NuxtLink>
       </li>
     </ol>
+
+    <!-- The other half of the grammar: the tables, with the words. -->
+    <NuxtLink
+      to="/library/lexicon"
+      class="mt-6 flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-meltho-faint)] px-5 py-3.5 font-sans text-sm text-[var(--color-meltho)] no-underline transition-colors hover:border-[var(--color-meltho)]"
+    >
+      <span aria-hidden="true" class="h-[22px] w-4 shrink-0 rounded-[2px_4px_4px_2px] bg-[var(--color-meltho)] shadow-[inset_3px_0_0_rgb(0_0_0/0.25)]" />
+      <span class="min-w-0 flex-1">{{ t('grammar.tablesInLexicon') }}</span>
+      <span aria-hidden="true">→</span>
+    </NuxtLink>
   </section>
 </template>

@@ -9,6 +9,8 @@
   {
    "slug": "past-ktab",
    "tense": "past",
+   "verb": "ktab",
+   "lemma": "ܟܬܒ",
    "category": "soundPtoho",
    "categorySyriac": "ܫܰܠܡܬ݂ܳܐ ܦ݂ܬ݂ܺܝܼܚܬ݁ܳܐ",
    "model": "ܟ݁ܬ݂ܰܒ݂",
@@ -115,6 +117,8 @@
   {
    "slug": "past-rgez",
    "tense": "past",
+   "verb": "rgez",
+   "lemma": "ܪܓܙ",
    "category": "soundRbosho",
    "categorySyriac": "ܫܰܠܡܬ݂ܳܐ ܪܒ݂ܺܝܼܨܬ݁ܳܐ",
    "model": "ܪܓ݂ܶܙ",
@@ -221,6 +225,8 @@
   {
    "slug": "past-pak",
    "tense": "past",
+   "verb": "pak",
+   "lemma": "ܦܟ",
    "category": "doubled",
    "categorySyriac": "ܥܦ݂ܺܝܼܦ݂ܬ݁ܳܐ",
    "model": "ܦ݁ܰܟ݂",
@@ -327,6 +333,8 @@
   {
    "slug": "past-tab",
    "tense": "past",
+   "verb": "tab",
+   "lemma": "ܬܒ",
    "category": "weakMiddle",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܡܶܨܥܳܝܳܐ",
    "model": "ܬ݁ܳܒ݂",
@@ -433,6 +441,8 @@
   {
    "slug": "past-qam",
    "tense": "past",
+   "verb": "qam",
+   "lemma": "ܩܡ",
    "category": "weakMiddle",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܡܶܨܥܳܝܳܐ",
    "model": "ܩܳܡ",
@@ -539,6 +549,8 @@
   {
    "slug": "past-gbo",
    "tense": "past",
+   "verb": "gbo",
+   "lemma": "ܓܒܐ",
    "category": "weakEnd",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܫܽܘܼܠܳܡܳܐ",
    "model": "ܓ݁ܒ݂ܳܐ",
@@ -645,6 +657,8 @@
   {
    "slug": "past-ebad",
    "tense": "past",
+   "verb": "ebad",
+   "lemma": "ܐܒܕ",
    "category": "alaphFirst",
    "categorySyriac": "ܐܳܠܰܐܦ݂ܳܝܰܬ݂ ܫܽܘܼܪܳܝܳܐ",
    "model": "ܐܶܒ݂ܰܕ݂",
@@ -751,6 +765,8 @@
   {
    "slug": "past-isef",
    "tense": "past",
+   "verb": "isef",
+   "lemma": "ܝܨܦ",
    "category": "yudhFirst",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܫܽܘܼܪܳܝܳܐ",
    "model": "ܝܼܺܨܶܦ݂",
@@ -857,6 +873,8 @@
   {
    "slug": "past-ntar",
    "tense": "past",
+   "verb": "ntar",
+   "lemma": "ܢܬܪ",
    "category": "nunFirst",
    "categorySyriac": "ܢܽܘܼܢܳܝܬ݁ܳܐ",
    "model": "ܢܬ݂ܰܪ",
@@ -963,6 +981,8 @@
   {
    "slug": "present-ktab",
    "tense": "present",
+   "verb": "ktab",
+   "lemma": "ܟܬܒ",
    "category": "soundPtoho",
    "categorySyriac": "ܫܰܠܡܬ݂ܳܐ ܦ݂ܬ݂ܺܝܼܚܬ݁ܳܐ",
    "model": "ܟ݁ܬ݂ܰܒ݂",
@@ -1111,6 +1131,8 @@
   {
    "slug": "present-rgez",
    "tense": "present",
+   "verb": "rgez",
+   "lemma": "ܪܓܙ",
    "category": "soundRbosho",
    "categorySyriac": "ܫܰܠܡܬ݂ܳܐ ܪܒ݂ܺܝܼܨܬ݁ܳܐ",
    "model": "ܪܓ݂ܶܙ",
@@ -1259,6 +1281,8 @@
   {
    "slug": "present-pak",
    "tense": "present",
+   "verb": "pak",
+   "lemma": "ܦܟ",
    "category": "doubled",
    "categorySyriac": "ܥܦ݂ܺܝܼܦ݂ܬ݁ܳܐ",
    "model": "ܦ݁ܰܟ݂",
@@ -1407,6 +1431,8 @@
   {
    "slug": "present-tab",
    "tense": "present",
+   "verb": "tab",
+   "lemma": "ܬܒ",
    "category": "weakMiddle",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܡܶܨܥܳܝܳܐ",
    "model": "ܬ݁ܳܒ݂",
@@ -1555,6 +1581,8 @@
   {
    "slug": "present-qam",
    "tense": "present",
+   "verb": "qam",
+   "lemma": "ܩܡ",
    "category": "weakMiddle",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܡܶܨܥܳܝܳܐ",
    "model": "ܩܳܡ",
@@ -1703,6 +1731,8 @@
   {
    "slug": "present-gbo",
    "tense": "present",
+   "verb": "gbo",
+   "lemma": "ܓܒܐ",
    "category": "weakEnd",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܫܽܘܼܠܳܡܳܐ",
    "model": "ܓ݁ܒ݂ܳܐ",
@@ -1853,6 +1883,8 @@
   {
    "slug": "present-ebad",
    "tense": "present",
+   "verb": "ebad",
+   "lemma": "ܐܒܕ",
    "category": "alaphFirst",
    "categorySyriac": "ܐܳܠܰܐܦ݂ܳܝܰܬ݂ ܫܽܘܼܪܳܝܳܐ",
    "model": "ܐܶܒ݂ܰܕ݂",
@@ -2001,6 +2033,8 @@
   {
    "slug": "present-isef",
    "tense": "present",
+   "verb": "isef",
+   "lemma": "ܝܨܦ",
    "category": "yudhFirst",
    "categorySyriac": "ܟ݁ܪܺܝܼܗܰܬ݂ ܫܽܘܼܪܳܝܳܐ",
    "model": "ܝܼܺܨܶܦ݂",
@@ -2149,6 +2183,8 @@
   {
    "slug": "present-ntar",
    "tense": "present",
+   "verb": "ntar",
+   "lemma": "ܢܬܪ",
    "category": "nunFirst",
    "categorySyriac": "ܢܽܘܼܢܳܝܬ݁ܳܐ",
    "model": "ܢܬ݂ܰܪ",
@@ -2297,6 +2333,8 @@
   {
    "slug": "future-ktab",
    "tense": "future",
+   "verb": "ktab",
+   "lemma": "ܟܬܒ",
    "category": "soundPtoho",
    "categorySyriac": "ܫܰܠܡܬ݂ܳܐ ܦ݂ܬ݂ܺܝܼܚܬ݁ܳܐ",
    "model": "ܟ݁ܬ݂ܰܒ݂",

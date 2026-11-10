@@ -296,18 +296,28 @@ figure opens inside its book: `?chant=<id>`, `?figure=<id>`). **Unmarking is the
 Undo" shows for a few seconds. The device remembers which marks Sabro has held (`synced`), so a mark removed on
 one device is let go on the others; only a mark made signed out is sent up.
 
-**The Grammar book (ܓܪܰܡܰܛܺܝܩܺܝ, `/library/grammar`; first edition 2026-11-10)** is the fourth book on the shelf:
-the verb (Kaylo Qadmoyo) in **the past, the present and the future with the imperative**, as the Owner teaches it
-from his grammar. One page per table, `/library/grammar/<slug>` (`past-ktab`, `present-qam`, `future-ktab`): 9
-kinds of root in the past and the present, the sound root alone in the future. **A slug is what a ribbon or a
-mark points at: never rename one.** The pages live in the hub, so Sabro stores the slug on trust and sends no
-label; the hub names a table from its slug (`useGrammar`).
+**The grammar is an extension of the Lexicon (Owner, 2026-11-10).** It has two halves, and they must stay apart:
+
+- **The tables belong to the words.** A Lexicon entry of class `Verb` whose spelling is one of the model verbs
+  (`grammarVerbFor`: ܟܬܒ ܪܓܙ ܦܟ ܬܒ ܩܡ ܓܒܐ ܐܒܕ ܝܨܦ ܢܬܪ) shows a **Conjugation** block on its own page
+  (`VerbConjugation`): the past, the present and, for ܟܬܒ so far, the future with the imperative
+  (Kaylo Qadmoyo). `?tense=` opens on a tense. There is no page per table. **A verb's tables are visible only
+  once the Owner has published that verb's entry.**
+- **The Grammar book (ܓܪܰܡܰܛܺܝܩܺܝ, `/library/grammar`) holds the rules**, as the fourth book on the shelf: six
+  chapters (`kinds-of-root`, `past`, `present`, `future`, `tense-dots`, `qushoyo-rukkokho`), one page each, no
+  tables. Each chapter ends with the model verbs, linked to their Lexicon pages when published
+  (`GET /dictionary?category=Verb`). **A chapter's slug is what a ribbon or a mark points at: never rename one.**
+  The pages live in the hub, so Sabro stores the slug on trust and sends no label; the hub names a chapter from
+  its slug (`useGrammar`). The first build (one page per table, a long contents list) was rejected by the Owner
+  the same day: do not bring it back.
+
+How it is made:
 
 - **The forms are generated, never typed in the repo.** `frontend/app/data/grammar-tables.json` is written by
   `Hito/grammar/export_hub.py` from the Owner's typed tables and his confirmed rules (it refuses to run if the
   rules no longer reproduce the book). A correction goes into `Hito/grammar` first, then re-export.
-- **The explanations are content, English only for now** (`app/data/grammar.ts`; Owner, 2026-11-09); the names of
-  tenses, persons, columns and kinds of root are interface strings in all five languages.
+- **The chapters are content, English only for now** (`app/data/grammar.ts`; Owner, 2026-11-09); chapter titles
+  and the names of tenses, persons, columns and kinds of root are interface strings in all five languages.
 - **Set in Serto Urhoy** (Owner, 2026-10-30), whatever script the reader chose: Beth Mardutho's Meltho font
   ("for free distribution"), served unmodified from `public/type/` (not `public/fonts/`, which the font script
   empties). The font places qushoyo, rukkokho and vowels.

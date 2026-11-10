@@ -454,7 +454,7 @@
         },
         "grammar": {
           "title": "Grammar",
-          "subtitle": "the verb, tense by tense"
+          "subtitle": "the rules of the verb"
         },
         "bethGazo": {
           "title": "Beth Gazo",
@@ -470,7 +470,7 @@
         "chants": "{count} chants | {count} chant | {count} chants",
         "figures": "{count} figures | {count} figure | {count} figures",
         "found": "{found} of {total} found",
-        "tables": "{count} tables | {count} table | {count} tables"
+        "chapters": "{count} chapters | {count} chapter | {count} chapters"
       }
     },
     "marks": {
@@ -1286,12 +1286,11 @@
       "description": "Sabro's Syriac library: the Lexicon of words, the Beth Gazo treasury of chants and the Beth Ṣalme gallery of figures."
     },
     "grammar": {
-      "title": "Syriac grammar: the verb in the past, present and future",
-      "description": "The Syriac verb set out tense by tense, for every kind of root, with qushoyo, rukkokho and the tense dots, as taught in the West Syriac tradition."
+      "title": "Syriac grammar: the rules of the verb",
+      "description": "How the Syriac verb is built, rule by rule: the kinds of root, the past, the present, the future, the tense dots, qushoyo and rukkokho, in the West Syriac tradition."
     },
-    "grammarTable": {
-      "title": "{table} — Syriac grammar",
-      "description": "The Syriac verb in the {tense}, for roots of the kind \"{category}\": every person, with qushoyo, rukkokho and the tense dots."
+    "grammarChapter": {
+      "title": "{chapter} — Syriac grammar"
     }
   },
   "privacy": {
@@ -1450,13 +1449,11 @@
     "continue": "Continue"
   },
   "grammar": {
-    "heading": "The verb, tense by tense",
-    "lede": "The Syriac verb as the grammar book sets it out: every person, for every kind of root, with qushoyo and rukkokho. The tense dots are drawn in red.",
+    "heading": "The rules of the verb",
+    "lede": "How Syriac verbs are built, rule by rule. The tables themselves are in the Lexicon, on each verb's page.",
     "englishOnly": "The explanations are in English for now.",
-    "notFound": "This table is not in the Grammar.",
-    "tableCount": "{count} tables | {count} table | {count} tables",
+    "notFound": "This chapter is not in the Grammar.",
     "tensesLabel": "Tense",
-    "rootsLabel": "Kind of root",
     "tenses": {
       "past": "The past",
       "present": "The present",
@@ -1497,8 +1494,41 @@
     },
     "sourceBook": "Every form as it stands in the grammar book. Where it gives two forms, a slash parts them.",
     "sourceRules": "Formed by the book's rules and checked by hand. Where there are two forms, a slash parts them.",
-    "aboutRoot": "This kind of root",
     "howBuilt": "How it is built: {tense}",
-    "dotsHeading": "The tense dots"
+    "chapterNumber": "Chapter {number}",
+    "nextChapter": "Next chapter",
+    "conjugation": "Conjugation",
+    "rulesInGrammar": "The rules, in the Grammar",
+    "tablesInLexicon": "The tables are in the Lexicon, on each verb's page.",
+    "seeInVerb": "See it in a verb",
+    "seeInVerbLine": "Each opens the verb in the Lexicon, with its full table.",
+    "verbsComing": "The model verbs. Their pages in the Lexicon, with the full tables, are on their way.",
+    "openVerb": "Open the verb in the Lexicon: {kind}",
+    "chapters": {
+      "kinds-of-root": {
+        "title": "The kinds of root",
+        "line": "Sound, doubled, weak: eight kinds, each with its model verb."
+      },
+      "past": {
+        "title": "The past",
+        "line": "Ten persons, one set of endings for every kind of root."
+      },
+      "present": {
+        "title": "The present",
+        "line": "One word in four shapes, with the pronoun after it or joined to it."
+      },
+      "future": {
+        "title": "The future and the imperative",
+        "line": "A letter in front of the root."
+      },
+      "tense-dots": {
+        "title": "The tense dots",
+        "line": "Below for the past, above for the present: what each dot tells apart."
+      },
+      "qushoyo-rukkokho": {
+        "title": "Qushoyo and rukkokho",
+        "line": "When a letter is hard and when it is soft."
+      }
+    }
   }
 }

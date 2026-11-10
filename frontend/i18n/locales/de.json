@@ -454,7 +454,7 @@
         },
         "grammar": {
           "title": "Grammatik",
-          "subtitle": "das Verb, Zeit für Zeit"
+          "subtitle": "die Regeln des Verbs"
         },
         "bethGazo": {
           "title": "Beth Gazo",
@@ -470,7 +470,7 @@
         "chants": "{count} Gesänge | {count} Gesang | {count} Gesänge",
         "figures": "{count} Gestalten | {count} Gestalt | {count} Gestalten",
         "found": "{found} von {total} gefunden",
-        "tables": "{count} Tabellen | {count} Tabelle | {count} Tabellen"
+        "chapters": "{count} Kapitel | {count} Kapitel | {count} Kapitel"
       }
     },
     "marks": {
@@ -1286,12 +1286,11 @@
       "description": "Die syrische Bibliothek von Sabro: das Lexikon der Wörter, die Schatzkammer der Gesänge des Beth Gazo und die Galerie der Gestalten des Beth Ṣalme."
     },
     "grammar": {
-      "title": "Syrische Grammatik: das Verb in Vergangenheit, Gegenwart und Zukunft",
-      "description": "Das syrische Verb Zeit für Zeit, für jede Art von Wurzel, mit Qushoyo, Rukkokho und den Zeitpunkten, nach der westsyrischen Tradition."
+      "title": "Syrische Grammatik: die Regeln des Verbs",
+      "description": "Wie das syrische Verb gebildet wird, Regel für Regel: die Arten der Wurzel, Vergangenheit, Gegenwart, Zukunft, die Zeitpunkte, Qushoyo und Rukkokho, nach der westsyrischen Tradition."
     },
-    "grammarTable": {
-      "title": "{table} — Syrische Grammatik",
-      "description": "Das syrische Verb, {tense}, für Wurzeln der Art „{category}“: jede Person, mit Qushoyo, Rukkokho und den Zeitpunkten."
+    "grammarChapter": {
+      "title": "{chapter} — Syrische Grammatik"
     }
   },
   "privacy": {
@@ -1450,13 +1449,11 @@
     "continue": "Weiter"
   },
   "grammar": {
-    "heading": "Das Verb, Zeit für Zeit",
-    "lede": "Das syrische Verb, wie das Grammatikbuch es darstellt: jede Person, für jede Art von Wurzel, mit Qushoyo und Rukkokho. Die Zeitpunkte sind rot gezeichnet.",
+    "heading": "Die Regeln des Verbs",
+    "lede": "Wie syrische Verben gebildet werden, Regel für Regel. Die Tabellen selbst stehen im Lexikon, auf der Seite jedes Verbs.",
     "englishOnly": "Die Erklärungen sind vorerst auf Englisch.",
-    "notFound": "Diese Tabelle steht nicht in der Grammatik.",
-    "tableCount": "{count} Tabellen | {count} Tabelle | {count} Tabellen",
+    "notFound": "Dieses Kapitel steht nicht in der Grammatik.",
     "tensesLabel": "Zeit",
-    "rootsLabel": "Art der Wurzel",
     "tenses": {
       "past": "Die Vergangenheit",
       "present": "Die Gegenwart",
@@ -1497,8 +1494,41 @@
     },
     "sourceBook": "Jede Form, wie sie im Grammatikbuch steht. Wo es zwei Formen gibt, trennt sie ein Schrägstrich.",
     "sourceRules": "Nach den Regeln des Buches gebildet und von Hand geprüft. Wo es zwei Formen gibt, trennt sie ein Schrägstrich.",
-    "aboutRoot": "Diese Art von Wurzel",
     "howBuilt": "Wie sie gebildet wird: {tense}",
-    "dotsHeading": "Die Zeitpunkte"
+    "chapterNumber": "Kapitel {number}",
+    "nextChapter": "Nächstes Kapitel",
+    "conjugation": "Konjugation",
+    "rulesInGrammar": "Die Regeln, in der Grammatik",
+    "tablesInLexicon": "Die Tabellen stehen im Lexikon, auf der Seite jedes Verbs.",
+    "seeInVerb": "An einem Verb sehen",
+    "seeInVerbLine": "Jedes öffnet das Verb im Lexikon, mit seiner vollständigen Tabelle.",
+    "verbsComing": "Die Musterverben. Ihre Seiten im Lexikon, mit den vollständigen Tabellen, folgen bald.",
+    "openVerb": "Das Verb im Lexikon öffnen: {kind}",
+    "chapters": {
+      "kinds-of-root": {
+        "title": "Die Arten der Wurzel",
+        "line": "Stark, verdoppelt, schwach: acht Arten, jede mit ihrem Musterverb."
+      },
+      "past": {
+        "title": "Die Vergangenheit",
+        "line": "Zehn Personen, dieselben Endungen für jede Art von Wurzel."
+      },
+      "present": {
+        "title": "Die Gegenwart",
+        "line": "Ein Wort in vier Formen, mit dem Pronomen danach oder damit verbunden."
+      },
+      "future": {
+        "title": "Die Zukunft und der Imperativ",
+        "line": "Ein Buchstabe vor der Wurzel."
+      },
+      "tense-dots": {
+        "title": "Die Zeitpunkte",
+        "line": "Unten für die Vergangenheit, oben für die Gegenwart: was jeder Punkt unterscheidet."
+      },
+      "qushoyo-rukkokho": {
+        "title": "Qushoyo und Rukkokho",
+        "line": "Wann ein Buchstabe hart ist und wann weich."
+      }
+    }
   }
 }

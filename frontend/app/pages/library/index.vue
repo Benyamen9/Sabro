@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { BethGazoBookDto, HistoricalFigureListItem, PagedResult, ShmoCollectionDto } from '~/types/api'
-import { GRAMMAR_TABLES } from '~/data/grammar'
+import { GRAMMAR_CHAPTERS } from '~/data/grammar'
 import { chantCount } from '~/utils/bethGazo'
 import type { LibraryBook } from '~/utils/libraryPlaces'
 
@@ -66,7 +66,7 @@ const books = computed(() => {
       title: t('library.shelf.books.grammar.title'),
       syriacTitle: 'ܓܪܰܡܰܛܺܝܩܺܝ',
       subtitle: t('library.shelf.books.grammar.subtitle'),
-      count: t('library.shelf.counts.tables', { count: GRAMMAR_TABLES.length }, GRAMMAR_TABLES.length),
+      count: t('library.shelf.counts.chapters', { count: GRAMMAR_CHAPTERS.length }, GRAMMAR_CHAPTERS.length),
     },
     {
       book: 'beth-gazo' as LibraryBook,

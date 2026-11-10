@@ -5,10 +5,8 @@
 // Both come from the same public API the pages render from; if the API is
 // unreachable the static URLs still ship rather than failing the whole
 // sitemap. Cached for an hour — the pools grow slowly.
-import grammar from '../../app/data/grammar-tables.json'
-
-// The Grammar book's tables live in the hub, one page each.
-const GRAMMAR_SLUGS = grammar.tables.map(table => table.slug)
+// The Grammar book's chapters live in the hub, one page each (see app/data/grammar.ts).
+const GRAMMAR_SLUGS = ['kinds-of-root', 'past', 'present', 'future', 'tense-dots', 'qushoyo-rukkokho']
 
 interface LibraryItem { lexiconEntryId: string, lastPlayedOn?: string }
 interface LibraryPage { items: LibraryItem[], total: number, page: number, pageSize: number }

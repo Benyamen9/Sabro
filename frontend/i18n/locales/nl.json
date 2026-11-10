@@ -454,7 +454,7 @@
         },
         "grammar": {
           "title": "Grammatica",
-          "subtitle": "het werkwoord, tijd per tijd"
+          "subtitle": "de regels van het werkwoord"
         },
         "bethGazo": {
           "title": "Beth Gazo",
@@ -470,7 +470,7 @@
         "chants": "{count} gezangen | {count} gezang | {count} gezangen",
         "figures": "{count} figuren | {count} figuur | {count} figuren",
         "found": "{found} van {total} gevonden",
-        "tables": "{count} tabellen | {count} tabel | {count} tabellen"
+        "chapters": "{count} hoofdstukken | {count} hoofdstuk | {count} hoofdstukken"
       }
     },
     "marks": {
@@ -1286,12 +1286,11 @@
       "description": "De Syrische bibliotheek van Sabro: het Lexicon van woorden, de schatkamer van gezangen van de Beth Gazo en de galerij van figuren van de Beth Ṣalme."
     },
     "grammar": {
-      "title": "Syrische grammatica: het werkwoord in verleden, tegenwoordige en toekomende tijd",
-      "description": "Het Syrische werkwoord tijd per tijd, voor elke soort wortel, met qushoyo, rukkokho en de tijdspunten, volgens de West-Syrische traditie."
+      "title": "Syrische grammatica: de regels van het werkwoord",
+      "description": "Hoe het Syrische werkwoord gevormd wordt, regel per regel: de soorten wortel, de verleden, tegenwoordige en toekomende tijd, de tijdspunten, qushoyo en rukkokho, volgens de West-Syrische traditie."
     },
-    "grammarTable": {
-      "title": "{table} — Syrische grammatica",
-      "description": "Het Syrische werkwoord, {tense}, voor wortels van de soort \"{category}\": elke persoon, met qushoyo, rukkokho en de tijdspunten."
+    "grammarChapter": {
+      "title": "{chapter} — Syrische grammatica"
     }
   },
   "privacy": {
@@ -1450,13 +1449,11 @@
     "continue": "Verder"
   },
   "grammar": {
-    "heading": "Het werkwoord, tijd per tijd",
-    "lede": "Het Syrische werkwoord zoals het grammaticaboek het geeft: elke persoon, voor elke soort wortel, met qushoyo en rukkokho. De tijdspunten zijn in het rood getekend.",
+    "heading": "De regels van het werkwoord",
+    "lede": "Hoe Syrische werkwoorden gevormd worden, regel per regel. De tabellen zelf staan in het Lexicon, op de pagina van elk werkwoord.",
     "englishOnly": "De uitleg is voorlopig in het Engels.",
-    "notFound": "Deze tabel staat niet in de Grammatica.",
-    "tableCount": "{count} tabellen | {count} tabel | {count} tabellen",
+    "notFound": "Dit hoofdstuk staat niet in de Grammatica.",
     "tensesLabel": "Tijd",
-    "rootsLabel": "Soort wortel",
     "tenses": {
       "past": "De verleden tijd",
       "present": "De tegenwoordige tijd",
@@ -1497,8 +1494,41 @@
     },
     "sourceBook": "Elke vorm zoals die in het grammaticaboek staat. Waar het twee vormen geeft, scheidt een schuine streep ze.",
     "sourceRules": "Gevormd volgens de regels van het boek en met de hand nagekeken. Waar er twee vormen zijn, scheidt een schuine streep ze.",
-    "aboutRoot": "Deze soort wortel",
     "howBuilt": "Hoe hij gevormd wordt: {tense}",
-    "dotsHeading": "De tijdspunten"
+    "chapterNumber": "Hoofdstuk {number}",
+    "nextChapter": "Volgend hoofdstuk",
+    "conjugation": "Vervoeging",
+    "rulesInGrammar": "De regels, in de Grammatica",
+    "tablesInLexicon": "De tabellen staan in het Lexicon, op de pagina van elk werkwoord.",
+    "seeInVerb": "Bekijk het in een werkwoord",
+    "seeInVerbLine": "Elk opent het werkwoord in het Lexicon, met de volledige tabel.",
+    "verbsComing": "De modelwerkwoorden. Hun pagina’s in het Lexicon, met de volledige tabellen, komen eraan.",
+    "openVerb": "Open het werkwoord in het Lexicon: {kind}",
+    "chapters": {
+      "kinds-of-root": {
+        "title": "De soorten wortel",
+        "line": "Sterk, verdubbeld, zwak: acht soorten, elk met zijn modelwerkwoord."
+      },
+      "past": {
+        "title": "De verleden tijd",
+        "line": "Tien personen, dezelfde uitgangen voor elke soort wortel."
+      },
+      "present": {
+        "title": "De tegenwoordige tijd",
+        "line": "Eén woord in vier vormen, met het voornaamwoord erna of eraan vast."
+      },
+      "future": {
+        "title": "De toekomende tijd en de gebiedende wijs",
+        "line": "Een letter vóór de wortel."
+      },
+      "tense-dots": {
+        "title": "De tijdspunten",
+        "line": "Onder voor de verleden tijd, boven voor de tegenwoordige: wat elke punt onderscheidt."
+      },
+      "qushoyo-rukkokho": {
+        "title": "Qushoyo en rukkokho",
+        "line": "Wanneer een letter hard is en wanneer zacht."
+      }
+    }
   }
 }
