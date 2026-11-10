@@ -452,6 +452,10 @@
           "title": "Lexicon",
           "subtitle": "every word, letter by letter"
         },
+        "grammar": {
+          "title": "Grammar",
+          "subtitle": "the verb, tense by tense"
+        },
         "bethGazo": {
           "title": "Beth Gazo",
           "subtitle": "the treasury of chants"
@@ -465,7 +469,8 @@
         "words": "{count} words | {count} word | {count} words",
         "chants": "{count} chants | {count} chant | {count} chants",
         "figures": "{count} figures | {count} figure | {count} figures",
-        "found": "{found} of {total} found"
+        "found": "{found} of {total} found",
+        "tables": "{count} tables | {count} table | {count} tables"
       }
     },
     "marks": {
@@ -1279,6 +1284,14 @@
     "libraryShelf": {
       "title": "Library",
       "description": "Sabro's Syriac library: the Lexicon of words, the Beth Gazo treasury of chants and the Beth Ṣalme gallery of figures."
+    },
+    "grammar": {
+      "title": "Syriac grammar: the verb in the past, present and future",
+      "description": "The Syriac verb set out tense by tense, for every kind of root, with qushoyo, rukkokho and the tense dots, as taught in the West Syriac tradition."
+    },
+    "grammarTable": {
+      "title": "{table} — Syriac grammar",
+      "description": "The Syriac verb in the {tense}, for roots of the kind \"{category}\": every person, with qushoyo, rukkokho and the tense dots."
     }
   },
   "privacy": {
@@ -1435,5 +1448,57 @@
     "found": "nothing found | {n} melody found | {n} melodies found",
     "ribbon": "Where you left off",
     "continue": "Continue"
+  },
+  "grammar": {
+    "heading": "The verb, tense by tense",
+    "lede": "The Syriac verb as the grammar book sets it out: every person, for every kind of root, with qushoyo and rukkokho. The tense dots are drawn in red.",
+    "englishOnly": "The explanations are in English for now.",
+    "notFound": "This table is not in the Grammar.",
+    "tableCount": "{count} tables | {count} table | {count} tables",
+    "tensesLabel": "Tense",
+    "rootsLabel": "Kind of root",
+    "tenses": {
+      "past": "The past",
+      "present": "The present",
+      "future": "The future"
+    },
+    "categories": {
+      "soundPtoho": "Sound root, with ptoho",
+      "soundRbosho": "Sound root, with rbosho",
+      "doubled": "Doubled root",
+      "weakMiddle": "Weak in the middle",
+      "weakEnd": "Weak at the end",
+      "alaphFirst": "Olaf at the start",
+      "yudhFirst": "Yudh at the start",
+      "nunFirst": "Nun at the start"
+    },
+    "persons": {
+      "i": "I",
+      "iM": "I (m.)",
+      "iF": "I (f.)",
+      "youM": "you (m.)",
+      "youF": "you (f.)",
+      "he": "he",
+      "she": "she",
+      "we": "we",
+      "weM": "we (m.)",
+      "weF": "we (f.)",
+      "youMPl": "you (m. pl.)",
+      "youFPl": "you (f. pl.)",
+      "theyM": "they (m.)",
+      "theyF": "they (f.)"
+    },
+    "columns": {
+      "form": "Form",
+      "long": "With the pronoun",
+      "short": "Joined",
+      "future": "Future",
+      "imperative": "Imperative"
+    },
+    "sourceBook": "Every form as it stands in the grammar book. Where it gives two forms, a slash parts them.",
+    "sourceRules": "Formed by the book's rules and checked by hand. Where there are two forms, a slash parts them.",
+    "aboutRoot": "This kind of root",
+    "howBuilt": "How it is built: {tense}",
+    "dotsHeading": "The tense dots"
   }
 }

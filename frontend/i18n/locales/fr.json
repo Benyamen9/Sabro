@@ -452,6 +452,10 @@
           "title": "Lexique",
           "subtitle": "chaque mot, lettre par lettre"
         },
+        "grammar": {
+          "title": "Grammaire",
+          "subtitle": "le verbe, temps par temps"
+        },
         "bethGazo": {
           "title": "Beth Gazo",
           "subtitle": "le trésor des chants"
@@ -465,7 +469,8 @@
         "words": "{count} mots | {count} mot | {count} mots",
         "chants": "{count} chants | {count} chant | {count} chants",
         "figures": "{count} figures | {count} figure | {count} figures",
-        "found": "{found} sur {total} trouvées"
+        "found": "{found} sur {total} trouvées",
+        "tables": "{count} tableaux | {count} tableau | {count} tableaux"
       }
     },
     "marks": {
@@ -1279,6 +1284,14 @@
     "libraryShelf": {
       "title": "Bibliothèque",
       "description": "La bibliothèque syriaque de Sabro : le Lexique des mots, le trésor des chants du Beth Gazo et la galerie des figures du Beth Ṣalme."
+    },
+    "grammar": {
+      "title": "Grammaire syriaque : le verbe au passé, au présent et au futur",
+      "description": "Le verbe syriaque présenté temps par temps, pour chaque type de racine, avec qushoyo, rukkokho et les points de temps, selon la tradition syriaque occidentale."
+    },
+    "grammarTable": {
+      "title": "{table} — Grammaire syriaque",
+      "description": "Le verbe syriaque, {tense}, pour les racines du type « {category} » : chaque personne, avec qushoyo, rukkokho et les points de temps."
     }
   },
   "privacy": {
@@ -1435,5 +1448,57 @@
     "found": "rien trouvé | {n} mélodie trouvée | {n} mélodies trouvées",
     "ribbon": "Là où vous vous êtes arrêté",
     "continue": "Reprendre"
+  },
+  "grammar": {
+    "heading": "Le verbe, temps par temps",
+    "lede": "Le verbe syriaque tel que le livre de grammaire le présente : chaque personne, pour chaque type de racine, avec qushoyo et rukkokho. Les points de temps sont dessinés en rouge.",
+    "englishOnly": "Les explications sont en anglais pour l’instant.",
+    "notFound": "Ce tableau n’est pas dans la Grammaire.",
+    "tableCount": "{count} tableaux | {count} tableau | {count} tableaux",
+    "tensesLabel": "Temps",
+    "rootsLabel": "Type de racine",
+    "tenses": {
+      "past": "Le passé",
+      "present": "Le présent",
+      "future": "Le futur"
+    },
+    "categories": {
+      "soundPtoho": "Racine saine, avec ptoho",
+      "soundRbosho": "Racine saine, avec rbosho",
+      "doubled": "Racine redoublée",
+      "weakMiddle": "Faible au milieu",
+      "weakEnd": "Faible à la fin",
+      "alaphFirst": "Olaf au début",
+      "yudhFirst": "Yudh au début",
+      "nunFirst": "Nun au début"
+    },
+    "persons": {
+      "i": "je",
+      "iM": "je (m.)",
+      "iF": "je (f.)",
+      "youM": "tu (m.)",
+      "youF": "tu (f.)",
+      "he": "il",
+      "she": "elle",
+      "we": "nous",
+      "weM": "nous (m.)",
+      "weF": "nous (f.)",
+      "youMPl": "vous (m.)",
+      "youFPl": "vous (f.)",
+      "theyM": "ils",
+      "theyF": "elles"
+    },
+    "columns": {
+      "form": "Forme",
+      "long": "Avec le pronom",
+      "short": "Jointe",
+      "future": "Futur",
+      "imperative": "Impératif"
+    },
+    "sourceBook": "Chaque forme telle qu’elle figure dans le livre de grammaire. Quand il donne deux formes, une barre les sépare.",
+    "sourceRules": "Formé selon les règles du livre et vérifié à la main. Quand il y a deux formes, une barre les sépare.",
+    "aboutRoot": "Ce type de racine",
+    "howBuilt": "Comment il se forme : {tense}",
+    "dotsHeading": "Les points de temps"
   }
 }

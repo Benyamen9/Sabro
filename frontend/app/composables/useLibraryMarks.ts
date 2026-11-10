@@ -32,6 +32,7 @@ export function useLibraryMarks() {
   const { isConfigured, isSignedIn } = useAuth()
   const { locale } = useI18n()
   const { fetchShelf } = useReaderShelf()
+  const { label: grammarLabel } = useGrammar()
 
   const marks = useState<LibraryMark[]>('library-marks', () => [])
   const loaded = useState('library-marks-loaded', () => false)
@@ -40,7 +41,8 @@ export function useLibraryMarks() {
   const ids = computed(() => new Set(marks.value.map(mark => markId(mark.book, mark.itemKey))))
 
   function set(next: LibraryMark[]) {
-    marks.value = sortMarks(next)
+    // Sabro sends no label for a grammar table (its pages live in the hub): name it from its slug.
+    marks.value = sortMarks(next).map(mark => (mark.book === 'grammar' ? { ...mark, label: grammarLabel(mark.itemKey) ?? mark.label } : mark))
     writeDevice(marks.value)
   }
 
@@ -66,7 +68,7 @@ export function useLibraryMarks() {
   async function load() {
     if (import.meta.server) return
     const device = readDevice()
-    marks.value = device
+    set(device)
     loaded.value = true
     if (!signedIn.value) return
 

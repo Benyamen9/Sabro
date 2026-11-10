@@ -15,9 +15,10 @@ const { t, locale } = useI18n()
 const { marks, signedIn } = useLibraryMarks()
 const { isConfigured, signIn } = useAuth()
 
-const BOOK_KEYS: Record<LibraryBook, string> = { 'lexicon': 'lexicon', 'beth-gazo': 'bethGazo', 'beth-salme': 'bethSalme' }
+const BOOK_KEYS: Record<LibraryBook, string> = { 'lexicon': 'lexicon', 'grammar': 'grammar', 'beth-gazo': 'bethGazo', 'beth-salme': 'bethSalme' }
 const BOOK_COLOURS: Record<LibraryBook, string> = {
   'lexicon': 'var(--color-meltho)',
+  'grammar': 'var(--color-grammar)',
   'beth-gazo': 'var(--color-nahlo)',
   'beth-salme': 'var(--color-shmo)',
 }

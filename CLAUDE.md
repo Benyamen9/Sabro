@@ -296,6 +296,27 @@ figure opens inside its book: `?chant=<id>`, `?figure=<id>`). **Unmarking is the
 Undo" shows for a few seconds. The device remembers which marks Sabro has held (`synced`), so a mark removed on
 one device is let go on the others; only a mark made signed out is sent up.
 
+**The Grammar book (ܓܪܰܡܰܛܺܝܩܺܝ, `/library/grammar`; first edition 2026-11-10)** is the fourth book on the shelf:
+the verb (Kaylo Qadmoyo) in **the past, the present and the future with the imperative**, as the Owner teaches it
+from his grammar. One page per table, `/library/grammar/<slug>` (`past-ktab`, `present-qam`, `future-ktab`): 9
+kinds of root in the past and the present, the sound root alone in the future. **A slug is what a ribbon or a
+mark points at: never rename one.** The pages live in the hub, so Sabro stores the slug on trust and sends no
+label; the hub names a table from its slug (`useGrammar`).
+
+- **The forms are generated, never typed in the repo.** `frontend/app/data/grammar-tables.json` is written by
+  `Hito/grammar/export_hub.py` from the Owner's typed tables and his confirmed rules (it refuses to run if the
+  rules no longer reproduce the book). A correction goes into `Hito/grammar` first, then re-export.
+- **The explanations are content, English only for now** (`app/data/grammar.ts`; Owner, 2026-11-09); the names of
+  tenses, persons, columns and kinds of root are interface strings in all five languages.
+- **Set in Serto Urhoy** (Owner, 2026-10-30), whatever script the reader chose: Beth Mardutho's Meltho font
+  ("for free distribution"), served unmodified from `public/type/` (not `public/fonts/`, which the font script
+  empties). The font places qushoyo, rukkokho and vowels.
+- **The tense dots are drawn in red by the page** (`utils/tenseDots.ts`, `GrammarWord.vue`): each word is drawn on
+  a hidden canvas with and without the mark and the dot is placed from the difference, then moved by offsets
+  **set by eye with the Owner over many rounds. Do not tidy them.** A word must stay one text node: wrapping a
+  letter in an element breaks Syriac joining.
+- Say **Kaylo Qadmoyo / Trayono / Tlithoyo**, never Pʿal / Paʿʿel / Aphʿel (Owner, 2026-10-30).
+
 ### Translations
 **Status: deferred. Spec retained, not built first.**
 

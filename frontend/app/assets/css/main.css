@@ -39,6 +39,9 @@
   --color-shmo-faint: #eaf0e8;
   --color-nahlo: #6d4b9e;
   --color-nahlo-dark: #57397f;
+  --color-grammar: #1f3d5a;
+  --color-grammar-faint: #e6edf4;
+  --color-tense-dot: #9b2c2c;
   --color-nahlo-faint: #efe9f7;
   /* Sofro's charcoal (scribal family). Its night shade is light, so the
      text on a Sofro-coloured fill flips too — --color-on-sofro. */
@@ -101,6 +104,9 @@
     --color-shmo-faint: #19251c;
     --color-nahlo: #a98bd6;
     --color-nahlo-dark: #8b6bc0;
+    --color-grammar: #8fb4d9;
+    --color-grammar-faint: #162230;
+    --color-tense-dot: #e07a6f;
     --color-nahlo-faint: #1e1830;
     --color-sofro: #c6cdd2;
     --color-sofro-dark: #a6afb5;
@@ -162,6 +168,9 @@
   --color-shmo-faint: #eaf0e8;
   --color-nahlo: #6d4b9e;
   --color-nahlo-dark: #57397f;
+  --color-grammar: #1f3d5a;
+  --color-grammar-faint: #e6edf4;
+  --color-tense-dot: #9b2c2c;
   --color-nahlo-faint: #efe9f7;
   /* Sofro's charcoal (scribal family). Its night shade is light, so the
      text on a Sofro-coloured fill flips too — --color-on-sofro. */
@@ -221,6 +230,9 @@
   --color-shmo-faint: #19251c;
   --color-nahlo: #a98bd6;
   --color-nahlo-dark: #8b6bc0;
+  --color-grammar: #8fb4d9;
+  --color-grammar-faint: #162230;
+  --color-tense-dot: #e07a6f;
   --color-nahlo-faint: #1e1830;
   --color-sofro: #c6cdd2;
   --color-sofro-dark: #a6afb5;
@@ -350,4 +362,13 @@
   .badge-swim::after {
     animation: none;
   }
+}
+
+/* Serto Urhoy (Beth Mardutho's Meltho fonts, free to use and distribute, served unmodified): the
+   Grammar book's own face (Owner, 2026-10-30). Fetched only by pages that set text in it. Kept out of public/fonts/, which
+   scripts/self-host-fonts.mjs empties and refills. */
+@font-face {
+  font-family: "Serto Urhoy";
+  src: url("/type/SyrCOMUrhoy.otf") format("opentype");
+  font-display: block;
 }

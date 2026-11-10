@@ -90,10 +90,11 @@ export function mergeMarks(local: LibraryMark[], server: ServerMark[]): { merged
   return { merged: sortMarks(merged), toSend }
 }
 
-/** Where a marked item opens: a word has its own page, a chant and a figure open inside their book. */
+/** Where a marked item opens: a word and a grammar table have their own page, a chant and a figure open inside their book. */
 export function markHref(mark: Pick<LibraryMark, 'book' | 'itemKey'>): string {
   const key = encodeURIComponent(mark.itemKey)
   if (mark.book === 'lexicon') return `/library/lexicon/${key}`
+  if (mark.book === 'grammar') return `/library/grammar/${key}`
   if (mark.book === 'beth-gazo') return `/library/beth-gazo?chant=${key}`
   return `/library/beth-salme?figure=${key}`
 }

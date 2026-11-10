@@ -43,6 +43,13 @@ export function useLibraryPlaces() {
   const { isConfigured, isSignedIn } = useAuth()
   const { locale } = useI18n()
   const { fetchShelf } = useReaderShelf()
+  const { label: grammarLabel } = useGrammar()
+
+  /** Sabro sends no label for a grammar table (its pages live in the hub): name it from its slug. */
+  function named(all: LibraryPlaces): LibraryPlaces {
+    const kept = all.grammar
+    return kept ? { ...all, grammar: { ...kept, label: grammarLabel(kept.itemKey) ?? kept.label } } : all
+  }
 
   const places = useState<LibraryPlaces>('library-places', () => ({}))
   const loaded = useState('library-places-loaded', () => false)
@@ -61,7 +68,7 @@ export function useLibraryPlaces() {
   async function load() {
     if (import.meta.server) return
     const device = readDevice()
-    places.value = device
+    places.value = named(device)
     loaded.value = true
     if (!signedIn.value) return
 
@@ -74,8 +81,8 @@ export function useLibraryPlaces() {
     }
 
     const { merged, toSend } = mergePlaces(device, shelf.places)
-    places.value = merged
-    writeDevice(merged)
+    places.value = named(merged)
+    writeDevice(places.value)
     for (const { book, place } of toSend) {
       try {
         const kept = await send(book, place)

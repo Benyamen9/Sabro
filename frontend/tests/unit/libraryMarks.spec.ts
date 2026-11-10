@@ -69,7 +69,7 @@ describe('mergeMarks', () => {
 
     const { merged } = mergeMarks(local, [
       { book: 'lexicon', itemKey: 'w1', markedAt: EARLY, label: null },
-      { book: 'grammar', itemKey: 'past-ktab', markedAt: LATE },
+      { book: 'hymnal', itemKey: 'past-ktab', markedAt: LATE },
     ])
 
     expect(merged).toEqual([{ book: 'lexicon', itemKey: 'w1', markedAt: EARLY, label: { title: 'king' }, synced: true }])

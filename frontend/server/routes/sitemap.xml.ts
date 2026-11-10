@@ -5,6 +5,11 @@
 // Both come from the same public API the pages render from; if the API is
 // unreachable the static URLs still ship rather than failing the whole
 // sitemap. Cached for an hour — the pools grow slowly.
+import grammar from '../../app/data/grammar-tables.json'
+
+// The Grammar book's tables live in the hub, one page each.
+const GRAMMAR_SLUGS = grammar.tables.map(table => table.slug)
+
 interface LibraryItem { lexiconEntryId: string, lastPlayedOn?: string }
 interface LibraryPage { items: LibraryItem[], total: number, page: number, pageSize: number }
 interface DictionaryItem { id: string }
@@ -24,6 +29,8 @@ export default defineCachedEventHandler(async (event) => {
     { loc: `${siteUrl}/library/lexicon` },
     { loc: `${siteUrl}/library/beth-gazo` },
     { loc: `${siteUrl}/library/beth-salme` },
+    { loc: `${siteUrl}/library/grammar` },
+    ...GRAMMAR_SLUGS.map(slug => ({ loc: `${siteUrl}/library/grammar/${slug}` })),
     { loc: `${siteUrl}/privacy` },
   ]
 

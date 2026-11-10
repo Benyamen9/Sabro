@@ -68,7 +68,7 @@ describe('mergePlaces', () => {
   })
 
   it('ignores books it does not know', () => {
-    const { merged } = mergePlaces({}, [{ book: 'grammar', itemKey: 'past', openedAt: EARLY }])
+    const { merged } = mergePlaces({}, [{ book: 'hymnal', itemKey: 'past', openedAt: EARLY }])
 
     expect(merged).toEqual({})
   })

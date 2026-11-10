@@ -452,6 +452,10 @@
           "title": "Lexikon",
           "subtitle": "varje ord, bokstav för bokstav"
         },
+        "grammar": {
+          "title": "Grammatik",
+          "subtitle": "verbet, tempus för tempus"
+        },
         "bethGazo": {
           "title": "Beth Gazo",
           "subtitle": "skattkammaren av sånger"
@@ -465,7 +469,8 @@
         "words": "{count} ord | {count} ord | {count} ord",
         "chants": "{count} sånger | {count} sång | {count} sånger",
         "figures": "{count} gestalter | {count} gestalt | {count} gestalter",
-        "found": "{found} av {total} hittade"
+        "found": "{found} av {total} hittade",
+        "tables": "{count} tabeller | {count} tabell | {count} tabeller"
       }
     },
     "marks": {
@@ -1279,6 +1284,14 @@
     "libraryShelf": {
       "title": "Bibliotek",
       "description": "Sabros syriska bibliotek: Lexikonet med ord, Beth Gazos skattkammare av sånger och Beth Ṣalmes galleri av gestalter."
+    },
+    "grammar": {
+      "title": "Syrisk grammatik: verbet i dåtid, nutid och framtid",
+      "description": "Det syriska verbet tempus för tempus, för varje slags rot, med qushoyo, rukkokho och tempuspunkterna, enligt den västsyriska traditionen."
+    },
+    "grammarTable": {
+      "title": "{table} — Syrisk grammatik",
+      "description": "Det syriska verbet, {tense}, för rötter av slaget ”{category}”: varje person, med qushoyo, rukkokho och tempuspunkterna."
     }
   },
   "privacy": {
@@ -1435,5 +1448,57 @@
     "found": "inget hittat | {n} melodi hittad | {n} melodier hittade",
     "ribbon": "Där du slutade",
     "continue": "Fortsätt"
+  },
+  "grammar": {
+    "heading": "Verbet, tempus för tempus",
+    "lede": "Det syriska verbet så som grammatikboken ställer upp det: varje person, för varje slags rot, med qushoyo och rukkokho. Tempuspunkterna är ritade i rött.",
+    "englishOnly": "Förklaringarna är på engelska tills vidare.",
+    "notFound": "Den här tabellen finns inte i Grammatiken.",
+    "tableCount": "{count} tabeller | {count} tabell | {count} tabeller",
+    "tensesLabel": "Tempus",
+    "rootsLabel": "Slags rot",
+    "tenses": {
+      "past": "Dåtid",
+      "present": "Nutid",
+      "future": "Framtid"
+    },
+    "categories": {
+      "soundPtoho": "Stark rot, med ptoho",
+      "soundRbosho": "Stark rot, med rbosho",
+      "doubled": "Fördubblad rot",
+      "weakMiddle": "Svag i mitten",
+      "weakEnd": "Svag i slutet",
+      "alaphFirst": "Olaf i början",
+      "yudhFirst": "Yudh i början",
+      "nunFirst": "Nun i början"
+    },
+    "persons": {
+      "i": "jag",
+      "iM": "jag (m.)",
+      "iF": "jag (f.)",
+      "youM": "du (m.)",
+      "youF": "du (f.)",
+      "he": "han",
+      "she": "hon",
+      "we": "vi",
+      "weM": "vi (m.)",
+      "weF": "vi (f.)",
+      "youMPl": "ni (m.)",
+      "youFPl": "ni (f.)",
+      "theyM": "de (m.)",
+      "theyF": "de (f.)"
+    },
+    "columns": {
+      "form": "Form",
+      "long": "Med pronomenet",
+      "short": "Sammanfogad",
+      "future": "Framtid",
+      "imperative": "Imperativ"
+    },
+    "sourceBook": "Varje form som den står i grammatikboken. Där den ger två former skiljer ett snedstreck dem åt.",
+    "sourceRules": "Bildad enligt bokens regler och kontrollerad för hand. Där det finns två former skiljer ett snedstreck dem åt.",
+    "aboutRoot": "Det här slaget av rot",
+    "howBuilt": "Hur det bildas: {tense}",
+    "dotsHeading": "Tempuspunkterna"
   }
 }
