@@ -22,7 +22,11 @@ test.describe('Grammar book', () => {
 
     await page.getByRole('navigation', { name: 'Tense' }).getByRole('link', { name: 'The present' }).click()
     await expect(page).toHaveURL(/\/library\/grammar\/present-gbo$/)
-    await page.getByRole('button', { name: /^Mark The present/ }).click()
+    // The button answers only once the page has hydrated, so press until it says so.
+    await expect(async () => {
+      await page.getByRole('button', { name: /^Mark The present/ }).click({ timeout: 1000 })
+      await expect(page.getByRole('button', { name: /^Remove the mark from The present/ })).toBeVisible({ timeout: 1000 })
+    }).toPass()
 
     await page.goto('/library')
     await expect(page.getByRole('button', { name: /Marked 1/ })).toBeVisible()
