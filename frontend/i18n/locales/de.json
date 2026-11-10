@@ -1529,6 +1529,46 @@
         "title": "Qushoyo und Rukkokho",
         "line": "Wann ein Buchstabe hart ist und wann weich."
       }
+    },
+    "examplesHeading": "Beispiele",
+    "examples": {
+      "ktab": {
+        "past": "er schrieb",
+        "present": "er schreibt",
+        "future": "er wird schreiben"
+      },
+      "rgez": {
+        "past": "er war zornig",
+        "present": "er ist zornig"
+      },
+      "pak": {
+        "past": "er zerbrach, er zerschmetterte",
+        "present": "er zerbricht, er zerschmettert"
+      },
+      "tab": {
+        "past": "er kehrte zurück · er bereute",
+        "present": "er kehrt zurück · er bereut"
+      },
+      "qam": {
+        "past": "er stand auf · er stand",
+        "present": "er steht auf · er steht"
+      },
+      "gbo": {
+        "past": "er wählte",
+        "present": "er wählt"
+      },
+      "ebad": {
+        "past": "er ging zugrunde · er ging verloren",
+        "present": "er geht zugrunde · er geht verloren"
+      },
+      "isef": {
+        "past": "er trug Sorge · er war besorgt",
+        "present": "er trägt Sorge · er ist besorgt"
+      },
+      "ntar": {
+        "past": "es fiel ab",
+        "present": "es fällt ab"
+      }
     }
   }
 }
