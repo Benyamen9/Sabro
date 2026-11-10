@@ -287,6 +287,15 @@ keep their dates; marks from both sides are kept (a mark removed while signed ou
 Beth Gazo's localStorage ribbon moves into this once. Ceiling: `ReadingMark.MaxPerUser` (2000). Included in the
 profile **export** and removed by **account deletion**.
 
+**The marks in the hub (2026-11-10).** `MarkButton` is on a word's page and each line of the word list, on each
+chant line and on a figure's page: "Mark ܀" / "Marked", grey until marked, gold after. **"܀ Marked n"** by the
+shelf's title, and on the profile, opens one plain panel (`MarkedPanel`: sheet on a phone, right panel on a
+computer; newest first, a filter per book, rows edged in the book's colour). A row opens its item (a chant or
+figure opens inside its book: `?chant=<id>`, `?figure=<id>`). **Unmarking is the row's gold tick** (Owner,
+2026-11-01: no bin, no popup, no select mode): the row only fades until the panel closes, then "n marks removed ·
+Undo" shows for a few seconds. The device remembers which marks Sabro has held (`synced`), so a mark removed on
+one device is let go on the others; only a mark made signed out is sent up.
+
 ### Translations
 **Status: deferred. Spec retained, not built first.**
 

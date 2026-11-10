@@ -90,7 +90,11 @@ const anyPlace = computed(() => Object.keys(places.value).length > 0)
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
         {{ t('library.shelf.eyebrow') }}
       </p>
-      <h1 class="mt-3 font-serif text-4xl font-semibold tracking-[-0.02em] sm:text-[2.75rem]">{{ t('library.shelf.heading') }}</h1>
+      <!-- "܀ Marked n" sits by the title (Owner, 2026-11-01), so the reader's marks are never below the books. -->
+      <div class="mt-3 flex flex-wrap items-end gap-x-3 gap-y-2.5">
+        <h1 class="flex-1 font-serif text-4xl font-semibold tracking-[-0.02em] sm:text-[2.75rem]">{{ t('library.shelf.heading') }}</h1>
+        <div class="mb-1"><MarkedLauncher /></div>
+      </div>
     </header>
 
     <div class="grid gap-3.5 md:grid-cols-3 md:gap-4">

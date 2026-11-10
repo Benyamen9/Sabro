@@ -172,6 +172,15 @@ function categoryLabel(category: string | undefined) {
               <SyriacText :text="data.root" class="!text-[17px] leading-none text-[var(--color-accent)]" />
             </span>
           </div>
+          <!-- The reader's own mark: found again under "܀ Marked" on the Library shelf. -->
+          <div class="mt-4 flex justify-center">
+            <MarkButton
+              book="lexicon"
+              :item-key="data.id"
+              :label="{ title: preferredMeaning(data.meanings) ?? '', syriac: heroForm }"
+              :name="preferredMeaning(data.meanings) ?? heroForm"
+            />
+          </div>
         </div>
         <!-- Senses: the meanings belong to the entry itself, one row per language. -->
         <div class="border-t border-[var(--color-border)]">

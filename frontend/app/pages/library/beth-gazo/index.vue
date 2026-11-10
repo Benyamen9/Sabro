@@ -18,6 +18,7 @@ import { chantCount, filterBook, foundByIncipit, lineFor, locateChant, modeLabel
  * reopens there.
  */
 const { t, locale } = useI18n()
+const route = useRoute()
 const config = useRuntimeConfig()
 const mediaUrl = useMediaUrl()
 const { book, pending, failed } = useBethGazoBook()
@@ -147,6 +148,24 @@ onMounted(async () => {
   openSections.value.add(found.section.id)
   unfolded.value.add(melodyKey(found.section, found.melody))
 })
+
+/**
+ * A chant opened from the Marked panel (`?chant=<id>`): its section opens, its melody unfolds and
+ * the line is ringed. It is shown, not played, so the ribbon stays where it was.
+ */
+const shownChantId = computed(() => (typeof route.query.chant === 'string' ? route.query.chant : null))
+
+watch([book, shownChantId], async ([loadedBook, id]) => {
+  if (import.meta.server || !loadedBook || !id) return
+  const found = locateChant(loadedBook, id)
+  if (!found) return
+  query.value = ''
+  modeId.value = null
+  openSections.value.add(found.section.id)
+  unfolded.value.add(melodyKey(found.section, found.melody))
+  await nextTick()
+  document.getElementById(`chant-${id}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+}, { immediate: true })
 
 /** Which melody line carries the ribbon mark. */
 const ribbonMelody = computed(() => (ribbon.value ? melodyKey(ribbon.value.section, ribbon.value.melody) : null))
@@ -294,6 +313,7 @@ async function continueFromRibbon() {
                   :mode-label="null"
                   :playing="isPlaying(chant)"
                   :current="current?.chant.id === chant.id"
+                  :shown="shownChantId === chant.id"
                   @toggle="toggle(chant, melody.name, section.name)"
                 />
               </template>
@@ -339,6 +359,7 @@ async function continueFromRibbon() {
                     :mode-label="chant.modeId ? labels.get(chant.modeId) ?? null : null"
                     :playing="isPlaying(chant)"
                     :current="current?.chant.id === chant.id"
+                    :shown="shownChantId === chant.id"
                     @toggle="toggle(chant, melody.name, section.name)"
                   />
                 </div>
