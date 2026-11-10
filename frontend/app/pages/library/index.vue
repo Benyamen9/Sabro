@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { BethGazoBookDto, HistoricalFigureListItem, PagedResult, ShmoCollectionDto } from '~/types/api'
+import { GRAMMAR_CHAPTERS } from '~/data/grammar'
 import { chantCount } from '~/utils/bethGazo'
 import type { LibraryBook } from '~/utils/libraryPlaces'
 
 /**
  * The Library shelf (Owner, 2026-11-01): one place to choose a book, each keeping its own page and
  * style. The covers carry live counts of what is published and, where the reader has a place, the
- * red ribbon. The Grammar joins the shelf when its first page is ready (Owner, 2026-11-09).
+ * red ribbon. The Grammar joined the shelf with its first edition (2026-11-10).
  */
 const { t } = useI18n()
 const api = useSabroApi()
@@ -61,6 +62,13 @@ const books = computed(() => {
       count: c?.words != null ? t('library.shelf.counts.words', { count: c.words }, c.words) : null,
     },
     {
+      book: 'grammar' as LibraryBook,
+      title: t('library.shelf.books.grammar.title'),
+      syriacTitle: 'ܓܪܰܡܰܛܺܝܩܺܝ',
+      subtitle: t('library.shelf.books.grammar.subtitle'),
+      count: t('library.shelf.counts.chapters', { count: GRAMMAR_CHAPTERS.length }, GRAMMAR_CHAPTERS.length),
+    },
+    {
       book: 'beth-gazo' as LibraryBook,
       title: t('library.shelf.books.bethGazo.title'),
       syriacTitle: 'ܒܝܬ ܓܙܐ',
@@ -97,7 +105,7 @@ const anyPlace = computed(() => Object.keys(places.value).length > 0)
       </div>
     </header>
 
-    <div class="grid gap-3.5 md:grid-cols-3 md:gap-4">
+    <div class="grid gap-3.5 md:grid-cols-4 md:gap-3.5">
       <LibraryCover
         v-for="item in books"
         :key="item.book"

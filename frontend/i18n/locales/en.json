@@ -452,6 +452,10 @@
           "title": "Lexicon",
           "subtitle": "every word, letter by letter"
         },
+        "grammar": {
+          "title": "Grammar",
+          "subtitle": "the rules of the verb"
+        },
         "bethGazo": {
           "title": "Beth Gazo",
           "subtitle": "the treasury of chants"
@@ -465,7 +469,8 @@
         "words": "{count} words | {count} word | {count} words",
         "chants": "{count} chants | {count} chant | {count} chants",
         "figures": "{count} figures | {count} figure | {count} figures",
-        "found": "{found} of {total} found"
+        "found": "{found} of {total} found",
+        "chapters": "{count} chapters | {count} chapter | {count} chapters"
       }
     },
     "marks": {
@@ -1279,6 +1284,13 @@
     "libraryShelf": {
       "title": "Library",
       "description": "Sabro's Syriac library: the Lexicon of words, the Beth Gazo treasury of chants and the Beth Ṣalme gallery of figures."
+    },
+    "grammar": {
+      "title": "Syriac grammar: the rules of the verb",
+      "description": "How the Syriac verb is built, rule by rule: the kinds of root, the past, the present, the future, the tense dots, qushoyo and rukkokho, in the West Syriac tradition."
+    },
+    "grammarChapter": {
+      "title": "{chapter} — Syriac grammar"
     }
   },
   "privacy": {
@@ -1435,5 +1447,88 @@
     "found": "nothing found | {n} melody found | {n} melodies found",
     "ribbon": "Where you left off",
     "continue": "Continue"
+  },
+  "grammar": {
+    "heading": "The rules of the verb",
+    "lede": "How Syriac verbs are built, rule by rule. The tables themselves are in the Lexicon, on each verb's page.",
+    "englishOnly": "The explanations are in English for now.",
+    "notFound": "This chapter is not in the Grammar.",
+    "tensesLabel": "Tense",
+    "tenses": {
+      "past": "The past",
+      "present": "The present",
+      "future": "The future"
+    },
+    "categories": {
+      "soundPtoho": "Sound root, with ptoho",
+      "soundRbosho": "Sound root, with rbosho",
+      "doubled": "Doubled root",
+      "weakMiddle": "Weak in the middle",
+      "weakEnd": "Weak at the end",
+      "alaphFirst": "Olaf at the start",
+      "yudhFirst": "Yudh at the start",
+      "nunFirst": "Nun at the start"
+    },
+    "persons": {
+      "i": "I",
+      "iM": "I (m.)",
+      "iF": "I (f.)",
+      "youM": "you (m.)",
+      "youF": "you (f.)",
+      "he": "he",
+      "she": "she",
+      "we": "we",
+      "weM": "we (m.)",
+      "weF": "we (f.)",
+      "youMPl": "you (m. pl.)",
+      "youFPl": "you (f. pl.)",
+      "theyM": "they (m.)",
+      "theyF": "they (f.)"
+    },
+    "columns": {
+      "form": "Form",
+      "long": "With the pronoun",
+      "short": "Joined",
+      "future": "Future",
+      "imperative": "Imperative"
+    },
+    "sourceBook": "Every form as it stands in the grammar book. Where it gives two forms, a slash parts them.",
+    "sourceRules": "Formed by the book's rules and checked by hand. Where there are two forms, a slash parts them.",
+    "howBuilt": "How it is built: {tense}",
+    "chapterNumber": "Chapter {number}",
+    "nextChapter": "Next chapter",
+    "conjugation": "Conjugation",
+    "rulesInGrammar": "The rules, in the Grammar",
+    "tablesInLexicon": "The tables are in the Lexicon, on each verb's page.",
+    "seeInVerb": "See it in a verb",
+    "seeInVerbLine": "Each opens the verb in the Lexicon, with its full table.",
+    "verbsComing": "The model verbs. Their pages in the Lexicon, with the full tables, are on their way.",
+    "openVerb": "Open the verb in the Lexicon: {kind}",
+    "chapters": {
+      "kinds-of-root": {
+        "title": "The kinds of root",
+        "line": "Sound, doubled, weak: eight kinds, each with its model verb."
+      },
+      "past": {
+        "title": "The past",
+        "line": "Ten persons, one set of endings for every kind of root."
+      },
+      "present": {
+        "title": "The present",
+        "line": "One word in four shapes, with the pronoun after it or joined to it."
+      },
+      "future": {
+        "title": "The future and the imperative",
+        "line": "A letter in front of the root."
+      },
+      "tense-dots": {
+        "title": "The tense dots",
+        "line": "Below for the past, above for the present: what each dot tells apart."
+      },
+      "qushoyo-rukkokho": {
+        "title": "Qushoyo and rukkokho",
+        "line": "When a letter is hard and when it is soft."
+      }
+    }
   }
 }

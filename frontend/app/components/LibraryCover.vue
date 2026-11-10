@@ -28,6 +28,8 @@ const { t } = useI18n()
     <span class="plate" aria-hidden="true">
       <!-- Lexicon: an open book. -->
       <svg v-if="props.book === 'lexicon'" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M32 18c-6-4-14-5-22-4v34c8-1 16 0 22 4 6-4 14-5 22-4V14c-8-1-16 0-22 4z" /><path d="M32 18v34" /><path d="M15 24c4-.5 8 0 12 1.5M15 31c4-.5 8 0 12 1.5M15 38c4-.5 8 0 12 1.5M37 25.5c4-1.5 8-2 12-1.5M37 32.5c4-1.5 8-2 12-1.5M37 39.5c4-1.5 8-2 12-1.5" /></svg>
+      <!-- Grammar: a branch growing from one root. -->
+      <svg v-else-if="props.book === 'grammar'" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M32 56V30" /><path d="M32 40c-6 0-12-4-14-12M32 36c6 0 12-4 14-12M32 30c0-6-2-10-2-14" /><circle cx="18" cy="24" r="5" /><circle cx="46" cy="20" r="5" /><circle cx="30" cy="12" r="5" /><path d="M22 56h20" /></svg>
       <!-- Beth Gazo: a harp. -->
       <svg v-else-if="props.book === 'beth-gazo'" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 55V13" /><path d="M19 13c7-6 14-4 20 0s9 4 12 1" /><path d="M51 14L25 53" stroke-width="3" /><path d="M25 14.5v37M31 11.6v30.5M37 12.4v21M43 16.2v10" /><path d="M15 55h14" /><circle cx="19" cy="10" r="1.6" fill="currentColor" /></svg>
       <!-- Beth Ṣalme: a figure in an arched frame. -->
@@ -81,6 +83,7 @@ const { t } = useI18n()
   pointer-events: none;
 }
 .cover--lexicon { background: #134f4b; }
+.cover--grammar { background: #1f3d5a; }
 .cover--beth-gazo { background: #4f3474; }
 .cover--beth-salme { background: #3f5a41; }
 
@@ -124,12 +127,12 @@ const { t } = useI18n()
     grid-template-columns: 1fr;
     justify-items: center;
     align-content: start;
-    min-height: 370px;
-    padding: 28px 22px 26px 34px;
+    min-height: 350px;
+    padding: 28px 18px 26px 30px;
     text-align: center;
   }
   .ribbon { right: 26px; width: 22px; height: 64px; }
-  .plate { width: 128px; }
+  .plate { width: min(128px, 100%); }
   .text { align-items: center; }
   /* On the tall book the Syriac title sits under the plate, above the English. */
   .syriac { order: 0; align-self: center; margin-top: 16px; font-size: 26px; }

@@ -9,6 +9,7 @@ test.describe('Library shelf', () => {
     await expect(page.getByRole('heading', { name: 'Choose a book' })).toBeVisible()
     const main = page.getByRole('main')
     await expect(main.getByRole('link', { name: /Lexicon/ })).toHaveAttribute('href', '/library/lexicon')
+    await expect(main.getByRole('link', { name: /Grammar/ })).toHaveAttribute('href', '/library/grammar')
     await expect(main.getByRole('link', { name: /Beth Gazo/ })).toHaveAttribute('href', '/library/beth-gazo')
     await expect(main.getByRole('link', { name: /Beth Ṣalme/ })).toHaveAttribute('href', '/library/beth-salme')
   })

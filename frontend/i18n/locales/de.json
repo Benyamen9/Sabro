@@ -452,6 +452,10 @@
           "title": "Lexikon",
           "subtitle": "jedes Wort, Buchstabe für Buchstabe"
         },
+        "grammar": {
+          "title": "Grammatik",
+          "subtitle": "die Regeln des Verbs"
+        },
         "bethGazo": {
           "title": "Beth Gazo",
           "subtitle": "die Schatzkammer der Gesänge"
@@ -465,7 +469,8 @@
         "words": "{count} Wörter | {count} Wort | {count} Wörter",
         "chants": "{count} Gesänge | {count} Gesang | {count} Gesänge",
         "figures": "{count} Gestalten | {count} Gestalt | {count} Gestalten",
-        "found": "{found} von {total} gefunden"
+        "found": "{found} von {total} gefunden",
+        "chapters": "{count} Kapitel | {count} Kapitel | {count} Kapitel"
       }
     },
     "marks": {
@@ -1279,6 +1284,13 @@
     "libraryShelf": {
       "title": "Bibliothek",
       "description": "Die syrische Bibliothek von Sabro: das Lexikon der Wörter, die Schatzkammer der Gesänge des Beth Gazo und die Galerie der Gestalten des Beth Ṣalme."
+    },
+    "grammar": {
+      "title": "Syrische Grammatik: die Regeln des Verbs",
+      "description": "Wie das syrische Verb gebildet wird, Regel für Regel: die Arten der Wurzel, Vergangenheit, Gegenwart, Zukunft, die Zeitpunkte, Qushoyo und Rukkokho, nach der westsyrischen Tradition."
+    },
+    "grammarChapter": {
+      "title": "{chapter} — Syrische Grammatik"
     }
   },
   "privacy": {
@@ -1435,5 +1447,88 @@
     "found": "nichts gefunden | {n} Melodie gefunden | {n} Melodien gefunden",
     "ribbon": "Wo du aufgehört hast",
     "continue": "Weiter"
+  },
+  "grammar": {
+    "heading": "Die Regeln des Verbs",
+    "lede": "Wie syrische Verben gebildet werden, Regel für Regel. Die Tabellen selbst stehen im Lexikon, auf der Seite jedes Verbs.",
+    "englishOnly": "Die Erklärungen sind vorerst auf Englisch.",
+    "notFound": "Dieses Kapitel steht nicht in der Grammatik.",
+    "tensesLabel": "Zeit",
+    "tenses": {
+      "past": "Die Vergangenheit",
+      "present": "Die Gegenwart",
+      "future": "Die Zukunft"
+    },
+    "categories": {
+      "soundPtoho": "Starke Wurzel, mit Ptoho",
+      "soundRbosho": "Starke Wurzel, mit Rbosho",
+      "doubled": "Verdoppelte Wurzel",
+      "weakMiddle": "Schwach in der Mitte",
+      "weakEnd": "Schwach am Ende",
+      "alaphFirst": "Olaf am Anfang",
+      "yudhFirst": "Yudh am Anfang",
+      "nunFirst": "Nun am Anfang"
+    },
+    "persons": {
+      "i": "ich",
+      "iM": "ich (m.)",
+      "iF": "ich (f.)",
+      "youM": "du (m.)",
+      "youF": "du (f.)",
+      "he": "er",
+      "she": "sie",
+      "we": "wir",
+      "weM": "wir (m.)",
+      "weF": "wir (f.)",
+      "youMPl": "ihr (m.)",
+      "youFPl": "ihr (f.)",
+      "theyM": "sie (m. Pl.)",
+      "theyF": "sie (f. Pl.)"
+    },
+    "columns": {
+      "form": "Form",
+      "long": "Mit dem Pronomen",
+      "short": "Verbunden",
+      "future": "Zukunft",
+      "imperative": "Imperativ"
+    },
+    "sourceBook": "Jede Form, wie sie im Grammatikbuch steht. Wo es zwei Formen gibt, trennt sie ein Schrägstrich.",
+    "sourceRules": "Nach den Regeln des Buches gebildet und von Hand geprüft. Wo es zwei Formen gibt, trennt sie ein Schrägstrich.",
+    "howBuilt": "Wie sie gebildet wird: {tense}",
+    "chapterNumber": "Kapitel {number}",
+    "nextChapter": "Nächstes Kapitel",
+    "conjugation": "Konjugation",
+    "rulesInGrammar": "Die Regeln, in der Grammatik",
+    "tablesInLexicon": "Die Tabellen stehen im Lexikon, auf der Seite jedes Verbs.",
+    "seeInVerb": "An einem Verb sehen",
+    "seeInVerbLine": "Jedes öffnet das Verb im Lexikon, mit seiner vollständigen Tabelle.",
+    "verbsComing": "Die Musterverben. Ihre Seiten im Lexikon, mit den vollständigen Tabellen, folgen bald.",
+    "openVerb": "Das Verb im Lexikon öffnen: {kind}",
+    "chapters": {
+      "kinds-of-root": {
+        "title": "Die Arten der Wurzel",
+        "line": "Stark, verdoppelt, schwach: acht Arten, jede mit ihrem Musterverb."
+      },
+      "past": {
+        "title": "Die Vergangenheit",
+        "line": "Zehn Personen, dieselben Endungen für jede Art von Wurzel."
+      },
+      "present": {
+        "title": "Die Gegenwart",
+        "line": "Ein Wort in vier Formen, mit dem Pronomen danach oder damit verbunden."
+      },
+      "future": {
+        "title": "Die Zukunft und der Imperativ",
+        "line": "Ein Buchstabe vor der Wurzel."
+      },
+      "tense-dots": {
+        "title": "Die Zeitpunkte",
+        "line": "Unten für die Vergangenheit, oben für die Gegenwart: was jeder Punkt unterscheidet."
+      },
+      "qushoyo-rukkokho": {
+        "title": "Qushoyo und Rukkokho",
+        "line": "Wann ein Buchstabe hart ist und wann weich."
+      }
+    }
   }
 }

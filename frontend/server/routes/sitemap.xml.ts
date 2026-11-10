@@ -5,6 +5,9 @@
 // Both come from the same public API the pages render from; if the API is
 // unreachable the static URLs still ship rather than failing the whole
 // sitemap. Cached for an hour — the pools grow slowly.
+// The Grammar book's chapters live in the hub, one page each (see app/data/grammar.ts).
+const GRAMMAR_SLUGS = ['kinds-of-root', 'past', 'present', 'future', 'tense-dots', 'qushoyo-rukkokho']
+
 interface LibraryItem { lexiconEntryId: string, lastPlayedOn?: string }
 interface LibraryPage { items: LibraryItem[], total: number, page: number, pageSize: number }
 interface DictionaryItem { id: string }
@@ -24,6 +27,8 @@ export default defineCachedEventHandler(async (event) => {
     { loc: `${siteUrl}/library/lexicon` },
     { loc: `${siteUrl}/library/beth-gazo` },
     { loc: `${siteUrl}/library/beth-salme` },
+    { loc: `${siteUrl}/library/grammar` },
+    ...GRAMMAR_SLUGS.map(slug => ({ loc: `${siteUrl}/library/grammar/${slug}` })),
     { loc: `${siteUrl}/privacy` },
   ]
 

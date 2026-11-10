@@ -452,6 +452,10 @@
           "title": "Lexikon",
           "subtitle": "varje ord, bokstav för bokstav"
         },
+        "grammar": {
+          "title": "Grammatik",
+          "subtitle": "verbets regler"
+        },
         "bethGazo": {
           "title": "Beth Gazo",
           "subtitle": "skattkammaren av sånger"
@@ -465,7 +469,8 @@
         "words": "{count} ord | {count} ord | {count} ord",
         "chants": "{count} sånger | {count} sång | {count} sånger",
         "figures": "{count} gestalter | {count} gestalt | {count} gestalter",
-        "found": "{found} av {total} hittade"
+        "found": "{found} av {total} hittade",
+        "chapters": "{count} kapitel | {count} kapitel | {count} kapitel"
       }
     },
     "marks": {
@@ -1279,6 +1284,13 @@
     "libraryShelf": {
       "title": "Bibliotek",
       "description": "Sabros syriska bibliotek: Lexikonet med ord, Beth Gazos skattkammare av sånger och Beth Ṣalmes galleri av gestalter."
+    },
+    "grammar": {
+      "title": "Syrisk grammatik: verbets regler",
+      "description": "Hur det syriska verbet bildas, regel för regel: rötternas slag, dåtid, nutid, framtid, tempuspunkterna, qushoyo och rukkokho, enligt den västsyriska traditionen."
+    },
+    "grammarChapter": {
+      "title": "{chapter} — Syrisk grammatik"
     }
   },
   "privacy": {
@@ -1435,5 +1447,88 @@
     "found": "inget hittat | {n} melodi hittad | {n} melodier hittade",
     "ribbon": "Där du slutade",
     "continue": "Fortsätt"
+  },
+  "grammar": {
+    "heading": "Verbets regler",
+    "lede": "Hur syriska verb bildas, regel för regel. Själva tabellerna finns i Lexikonet, på varje verbs sida.",
+    "englishOnly": "Förklaringarna är på engelska tills vidare.",
+    "notFound": "Det här kapitlet finns inte i Grammatiken.",
+    "tensesLabel": "Tempus",
+    "tenses": {
+      "past": "Dåtid",
+      "present": "Nutid",
+      "future": "Framtid"
+    },
+    "categories": {
+      "soundPtoho": "Stark rot, med ptoho",
+      "soundRbosho": "Stark rot, med rbosho",
+      "doubled": "Fördubblad rot",
+      "weakMiddle": "Svag i mitten",
+      "weakEnd": "Svag i slutet",
+      "alaphFirst": "Olaf i början",
+      "yudhFirst": "Yudh i början",
+      "nunFirst": "Nun i början"
+    },
+    "persons": {
+      "i": "jag",
+      "iM": "jag (m.)",
+      "iF": "jag (f.)",
+      "youM": "du (m.)",
+      "youF": "du (f.)",
+      "he": "han",
+      "she": "hon",
+      "we": "vi",
+      "weM": "vi (m.)",
+      "weF": "vi (f.)",
+      "youMPl": "ni (m.)",
+      "youFPl": "ni (f.)",
+      "theyM": "de (m.)",
+      "theyF": "de (f.)"
+    },
+    "columns": {
+      "form": "Form",
+      "long": "Med pronomenet",
+      "short": "Sammanfogad",
+      "future": "Framtid",
+      "imperative": "Imperativ"
+    },
+    "sourceBook": "Varje form som den står i grammatikboken. Där den ger två former skiljer ett snedstreck dem åt.",
+    "sourceRules": "Bildad enligt bokens regler och kontrollerad för hand. Där det finns två former skiljer ett snedstreck dem åt.",
+    "howBuilt": "Hur det bildas: {tense}",
+    "chapterNumber": "Kapitel {number}",
+    "nextChapter": "Nästa kapitel",
+    "conjugation": "Böjning",
+    "rulesInGrammar": "Reglerna, i Grammatiken",
+    "tablesInLexicon": "Tabellerna finns i Lexikonet, på varje verbs sida.",
+    "seeInVerb": "Se det i ett verb",
+    "seeInVerbLine": "Vart och ett öppnar verbet i Lexikonet, med hela tabellen.",
+    "verbsComing": "Mönsterverben. Deras sidor i Lexikonet, med hela tabellerna, är på väg.",
+    "openVerb": "Öppna verbet i Lexikonet: {kind}",
+    "chapters": {
+      "kinds-of-root": {
+        "title": "Rötternas slag",
+        "line": "Stark, fördubblad, svag: åtta slag, vart och ett med sitt mönsterverb."
+      },
+      "past": {
+        "title": "Dåtid",
+        "line": "Tio personer, samma ändelser för varje slags rot."
+      },
+      "present": {
+        "title": "Nutid",
+        "line": "Ett ord i fyra former, med pronomenet efter eller sammanfogat."
+      },
+      "future": {
+        "title": "Framtid och imperativ",
+        "line": "En bokstav framför roten."
+      },
+      "tense-dots": {
+        "title": "Tempuspunkterna",
+        "line": "Under för dåtid, över för nutid: vad varje punkt skiljer åt."
+      },
+      "qushoyo-rukkokho": {
+        "title": "Qushoyo och rukkokho",
+        "line": "När en bokstav är hård och när den är mjuk."
+      }
+    }
   }
 }

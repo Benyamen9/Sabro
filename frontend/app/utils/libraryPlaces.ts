@@ -5,8 +5,8 @@
  * composable `useLibraryPlaces` does the storage and the calls.
  */
 
-/** The books on the shelf, by their address under /library/. Grammar joins when it has pages. */
-export const LIBRARY_BOOKS = ['lexicon', 'beth-gazo', 'beth-salme'] as const
+/** The books on the shelf, in shelf order, by their address under /library/. */
+export const LIBRARY_BOOKS = ['lexicon', 'grammar', 'beth-gazo', 'beth-salme'] as const
 export type LibraryBook = (typeof LIBRARY_BOOKS)[number]
 
 /** How a place is named on its cover: what Sabro sends, or what the page knew when it was opened. */

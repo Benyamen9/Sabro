@@ -452,6 +452,10 @@
           "title": "Lexique",
           "subtitle": "chaque mot, lettre par lettre"
         },
+        "grammar": {
+          "title": "Grammaire",
+          "subtitle": "les règles du verbe"
+        },
         "bethGazo": {
           "title": "Beth Gazo",
           "subtitle": "le trésor des chants"
@@ -465,7 +469,8 @@
         "words": "{count} mots | {count} mot | {count} mots",
         "chants": "{count} chants | {count} chant | {count} chants",
         "figures": "{count} figures | {count} figure | {count} figures",
-        "found": "{found} sur {total} trouvées"
+        "found": "{found} sur {total} trouvées",
+        "chapters": "{count} chapitres | {count} chapitre | {count} chapitres"
       }
     },
     "marks": {
@@ -1279,6 +1284,13 @@
     "libraryShelf": {
       "title": "Bibliothèque",
       "description": "La bibliothèque syriaque de Sabro : le Lexique des mots, le trésor des chants du Beth Gazo et la galerie des figures du Beth Ṣalme."
+    },
+    "grammar": {
+      "title": "Grammaire syriaque : les règles du verbe",
+      "description": "Comment se forme le verbe syriaque, règle par règle : les types de racine, le passé, le présent, le futur, les points de temps, qushoyo et rukkokho, selon la tradition syriaque occidentale."
+    },
+    "grammarChapter": {
+      "title": "{chapter} — Grammaire syriaque"
     }
   },
   "privacy": {
@@ -1435,5 +1447,88 @@
     "found": "rien trouvé | {n} mélodie trouvée | {n} mélodies trouvées",
     "ribbon": "Là où vous vous êtes arrêté",
     "continue": "Reprendre"
+  },
+  "grammar": {
+    "heading": "Les règles du verbe",
+    "lede": "Comment se forment les verbes syriaques, règle par règle. Les tableaux eux-mêmes sont dans le Lexique, sur la page de chaque verbe.",
+    "englishOnly": "Les explications sont en anglais pour l’instant.",
+    "notFound": "Ce chapitre n’est pas dans la Grammaire.",
+    "tensesLabel": "Temps",
+    "tenses": {
+      "past": "Le passé",
+      "present": "Le présent",
+      "future": "Le futur"
+    },
+    "categories": {
+      "soundPtoho": "Racine saine, avec ptoho",
+      "soundRbosho": "Racine saine, avec rbosho",
+      "doubled": "Racine redoublée",
+      "weakMiddle": "Faible au milieu",
+      "weakEnd": "Faible à la fin",
+      "alaphFirst": "Olaf au début",
+      "yudhFirst": "Yudh au début",
+      "nunFirst": "Nun au début"
+    },
+    "persons": {
+      "i": "je",
+      "iM": "je (m.)",
+      "iF": "je (f.)",
+      "youM": "tu (m.)",
+      "youF": "tu (f.)",
+      "he": "il",
+      "she": "elle",
+      "we": "nous",
+      "weM": "nous (m.)",
+      "weF": "nous (f.)",
+      "youMPl": "vous (m.)",
+      "youFPl": "vous (f.)",
+      "theyM": "ils",
+      "theyF": "elles"
+    },
+    "columns": {
+      "form": "Forme",
+      "long": "Avec le pronom",
+      "short": "Jointe",
+      "future": "Futur",
+      "imperative": "Impératif"
+    },
+    "sourceBook": "Chaque forme telle qu’elle figure dans le livre de grammaire. Quand il donne deux formes, une barre les sépare.",
+    "sourceRules": "Formé selon les règles du livre et vérifié à la main. Quand il y a deux formes, une barre les sépare.",
+    "howBuilt": "Comment il se forme : {tense}",
+    "chapterNumber": "Chapitre {number}",
+    "nextChapter": "Chapitre suivant",
+    "conjugation": "Conjugaison",
+    "rulesInGrammar": "Les règles, dans la Grammaire",
+    "tablesInLexicon": "Les tableaux sont dans le Lexique, sur la page de chaque verbe.",
+    "seeInVerb": "Voir dans un verbe",
+    "seeInVerbLine": "Chacun ouvre le verbe dans le Lexique, avec son tableau complet.",
+    "verbsComing": "Les verbes modèles. Leurs pages dans le Lexique, avec les tableaux complets, arrivent bientôt.",
+    "openVerb": "Ouvrir le verbe dans le Lexique : {kind}",
+    "chapters": {
+      "kinds-of-root": {
+        "title": "Les types de racine",
+        "line": "Saine, redoublée, faible : huit types, chacun avec son verbe modèle."
+      },
+      "past": {
+        "title": "Le passé",
+        "line": "Dix personnes, les mêmes terminaisons pour chaque type de racine."
+      },
+      "present": {
+        "title": "Le présent",
+        "line": "Un mot sous quatre formes, avec le pronom après lui ou joint à lui."
+      },
+      "future": {
+        "title": "Le futur et l’impératif",
+        "line": "Une lettre devant la racine."
+      },
+      "tense-dots": {
+        "title": "Les points de temps",
+        "line": "En dessous pour le passé, au-dessus pour le présent : ce que chaque point distingue."
+      },
+      "qushoyo-rukkokho": {
+        "title": "Qushoyo et rukkokho",
+        "line": "Quand une lettre est dure et quand elle est douce."
+      }
+    }
   }
 }
