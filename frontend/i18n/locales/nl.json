@@ -1529,6 +1529,46 @@
         "title": "Qushoyo en rukkokho",
         "line": "Wanneer een letter hard is en wanneer zacht."
       }
+    },
+    "examplesHeading": "Voorbeelden",
+    "examples": {
+      "ktab": {
+        "past": "hij schreef",
+        "present": "hij schrijft",
+        "future": "hij zal schrijven"
+      },
+      "rgez": {
+        "past": "hij was boos",
+        "present": "hij is boos"
+      },
+      "pak": {
+        "past": "hij brak, hij verbrijzelde",
+        "present": "hij breekt, hij verbrijzelt"
+      },
+      "tab": {
+        "past": "hij keerde terug · hij had berouw",
+        "present": "hij keert terug · hij heeft berouw"
+      },
+      "qam": {
+        "past": "hij stond op · hij stond",
+        "present": "hij staat op · hij staat"
+      },
+      "gbo": {
+        "past": "hij koos",
+        "present": "hij kiest"
+      },
+      "ebad": {
+        "past": "hij verging · hij ging verloren",
+        "present": "hij vergaat · hij gaat verloren"
+      },
+      "isef": {
+        "past": "hij droeg zorg · hij was bezorgd",
+        "present": "hij draagt zorg · hij is bezorgd"
+      },
+      "ntar": {
+        "past": "het viel af",
+        "present": "het valt af"
+      }
     }
   }
 }

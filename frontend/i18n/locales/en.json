@@ -1529,6 +1529,46 @@
         "title": "Qushoyo and rukkokho",
         "line": "When a letter is hard and when it is soft."
       }
+    },
+    "examplesHeading": "Examples",
+    "examples": {
+      "ktab": {
+        "past": "he wrote",
+        "present": "he writes",
+        "future": "he will write"
+      },
+      "rgez": {
+        "past": "he was angry",
+        "present": "he is angry"
+      },
+      "pak": {
+        "past": "he broke, he shattered",
+        "present": "he breaks, he shatters"
+      },
+      "tab": {
+        "past": "he returned · he repented",
+        "present": "he returns · he repents"
+      },
+      "qam": {
+        "past": "he rose · he stood",
+        "present": "he rises · he stands"
+      },
+      "gbo": {
+        "past": "he chose",
+        "present": "he chooses"
+      },
+      "ebad": {
+        "past": "he perished · he was lost",
+        "present": "he perishes · he is lost"
+      },
+      "isef": {
+        "past": "he took care · he was anxious",
+        "present": "he takes care · he is anxious"
+      },
+      "ntar": {
+        "past": "it fell off",
+        "present": "it falls off"
+      }
     }
   }
 }

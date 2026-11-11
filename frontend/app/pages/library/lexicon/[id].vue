@@ -83,13 +83,14 @@ useHead({
 })
 
 const meaningLanguages = ['en', 'fr', 'nl', 'de', 'sv'] as const
+// One row per language. A word with several meanings (ܬܒ: to return, to repent) has one
+// line each in the Lexicon; they are shown together, in the order they were written.
 const orderedMeanings = computed(() => {
   const meanings = data.value?.meanings ?? []
-  const known = meaningLanguages
-    .map(lang => meanings.find(m => m.language === lang))
-    .filter((m): m is NonNullable<typeof m> => Boolean(m))
-  const extra = meanings.filter(m => !meaningLanguages.includes(m.language as typeof meaningLanguages[number]))
-  return [...known, ...extra]
+  const languages = [...meaningLanguages, ...meanings.map(m => m.language)].filter((lang, index, all) => all.indexOf(lang) === index)
+  return languages
+    .map(language => ({ language, text: meanings.filter(m => m.language === language).map(m => m.text).join(' · ') }))
+    .filter(m => m.text)
 })
 
 // The red ribbon (Owner, 2026-11-01): opening a word moves the Lexicon's place to it.
@@ -197,6 +198,7 @@ function categoryLabel(category: string | undefined) {
             <span class="font-serif text-[16.5px]">{{ m.text }}</span>
           </div>
         </div>
+        <VerbExamples v-if="verb" :verb="verb" />
       </article>
 
       <!-- Cross-link: this word has been a Meltho daily puzzle on a past day,

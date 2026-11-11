@@ -1529,6 +1529,46 @@
         "title": "Qushoyo et rukkokho",
         "line": "Quand une lettre est dure et quand elle est douce."
       }
+    },
+    "examplesHeading": "Exemples",
+    "examples": {
+      "ktab": {
+        "past": "il a écrit",
+        "present": "il écrit",
+        "future": "il écrira"
+      },
+      "rgez": {
+        "past": "il était en colère",
+        "present": "il est en colère"
+      },
+      "pak": {
+        "past": "il a brisé, il a fracassé",
+        "present": "il brise, il fracasse"
+      },
+      "tab": {
+        "past": "il est revenu · il s’est repenti",
+        "present": "il revient · il se repent"
+      },
+      "qam": {
+        "past": "il s’est levé · il s’est tenu debout",
+        "present": "il se lève · il se tient debout"
+      },
+      "gbo": {
+        "past": "il a choisi",
+        "present": "il choisit"
+      },
+      "ebad": {
+        "past": "il a péri · il s’est perdu",
+        "present": "il périt · il se perd"
+      },
+      "isef": {
+        "past": "il a pris soin · il était inquiet",
+        "present": "il prend soin · il est inquiet"
+      },
+      "ntar": {
+        "past": "il est tombé",
+        "present": "il tombe"
+      }
     }
   }
 }

@@ -1529,6 +1529,46 @@
         "title": "Qushoyo och rukkokho",
         "line": "När en bokstav är hård och när den är mjuk."
       }
+    },
+    "examplesHeading": "Exempel",
+    "examples": {
+      "ktab": {
+        "past": "han skrev",
+        "present": "han skriver",
+        "future": "han ska skriva"
+      },
+      "rgez": {
+        "past": "han var arg",
+        "present": "han är arg"
+      },
+      "pak": {
+        "past": "han bröt, han krossade",
+        "present": "han bryter, han krossar"
+      },
+      "tab": {
+        "past": "han återvände · han ångrade sig",
+        "present": "han återvänder · han ångrar sig"
+      },
+      "qam": {
+        "past": "han stod upp · han stod",
+        "present": "han står upp · han står"
+      },
+      "gbo": {
+        "past": "han valde",
+        "present": "han väljer"
+      },
+      "ebad": {
+        "past": "han förgicks · han gick förlorad",
+        "present": "han förgås · han går förlorad"
+      },
+      "isef": {
+        "past": "han hade omsorg · han var orolig",
+        "present": "han har omsorg · han är orolig"
+      },
+      "ntar": {
+        "past": "det föll av",
+        "present": "det faller av"
+      }
     }
   }
 }

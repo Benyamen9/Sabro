@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { GRAMMAR_CHAPTERS, GRAMMAR_TABLES, GRAMMAR_TENSES, GRAMMAR_VERBS, chapterForTense, grammarChapter, grammarVerbFor } from '~/data/grammar'
 import { clusters, prepareWord } from '~/utils/tenseDots'
+import de from '~~/i18n/locales/de.json'
+import en from '~~/i18n/locales/en.json'
+import fr from '~~/i18n/locales/fr.json'
+import nl from '~~/i18n/locales/nl.json'
+import sv from '~~/i18n/locales/sv.json'
 
 const BELOW = '̣'
 const ABOVE = '̇'
@@ -100,6 +105,18 @@ describe('the verbs\' tables', () => {
       for (const row of item.rows) {
         for (const form of row.cells[0]!) {
           expect(prepareWord(form.split(' ')[0]!, item.tense).marks.length, `${item.slug} ${row.person}`).toBeGreaterThan(0)
+        }
+      }
+    }
+  })
+
+  it('says what each verb\'s example means, in all five languages', () => {
+    const locales: Record<string, { grammar: { examples: Record<string, Record<string, string>> } }> = { en, fr, nl, de, sv }
+    for (const [name, locale] of Object.entries(locales)) {
+      for (const verb of GRAMMAR_VERBS) {
+        for (const item of verb.tables) {
+          expect(item.rows.some(row => row.person === 'he'), `${item.slug} he`).toBe(true)
+          expect(locale.grammar.examples[verb.verb]?.[item.tense], `${name} ${item.slug}`).toBeTruthy()
         }
       }
     }
