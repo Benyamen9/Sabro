@@ -302,7 +302,11 @@ one device is let go on the others; only a mark made signed out is sent up.
   (`grammarVerbFor`: ܟܬܒ ܪܓܙ ܦܟ ܬܒ ܩܡ ܓܒܐ ܐܒܕ ܝܨܦ ܢܬܪ) shows a **Conjugation** block on its own page
   (`VerbConjugation`): the past, the present and, for ܟܬܒ so far, the future with the imperative
   (Kaylo Qadmoyo). `?tense=` opens on a tense. There is no page per table. **A verb's tables are visible only
-  once the Owner has published that verb's entry.**
+  once the Owner has published that verb's entry.** Above it, an **Examples** block (`VerbExamples`, "for now",
+  2026-11-10): the "he" form of each tense with what it says, from `grammar.examples.<verb>.<tense>` in the five
+  locale files. Forms, not sentences: real sentences wait for the Owner to dictate them. **When a model verb's
+  meanings change in the backoffice, change these lines too.** A word's page shows **all** its meanings per
+  language, joined with " · ", not only the first.
 - **The Grammar book (ܓܪܰܡܰܛܺܝܩܺܝ, `/library/grammar`) holds the rules**, as the fourth book on the shelf: six
   chapters (`kinds-of-root`, `past`, `present`, `future`, `tense-dots`, `qushoyo-rukkokho`), one page each, no
   tables. Each chapter ends with the model verbs, linked to their Lexicon pages when published
