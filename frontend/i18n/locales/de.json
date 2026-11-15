@@ -335,6 +335,8 @@
     "pageOf": "Seite {page} von {total}"
   },
   "library": {
+    "verbLiteral": "„{text}“",
+    "verbLiteralNote": "die Vergangenheitsform, unter der ein Wörterbuch ein Verb aufführt",
     "title": "Wortbibliothek",
     "heading": "Wortbibliothek",
     "tabs": {

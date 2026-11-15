@@ -335,6 +335,8 @@
     "pageOf": "Pagina {page} van {total}"
   },
   "library": {
+    "verbLiteral": "‘{text}’",
+    "verbLiteralNote": "de verleden vorm, waaronder een woordenboek een werkwoord vermeldt",
     "title": "Woordbibliotheek",
     "heading": "Woordbibliotheek",
     "tabs": {
