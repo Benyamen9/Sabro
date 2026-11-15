@@ -30,7 +30,7 @@ const place = computed(() => {
   <section class="mx-auto max-w-3xl" :style="{ '--color-accent': 'var(--color-grammar)', '--color-accent-faint': 'var(--color-grammar-faint)' }">
     <header class="mb-6 pt-2">
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
-        {{ t('library.shelf.books.grammar.title') }}
+        <LibraryBack />{{ t('library.shelf.books.grammar.title') }}
         <span dir="rtl" lang="syc" class="ml-1 font-syriac text-[15px] normal-case tracking-normal">ܓܪܰܡܰܛܺܝܩܺܝ</span>
       </p>
       <h1 class="mt-3 font-serif text-4xl font-semibold tracking-[-0.02em] text-balance sm:text-[2.75rem]">{{ t('grammar.heading') }}</h1>

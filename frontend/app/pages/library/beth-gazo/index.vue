@@ -193,7 +193,7 @@ async function continueFromRibbon() {
   <section class="mx-auto max-w-4xl">
     <header class="mb-5 pt-2">
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-nahlo)]">
-        {{ t('bethGazo.title') }}
+        <LibraryBack />{{ t('bethGazo.title') }}
         <span dir="rtl" lang="syc" class="ml-1 font-syriac text-[15px] normal-case tracking-normal">ܒܝܬ ܓܙܐ</span>
       </p>
       <h1 class="mt-3 font-serif text-4xl font-semibold tracking-[-0.02em] text-balance sm:text-[2.75rem]">{{ t('bethGazo.heading') }}</h1>

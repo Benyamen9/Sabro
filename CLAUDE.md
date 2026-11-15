@@ -495,6 +495,22 @@ Sofro). **A new app goes into all six at once**, with its `<app>Url` runtime-con
 hub's page links (Library, Beth Gazo, Beth Ṣalme, Backoffice) live **inside the launcher panel**, under the apps (Owner,
 2026-10-15); from `sm` up they stay in the header. Under 340 px the hub shows its ܣ badge alone.
 
+**The games' header (Owner, 2026-11-15)**, the same in all five games, changed together:
+
+- **Back to Sabro**: a small arrow and Sabro's red ܣ before the game's badge (`.sabro-back`) open Sabro's home page
+  in one tap. He first asked for the game's own logo to do it; that was not done, on purpose: the badge and name are
+  **not** a link, so a tap there never leaves a round. Sabro stays in the launcher. Sofro's sideways header (inside
+  the card) has no way back.
+- **One button for light/dark, script and language** (`DisplayMenu.vue`; his idea: "join the night/day, font and
+  language together"). The three switchers and `SelectMenu` are gone from the games. Signed out, a text "Sign in"
+  button left no room for the way back. The panel stays open after a choice. **The hub still has its three
+  buttons**: joining them there is offered, not yet asked for.
+- **The name gives way** (`.brand-fit`; his words: "remove the name when it doesn't fit"): the Syriac word drops
+  first, then the name, never the badge. Nothing slides under the buttons.
+
+**The Library's books have a way back to the shelf (Owner, 2026-11-15):** `LibraryBack`, an arrow just before the
+book's name at the top of the Lexicon, the Grammar, Beth Gazo and Beth Ṣalme.
+
 **Loading speed (Owner, 2026-11-02)** left two more files copied into all six frontends, kept identical:
 `utils/tokenCache.ts` keeps the Sabro access token **in the browser only** until a minute before it
 expires (never on the server, which serves every visitor), cleared on sign-out and on a 401; and

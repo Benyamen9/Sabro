@@ -442,6 +442,7 @@
       "computedHard": "dur à l’initiale ou après une lettre sans voyelle (calculé)"
     },
     "shelf": {
+      "back": "Retour à la bibliothèque",
       "eyebrow": "Bibliothèque",
       "heading": "Choisissez un livre",
       "hint": "Un ruban rouge sur une couverture marque votre page dans ce livre.",

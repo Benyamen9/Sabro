@@ -442,6 +442,7 @@
       "computedHard": "hard at the start or after a vowelless letter (computed)"
     },
     "shelf": {
+      "back": "Back to the Library",
       "eyebrow": "Library",
       "heading": "Choose a book",
       "hint": "A red ribbon on a cover marks your place in that book.",

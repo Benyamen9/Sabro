@@ -442,6 +442,7 @@
       "computedHard": "hart am Anfang oder nach einem vokallosen Buchstaben (berechnet)"
     },
     "shelf": {
+      "back": "Zurück zur Bibliothek",
       "eyebrow": "Bibliothek",
       "heading": "Wähle ein Buch",
       "hint": "Ein rotes Lesebändchen auf einem Einband markiert deine Stelle in diesem Buch.",

@@ -52,7 +52,7 @@ const place = computed(() => places.value.lexicon ?? null)
   <section class="mx-auto max-w-4xl" :style="retintStyle">
     <header class="mb-6 pt-2">
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-accent)]">
-        {{ t('library.shelf.books.lexicon.title') }}
+        <LibraryBack />{{ t('library.shelf.books.lexicon.title') }}
         <span dir="rtl" lang="syc" class="ml-1 font-syriac text-[15px] normal-case tracking-normal">ܠܶܟܣܺܝܩܳܘܢ</span>
       </p>
       <h1 class="mt-3 font-serif text-4xl font-semibold tracking-[-0.02em] sm:text-[2.75rem]">{{ t('library.heading') }}</h1>

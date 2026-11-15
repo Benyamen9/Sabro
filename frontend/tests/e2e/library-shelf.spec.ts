@@ -27,4 +27,11 @@ test.describe('Library shelf', () => {
     await page.goto('/library?view=meltho')
     await expect(page).toHaveURL(/\/library\/lexicon\?view=meltho$/)
   })
+
+  test('every book has a way back to the shelf, before its name', async ({ page }) => {
+    for (const book of ['lexicon', 'grammar', 'beth-gazo', 'beth-salme']) {
+      await page.goto(`/library/${book}`)
+      await expect(page.getByRole('main').getByRole('link', { name: 'Back to the Library' }), book).toHaveAttribute('href', '/library')
+    }
+  })
 })
