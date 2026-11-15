@@ -3,7 +3,11 @@ import tailwindcss from '@tailwindcss/vite'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-01',
-  devtools: { enabled: true },
+  // Off under the e2e suite. DevTools pulls `@vue/devtools-core` in at runtime; on a cold dev
+  // server Vite then re-bundles and reloads the page, which throws away a click made just
+  // before it. The first two tests of every CI run lost their "Library" click that way and
+  // only passed on retry (found 2026-11-15).
+  devtools: { enabled: process.env.SABRO_E2E !== '1' },
   modules: ['@nuxtjs/i18n', '@nuxt/eslint', '@logto/nuxt'],
   // fonts.css comes from scripts/self-host-fonts.mjs: the fonts are served from this site.
   css: ['~/assets/css/fonts.css', '~/assets/css/main.css'],
