@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GRAMMAR_CHAPTERS, GRAMMAR_TABLES, GRAMMAR_TENSES, GRAMMAR_VERBS, chapterForTense, grammarChapter, grammarVerbFor } from '~/data/grammar'
+import { GRAMMAR_CHAPTERS, GRAMMAR_TABLES, GRAMMAR_TENSES, GRAMMAR_VERBS, chapterForTense, grammarChapter, grammarLinkFor, grammarVerbFor, verbOfKind } from '~/data/grammar'
 import { clusters, prepareWord } from '~/utils/tenseDots'
 import de from '~~/i18n/locales/de.json'
 import en from '~~/i18n/locales/en.json'
@@ -149,6 +149,40 @@ describe('the Grammar book\'s chapters', () => {
         // Braces must pair up, or the page shows them.
         for (const text of prose) expect(text.split('{').length, text).toBe(text.split('}').length)
         for (const example of section.examples ?? []) expect(prepareWord(example.form, example.tense).marks.length, example.caption).toBeGreaterThan(0)
+      }
+    }
+  })
+})
+
+describe('the words of the explanations that open a verb', () => {
+  it('finds the verb and tense of a form, with or without its tense dots', () => {
+    expect(grammarLinkFor('ܟ݁ܬ݂ܰܒ݂')).toEqual({ verb: 'ktab', tense: 'past' })
+    expect(grammarLinkFor('ܟ̣݁ܬ݂ܰܒ݂')).toEqual({ verb: 'ktab', tense: 'past' })
+    expect(grammarLinkFor('ܟ݁ܳܬ݂ܒ݁ܳܐ')).toEqual({ verb: 'ktab', tense: 'present' })
+    expect(grammarLinkFor('ܬ݁ܶܟ݂ܬ݁ܽܘܿܒ݂')).toEqual({ verb: 'ktab', tense: 'future' })
+    expect(grammarLinkFor('ܩܳܐܶܡ')).toEqual({ verb: 'qam', tense: 'present' })
+  })
+
+  it('leads from the name of a kind of root, and from a verb written without vowels, to the verb', () => {
+    expect(grammarLinkFor('ܢܽܘܼܢܳܝܬ݁ܳܐ')).toEqual({ verb: 'ntar' })
+    expect(grammarLinkFor('ܟܬܒ')).toEqual({ verb: 'ktab' })
+    expect(verbOfKind('nunFirst').verb).toBe('ntar')
+    // Two model verbs are weak in the middle: the kind's name opens the first.
+    expect(verbOfKind('weakMiddle').verb).toBe('tab')
+  })
+
+  it('leaves letters and pronouns alone', () => {
+    for (const text of ['ܬ', 'ܐ', 'ܒ ܓ ܕ ܟ ܦ ܬ', 'ܐܢܳܐ', 'ܐܰܢ̱ܬ݁']) expect(grammarLinkFor(text), text).toBeNull()
+  })
+
+  it('every kind of root named in the first chapter opens a verb, and so does every example', () => {
+    const kinds = GRAMMAR_CHAPTERS[0]!.sections[0]!.points!
+    expect(kinds).toHaveLength(8)
+    for (const point of kinds) expect(grammarLinkFor(point.lead.match(/\{([^}]*)\}/)![1]!), point.lead).not.toBeNull()
+    for (const chapter of GRAMMAR_CHAPTERS) {
+      for (const section of chapter.sections) {
+        for (const example of section.examples ?? []) expect(grammarLinkFor(example.form)?.verb, example.caption).toBe('ktab')
+        for (const point of section.points ?? []) if (point.category) expect(verbOfKind(point.category)).toBeTruthy()
       }
     }
   })

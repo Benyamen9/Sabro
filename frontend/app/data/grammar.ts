@@ -89,9 +89,58 @@ export function startsPlural(person: GrammarPerson): boolean {
   return person === 'we' || person === 'weM'
 }
 
+/** The tense dots: below or above the first letter, and the feminine dot of "she". */
+const TENSE_DOTS = /[̣̇݀]/g
+
+/** A form as the explanations quote it: without its tense dots, which only the tables draw. */
+const quoted = (form: string) => form.replace(TENSE_DOTS, '')
+
+/** Where a Syriac word of the explanations leads: a model verb, on a tense when the word is one of its forms. */
+export interface GrammarLink {
+  verb: string
+  tense?: Tense
+}
+
+const FORM_LINKS = new Map<string, GrammarLink>()
+for (const table of GRAMMAR_TABLES) {
+  for (const row of table.rows) {
+    for (const cell of row.cells) {
+      for (const form of cell) {
+        // A form of two words is the verb and its pronoun: the verb alone is quoted too.
+        for (const text of [form, form.split(' ')[0]!]) {
+          const key = quoted(text)
+          if (!FORM_LINKS.has(key)) FORM_LINKS.set(key, { verb: table.verb, tense: table.tense })
+        }
+      }
+    }
+  }
+}
+/** The book's name for a kind of root leads to that kind's model verb (the first, where it has two). */
+for (const verb of GRAMMAR_VERBS) {
+  if (!FORM_LINKS.has(verb.categorySyriac)) FORM_LINKS.set(verb.categorySyriac, { verb: verb.verb })
+  // The verb written without vowels, as the chapter on the tense dots quotes it.
+  if (!FORM_LINKS.has(verb.lemma)) FORM_LINKS.set(verb.lemma, { verb: verb.verb })
+}
+
+/**
+ * The verb a Syriac word of the explanations belongs to, or null: a form found in a table (with the
+ * tense of the first table that has it), or the name of a kind of root. The Owner asked that the
+ * books be linked together (2026-11-15): each such word opens its verb in the Lexicon.
+ */
+export function grammarLinkFor(text: string): GrammarLink | null {
+  return FORM_LINKS.get(quoted(text.trim())) ?? null
+}
+
+/** The model verb of a kind of root: the first, where a kind has two. */
+export function verbOfKind(category: GrammarCategory): GrammarVerb {
+  return GRAMMAR_VERBS.find(verb => verb.category === category)!
+}
+
 export interface GrammarPoint {
   lead: string
   text?: string
+  /** Where the point is about one kind of root: its lead opens that kind's model verb. */
+  category?: GrammarCategory
 }
 
 export interface GrammarSection {
@@ -115,7 +164,7 @@ export interface GrammarChapter {
 /** What is particular to each kind of root, shown in the tense chapters. */
 const KINDS: Record<GrammarCategory, string> = {
   soundPtoho: 'Sound, with ptoho',
-  soundRbosho: 'Sound, with rbosho',
+  soundRbosho: 'Sound, with rboso',
   doubled: 'Doubled',
   weakMiddle: 'Weak in the middle',
   weakEnd: 'Weak at the end',
@@ -124,7 +173,7 @@ const KINDS: Record<GrammarCategory, string> = {
   nunFirst: 'Nun at the start',
 }
 
-const kind = (category: GrammarCategory, text: string): GrammarPoint => ({ lead: `${KINDS[category]}.`, text })
+const kind = (category: GrammarCategory, text: string): GrammarPoint => ({ lead: `${KINDS[category]}.`, text, category })
 
 export const GRAMMAR_CHAPTERS: GrammarChapter[] = [
   {
@@ -134,7 +183,7 @@ export const GRAMMAR_CHAPTERS: GrammarChapter[] = [
         intro: 'A verb is built on a root, most often of three letters. The grammar sorts roots into kinds by the letters they are made of, because each kind bends the same endings a little differently. Each kind has a model verb, and the tables are given for that verb.',
         points: [
           { lead: '{ܫܰܠܡܬ݂ܳܐ ܦ݂ܬ݂ܺܝܼܚܬ݁ܳܐ}, sound with ptoho.', text: 'Three firm letters, and ptoho in the past: {ܟ݁ܬ݂ܰܒ݂}.' },
-          { lead: '{ܫܰܠܡܬ݂ܳܐ ܪܒ݂ܺܝܼܨܬ݁ܳܐ}, sound with rbosho.', text: 'The same, with rbosho where the first kind has ptoho: {ܪܓ݂ܶܙ}.' },
+          { lead: '{ܫܰܠܡܬ݂ܳܐ ܪܒ݂ܺܝܼܨܬ݁ܳܐ}, sound with rboso.', text: 'The same, with rboso where the first kind has ptoho: {ܪܓ݂ܶܙ}.' },
           { lead: '{ܥܦ݂ܺܝܼܦ݂ܬ݁ܳܐ}, doubled.', text: 'The second letter counts twice and is written once: {ܦ݁ܰܟ݂}.' },
           { lead: '{ܟ݁ܪܺܝܼܗܰܬ݂ ܡܶܨܥܳܝܳܐ}, weak in the middle.', text: 'The middle of the root is weak and shows as a long zqofo in the past: {ܬ݁ܳܒ݂}, {ܩܳܡ}.' },
           { lead: '{ܟ݁ܪܺܝܼܗܰܬ݂ ܫܽܘܼܠܳܡܳܐ}, weak at the end.', text: 'The last letter is weak and written {ܐ}: {ܓ݁ܒ݂ܳܐ}.' },
@@ -163,11 +212,11 @@ export const GRAMMAR_CHAPTERS: GrammarChapter[] = [
       {
         heading: 'Kind by kind',
         points: [
-          kind('soundRbosho', 'Exactly like {ܟ݁ܬ݂ܰܒ݂}, with rbosho wherever it has ptoho: {ܪܓ݂ܶܙ}.'),
+          kind('soundRbosho', 'Exactly like {ܟ݁ܬ݂ܰܒ݂}, with rboso wherever it has ptoho: {ܪܓ݂ܶܙ}.'),
           kind('doubled', 'The second letter comes back, hard, only in "I" and "she": {ܦ݁ܰܟ݂} becomes {ܦ݁ܶܟ݁ܶܬ݂}.'),
           kind('weakMiddle', 'A long zqofo throughout: {ܬ݁ܳܒ݂}, {ܬ݁ܳܒ݂ܬ݁}.'),
           kind('weakEnd', 'The final {ܐ} becomes {ܝ} in "I" and before an ending, and {ܘ} in "they": {ܓ݁ܒ݂ܺܝܼܬ݂}, {ܓ݁ܒ݂ܰܝܬ݁}, {ܓ݁ܒ݂ܰܘ}. In "they" feminine the stem\'s own {ܝ} takes the seyame: {ܓ݁ܒ݂ܰܝ̈}.'),
-          kind('alaphFirst', 'The {ܐ} takes rbosho where other roots have no vowel: {ܐܶܒ݂ܰܕ݂}.'),
+          kind('alaphFirst', 'The {ܐ} takes rboso where other roots have no vowel: {ܐܶܒ݂ܰܕ݂}.'),
           kind('yudhFirst', 'The {ܝ} takes hbosho where other roots have no vowel: {ܝܼܺܨܶܦ݂}.'),
           kind('nunFirst', 'The {ܢ} stays in the past, so the forms follow {ܟ݁ܬ݂ܰܒ݂}: {ܢܬ݂ܰܪ}.'),
         ],
@@ -193,7 +242,7 @@ export const GRAMMAR_CHAPTERS: GrammarChapter[] = [
       {
         heading: 'Kind by kind',
         points: [
-          kind('soundRbosho', 'Exactly like {ܟ݁ܳܬ݂ܶܒ݂}: the rbosho of the past does not reach the present.'),
+          kind('soundRbosho', 'Exactly like {ܟ݁ܳܬ݂ܶܒ݂}: the rboso of the past does not reach the present.'),
           kind('doubled', 'The masculine singular takes an {ܐ}: {ܦ݁ܳܐܶܟ݂}. In every other shape the doubled letter follows the zqofo directly, hard: {ܦ݁ܳܟ݁ܳܐ}.'),
           kind('weakMiddle', '{ܐ} in the masculine singular, {ܝ} everywhere else: {ܩܳܐܶܡ}, {ܩܳܝܡܳܐ}. A letter after that {ܝ} is hard: {ܬ݁ܳܝܒ݁ܳܐ}. The short "you" forms drop the {ܝ}, and the letter after the zqofo is soft again: {ܬ݁ܳܒ݂ܰܬ݁}.'),
           kind('weakEnd', 'The final {ܐ} becomes {ܝ}: {ܓ݁ܳܒ݂ܝܳܐ}, {ܓ݁ܳܒ݂ܶܝܢ}. "I" masculine has a short form in this kind of root only.'),
@@ -212,7 +261,7 @@ export const GRAMMAR_CHAPTERS: GrammarChapter[] = [
       {
         intro: 'A letter in front of the root, and the imperative beside it. So far the book\'s table is for the sound root; the other kinds will follow.',
         points: [
-          { lead: 'The future is built with a letter in front,', text: 'not a pronoun after: {ܐ} for "I", {ܬ} for "you" and "she", {ܢ} for "he", "we" and "they". Each takes an rbosho.' },
+          { lead: 'The future is built with a letter in front,', text: 'not a pronoun after: {ܐ} for "I", {ܬ} for "you" and "she", {ܢ} for "he", "we" and "they". Each takes an rboso.' },
           { lead: 'The root then has {ܘ} before its last letter:', text: '{ܐܶܟ݂ܬ݁ܽܘܿܒ݂}. An ending pushes the {ܘ} out: {ܬ݁ܶܟ݂ܬ݁ܒ݂ܽܘܼܢ}.' },
           { lead: 'The front letter is hard;', text: 'the first root letter after its vowel turns soft, and the second goes hard.' },
           { lead: '{ܒ} stays soft even when the {ܘ} goes', text: '({ܬ݁ܶܟ݂ܬ݁ܒ݂ܺܝܼܢ}). In the present it went hard in the same place ({ܟ݁ܳܬ݂ܒ݁ܳܐ}): a soft letter remembers the vowel that was there.' },

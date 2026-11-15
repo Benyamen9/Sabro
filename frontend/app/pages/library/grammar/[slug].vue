@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GRAMMAR_CHAPTERS, GRAMMAR_VERBS, grammarChapter } from '~/data/grammar'
+import { GRAMMAR_CHAPTERS, GRAMMAR_VERBS, grammarChapter, grammarLinkFor, verbOfKind, type GrammarCategory } from '~/data/grammar'
 
 /**
  * One chapter of the Grammar book: a set of rules with small examples, then the verbs to see them
@@ -35,6 +35,25 @@ const verbs = computed(() => GRAMMAR_VERBS.map((verb) => {
 }))
 const anyLinked = computed(() => verbs.value.some(verb => verb.to))
 
+/**
+ * The way to a published verb's page, for the Syriac words of the text (see GrammarProse) and the
+ * names of the kinds of root: on the given tense, or on the chapter's own.
+ */
+function verbPath(verb: string, tense?: string): string | null {
+  const id = links.value.find(item => item.verb === verb)?.id
+  if (!id) return null
+  const model = GRAMMAR_VERBS.find(item => item.verb === verb)
+  const on = tense ?? chapter.value?.tense
+  const query = on && model?.tables.some(table => table.tense === on) ? `?tense=${on}` : ''
+  return `/library/lexicon/${id}${query}#conjugation`
+}
+provide('grammarVerbPath', verbPath)
+const kindPath = (category: GrammarCategory) => verbPath(verbOfKind(category).verb)
+function examplePath(example: { form: string, tense: string }): string | null {
+  const link = grammarLinkFor(example.form)
+  return link ? verbPath(link.verb, example.tense) : null
+}
+
 const { record } = useLibraryPlaces()
 watch(slug, (value) => {
   if (import.meta.server || !grammarChapter(value)) return
@@ -68,14 +87,30 @@ watch(slug, (value) => {
           <GrammarProse :text="section.intro" />
         </p>
         <div v-if="section.examples" class="mt-3 grid gap-2.5" :class="section.examples.length > 2 ? 'grid-cols-3' : 'grid-cols-2'">
-          <figure v-for="example in section.examples" :key="example.form" class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2 py-3 text-center">
-            <GrammarWord :text="example.form" :tense="example.tense" class="text-[34px] leading-[1.6]" />
-            <figcaption class="mt-1 font-sans text-[12.5px] leading-snug text-[var(--color-text-muted)]">{{ example.caption }}</figcaption>
-          </figure>
+          <!-- An example is a form of a verb: once that verb is published, the card opens it. -->
+          <component
+            :is="examplePath(example) ? NuxtLink : 'div'"
+            v-for="example in section.examples"
+            :key="example.form"
+            :to="examplePath(example) ?? undefined"
+            class="block rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2 py-3 text-center text-[var(--color-text)] no-underline"
+            :class="examplePath(example) ? 'transition-colors hover:border-[var(--color-meltho)]' : ''"
+          >
+            <figure>
+              <GrammarWord :text="example.form" :tense="example.tense" class="text-[34px] leading-[1.6]" />
+              <figcaption class="mt-1 font-sans text-[12.5px] leading-snug text-[var(--color-text-muted)]">{{ example.caption }}</figcaption>
+            </figure>
+          </component>
         </div>
         <ol v-if="section.points" class="mt-3 grid list-decimal gap-2.5 pl-5 font-serif text-[16.5px] leading-relaxed marker:font-sans marker:text-sm marker:text-[var(--color-accent)]">
           <li v-for="point in section.points" :key="point.lead">
-            <strong class="font-semibold"><GrammarProse :text="point.lead" /></strong>
+            <!-- A point about one kind of root opens that kind's verb, once it is published. -->
+            <NuxtLink
+              v-if="point.category && kindPath(point.category)"
+              :to="kindPath(point.category)!"
+              class="font-semibold text-[var(--color-text)] underline decoration-[var(--color-meltho)] decoration-dotted decoration-[1.5px] underline-offset-4 transition-colors hover:text-[var(--color-meltho)]"
+            ><GrammarProse :text="point.lead" /></NuxtLink>
+            <strong v-else class="font-semibold"><GrammarProse :text="point.lead" /></strong>
             <template v-if="point.text">{{ ' ' }}<GrammarProse :text="point.text" /></template>
           </li>
         </ol>
