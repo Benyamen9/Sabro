@@ -42,6 +42,8 @@ export default defineConfig({
     env: {
       NUXT_PUBLIC_LOGTO_ENDPOINT: '',
       NUXT_LOGTO_ENDPOINT: '',
+      // Turns Nuxt DevTools off for the suite: see `devtools` in nuxt.config.ts.
+      SABRO_E2E: '1',
     },
   },
 })
