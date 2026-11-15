@@ -40,6 +40,12 @@ const { t } = useI18n()
   transition: background-color 0.15s ease;
 }
 
+/* The chevron's ink sits on the x-height, so it read low beside the capitals (Owner, 2026-11-15:
+   "is it not too low?"). Measured: 3 px up centres it on them. */
+.library-back > span {
+  transform: translateY(-3px);
+}
+
 .library-back:hover,
 .library-back:focus-visible {
   background: color-mix(in oklab, currentColor 10%, transparent);
