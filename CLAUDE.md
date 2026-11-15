@@ -314,6 +314,11 @@ one device is let go on the others; only a mark made signed out is sent up.
   The pages live in the hub, so Sabro stores the slug on trust and sends no label; the hub names a chapter from
   its slug (`useGrammar`). The first build (one page per table, a long contents list) was rejected by the Owner
   the same day: do not bring it back.
+- **The words of a chapter open their verb (Owner, 2026-11-15: "link all the books together").** A Syriac word in the
+  text that is a form of a model verb opens that verb's Lexicon page on the form's tense (`grammarLinkFor`, built from
+  the tables, tense dots ignored); so do the name of a kind of root (ܢܽܘܼܢܳܝܬ݁ܳܐ and the others, English or Syriac) and
+  the example cards. Letters and pronouns stay plain. **Nothing links until that verb's entry is published**, as with
+  the tables.
 
 How it is made:
 

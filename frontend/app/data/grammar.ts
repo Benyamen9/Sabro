@@ -89,9 +89,58 @@ export function startsPlural(person: GrammarPerson): boolean {
   return person === 'we' || person === 'weM'
 }
 
+/** The tense dots: below or above the first letter, and the feminine dot of "she". */
+const TENSE_DOTS = /[̣̇݀]/g
+
+/** A form as the explanations quote it: without its tense dots, which only the tables draw. */
+const quoted = (form: string) => form.replace(TENSE_DOTS, '')
+
+/** Where a Syriac word of the explanations leads: a model verb, on a tense when the word is one of its forms. */
+export interface GrammarLink {
+  verb: string
+  tense?: Tense
+}
+
+const FORM_LINKS = new Map<string, GrammarLink>()
+for (const table of GRAMMAR_TABLES) {
+  for (const row of table.rows) {
+    for (const cell of row.cells) {
+      for (const form of cell) {
+        // A form of two words is the verb and its pronoun: the verb alone is quoted too.
+        for (const text of [form, form.split(' ')[0]!]) {
+          const key = quoted(text)
+          if (!FORM_LINKS.has(key)) FORM_LINKS.set(key, { verb: table.verb, tense: table.tense })
+        }
+      }
+    }
+  }
+}
+/** The book's name for a kind of root leads to that kind's model verb (the first, where it has two). */
+for (const verb of GRAMMAR_VERBS) {
+  if (!FORM_LINKS.has(verb.categorySyriac)) FORM_LINKS.set(verb.categorySyriac, { verb: verb.verb })
+  // The verb written without vowels, as the chapter on the tense dots quotes it.
+  if (!FORM_LINKS.has(verb.lemma)) FORM_LINKS.set(verb.lemma, { verb: verb.verb })
+}
+
+/**
+ * The verb a Syriac word of the explanations belongs to, or null: a form found in a table (with the
+ * tense of the first table that has it), or the name of a kind of root. The Owner asked that the
+ * books be linked together (2026-11-15): each such word opens its verb in the Lexicon.
+ */
+export function grammarLinkFor(text: string): GrammarLink | null {
+  return FORM_LINKS.get(quoted(text.trim())) ?? null
+}
+
+/** The model verb of a kind of root: the first, where a kind has two. */
+export function verbOfKind(category: GrammarCategory): GrammarVerb {
+  return GRAMMAR_VERBS.find(verb => verb.category === category)!
+}
+
 export interface GrammarPoint {
   lead: string
   text?: string
+  /** Where the point is about one kind of root: its lead opens that kind's model verb. */
+  category?: GrammarCategory
 }
 
 export interface GrammarSection {
@@ -124,7 +173,7 @@ const KINDS: Record<GrammarCategory, string> = {
   nunFirst: 'Nun at the start',
 }
 
-const kind = (category: GrammarCategory, text: string): GrammarPoint => ({ lead: `${KINDS[category]}.`, text })
+const kind = (category: GrammarCategory, text: string): GrammarPoint => ({ lead: `${KINDS[category]}.`, text, category })
 
 export const GRAMMAR_CHAPTERS: GrammarChapter[] = [
   {
