@@ -141,6 +141,16 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
 
+      # The runner's apt goes through Azure's Ubuntu mirror. On 2026-11-11 that name stopped
+      # resolving for hours and every frontend job died here, which also blocked the deploy.
+      # When the mirror cannot be resolved, use Ubuntu's own archive instead.
+      - name: Fall back to Ubuntu's archive when the Azure mirror is unreachable
+        run: |
+          if ! getent hosts azure.archive.ubuntu.com > /dev/null; then
+            echo "azure.archive.ubuntu.com does not resolve; using archive.ubuntu.com"
+            printf 'http://archive.ubuntu.com/ubuntu/\n' | sudo tee /etc/apt/apt-mirrors.txt
+          fi
+
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
