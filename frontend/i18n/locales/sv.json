@@ -335,6 +335,8 @@
     "pageOf": "Sida {page} av {total}"
   },
   "library": {
+    "verbLiteral": "”{text}”",
+    "verbLiteralNote": "preteritumformen, som en ordbok tar upp ett verb under",
     "title": "Ordbibliotek",
     "heading": "Ordbibliotek",
     "tabs": {

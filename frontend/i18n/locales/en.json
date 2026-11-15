@@ -335,6 +335,8 @@
     "pageOf": "Page {page} of {total}"
   },
   "library": {
+    "verbLiteral": "“{text}”",
+    "verbLiteralNote": "the past form, under which a dictionary lists a verb",
     "title": "Word library",
     "heading": "Word library",
     "tabs": {

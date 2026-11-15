@@ -335,6 +335,8 @@
     "pageOf": "Page {page} sur {total}"
   },
   "library": {
+    "verbLiteral": "« {text} »",
+    "verbLiteralNote": "la forme du passé, sous laquelle un dictionnaire range un verbe",
     "title": "Bibliothèque des mots",
     "heading": "Bibliothèque de mots",
     "tabs": {

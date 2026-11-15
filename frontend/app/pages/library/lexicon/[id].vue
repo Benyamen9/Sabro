@@ -36,6 +36,15 @@ const hasComposition = computed(() => (data.value?.composition ?? []).length > 0
 
 // The form shown large in the hero: the vocalized spelling when authored, else the bare word.
 const heroForm = computed(() => data.value?.syriacVocalized || data.value?.syriacUnvocalized || '')
+/**
+ * A model verb is shown as its table's past "he" form, with the tense dot below the first letter in
+ * red, as the Grammar draws it (Owner, 2026-11-15: the form says "he wrote", so it carries the past's
+ * dot). Set in the Grammar's font, like the tables further down the page.
+ */
+const pastHe = computed(() => {
+  const table = verb.value?.tables.find(item => item.tense === 'past')
+  return table?.rows.find(row => row.person === 'he')?.cells[0]?.[0] ?? null
+})
 
 // Word-specific title/description ("bartho · daughter — Sabro") for the
 // long-tail search surface; app-level defaults hold while loading or on 404.
@@ -150,10 +159,19 @@ function categoryLabel(category: string | undefined) {
                strip beneath fills, right to left, like the word itself. A word
                with no recording keeps the same strip, flat and dimmed. -->
           <PronunciationWord :src="data.pronunciationAudioUrl ? mediaUrl(data.pronunciationAudioUrl) : null">
-            <SyriacText :text="heroForm" class="!text-[3.1rem] leading-[1.4] text-[var(--color-accent)] sm:!text-[4.25rem]" />
+            <!-- In ink, not the Lexicon's red, so the red tense dot shows (Owner, 2026-11-15), as in the tables. -->
+            <GrammarWord v-if="pastHe" :text="pastHe" tense="past" class="text-[3.1rem] leading-[1.4] text-[var(--color-text)] sm:text-[4.25rem]" />
+            <SyriacText v-else :text="heroForm" class="!text-[3.1rem] leading-[1.4] text-[var(--color-accent)] sm:!text-[4.25rem]" />
           </PronunciationWord>
           <p v-if="data.sblTransliteration" class="mt-1.5 font-serif text-[21px] text-[var(--color-text-muted)] italic">
             {{ data.sblTransliteration }}
+          </p>
+          <!-- A verb is listed under its past "he" form: say what the form shown literally means, while the
+               meanings below give the verb as a whole (Owner, 2026-11-15, option A). Model verbs only:
+               their past is in the locale files, beside the examples. -->
+          <p v-if="pastHe" class="mt-1.5 font-serif text-[18px] text-[var(--color-text)]">
+            {{ t('library.verbLiteral', { text: t(`grammar.examples.${verb?.verb}.past`) }) }}
+            <span class="mt-0.5 block font-sans text-[12.5px] text-[var(--color-text-faint)]">{{ t('library.verbLiteralNote') }}</span>
           </p>
           <div class="mt-4 flex flex-wrap items-center justify-center gap-2 font-sans text-[12.5px]">
             <span class="rounded-full border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-1 text-[var(--color-text-muted)]">
