@@ -442,6 +442,7 @@
       "computedHard": "hard aan het begin of na een klinkerloze letter (berekend)"
     },
     "shelf": {
+      "back": "Terug naar de bibliotheek",
       "eyebrow": "Bibliotheek",
       "heading": "Kies een boek",
       "hint": "Een rood lint op een kaft markeert waar je in dat boek gebleven bent.",

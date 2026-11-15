@@ -98,7 +98,7 @@ onMounted(() => {
   <section class="mx-auto max-w-6xl" :style="{ '--color-accent': 'var(--color-shmo)', '--color-accent-faint': 'var(--color-shmo-faint)' }">
     <header class="mb-6 pt-2">
       <p class="font-sans text-xs font-medium uppercase tracking-[0.16em] text-[var(--color-shmo)]">
-        {{ t('bethSalme.title') }}
+        <LibraryBack />{{ t('bethSalme.title') }}
         <span dir="rtl" lang="syc" class="ml-1 font-syriac text-[15px] normal-case tracking-normal">ܒܝܬ ܨܠܡ̈ܐ</span>
       </p>
       <h1 class="mt-3 font-serif text-4xl font-semibold tracking-[-0.02em] text-balance sm:text-[2.75rem]">{{ t('bethSalme.heading') }}</h1>

@@ -442,6 +442,7 @@
       "computedHard": "hård i början eller efter en vokallös bokstav (beräknat)"
     },
     "shelf": {
+      "back": "Tillbaka till biblioteket",
       "eyebrow": "Bibliotek",
       "heading": "Välj en bok",
       "hint": "Ett rött bokmärkesband på ett omslag visar var du är i den boken.",
