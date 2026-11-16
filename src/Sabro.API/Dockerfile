@@ -51,7 +51,7 @@ ENTRYPOINT ["/usr/local/bin/apply-migrations.sh"]
 # ---- Runtime: slim ASP.NET image ---------------------------------------------
 # Debian-based (not Alpine): Directory.Build.props sets InvariantGlobalization
 # = false, so the image must ship ICU for correct Syriac/Unicode handling.
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS runtime
 WORKDIR /app
 
 # Listen on plain HTTP inside the container; Caddy terminates TLS in front.
