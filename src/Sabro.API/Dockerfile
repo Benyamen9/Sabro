@@ -13,7 +13,7 @@
 #   runtime  - slim ASP.NET image that actually serves traffic.
 
 # ---- Build: restore + publish ------------------------------------------------
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 
 # Central build configuration first so the restore layer caches independently
