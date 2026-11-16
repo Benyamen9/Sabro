@@ -25,7 +25,7 @@
          TreatWarningsAsErrors on restore. Stays in the 2.x line for
          Microsoft.AspNetCore.OpenApi 10.0.0 compatibility. -->
     <PackageVersion Include="Microsoft.OpenApi" Version="2.13.0" />
-    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="11.0.0" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.11" />
   </ItemGroup>
   <ItemGroup Label="EF Core / PostgreSQL">
