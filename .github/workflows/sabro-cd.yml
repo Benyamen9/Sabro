@@ -103,15 +103,15 @@ jobs:
           echo "Verified: $runs successful sabro-ci run(s) for $DISPATCH_SHA on main."
 
       - name: Checkout tested commit
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.SHA }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Log in to GHCR
-        uses: docker/login-action@v4
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -124,7 +124,7 @@ jobs:
       # API runtime image (context = repo root). BUILD_SHA is served at /version
       # and asserted by the deploy job after the swap.
       - name: Build + push API
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: src/Sabro.API/Dockerfile
@@ -183,7 +183,7 @@ jobs:
 
       # Migrator image — same Dockerfile, migrator target.
       - name: Build + push migrator
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           file: src/Sabro.API/Dockerfile
@@ -199,7 +199,7 @@ jobs:
       # weekly restore test. Tiny image, but pinned to the same SHA so the
       # deployed stack is fully reproducible from one tag.
       - name: Build + push backup
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: ./backup
           file: backup/Dockerfile
@@ -213,7 +213,7 @@ jobs:
       # Frontend image (context = ./frontend). The API resource must be baked in
       # at build time (it feeds the Logto `resources` array in nuxt.config).
       - name: Build + push frontend
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: ./frontend
           file: frontend/Dockerfile
@@ -234,7 +234,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout tested commit
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.SHA }}
 
@@ -246,20 +246,28 @@ jobs:
       # `caddy reload` validates again and keeps the running config if the new
       # one is bad, so a broken Caddyfile fails loudly without dropping the proxy.
       - name: Ship compose file and Caddyfile to VPS
-        uses: appleboy/scp-action@v1
+        uses: appleboy/scp-action@ff85246acaad7bdce478db94a363cd2bf7c90345 # v1.0.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # The server's ECDSA host key (the type Go's SSH client picks first).
+          # Without it the action trusts any machine answering at VPS_HOST.
+          # Check: ssh-keyscan -t ecdsa <host> | ssh-keygen -lf -
+          fingerprint: SHA256:gOp9jHA1Zv+HDobSCCi3/AQg0tAgTETqrUxV8xSj7Zg
           source: "docker-compose.prod.yml,Caddyfile"
           target: ${{ secrets.APP_DIR }}
 
       - name: SSH deploy
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # The server's ECDSA host key (the type Go's SSH client picks first).
+          # Without it the action trusts any machine answering at VPS_HOST.
+          # Check: ssh-keyscan -t ecdsa <host> | ssh-keygen -lf -
+          fingerprint: SHA256:gOp9jHA1Zv+HDobSCCi3/AQg0tAgTETqrUxV8xSj7Zg
           # APP_DIR holds docker-compose.prod.yml, Caddyfile, and the .env.
           # Pin the image tag to this commit, migrate first, then swap.
           script: |
