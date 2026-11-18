@@ -63,6 +63,14 @@ updates:
       # patch bumps within the pinned major still arrive as normal.
       - dependency-name: "node"
         update-types: ["version-update:semver-major"]
+      # .NET majors are taken per LTS line, never from a tag PR. Sabro is on
+      # .NET 10 (LTS); Dependabot offered 11 on 2026-11-16 (#371, #372), an STS
+      # release with a shorter support window. Move to 12 (the next LTS) as one
+      # planned change with the NuGet packages below.
+      - dependency-name: "dotnet/sdk"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "dotnet/aspnet"
+        update-types: ["version-update:semver-major"]
 
   # Action pins in the CI/CD workflows.
   - package-ecosystem: "github-actions"
@@ -112,6 +120,15 @@ updates:
       # so a major PR here would be reopened and rejected every release.
       - dependency-name: "Microsoft.OpenApi"
         update-types: ["version-update:semver-major"]
+      # The .NET platform packages version with the runtime: 11.x targets
+      # .NET 11 (#375, #377, #379, #380 were closed for it). Same rule as the
+      # dotnet images above; minor and patch moves on 10.x still arrive.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: ["version-update:semver-major"]
 
   # The hub frontend. TreatWarningsAsErrors has no npm equivalent, but CI runs
   # typecheck, Vitest and Playwright, so a bad bump surfaces there.
@@ -126,3 +143,9 @@ updates:
     groups:
       dev-minor-and-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # @types/node follows the runtime, not the newest Node: every Dockerfile
+      # runs node:22-bookworm-slim, so the types stay on 22.x (CLAUDE.md). They
+      # move when the node image moves, deliberately, not from a tag PR.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
