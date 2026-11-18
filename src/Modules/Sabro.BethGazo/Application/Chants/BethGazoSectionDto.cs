@@ -25,6 +25,9 @@ namespace Sabro.BethGazo.Application.Chants;
 /// backoffice and the hub's Beth Gazo; Nahlo's answer options leave them null.
 /// </para>
 /// </remarks>
+/// <param name="Id">The section's id.</param>
+/// <param name="Name">The section's name.</param>
+/// <param name="Position">Where the section sits in the treasury's order; a sort key only.</param>
 /// <param name="AllowedModeIds">
 /// <b>Empty is meaningful:</b> the section has no modes, so a chant in it is never
 /// asked for one. That is the madroshe.

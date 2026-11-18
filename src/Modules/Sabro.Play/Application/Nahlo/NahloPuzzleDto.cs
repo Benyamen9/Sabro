@@ -20,6 +20,10 @@ namespace Sabro.Play.Application.Nahlo;
 /// does.
 /// </para>
 /// </remarks>
+/// <param name="Date">The day this puzzle is served for.</param>
+/// <param name="ChantId">The chant behind the puzzle.</param>
+/// <param name="AudioUrl">The recording to play; the only part that is not the answer.</param>
+/// <param name="Transliteration">The melody name, romanized: the first answer part.</param>
 /// <param name="SectionName">The section of the treasury this chant belongs to — an answer part,
 /// and what decides whether <paramref name="ModeName"/> exists at all.</param>
 /// <param name="ModeName">The mode's name, not its id: the client shows the name, and the mode

@@ -98,7 +98,7 @@ public sealed class BiblicalBook : Entity<Guid>, IAggregateRoot
 
         foreach (var c in code)
         {
-            if (!(c is >= 'A' and <= 'Z' or >= '0' and <= '9'))
+            if (!(c is (>= 'A' and <= 'Z') or (>= '0' and <= '9')))
             {
                 return false;
             }
