@@ -12,6 +12,7 @@ namespace Sabro.BethGazo.Application.Chants;
 /// the backoffice sends back what it was given.
 /// </para>
 /// </remarks>
+/// <param name="Name">The section's name.</param>
 /// <param name="AllowedModeIds">
 /// The modes this section admits. <b>An empty list is meaningful</b> — it declares a
 /// section with no modes, which is how the madroshe are expressed, and not a field
