@@ -5,7 +5,7 @@
     "Segoe UI", Roboto, sans-serif;
   --font-serif: "Source Serif 4", "Source Serif Pro", ui-serif, Georgia, Cambria,
     "Times New Roman", serif;
-  --font-syriac: "Noto Sans Syriac", "Estrangelo Edessa", serif;
+  --font-syriac: "Serto Jerusalem", "Noto Sans Syriac Western", "Noto Sans Syriac", serif;
 
   --color-bg: #fafaf9;
   --color-bg-elevated: #ffffff;
@@ -371,4 +371,32 @@
   font-family: "Serto Urhoy";
   src: url("/type/SyrCOMUrhoy.otf") format("opentype");
   font-display: block;
+}
+
+/* The three script faces (Owner, 2026-11-15), from the same Meltho fonts, unmodified; their licence
+   is public/type/LICENSE-Meltho.txt and must ship beside them. Maherboyo = Serto Jerusalem (with its
+   bold), Estrangeloyo = Estrangelo Quenneshrin, Madenhoyo = East Syriac Adiabene. The last two have
+   no bold: the browser thickens them. `swap` shows the Noto fallback until the face arrives, never
+   blank text. Only the face of the reader's chosen script is fetched. */
+@font-face {
+  font-family: "Serto Jerusalem";
+  src: url("/type/SyrCOMJerusalem.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Serto Jerusalem";
+  src: url("/type/SyrCOMJerusalemBold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Estrangelo Quenneshrin";
+  src: url("/type/SyrCOMQenNeshrin.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "East Syriac Adiabene";
+  src: url("/type/SyrCOMAdiabene.otf") format("opentype");
+  font-display: swap;
 }
