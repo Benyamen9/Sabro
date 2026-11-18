@@ -2,12 +2,13 @@ export type ScriptVariant = 'estrangela' | 'serto' | 'madnhaya'
 
 export const scriptVariants: readonly ScriptVariant[] = ['estrangela', 'serto', 'madnhaya'] as const
 
-// Each variant maps to a distinct Google-hosted Noto Syriac family (loaded in
-// nuxt.config head), falling back to the Estrangela family then a generic serif.
+// Each variant maps to its Meltho face (Owner, 2026-11-15; declared in main.css, served from
+// public/type/), with the matching self-hosted Noto Syriac family behind it as the fallback
+// shown until the face loads, then a generic serif.
 const FONTS: Record<ScriptVariant, string> = {
-  estrangela: '"Noto Sans Syriac", serif',
-  serto: '"Noto Sans Syriac Western", "Noto Sans Syriac", serif',
-  madnhaya: '"Noto Sans Syriac Eastern", "Noto Sans Syriac", serif',
+  estrangela: '"Estrangelo Quenneshrin", "Noto Sans Syriac", serif',
+  serto: '"Serto Jerusalem", "Noto Sans Syriac Western", "Noto Sans Syriac", serif',
+  madnhaya: '"East Syriac Adiabene", "Noto Sans Syriac Eastern", "Noto Sans Syriac", serif',
 }
 
 /** The font stack for a given script variant — shared by SyriacText and the global binding. */
