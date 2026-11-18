@@ -49,7 +49,15 @@ env:
 jobs:
   build-and-push:
     name: Build + push images
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # `branches: [main]` above matches the branch NAME only: a pull request from
+    # a fork's own branch called "main" passes it, and its green CI run would
+    # otherwise deploy the fork's code with this repo's secrets. Only a push to
+    # main in this repository may deploy.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ env.SHA }}
@@ -61,7 +69,8 @@ jobs:
       # "On main" is the part that is easy to get wrong: sabro-ci also runs on
       # pull requests, so checking only "some green run exists for this SHA"
       # would make any green feature-branch commit deployable to production.
-      # Only a run whose head_branch is main counts.
+      # Only a push run on this repository's main counts: head_branch alone is
+      # "main" for a fork's pull request from its own main branch too.
       - name: Verify CI passed for this commit on main
         if: github.event_name == 'workflow_dispatch'
         env:
@@ -80,7 +89,9 @@ jobs:
           runs=$(gh api \
             "repos/${{ github.repository }}/actions/workflows/sabro-ci.yml/runs?head_sha=$DISPATCH_SHA&per_page=100" \
             --jq '[.workflow_runs[]
-                   | select(.head_branch == "main" and .conclusion == "success")]
+                   | select(.head_branch == "main" and .event == "push"
+                            and .head_repository.full_name == "${{ github.repository }}"
+                            and .conclusion == "success")]
                   | length')
 
           if [ "$runs" -eq 0 ]; then
