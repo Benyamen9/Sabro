@@ -931,13 +931,22 @@ build failure — so the image goes in the constructor, not in a following
 > Microsoft.Testing.Platform, which does not reject the VSTest flag as unknown — it
 > forwards it to the test app, which refuses the run and reports **`Zero tests ran`,
 > exit 5**. That reads like a broken SDK or project; it is neither. Plain
-> `dotnet test` runs all 660 unit tests. When a local run fails and CI passes, diff
+> `dotnet test` runs all 744 unit tests. When a local run fails and CI passes, diff
 > the *command* before the environment. Documented in `sabro-ci.yml` (#270);
 > upstream: dotnet/sdk#55309. For a subset, run the test exe with `-class`.
 > CI now also asserts a **minimum test count** (`--minimum-expected-tests`, 600 unit /
 > 480 integration, set 2026-10-01): too few tests fails with exit 9 and "Minimum
 > expected tests policy violation", so a filter or discovery break cannot pass quietly.
 > Raise the floors as the suites grow; never lower them to get a build through.
+
+> ⚠️ **A green local build does not prove CI will pass the analyzers.** CI builds in
+> **Release** on whatever SDK `setup-dotnet` resolves under `global.json`'s
+> `latestFeature` roll-forward (10.0.404 on 2026-11-18, while the dev machine had 10.0.401),
+> and a newer compiler lets StyleCop see more: 1.3.180 flagged SA1612 on *record* parameter
+> docs only on CI (#374). Build with `-c Release`, and when CI reports what you cannot
+> reproduce, compare `dotnet --version` with the "SDK with version" line in the CI log.
+> SA1612 itself: on a record, a `<param>` must sit at its parameter's position, so document
+> every parameter up to the last one you document.
 
 ### Coverage Targets
 - Domain + Application: **80–90%**
@@ -967,8 +976,20 @@ The *intent* is that a coverage drop blocks CI on **Domain and Application** lay
 **Dependabot** watches npm and NuGet in all five repos (minor + patch grouped), and
 **security alerts are enabled on all five** since 2026-09-28 — they had been off
 everywhere, so advisories surfaced only when someone ran `npm audit`. Secret scanning
-is on for public Sabro only; the four private client repos would need paid Advanced
-Security.
+(with push protection) is on for public Sabro only; the five private client repos would
+need paid Advanced Security, and branch protection on them needs GitHub Pro. Sabro also has
+**private vulnerability reporting** on (2026-11-18), and **every** fork pull request waits for
+the Owner's approval before any workflow runs (Settings → Actions, "all external contributors").
+All six repos **delete a branch when its PR merges** (2026-11-18); a deleted branch can be
+restored from its PR page.
+
+**All five games are on Nuxt 4.6.4** since 2026-11-18 (Nahlo and Sofro were the last, on 4.6.3),
+each with `@nuxt/cli` locked at **4.0.3**: 4.6.4 hands an unset `devServer.host` to the CLI as
+`{}`, 4.0.1 crashes on it (`options.hostname.toLowerCase`) and the e2e web server never starts.
+A Dependabot group that moves Nuxt can lose that lock entry: if e2e fails with that error, copy
+the `node_modules/@nuxt/cli*` entries from a game whose lock is fixed. The games also moved to
+**Vitest 5** and **`@logto/nuxt` 2.0.3** that day, as the hub had on 2026-10-25 (Logto 2's only
+breaking change is Node 22+, which every image already runs).
 
 **npm advisories after the 2026-10-12 sweep.** None of what remains is in `.output`, so the live
 sites run none of it. npm's suggested `nuxt@3.7.4` "fix" is a downgrade: never apply it.
@@ -997,9 +1018,18 @@ sites run none of it. npm's suggested `nuxt@3.7.4` "fix" is a downgrade: never a
 
 Both stand-ins live in `vendor/` in all five frontends; change them together.
 
-Not every Dependabot PR is meant to merge: TS 7 and `@types/node` majors
-are expected closes (*Outstanding Worklist* item 1), and image bumps for Meilisearch
-and Logto need their upgrade rituals — green CI cannot see those.
+Not every Dependabot PR is meant to merge: TS 7 is an expected close (*Outstanding
+Worklist* item 1), and image bumps for Meilisearch and Logto need their upgrade
+rituals — green CI cannot see those.
+
+**Majors Dependabot no longer offers** (ignore rules in `.github/dependabot.yml`, 2026-11-18;
+each repo's file says why). Change them deliberately, never from a tag PR:
+- **The .NET line**: the `dotnet/sdk` and `dotnet/aspnet` images and the `Microsoft.Extensions.*`,
+  `Microsoft.AspNetCore.*`, `Microsoft.EntityFrameworkCore*` and `Serilog.AspNetCore` packages. Sabro is on
+  .NET 10 (LTS); 11 is STS, and those packages' 11.x versions require it (Serilog.AspNetCore 11
+  failed restore with NU1109 downgrade errors, #386). Move to 12, the next LTS, as one planned change.
+- **`@types/node`**, in all six frontends: it follows the `node:22` images.
+- Already there before: `postgres` and `node` image majors, `Microsoft.OpenApi` 3.x.
 
 ### CD
 GitHub Actions builds Docker images for the API and frontend, pushes them to **GitHub Container Registry** (`ghcr.io`), then SSHes to the production VPS to pull and run `docker compose up -d`.
@@ -1019,6 +1049,30 @@ GitHub Actions builds Docker images for the API and frontend, pushes them to **G
 
 **Secrets:** GitHub Actions secrets for `SSH_PRIVATE_KEY`, `VPS_HOST`, GHCR token (often `GITHUB_TOKEN` suffices). Production app secrets live in a `.env` next to `docker-compose.prod.yml` on the VPS, plus a mounted `appsettings.Production.json` — never committed.
 
+**Deploy security (2026-11-18, all six repos; from a GitHub audit). Keep all four:**
+- **Only a push to `main` in this repository deploys.** A `workflow_run` trigger's `branches: [main]`
+  matches the branch *name*: a fork's pull request from its own `main` passes it, and its green CI
+  run used to start CD on the fork's code with our secrets (Sabro is public). The deploy job's `if:`
+  now also requires `workflow_run.event == 'push'` and `head_repository.full_name ==
+  github.repository`, and Sabro's manual-dispatch check asks the same of the CI run it looks up
+  (#381). Do not simplify that condition back to `conclusion == 'success'`.
+- **The SSH steps check the server's identity.** `appleboy/ssh-action` and `scp-action` skip host
+  verification without `fingerprint:`, so each step carries the server's **ECDSA** host key,
+  inline, since a fingerprint is not secret (#382). ECDSA because Go's `x/crypto/ssh`, which the action
+  uses, prefers it over RSA and Ed25519. **If the server is rebuilt**, every deploy fails with
+  `ssh: host key fingerprint mismatch` and nothing runs on the box. Read the new key with
+  `ssh-keyscan -t ecdsa <host> | ssh-keygen -lf -`, compare it with what the server itself reports,
+  and update the line in all six CD workflows.
+- **Every action is pinned to a commit SHA**, its release in a comment (`@3d3c… # v7.0.1`): a tag
+  can be moved by its owner, and these steps hold the SSH key and the registry token. Dependabot's
+  `github-actions` updates keep the pins current; never replace a pin with a bare tag.
+- **One deploy key per repo.** The server's `deploy` user accepts the Owner's own `sabro-deploy`
+  key plus `ci-deploy-<repo>` keys (sabro, meltho, mno, shmo, nahlo, sofro), each with port, agent
+  and X11 forwarding off. Each repo's `SSH_PRIVATE_KEY` holds only its own, so one leaked secret is
+  revoked by deleting one line of `~/.ssh/authorized_keys`, without touching the other five. Until
+  2026-11-18 all six repos held the Owner's personal key. `deploy` is in the `docker` group, which
+  is root-equivalent on that box: treat every deploy key as a root key.
+
 **Rejected approaches:** Coolify / Dokku / CapRover (PaaS overhead + maintenance surface), Watchtower (skips migrations + health checks), Kubernetes / k3s (no justification at modular-monolith / single-VPS scale).
 
 ### Branching Strategy
@@ -1027,6 +1081,11 @@ GitHub Actions builds Docker images for the API and frontend, pushes them to **G
 - `fix/short-description` — bug fix branches off `main`
 
 (No `develop` integration branch — trunk-based off `main`; an earlier draft documented one, it was never used.)
+
+**Merging when `main` has moved.** Sabro's protection is `strict`: a PR behind `main` cannot
+merge (`gh pr merge` fails quietly, the PR stays `BEHIND`). Run `gh pr update-branch`, wait for
+CI, then merge. Merge one Sabro PR at a time and let its deploy finish before the next:
+overlapping CD runs finish in any order, and the last to finish is what production serves.
 
 ### Commits — Conventional Commits
 ```
