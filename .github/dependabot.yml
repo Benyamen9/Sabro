@@ -129,6 +129,10 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "Microsoft.EntityFrameworkCore*"
         update-types: ["version-update:semver-major"]
+      # Serilog.AspNetCore versions with .NET too: Serilog.AspNetCore
+      # 11 needs Microsoft.Extensions 11.0 and failed restore with NU1109 (#386).
+      - dependency-name: "Serilog.AspNetCore"
+        update-types: ["version-update:semver-major"]
 
   # The hub frontend. TreatWarningsAsErrors has no npm equivalent, but CI runs
   # typecheck, Vitest and Playwright, so a bad bump surfaces there.
