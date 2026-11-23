@@ -24,7 +24,7 @@
     "@tailwindcss/vite": "^4.3.5",
     "nuxt": "^4.6.4",
     "tailwindcss": "^4.3.0",
-    "vue": "^3.5.45",
+    "vue": "^3.5.46",
     "vue-router": "^5.5.1"
   },
   "devDependencies": {
@@ -40,7 +40,7 @@
     "prettier": "^3.10.1",
     "simple-git": "file:./vendor/simple-git",
     "typescript": "^6.0.3",
-    "vitest": "^5.1.0",
+    "vitest": "^5.1.1",
     "vue-tsc": "^3.3.14"
   },
   "overrides": {
