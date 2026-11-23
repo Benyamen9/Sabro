@@ -37,7 +37,7 @@
          ADO connection rather than going through a module's DbContext (the API must not
          reach into module infrastructure). Kept at the version the EF provider above
          already resolves, so this pins nothing new. -->
-    <PackageVersion Include="Npgsql" Version="10.0.3" />
+    <PackageVersion Include="Npgsql" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup Label="Validation / Markdown / Search">
     <PackageVersion Include="FluentValidation" Version="12.2.0" />
